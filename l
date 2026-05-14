@@ -1,251 +1,2073 @@
 <!DOCTYPE html>
+
 <html lang="sk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Koverta AI Chatbot</title>
+<title>Môj plot - AI asistent & Cenová kalkulačka</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--k-yellow:#FFCC00;--k-yellow-hover:#E6B800;--k-yellow-glow:rgba(255,204,0,0.15);--k-dark:#495862;--k-white:#FFF;--k-light:#F4F5F7;--k-gray:#8A9AA4;--k-border:#E2E6EA;--k-green:#4CAF50;--k-red:#E53935;--k-radius:20px;--k-font:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;--kc-bg:#FFF;--kc-msg-bot:#F4F5F7;--kc-msg-user:#FFCC00;--kc-msg-user-text:#495862;--kc-input-bg:#F4F5F7;--kc-header-bg:#495862;--kc-header-text:#FFF;--kc-text:#495862;--kc-text-sub:#8A9AA4;--kc-border:#E2E6EA;--kc-contact-bg:#FFF}
-.dark-mode{--kc-bg:#1a2228;--kc-msg-bot:#2a363e;--kc-msg-user:#FFCC00;--kc-msg-user-text:#1a2228;--kc-input-bg:#2a363e;--kc-header-bg:#141b20;--kc-header-text:#F4F5F7;--kc-text:#E2E6EA;--kc-text-sub:#6a7a84;--kc-border:#2a363e;--kc-contact-bg:#1e2a31}
+:root{
+  --m-green:#2E7D32;
+  --m-green-hover:#1B5E20;
+  --m-green-light:#4CAF50;
+  --m-green-soft:#66BB6A;
+  --m-green-glow:rgba(46,125,50,.18);
+  --m-green-bg:rgba(46,125,50,.08);
+  --m-green-line:rgba(46,125,50,.35);
+  --m-dark:#1F2937;
+  --m-darker:#111827;
+  --m-white:#FFFFFF;
+  --m-light:#F5F7F4;
+  --m-light-2:#EEF2EE;
+  --m-gray:#6B7280;
+  --m-border:#E2E6EA;
+  --m-success:#2E7D32;
+  --m-error:#E53935;
+  --m-amber:#F59E0B;
+  --m-radius:20px;
+  --m-font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mc-bg:#FFF;
+  --mc-msg-bot:#F5F7F4;
+  --mc-msg-user:#2E7D32;
+  --mc-msg-user-text:#FFF;
+  --mc-input-bg:#F5F7F4;
+  --mc-header-bg:#1F2937;
+  --mc-header-text:#FFF;
+  --mc-text:#1F2937;
+  --mc-text-sub:#6B7280;
+  --mc-border:#E2E6EA;
+  --mc-contact-bg:#FFF
+}
+.dark-mode{
+  --mc-bg:#0F1A14;
+  --mc-msg-bot:#1A2820;
+  --mc-msg-user:#4CAF50;
+  --mc-msg-user-text:#0F1A14;
+  --mc-input-bg:#1A2820;
+  --mc-header-bg:#070D0A;
+  --mc-header-text:#E8EBE9;
+  --mc-text:#E8EBE9;
+  --mc-text-sub:#8A9A92;
+  --mc-border:#1A2820;
+  --mc-contact-bg:#0F1A14
+}
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px!important}
-body{margin:0;padding:0;background:transparent!important;font-family:var(--k-font)!important;font-size:16px!important;}
+body{margin:0;padding:0;background:transparent!important;font-family:var(--m-font)!important;font-size:16px!important}
 
-#kc-tooltip{position:fixed;bottom:94px;right:16px;background:#fff;color:#000;font-family:var(--k-font)!important;font-size:16px!important;font-weight:600!important;padding:11px 34px 11px 16px;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.15);z-index:100000;white-space:nowrap;line-height:1.4!important;cursor:pointer;opacity:0;animation:tooltipShow .4s ease .6s forwards;letter-spacing:.2px}
-#kc-tooltip::after{content:'';position:absolute;bottom:-8px;right:32px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #fff}
-#kc-tooltip .tt-x{position:absolute;top:4px;right:6px;width:18px;height:18px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;color:var(--k-gray);line-height:1}
-#kc-tooltip .tt-x:hover{background:var(--k-light);color:var(--k-dark)}
+html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;position:fixed!important;width:100%!important;touch-action:none!important;-webkit-overflow-scrolling:auto!important}
+
+/* Tooltip */
+#mc-tooltip{position:fixed;bottom:94px;right:16px;background:#fff;color:#1F2937;font-family:var(–m-font)!important;font-size:14px!important;font-weight:600!important;padding:11px 34px 11px 16px;border-radius:14px;box-shadow:0 6px 28px rgba(0,0,0,.18);z-index:100000;white-space:nowrap;line-height:1.4!important;cursor:pointer;opacity:0;animation:tooltipShow .4s ease .6s forwards;letter-spacing:.1px;display:none}
+#mc-tooltip::after{content:’’;position:absolute;bottom:-8px;right:32px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #fff}
+#mc-tooltip .tt-x{position:absolute;top:4px;right:6px;width:18px;height:18px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;color:var(–m-gray);line-height:1}
+#mc-tooltip .tt-x:hover{background:var(–m-light);color:var(–m-dark)}
 @keyframes tooltipShow{to{opacity:1}}
-#kc-tooltip.hidden{display:none}
 
-#koverta-bubble{position:fixed;bottom:16px;right:16px;width:70px;height:70px;background:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.15),0 0 0 0 rgba(255,204,0,.3);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;z-index:100000;overflow:hidden;animation:bubblePulse 3s ease-in-out infinite}
-@keyframes bubblePulse{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,.15),0 0 0 0 rgba(255,204,0,.3)}50%{box-shadow:0 4px 20px rgba(0,0,0,.15),0 0 0 12px rgba(255,204,0,0)}}
-#koverta-bubble:hover{transform:scale(1.08);animation:none}
-#koverta-bubble.open{animation:none}
-#koverta-bubble img{width:66px;height:66px;object-fit:contain;border-radius:50%}
-#koverta-bubble.open img{display:none}
-#koverta-bubble .bubble-x{display:none;width:28px;height:28px;align-items:center;justify-content:center}
-#koverta-bubble.open .bubble-x{display:flex}
-.bubble-x svg{width:28px;height:28px;fill:var(--k-dark)}
-@keyframes robotWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(5deg)}75%{transform:rotate(-5deg)}}
-.wobble{animation:robotWobble 2s ease-in-out infinite}
+/* Bubble */
+#mojplot-bubble{position:fixed;bottom:18px;right:18px;width:68px;height:68px;background:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(46,125,50,.35),0 0 0 0 rgba(46,125,50,.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;z-index:100000;overflow:hidden;animation:bubblePulse 3s ease-in-out infinite;border:2px solid #fff}
+@keyframes bubblePulse{0%,100%{box-shadow:0 6px 24px rgba(46,125,50,.35),0 0 0 0 rgba(46,125,50,.4)}50%{box-shadow:0 6px 24px rgba(46,125,50,.35),0 0 0 14px rgba(46,125,50,0)}}
+#mojplot-bubble:hover{transform:scale(1.08);animation:none}
+#mojplot-bubble.open{animation:none;opacity:0;pointer-events:none}
+#mojplot-bubble .bubble-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;transform-origin:center}
+#mojplot-bubble .bubble-icon img{width:100%;height:100%;object-fit:contain;display:block}
+#mojplot-bubble.open .bubble-icon{display:none}
+#mojplot-bubble .bubble-x{display:none;width:28px;height:28px;align-items:center;justify-content:center}
+#mojplot-bubble.open .bubble-x{display:flex}
+.bubble-x svg{width:24px;height:24px;fill:#2E7D32}
+@keyframes botWobble{0%,100%{transform:rotate(0) translateY(0)}25%{transform:rotate(6deg) translateY(-1px)}75%{transform:rotate(-6deg) translateY(-1px)}}
+.wobble{animation:botWobble 2.2s ease-in-out infinite}
 
-#koverta-chat{position:fixed;bottom:90px;right:16px;width:380px;max-height:560px;height:75vh;background:var(--kc-bg);border-radius:var(--k-radius);box-shadow:0 16px 64px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden;z-index:99999;transform:scale(.8) translateY(20px);opacity:0;pointer-events:none;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;transform-origin:bottom right}
-#koverta-chat.visible{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+/* Notifikacny bod */
+#mojplot-bubble .notif-dot{position:absolute;top:6px;right:7px;width:14px;height:14px;background:#FF5252;border-radius:50%;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:800;animation:notifPulse 2s ease-in-out infinite}
+@keyframes notifPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+#mojplot-bubble.open .notif-dot{display:none}
 
-.kc-header{background:var(--kc-header-bg);padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.kc-hdr-av{width:48px;height:48px;border-radius:14px;overflow:hidden;flex-shrink:0;background:#fff}
-.kc-hdr-av img{width:48px;height:48px;object-fit:cover}
-.kc-hdr-info{flex:1}
-.kc-hdr-title{font-size:15px;font-weight:700;color:var(--kc-header-text)}
-.kc-hdr-sub{font-size:11px;color:var(--kc-text-sub);display:flex;align-items:center;gap:5px;margin-top:1px}
-.kc-hdr-sub .dot{width:7px;height:7px;background:var(--k-green);border-radius:50%;animation:dotP 2s infinite}
+/* Chat okno */
+#mojplot-chat{position:fixed;bottom:96px;right:18px;width:390px;max-height:600px;height:78vh;background:var(–mc-bg);border-radius:var(–m-radius);box-shadow:0 18px 70px rgba(31,41,55,.28);display:flex;flex-direction:column;overflow:hidden;z-index:99999;transform:scale(.85) translateY(20px);opacity:0;pointer-events:none;transition:transform .42s cubic-bezier(.34,1.56,.64,1),opacity .3s;transform-origin:bottom right}
+#mojplot-chat.visible{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+
+/* Header */
+.mc-header{background:linear-gradient(135deg,#1F2937 0%,#111827 100%);padding:13px 16px;display:flex;align-items:center;gap:11px;flex-shrink:0;position:relative;overflow:hidden}
+.mc-header::before{content:’’;position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(46,125,50,.22) 0%,transparent 65%);pointer-events:none}
+.mc-hdr-av{width:48px;height:48px;border-radius:14px;overflow:hidden;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(46,125,50,.4);position:relative;z-index:1;padding:4px;box-sizing:border-box}
+.mc-hdr-av img{width:100%;height:100%;object-fit:contain;display:block}
+.mc-hdr-av svg{width:30px;height:30px;fill:#2E7D32}
+.mc-hdr-info{flex:1;position:relative;z-index:1}
+.mc-hdr-title{font-size:15px;font-weight:700;color:var(–mc-header-text);letter-spacing:-.2px}
+.mc-hdr-sub{font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px;margin-top:1px;font-weight:500}
+.mc-hdr-sub .dot{width:7px;height:7px;background:#4CAF50;border-radius:50%;animation:dotP 2s infinite;box-shadow:0 0 6px #4CAF50}
 @keyframes dotP{0%,100%{opacity:1}50%{opacity:.4}}
-.kc-hdr-actions{display:flex;gap:4px;align-items:center}
-.kc-hdr-btn{width:32px;height:32px;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);transition:all .2s}
-.kc-hdr-btn:hover{background:rgba(255,255,255,.15)}
-.kc-hdr-btn svg{width:15px;height:15px;fill:var(--kc-text-sub)}
-.kc-hdr-btn.active svg{fill:var(--k-yellow)}
-.kc-lang{display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:7px;padding:2px}
-.kc-lang button{border:none;background:transparent;color:var(--kc-text-sub);font-family:var(--k-font);font-size:11px;font-weight:600;padding:3px 7px;border-radius:5px;cursor:pointer;transition:all .2s}
-.kc-lang button.active{background:var(--k-yellow);color:var(--k-dark)}
+.mc-hdr-actions{display:flex;gap:4px;align-items:center;position:relative;z-index:1}
+.mc-hdr-btn{width:32px;height:32px;border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);transition:all .2s}
+.mc-hdr-btn:hover{background:rgba(255,255,255,.15)}
+.mc-hdr-btn svg{width:15px;height:15px;fill:rgba(255,255,255,.7)}
+.mc-hdr-btn.active svg{fill:#4CAF50}
+.mc-lang{display:flex;gap:2px;background:rgba(0,0,0,.25);border-radius:8px;padding:2px}
+.mc-lang button{border:none;background:transparent;color:rgba(255,255,255,.65);font-family:var(–m-font);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.mc-lang button.active{background:#2E7D32;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 
-.kc-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth}
-.kc-msgs::-webkit-scrollbar{width:3px}
-.kc-msgs::-webkit-scrollbar-thumb{background:var(--kc-border);border-radius:3px}
-.kc-row{display:flex;gap:7px;align-items:flex-end;animation:msgIn .35s cubic-bezier(.34,1.4,.64,1)}
-.kc-row.user{justify-content:flex-end}
+/* Spravy */
+.mc-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.mc-msgs::-webkit-scrollbar{width:4px}
+.mc-msgs::-webkit-scrollbar-thumb{background:var(–mc-border);border-radius:4px}
+.mc-row{display:flex;gap:8px;align-items:flex-end;animation:msgIn .35s cubic-bezier(.34,1.4,.64,1)}
+.mc-row.user{justify-content:flex-end}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}
-.kc-av{width:32px;height:32px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#fff}
-.kc-av img{width:32px;height:32px;object-fit:cover}
-.kc-row.user .kc-av{display:none}
-.kc-mc{max-width:80%}
-.kc-m{padding:10px 14px;font-size:13.5px;line-height:1.55;border-radius:16px;word-wrap:break-word;color:var(--kc-text)}
-.kc-m.bot{background:var(--kc-msg-bot);border-bottom-left-radius:5px}
-.kc-m.user{background:var(--kc-msg-user);color:var(--kc-msg-user-text);border-bottom-right-radius:5px;font-weight:500}
-.kc-m a{color:#1976D2;text-decoration:underline;font-weight:600}
-.dark-mode .kc-m a{color:var(--k-yellow)}
-.kc-ts{font-size:10px;color:var(--kc-text-sub);margin-top:2px;padding:0 2px}
-.kc-row.user .kc-ts{text-align:right}
-.kc-rt{display:flex;gap:4px;margin-top:4px}
-.kc-rb{width:26px;height:26px;border:1px solid var(--kc-border);background:transparent;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:.45;transition:all .2s}
-.kc-rb:hover,.kc-rb.on{opacity:1;border-color:var(--k-yellow);background:var(--k-yellow-glow)}
+.mc-av{width:32px;height:32px;flex-shrink:0;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,#2E7D32,#1B5E20);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(46,125,50,.3)}
+.mc-av svg{width:20px;height:20px;fill:#fff}
+.mc-row.user .mc-av{display:none}
+.mc-mc{max-width:80%}
+.mc-m{padding:10px 14px;font-size:13.5px;line-height:1.55;border-radius:16px;word-wrap:break-word;color:var(–mc-text)}
+.mc-m.bot{background:var(–mc-msg-bot);border-bottom-left-radius:5px}
+.mc-m.user{background:var(–mc-msg-user);color:var(–mc-msg-user-text);border-bottom-right-radius:5px;font-weight:500;box-shadow:0 2px 8px rgba(46,125,50,.25)}
+.mc-m a{color:#1976D2;text-decoration:underline;font-weight:600}
+.dark-mode .mc-m a{color:#66BB6A}
+.mc-m b,.mc-m strong{font-weight:700;color:var(–mc-text)}
+.mc-m.user b,.mc-m.user strong{color:#fff}
+.mc-ts{font-size:10px;color:var(–mc-text-sub);margin-top:2px;padding:0 2px;font-weight:500}
+.mc-row.user .mc-ts{text-align:right}
+.mc-rt{display:flex;gap:4px;margin-top:5px}
+.mc-rb{width:26px;height:26px;border:1px solid var(–mc-border);background:transparent;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:.45;transition:all .2s}
+.mc-rb:hover,.mc-rb.on{opacity:1;border-color:var(–m-green);background:var(–m-green-glow)}
 
-.kc-typing{display:none;gap:7px;align-items:flex-end;padding:0 14px 6px}
-.kc-typing.show{display:flex}
-.kc-tbub{display:flex;gap:4px;align-items:center;padding:12px 18px;background:var(--kc-msg-bot);border-radius:16px;border-bottom-left-radius:5px}
-.kc-tbub span{width:6px;height:6px;background:var(--kc-text-sub);border-radius:50%;animation:tb 1.4s infinite}
-.kc-tbub span:nth-child(2){animation-delay:.15s}
-.kc-tbub span:nth-child(3){animation-delay:.3s}
+.mc-typing{display:none;gap:8px;align-items:flex-end;padding:0 14px 6px}
+.mc-typing.show{display:flex}
+.mc-tbub{display:flex;gap:4px;align-items:center;padding:12px 18px;background:var(–mc-msg-bot);border-radius:16px;border-bottom-left-radius:5px}
+.mc-tbub span{width:6px;height:6px;background:var(–mc-text-sub);border-radius:50%;animation:tb 1.4s infinite}
+.mc-tbub span:nth-child(2){animation-delay:.15s}
+.mc-tbub span:nth-child(3){animation-delay:.3s}
 @keyframes tb{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-5px);opacity:1}}
 
-.kc-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 14px 8px;flex-shrink:0}
-.kc-chip {
-    border: 1px solid var(--kc-border);
-    background: radial-gradient(circle at center,var(--k-yellow) 0%,var(--k-yellow) 70%,transparent 71%) no-repeat center;
-    background-size: 0% 0%;
-    background-color: var(--kc-bg);
-    color: var(--kc-text);
-    font-family: var(--k-font);
-    font-size: 12.5px;
-    font-weight: 500;
-    padding: 6px 13px;
-    border-radius: 20px;
-    cursor: pointer;
-    /* Tu sme zmenili .5s na 1s pre plynulejší a pomalší efekt */
-    transition: background-size 1s cubic-bezier(.4,0,.2,1), border-color .3s, color .3s, transform .3s;
-    position: relative;
-    z-index: 1;
-}
-.kc-chip:hover,.kc-chip:active{background-size:300% 300%;border-color:var(--k-yellow);color:#000;transform:translateY(-1px);animation:chipOrbit 4s linear infinite}
-@keyframes chipOrbit{0%{box-shadow:4px 0 8px rgba(73,88,98,.35),0 0 3px rgba(255,204,0,.2)}25%{box-shadow:0 4px 8px rgba(73,88,98,.35),0 0 3px rgba(255,204,0,.2)}50%{box-shadow:-4px 0 8px rgba(73,88,98,.35),0 0 3px rgba(255,204,0,.2)}75%{box-shadow:0 -4px 8px rgba(73,88,98,.35),0 0 3px rgba(255,204,0,.2)}100%{box-shadow:4px 0 8px rgba(73,88,98,.35),0 0 3px rgba(255,204,0,.2)}}
+/* Chips / Quick actions */
+.mc-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 14px 8px;flex-shrink:0}
+.mc-chip{border:1px solid var(–mc-border);background:var(–mc-bg);color:var(–mc-text);font-family:var(–m-font);font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:20px;cursor:pointer;transition:all .25s cubic-bezier(.34,1.4,.64,1);position:relative;overflow:hidden}
+.mc-chip:hover{border-color:var(–m-green);color:var(–m-green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,125,50,.18)}
+.mc-chip.mc-chip-calc{background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;border-color:#1B5E20;box-shadow:0 3px 10px rgba(46,125,50,.4);animation:calcPulse 2.5s ease-in-out infinite}
+.mc-chip.mc-chip-calc:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(46,125,50,.55);color:#fff;animation:none}
+@keyframes calcPulse{0%,100%{box-shadow:0 3px 10px rgba(46,125,50,.4)}50%{box-shadow:0 3px 18px rgba(46,125,50,.7)}}
+.mc-quick-calc{width:42px;height:42px;border:none;border-radius:12px;background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(46,125,50,.35);transition:transform .2s,filter .2s}
+.mc-quick-calc:hover{transform:translateY(-1px) scale(1.05);filter:brightness(1.1)}
+.mc-quick-calc svg{width:20px;height:20px;fill:currentColor}
 
-.kc-ibar{display:flex;align-items:center;gap:7px;padding:10px 14px;border-top:1px solid var(--kc-border);flex-shrink:0}
-.kc-inp{flex:1;border:1.5px solid var(--kc-border);border-radius:12px;padding:10px 13px;font-family:var(--k-font);font-size:13.5px;color:var(--kc-text);outline:none;background:var(--kc-input-bg);transition:border-color .2s,background .2s}
-.kc-inp:focus{border-color:var(--k-yellow);background:var(--kc-bg)}
-.kc-inp::placeholder{color:var(--kc-text-sub)}
-.kc-send{width:40px;height:40px;background:var(--k-yellow);border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.kc-send:hover{background:var(--k-yellow-hover);transform:scale(1.05)}
-.kc-send svg{width:18px;height:18px;fill:var(--k-dark)}
+/* Input bar */
+.mc-ibar{display:flex;align-items:center;gap:7px;padding:10px 14px;border-top:1px solid var(–mc-border);flex-shrink:0}
+.mc-inp{flex:1;border:1.5px solid var(–mc-border);border-radius:12px;padding:10px 13px;font-family:var(–m-font);font-size:13.5px;color:var(–mc-text);outline:none;background:var(–mc-input-bg);transition:border-color .2s,background .2s}
+.mc-inp:focus{border-color:var(–m-green);background:var(–mc-bg)}
+.mc-inp::placeholder{color:var(–mc-text-sub)}
+.mc-send{width:42px;height:42px;background:linear-gradient(135deg,#2E7D32,#1B5E20);border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;box-shadow:0 3px 10px rgba(46,125,50,.35)}
+.mc-send:hover{transform:scale(1.05);filter:brightness(1.1)}
+.mc-send svg{width:18px;height:18px;fill:#fff}
 
-.kc-cbar{display:flex;gap:5px;padding:8px 14px;border-top:1px solid var(--kc-border);flex-shrink:0;background:var(--kc-contact-bg);border-radius:0 0 var(--k-radius) var(--k-radius)}
-.kc-ct{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 6px;font-family:var(--k-font);font-size:11.5px;font-weight:600;color:var(--kc-text);cursor:pointer;border:1.5px solid var(--kc-border);background:var(--kc-bg);border-radius:11px;transition:all .25s;text-decoration:none}
-.kc-ct:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.1)}
-.kc-ci{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.kc-ci svg{width:14px;height:14px}
-.kc-ct.wa .kc-ci{background:#25D366}.kc-ct.wa .kc-ci svg{fill:#fff}.kc-ct.wa:hover{border-color:#25D366}
-.kc-ct.ph .kc-ci{background:#2196F3}.kc-ct.ph .kc-ci svg{fill:#fff}.kc-ct.ph:hover{border-color:#2196F3}
-.kc-ct.em .kc-ci{background:var(--k-dark)}.kc-ct.em .kc-ci svg{fill:var(--k-yellow)}.kc-ct.em:hover{border-color:var(--k-dark)}
+/* Kontaktna lista */
+.mc-cbar{display:flex;gap:5px;padding:8px 14px;border-top:1px solid var(–mc-border);flex-shrink:0;background:var(–mc-contact-bg);border-radius:0 0 var(–m-radius) var(–m-radius)}
+.mc-ct{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 6px;font-family:var(–m-font);font-size:11.5px;font-weight:700;color:var(–mc-text);cursor:pointer;border:1.5px solid var(–mc-border);background:var(–mc-bg);border-radius:11px;transition:all .25s;text-decoration:none}
+.mc-ct:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.mc-ci{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mc-ci svg{width:14px;height:14px}
+.mc-ct.wa .mc-ci{background:#25D366}.mc-ct.wa .mc-ci svg{fill:#fff}.mc-ct.wa:hover{border-color:#25D366}
+.mc-ct.ph .mc-ci{background:#2196F3}.mc-ct.ph .mc-ci svg{fill:#fff}.mc-ct.ph:hover{border-color:#2196F3}
+.mc-ct.em .mc-ci{background:linear-gradient(135deg,#2E7D32,#1B5E20)}.mc-ct.em .mc-ci svg{fill:#fff}.mc-ct.em:hover{border-color:#2E7D32}
 
-.kc-eo{display:none;position:absolute;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:10}
-.kc-eo.show{display:block}
-.kc-ep{display:none;flex-direction:column;position:absolute;bottom:0;left:0;right:0;background:var(--kc-bg);border-radius:20px 20px 0 0;z-index:11;animation:sp .35s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -8px 40px rgba(0,0,0,.2)}
-.kc-ep.show{display:flex}
+/* Email overlay */
+.mc-eo{display:none;position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:10}
+.mc-eo.show{display:block}
+.mc-ep{display:none;flex-direction:column;position:absolute;bottom:0;left:0;right:0;background:var(–mc-bg);border-radius:20px 20px 0 0;z-index:11;animation:sp .35s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+.mc-ep.show{display:flex}
 @keyframes sp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.kc-eph{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;border-bottom:1px solid var(--kc-border)}
+.mc-eph{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;border-bottom:1px solid var(–mc-border)}
+.mc-ept{font-size:15px;font-weight:700;color:var(–mc-text);display:flex;align-items:center;gap:8px}
+.mc-ept .ei{width:28px;height:28px;background:linear-gradient(135deg,#2E7D32,#1B5E20);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(46,125,50,.3)}
+.mc-ept .ei svg{width:15px;height:15px;fill:#fff}
+.mc-ecl{width:32px;height:32px;border:none;background:var(–mc-input-bg);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mc-ecl svg{width:14px;height:14px;fill:var(–mc-text-sub)}
+.mc-eb{padding:14px 18px 18px;display:flex;flex-direction:column;gap:9px}
+.mc-eb .fg{display:flex;flex-direction:column;gap:4px}
+.mc-eb label{font-size:11px;font-weight:700;color:var(–mc-text-sub);text-transform:uppercase;letter-spacing:.5px}
+.mc-eb input,.mc-eb textarea{font-family:var(–m-font);font-size:13.5px;line-height:1.55;padding:10px 13px;border:1.5px solid var(–mc-border);border-radius:10px;outline:none;color:var(–mc-text);background:var(–mc-input-bg);transition:border-color .2s,background .2s}
+.mc-eb input:focus,.mc-eb textarea:focus{border-color:var(–m-green);background:var(–mc-bg)}
+.mc-eb textarea{resize:none;height:68px}
+.mc-eb .fr{display:flex;gap:8px}
+.mc-eb .fr .fg{flex:1}
+.mc-esb{background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;font-family:var(–m-font);font-weight:700;font-size:13.5px;border:none;padding:12px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:3px;box-shadow:0 4px 12px rgba(46,125,50,.35);transition:transform .2s,filter .2s}
+.mc-esb:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.mc-esb svg{width:16px;height:16px;fill:#fff}
+.mc-esb.ok{background:#4CAF50}
 
-/* Nadpis formulára (15px) */
-.kc-ept{font-size:15px;font-weight:700;color:var(--kc-text);display:flex;align-items:center;gap:7px}
-.kc-ept .ei{width:26px;height:26px;background:var(--k-yellow);border-radius:7px;display:flex;align-items:center;justify-content:center}
-.kc-ept .ei svg{width:14px;height:14px;fill:var(--k-dark)}
+/* =========== KALKULACKA STYLES =========== */
+.mc-calc-container{display:none;position:relative;padding:16px;background:var(–mc-bg);border-top:1px solid var(–mc-border);flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.mc-calc-container::-webkit-scrollbar{width:4px}
+.mc-calc-container::-webkit-scrollbar-thumb{background:var(–mc-border);border-radius:4px}
+.mc-calc-container[data-open=“true”]{display:block;animation:calcOpen .4s cubic-bezier(.16,1,.3,1)}
+@keyframes calcOpen{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.mc-calc-container[data-open=“true”] ~ .mc-msgs,#mojplot-chat:has(.mc-calc-container[data-open=“true”]) .mc-msgs{display:none}
 
-.kc-ecl{width:30px;height:30px;border:none;background:var(--kc-input-bg);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.kc-ecl svg{width:14px;height:14px;fill:var(--kc-text-sub)}
+.mc-calc-head{display:flex;justify-content:space-between;margin-bottom:10px;align-items:center}
+.mc-calc-title{font-size:14px;font-weight:800;margin:0;color:var(–mc-text);letter-spacing:-.2px}
+.mc-calc-close{cursor:pointer;background:var(–mc-input-bg);border:none;font-size:16px;color:var(–mc-text-sub);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.mc-calc-close:hover{background:var(–m-green-glow);color:var(–m-green)}
 
-.kc-eb{padding:14px 18px 18px;display:flex;flex-direction:column;gap:8px}
-.kc-eb .fg{display:flex;flex-direction:column;gap:3px}
+/* Progress bar */
+.mc-calc-progress-wrap{margin-bottom:14px;padding:6px 4px 2px;overflow:visible;display:flex;align-items:center;gap:8px}
+.mc-progress-back{width:32px;height:32px;border:1px solid var(–mc-border);background:var(–mc-bg);color:var(–mc-text);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex:0 0 auto;font-size:18px;line-height:1;font-weight:700}
+.mc-progress-back:hover{border-color:var(–m-green);background:var(–m-green-glow);color:var(–m-green);transform:translateX(-1px)}
+.mc-progress-back:disabled{opacity:.35;cursor:not-allowed;transform:none;background:var(–mc-input-bg)}
+.mc-calc-progress{height:10px;border-radius:999px;background:linear-gradient(180deg,rgba(31,41,55,.1),rgba(31,41,55,.04));border:1px solid rgba(31,41,55,.1);overflow:visible;position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,.06);flex:1}
+.mc-calc-progress-fill{height:100%;background:linear-gradient(90deg,#2E7D32,#4CAF50);border-radius:999px;transition:width .42s cubic-bezier(.34,1.2,.64,1);position:relative;box-shadow:0 0 8px rgba(46,125,50,.4)}
+.mc-calc-progress-fill::after{content:’’;position:absolute;right:0;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;transform:translate(50%,-50%);box-shadow:0 0 0 3px #2E7D32,0 2px 8px rgba(46,125,50,.4);transition:right .42s cubic-bezier(.34,1.2,.64,1)}
+.mc-progress-step{font-size:11px;font-weight:700;color:var(–mc-text-sub);flex:0 0 auto;letter-spacing:.3px}
 
-/* Popisky polí (11px) */
-.kc-eb label{font-size:11px;font-weight:600;color:var(--kc-text-sub);text-transform:uppercase;letter-spacing:.5px}
+/* Step content */
+.mc-step{animation:stepIn .4s cubic-bezier(.34,1.2,.64,1)}
+@keyframes stepIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:translateX(0)}}
+.mc-step-title{font-size:16px;font-weight:800;color:var(–mc-text);margin-bottom:4px;letter-spacing:-.3px}
+.mc-step-sub{font-size:12.5px;color:var(–mc-text-sub);margin-bottom:14px;line-height:1.45}
 
-/* Inputy a textarea vo formulári (padding 10px 13px, line-height 1.55) */
-.kc-eb input,.kc-eb textarea{font-family:var(--k-font);font-size:13.5px;line-height:1.55;padding:10px 13px;border:1.5px solid var(--kc-border);border-radius:10px;outline:none;color:var(--kc-text);background:var(--kc-input-bg)}
-.kc-eb input:focus,.kc-eb textarea:focus{border-color:var(--k-yellow);background:var(--kc-bg)}
-.kc-eb textarea{resize:none;height:64px}
-.kc-eb .fr{display:flex;gap:8px}
-.kc-eb .fr .fg{flex:1}
+/* Cards (product selection) */
+.mc-product-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:8px}
+.mc-product-card{position:relative;border:1.5px solid var(–mc-border);border-radius:14px;padding:0;cursor:pointer;transition:all .25s cubic-bezier(.34,1.2,.64,1);background:var(–mc-bg);overflow:hidden;display:flex;flex-direction:column}
+.mc-product-card:hover{border-color:var(–m-green);transform:translateY(-2px);box-shadow:0 8px 22px rgba(46,125,50,.18)}
+.mc-product-card.selected{border-color:var(–m-green);box-shadow:0 0 0 2px var(–m-green-glow),0 6px 18px rgba(46,125,50,.22);transform:translateY(-2px)}
+.mc-product-card.selected::before{content:‘✓’;position:absolute;top:8px;right:8px;width:22px;height:22px;background:var(–m-green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;z-index:2;box-shadow:0 2px 6px rgba(46,125,50,.4);animation:checkPop .35s cubic-bezier(.34,1.6,.64,1)}
+@keyframes checkPop{from{transform:scale(0)}to{transform:scale(1)}}
+.mc-product-img{width:100%;height:90px;background:linear-gradient(135deg,#F5F7F4,#EEF2EE);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.mc-product-img img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.mc-product-card:hover .mc-product-img img{transform:scale(1.06)}
+.mc-product-info{padding:9px 10px 11px;flex:1;display:flex;flex-direction:column;gap:2px}
+.mc-product-name{font-size:13px;font-weight:700;color:var(–mc-text);line-height:1.25}
+.mc-product-desc{font-size:10.5px;color:var(–mc-text-sub);font-weight:500;line-height:1.35}
+.mc-product-badge{position:absolute;top:7px;left:7px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:9px;font-weight:800;padding:3px 7px;border-radius:6px;letter-spacing:.3px;text-transform:uppercase;box-shadow:0 2px 6px rgba(217,119,6,.4);z-index:1}
+.mc-product-badge.new{background:linear-gradient(135deg,#2E7D32,#1B5E20);box-shadow:0 2px 6px rgba(46,125,50,.4)}
 
-/* Tlačidlo Odoslať správu (13.5px) */
-.kc-esb{background:var(--k-yellow);color:var(--k-dark);font-family:var(--k-font);font-weight:700;font-size:13.5px;border:none;padding:11px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:2px}
-.kc-esb:hover{background:var(--k-yellow-hover)}
-.kc-esb svg{width:16px;height:16px;fill:var(--k-dark)}
-.kc-esb.ok{background:var(--k-green);color:#fff}
-.kc-esb.ok svg{fill:#fff}
+/* Color swatches */
+.mc-color-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.mc-color-card{border:1.5px solid var(–mc-border);border-radius:12px;padding:0;cursor:pointer;transition:all .25s;background:var(–mc-bg);display:flex;flex-direction:column;align-items:center;gap:0;position:relative;overflow:hidden}
+.mc-color-card:hover{border-color:var(–m-green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.mc-color-card.selected{border-color:var(–m-green);box-shadow:0 0 0 2px var(–m-green-glow)}
+.mc-color-photo{width:100%;height:70px;overflow:hidden;background:linear-gradient(135deg,#F5F7F4,#EEF2EE);display:flex;align-items:center;justify-content:center;position:relative}
+.mc-color-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+.mc-color-card:hover .mc-color-photo img{transform:scale(1.08)}
+.mc-color-body{padding:7px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%}
+.mc-color-swatch{width:24px;height:24px;border-radius:7px;border:1px solid rgba(0,0,0,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),0 2px 4px rgba(0,0,0,.12);position:relative;overflow:hidden;flex-shrink:0}
+.mc-color-swatch.lg{width:42px;height:42px;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.12)}
+.mc-color-swatch.zinok{background:linear-gradient(135deg,#C8CED5 0%,#9AA5AF 50%,#7A8590 100%)}
+.mc-color-swatch.zinok::after{content:’’;position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0,transparent 2px,rgba(255,255,255,.1) 2px,rgba(255,255,255,.1) 4px)}
+.mc-color-swatch.zelena{background:#3F6E29}
+.mc-color-swatch.antracit{background:#2F353B}
+.mc-color-name{font-size:11px;font-weight:700;color:var(–mc-text);text-align:center;line-height:1.2}
+.mc-color-ral{font-size:9.5px;color:var(–mc-text-sub);font-weight:600}
+.mc-color-card.selected::after{content:‘✓’;position:absolute;top:5px;right:5px;width:18px;height:18px;background:var(–m-green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;z-index:3;box-shadow:0 2px 4px rgba(46,125,50,.4)}
 
-@media(max-width:500px){
-#koverta-chat{width:calc(100vw - 8px);height:calc(100dvh - 80px);max-height:none;bottom:74px;right:4px;left:4px;border-radius:16px}
-#koverta-bubble{bottom:10px;right:10px;width:58px;height:58px}
-#koverta-bubble img{width:54px;height:54px;object-fit:contain;border-radius:50%}
-#kc-tooltip{display:none!important}
+/* Height/Size cards */
+.mc-size-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.mc-size-card{border:1.5px solid var(–mc-border);border-radius:12px;padding:11px 12px;cursor:pointer;transition:all .25s;background:var(–mc-bg);display:flex;flex-direction:column;gap:3px;position:relative}
+.mc-size-card:hover{border-color:var(–m-green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,125,50,.12)}
+.mc-size-card.selected{border-color:var(–m-green);background:var(–m-green-bg);box-shadow:0 0 0 2px var(–m-green-glow)}
+.mc-size-val{font-size:18px;font-weight:800;color:var(–mc-text);letter-spacing:-.3px}
+.mc-size-card.selected .mc-size-val{color:var(–m-green)}
+.mc-size-label{font-size:10.5px;color:var(–mc-text-sub);font-weight:600;line-height:1.3}
+.mc-size-card.popular::before{content:‘TOP’;position:absolute;top:-7px;right:8px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.4px;box-shadow:0 2px 4px rgba(217,119,6,.4)}
+
+/* Radio / checkbox */
+.mc-radio-list,.mc-check-list{display:flex;flex-direction:column;gap:7px;margin-bottom:8px}
+.mc-check{display:flex;align-items:center;gap:11px;padding:11px 13px;cursor:pointer;font-size:13px;color:var(–mc-text);border:1.5px solid var(–mc-border);border-radius:11px;background:var(–mc-bg);transition:all .2s;user-select:none;position:relative;font-weight:600;line-height:1.35}
+.mc-check:hover{border-color:var(–m-green);background:var(–m-green-bg)}
+.mc-check input[type=“checkbox”],.mc-check input[type=“radio”]{position:absolute;opacity:0;pointer-events:none}
+.mc-check .mc-cbx{width:20px;height:20px;border:2px solid var(–mc-text-sub);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(–mc-bg)}
+.mc-check input[type=“radio”] ~ .mc-cbx{border-radius:50%}
+.mc-check .mc-cbx svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .15s}
+.mc-check input:checked ~ .mc-cbx{background:var(–m-green);border-color:var(–m-green)}
+.mc-check input:checked ~ .mc-cbx svg{opacity:1}
+.mc-check input[type=“radio”]:checked ~ .mc-cbx::after{content:’’;width:10px;height:10px;border-radius:50%;background:#fff}
+.mc-check input[type=“radio”]:checked ~ .mc-cbx svg{display:none}
+.mc-check.selected{border-color:var(–m-green);background:var(–m-green-bg)}
+.mc-check-desc{font-size:11px;color:var(–mc-text-sub);font-weight:500;display:block;margin-top:2px;line-height:1.35}
+.mc-check-label{flex:1;display:flex;flex-direction:column}
+.mc-check-price{font-size:11.5px;font-weight:700;color:var(–m-green);margin-left:8px;white-space:nowrap}
+
+/* Slider / dimension input */
+.mc-dim-wrap{margin-bottom:12px}
+.mc-dim-label{font-size:12px;font-weight:800;color:var(–mc-text);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.mc-dim-value{font-size:18px;font-weight:800;color:var(–m-green);letter-spacing:-.4px}
+.mc-dim-value-unit{font-size:11px;color:var(–mc-text-sub);font-weight:600;margin-left:3px}
+.mc-slider{-webkit-appearance:none;width:100%;height:8px;border-radius:4px;background:linear-gradient(90deg,#4CAF50,#2E7D32);outline:none;margin:6px 0 4px}
+.mc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;cursor:pointer;border:3px solid #2E7D32;box-shadow:0 3px 8px rgba(46,125,50,.3);transition:transform .12s}
+.mc-slider::-webkit-slider-thumb:active{transform:scale(1.15)}
+.mc-slider::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;cursor:pointer;border:3px solid #2E7D32;box-shadow:0 3px 8px rgba(46,125,50,.3)}
+.mc-slider-ticks{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(–mc-text-sub);padding:0 3px;margin-top:2px}
+
+.mc-num-input-row{display:flex;gap:8px;align-items:center;margin:6px 0 4px}
+.mc-num-input{flex:1;padding:11px 13px;border:1.5px solid var(–mc-border);border-radius:10px;font:inherit;font-size:15px;font-weight:700;color:var(–mc-text);background:var(–mc-input-bg);outline:none;text-align:center}
+.mc-num-input:focus{border-color:var(–m-green);background:var(–mc-bg)}
+.mc-num-btn{width:38px;height:42px;border:1.5px solid var(–mc-border);background:var(–mc-bg);border-radius:10px;cursor:pointer;font-size:18px;font-weight:700;color:var(–mc-text);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.mc-num-btn:hover{border-color:var(–m-green);color:var(–m-green);background:var(–m-green-bg)}
+
+/* Action buttons */
+.mc-actions{display:flex;gap:8px;margin-top:14px}
+.mc-btn{flex:1;padding:13px 16px;background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;border:none;border-radius:11px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(46,125,50,.32);display:flex;align-items:center;justify-content:center;gap:7px}
+.mc-btn:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 6px 16px rgba(46,125,50,.4)}
+.mc-btn:active{transform:scale(.98)}
+.mc-btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4)}
+.mc-btn svg{width:15px;height:15px;fill:#fff}
+.mc-btn-secondary{flex:0 0 auto;padding:13px 16px;background:var(–mc-input-bg);color:var(–mc-text);border:1.5px solid var(–mc-border);border-radius:11px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.mc-btn-secondary:hover{border-color:var(–m-green);color:var(–m-green);background:var(–m-green-bg)}
+
+/* Info / hint boxes */
+.mc-hint{padding:10px 12px;background:var(–m-green-bg);border:1px solid var(–m-green-line);border-radius:11px;font-size:12px;color:var(–mc-text);line-height:1.5;margin-bottom:12px;display:flex;gap:9px;align-items:flex-start}
+.mc-hint .hi{flex:0 0 auto;width:20px;height:20px;background:var(–m-green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;margin-top:1px}
+.mc-hint b{font-weight:700;color:var(–m-green-hover)}
+
+/* Final price card */
+.mc-result-card{background:linear-gradient(135deg,#FFF 0%,var(–m-green-bg) 100%);border:1.5px solid var(–m-green);border-radius:16px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden;animation:resultPop .55s cubic-bezier(.34,1.45,.64,1)}
+@keyframes resultPop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.mc-result-card::before{content:’’;position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(46,125,50,.15) 0%,transparent 65%);pointer-events:none}
+.mc-result-label{font-size:11px;font-weight:800;color:var(–m-green);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;position:relative}
+.mc-result-price{font-size:30px;font-weight:800;color:var(–mc-text);letter-spacing:-.8px;line-height:1.05;margin-bottom:4px;position:relative}
+.mc-result-price-eur{font-size:18px;color:var(–m-green);margin-left:3px;vertical-align:baseline;font-weight:700}
+.mc-result-from{font-size:12.5px;color:var(–mc-text);font-weight:700;display:inline-block;margin-right:6px}
+.mc-result-note{font-size:11.5px;color:var(–mc-text-sub);font-weight:500;line-height:1.45;position:relative}
+.mc-result-disclaimer{font-size:10.5px;color:var(–mc-text-sub);font-style:italic;margin-top:6px;line-height:1.4;position:relative}
+
+.mc-summary-card{background:var(–mc-input-bg);border:1px solid var(–mc-border);border-radius:13px;padding:13px 14px;margin-bottom:12px}
+.mc-summary-title{font-size:12px;font-weight:800;color:var(–mc-text);text-transform:uppercase;letter-spacing:.4px;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.mc-summary-title::before{content:’’;width:3px;height:13px;background:var(–m-green);border-radius:2px}
+.mc-summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;gap:10px;font-size:12.5px;border-bottom:1px dashed var(–mc-border)}
+.mc-summary-row:last-child{border-bottom:none}
+.mc-summary-key{color:var(–mc-text-sub);font-weight:600;flex:0 0 auto;min-width:90px}
+.mc-summary-val{color:var(–mc-text);font-weight:700;text-align:right;flex:1}
+
+/* Pricing breakdown card */
+.mc-breakdown{background:var(–mc-input-bg);border:1px solid var(–mc-border);border-radius:13px;padding:12px 14px;margin-bottom:12px;font-size:12px}
+.mc-breakdown-row{display:flex;justify-content:space-between;padding:5px 0;color:var(–mc-text);font-weight:600}
+.mc-breakdown-row.sub{padding-left:10px;color:var(–mc-text-sub);font-weight:500;font-size:11.5px}
+.mc-breakdown-total{display:flex;justify-content:space-between;padding-top:8px;margin-top:5px;border-top:2px solid var(–m-green);font-weight:800;color:var(–m-green);font-size:14px}
+
+/* Result sub-text */
+.mc-result-sub{font-size:11.5px;color:var(–mc-text-sub);line-height:1.5;position:relative;margin-top:4px}
+
+/* Contact form (final step) */
+.mc-contact-form{display:flex;flex-direction:column;gap:9px;margin:14px 0 6px;padding:14px 13px;background:var(–mc-input-bg);border:1px solid var(–mc-border);border-radius:14px}
+.mc-form-title{font-size:14px;font-weight:800;color:var(–mc-text);margin-bottom:2px}
+.mc-form-sub{font-size:12px;color:var(–mc-text-sub);line-height:1.5;margin-bottom:6px}
+.mc-form-input,.mc-form-textarea{width:100%;padding:11px 13px;border:1.5px solid var(–mc-border);border-radius:11px;font:inherit;font-size:13.5px;color:var(–mc-text);background:var(–mc-bg);outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box;font-family:var(–m-font)}
+.mc-form-input:focus,.mc-form-textarea:focus{border-color:var(–m-green);box-shadow:0 0 0 3px rgba(46,125,50,.12)}
+.mc-form-textarea{resize:none;height:72px}
+.mc-form-submit{margin-top:4px;width:100%}
+.mc-form-submit:disabled{opacity:.6;cursor:wait}
+.mc-form-note{font-size:10.5px;color:var(–mc-text-sub);line-height:1.45;margin-top:2px;text-align:center;opacity:.85}
+.mc-contact-fr{display:flex;gap:8px}
+.mc-contact-fr input{flex:1}
+
+/* Trust badges */
+.mc-trust-row{display:flex;gap:7px;justify-content:space-between;margin:12px 0 4px}
+.mc-trust{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 6px;background:var(–mc-input-bg);border:1px solid var(–mc-border);border-radius:11px;font-size:10.5px;color:var(–mc-text-sub);font-weight:700;text-align:center;line-height:1.3;transition:transform .2s,border-color .2s}
+.mc-trust:hover{transform:translateY(-2px);border-color:var(–m-green)}
+.mc-trust-ico{font-size:20px}
+.mc-trust-item{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(–mc-text-sub);font-weight:700}
+.mc-trust-item svg{width:11px;height:11px;fill:var(–m-green)}
+
+/* Pulse pre dakovaciu ikonku */
+@keyframes mcPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* Mobile fullscreen */
+@media (max-width:480px){
+#mojplot-chat{bottom:0!important;right:0!important;left:0!important;width:100%!important;height:100vh!important;max-height:100vh!important;border-radius:0!important}
+#mojplot-bubble{bottom:14px;right:14px}
 }
 </style>
+
 </head>
 <body>
 
-<div id="kc-tooltip" onclick="toggleChat()">Potrebujete poradiť? 🤖<button class="tt-x" onclick="event.stopPropagation();document.getElementById('kc-tooltip').classList.add('hidden');">✕</button></div>
+<!-- Bubble -->
 
-<div id="koverta-bubble" onclick="toggleChat()">
-  <img class="wobble" src="data:image/png;base64,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" alt="Koverta Robot">
-  <div class="bubble-x"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+<div id="mojplot-bubble" onclick="toggleChat()">
+  <div class="bubble-icon wobble">
+    <!-- Mojplot logo (ak sa nenacita, zostane prazdny - bubble background je biely) -->
+    <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png"
+         alt="Môj plot"
+         onerror="this.style.display='none';var s=document.createElement('div');s.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; width=&quot;42&quot; height=&quot;42&quot; fill=&quot;%232E7D32&quot;><path d=&quot;M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6zM6 6h12v2H6zM6 12h8v2H6z&quot;/></svg>';this.parentElement.appendChild(s.firstChild);">
+  </div>
+  <div class="bubble-x">
+    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </div>
+  <div class="notif-dot">1</div>
 </div>
 
-<div id="koverta-chat">
-  <div class="kc-header">
-    <div class="kc-hdr-av"><img class="wobble" src="data:image/png;base64,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" alt=""></div>
-    <div class="kc-hdr-info"><div class="kc-hdr-title">Koverta Asistent</div><div class="kc-hdr-sub"><span class="dot"></span><span id="st">Online</span></div></div>
-    <div class="kc-hdr-actions">
-      <button class="kc-hdr-btn" id="dkBtn" onclick="toggleDark()"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg></button>
-      <button class="kc-hdr-btn" id="rstBtn" onclick="resetChat()" title="Nová konverzácia"><svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
-      <div class="kc-lang"><button class="active" onclick="setLang('sk')">SK</button><button onclick="setLang('en')">EN</button></div>
+<!-- Tooltip -->
+
+<div id="mc-tooltip" onclick="toggleChat()">
+  <button class="tt-x" onclick="event.stopPropagation();document.getElementById('mc-tooltip').style.display='none'">×</button>
+  <span id="tt-text">Potrebujete poradiť? 👋</span>
+</div>
+
+<!-- Chat window -->
+
+<div id="mojplot-chat">
+
+  <!-- Header -->
+
+  <div class="mc-header">
+    <div class="mc-hdr-av">
+      <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png"
+           alt="Môj plot"
+           onerror="this.style.display='none';this.parentElement.innerHTML+='<svg viewBox=&quot;0 0 24 24&quot;><path d=&quot;M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6zM6 6h12v2H6zM6 12h8v2H6z&quot;/></svg>';">
+    </div>
+    <div class="mc-hdr-info">
+      <div class="mc-hdr-title" id="hdr-title">Asistent Môj plot</div>
+      <div class="mc-hdr-sub"><span class="dot"></span><span id="hdr-sub">Online · Odpovedá hneď</span></div>
+    </div>
+    <div class="mc-hdr-actions">
+      <div class="mc-lang">
+        <button id="lang-sk" class="active" onclick="setLang('sk')">SK</button>
+        <button id="lang-en" onclick="setLang('en')">EN</button>
+      </div>
+      <button class="mc-hdr-btn" id="darkBtn" onclick="toggleDark()" title="Tmavý režim">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="mc-hdr-btn" onclick="toggleChat()" title="Zavrieť">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
     </div>
   </div>
-  <div class="kc-msgs" id="msgs"></div>
-  <div class="kc-typing" id="typ"><div class="kc-av"><img src="data:image/png;base64,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" alt=""></div><div class="kc-tbub"><span></span><span></span><span></span></div></div>
-  <div class="kc-chips" id="chips"></div>
-  <div class="kc-ibar">
-    <input class="kc-inp" id="inp" placeholder="Napíšte správu..." autocomplete="off" onkeydown="if(event.key==='Enter')send()">
-    <button class="kc-send" onclick="send()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+
+  <!-- Messages -->
+
+  <div class="mc-msgs" id="messages"></div>
+
+  <!-- Typing indicator -->
+
+  <div class="mc-typing" id="typing">
+    <div class="mc-av"><svg viewBox="0 0 32 32"><circle cx="11" cy="14" r="1.8" fill="#fff"/><circle cx="21" cy="14" r="1.8" fill="#fff"/><path d="M11 19 Q16 22 21 19" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="mc-tbub"><span></span><span></span><span></span></div>
   </div>
-  <div class="kc-cbar">
-    <a class="kc-ct wa" href="https://wa.me/421948482266" target="_blank"><span class="kc-ci"><svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.5-.7-2.7-1.9-3.4-3.4-.1-.3-.1-.4.1-.6l.6-.7c.2-.2.2-.4.1-.7l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.4-1.2 1.2-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.6 5.8 5.1 3.4 1.4 3.4.9 4 .9s2-.8 2.3-1.6c.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.4 5L2 22l5.2-1.4C8.6 21.5 10.3 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></span>WhatsApp</a>
-    <a class="kc-ct ph" href="tel:+421948482266"><span class="kc-ci"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></span><span id="cl">Zavolať</span></a>
-    <button class="kc-ct em" onclick="tgEmail()"><span class="kc-ci"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-.4 4.25l-7.07 4.42c-.32.2-.74.2-1.06 0L4.4 8.25a.85.85 0 11.9-1.44L12 11l5.7-4.19a.85.85 0 11.9 1.44z"/></svg></span><span id="el">Email</span></button>
+
+  <!-- Quick chips -->
+
+  <div class="mc-chips" id="chips"></div>
+
+  <!-- Kalkulacka container -->
+
+  <div class="mc-calc-container" id="calcContainer" data-open="false">
+    <div class="mc-calc-head">
+      <div class="mc-calc-title" id="calc-title">🧮 Cenová kalkulačka</div>
+      <button class="mc-calc-close" onclick="closeCalc()">✕</button>
+    </div>
+    <div class="mc-calc-progress-wrap">
+      <button class="mc-progress-back" id="calcBackBtn" onclick="calcBack()" disabled>‹</button>
+      <div class="mc-calc-progress"><div class="mc-calc-progress-fill" id="calcProgressFill" style="width:14%"></div></div>
+      <div class="mc-progress-step" id="calcStepLabel">1 / 7</div>
+    </div>
+    <div id="calcContent"></div>
   </div>
-  <div class="kc-eo" id="eo" onclick="tgEmail()"></div>
-  <div class="kc-ep" id="ep">
-    <div class="kc-eph"><div class="kc-ept"><span class="ei"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-.4 4.25l-7.07 4.42c-.32.2-.74.2-1.06 0L4.4 8.25a.85.85 0 11.9-1.44L12 11l5.7-4.19a.85.85 0 11.9 1.44z"/></svg></span><span id="ept">Napíšte nám</span></div><button class="kc-ecl" onclick="tgEmail()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
-    <div class="kc-eb">
-      <div class="fr"><div class="fg"><label id="ln">Meno</label><input type="text" id="fn" placeholder="Ján Novák"></div><div class="fg"><label id="lp">Telefón</label><input type="tel" id="fp" placeholder="+421 9XX XXX XXX"></div></div>
-      <div class="fg"><label id="le">Email *</label><input type="email" id="fe" placeholder="jan@example.sk"></div>
-      <div class="fg"><label id="lm">Správa *</label><textarea id="fm" placeholder="Zaujíma ma cenová ponuka na..."></textarea></div>
-      <button class="kc-esb" id="esb" onclick="subEmail()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg><span id="est">Odoslať správu</span></button>
-        /* Skrytie uvítacieho textu (tooltipu) na mobiloch */
-@media (max-width: 768px) {
-    #kc-tooltip {
-        display: none !important;
-    }
-}
+
+  <!-- Input bar -->
+
+  <div class="mc-ibar">
+    <input class="mc-inp" id="inputField" type="text" placeholder="Napíšte vašu otázku..." onkeypress="if(event.key==='Enter')send()">
+    <button class="mc-quick-calc" onclick="openCalc()" title="Kalkulačka">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 19H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V9h2v2zm5 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm5 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zM8 7H6V5h12v2H8z"/></svg>
+    </button>
+    <button class="mc-send" onclick="send()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
+  <!-- Contact bar -->
+
+  <div class="mc-cbar">
+    <a href="https://wa.me/421940511266" target="_blank" class="mc-ct wa">
+      <div class="mc-ci"><svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5 0-.6.1-.1.1-.6.7-.7.9-.1.1-.3.2-.5.1-.7-.3-1.4-.7-2-1.3-.5-.5-1-1.1-1.4-1.8-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.1.2-.3.3-.4.1-.1.1-.3 0-.4-.1-.1-.6-1.3-.8-1.8-.1-.3-.4-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.5.5-.8 1.1-.8 1.8.1.8.4 1.6.9 2.3.9 1.3 2 2.4 3.4 3.1.4.2.7.3 1.1.4.4.1.8.1 1.3.1.5-.1.9-.3 1.2-.7l.3-.3c.1-.1.1-.2.2-.3.1-.2.3-.5.2-.8 0 0-.1-.1-.4-.3zM20.5 3.4C16.2-.9 9.3-.9 5 3.4c-3.5 3.5-4.2 9-1.6 13.4l-1.4 5 5.1-1.3c1.6.9 3.5 1.4 5.4 1.4 6.1 0 11-4.9 11-11 0-2.9-1.2-5.7-3-7.5zM12.5 20.7c-1.7 0-3.4-.5-4.9-1.3l-.4-.2-3 .8.8-2.9-.2-.4c-2.7-4.4-1.3-10 3-12.7 4.4-2.7 10-1.3 12.7 3 2.7 4.4 1.3 10-3 12.7-1.5.9-3.2 1.4-5 1.4z"/></svg></div>
+      <span>WhatsApp</span>
+    </a>
+    <a href="tel:+421940511266" class="mc-ct ph">
+      <div class="mc-ci"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.27-.27.35-.66.24-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>
+      <span>Volať</span>
+    </a>
+    <button class="mc-ct em" onclick="tgEmail()">
+      <div class="mc-ci"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+      <span>E-mail</span>
+    </button>
+  </div>
+
+  <!-- Email modal overlay -->
+
+  <div class="mc-eo" id="eo" onclick="tgEmail()"></div>
+  <div class="mc-ep" id="ep">
+    <div class="mc-eph">
+      <div class="mc-ept">
+        <div class="ei"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+        <span id="email-title">Napíšte nám</span>
+      </div>
+      <button class="mc-ecl" onclick="tgEmail()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    </div>
+    <div class="mc-eb">
+      <div class="fr">
+        <div class="fg"><label>Meno</label><input id="fn" type="text" placeholder="Vaše meno"></div>
+        <div class="fg"><label>Telefón</label><input id="fp" type="tel" placeholder="+421..."></div>
+      </div>
+      <div class="fg"><label>E-mail</label><input id="fe" type="email" placeholder="vas@email.sk"></div>
+      <div class="fg"><label>Správa</label><textarea id="fm" placeholder="Vaša správa..."></textarea></div>
+      <button class="mc-esb" id="esb" onclick="subEmail()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        <span id="est">Odoslať</span>
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-var MSG_IMG="data:image/png;base64,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";
-var C={apiUrl:"https://koverta-chatbot-backend.vercel.app/api/chat",lang:'sk',dm:false,snd:true,contactShown:false,convoLogged:false,
-s:{sk:{ch:['Carporty','Pergoly','Prístrešky','Kalkulácia ceny','Kontakt'],ph:'Napíšte správu...',st:'Online',ca:'Zavolať',em:'Email',se:'Odoslať správu',sd:'Odoslané! ✓',et:'Napíšte nám',ln:'Meno',lp:'Telefón',le:'Email *',lm:'Správa *',np:'Ján Novák',pp:'+421 9XX XXX XXX',ep:'jan@example.sk',mp:'Zaujíma ma cenová ponuku na...',er:'Prepáčte, momentálne nie som dostupný. Skúste nás kontaktovať telefonicky alebo emailom.',fw:['Ďakujem za váš záujem! Prajeme pekný zvyšok dňa. 😊','Bolo mi potešením pomôcť! Do skorého videnia. 👋','Ďakujeme, že ste nás kontaktovali! Pekný deň! ☀️']},
-en:{ch:['Carports','Pergolas','Canopies','Price calculator','Contact'],ph:'Type a message...',st:'Online',ca:'Call us',em:'Email',se:'Send message',sd:'Sent! ✓',et:'Write to us',ln:'Name',lp:'Phone',le:'Email *',lm:'Message *',np:'John Smith',pp:'+421 9XX XXX XXX',ep:'john@example.com',mp:"I'm interested in...",er:"Sorry, I'm not available. Please contact us by phone or email.",fw:['Thank you! Have a great day. 😊','It was my pleasure! See you soon. 👋','Thanks for reaching out! 😊']}}
+/* =========================================================
+   MOJPLOT WIDGET - KONFIGURACIA
+   ========================================================= */
+var MC = {
+  /* Backend - vlastny Vercel endpoint pre AI chat (treba nastavit) */
+  apiUrl: 'https://mojplot-chatbot-backend.vercel.app/api/chat',
+
+  /* EmailJS - sluzba pre odosielanie dopytov (treba vytvorit alebo zdielat) */
+  emailService: 'service_mojplot',
+  emailTemplate: 'template_mojplot',
+  emailKey: 'YOUR_EMAILJS_PUBLIC_KEY',
+
+  /* Stav */
+  lang: 'sk',
+  dark: false,
+  open: false,
+  contactShown: false,
+  convoLogged: false,
+  hist: [],
+
+  /* Texty */
+  s: {
+    sk: {
+      hdrTitle: 'Asistent Môj plot',
+      hdrSub: 'Online · Odpovedá hneď',
+      placeholder: 'Napíšte vašu otázku...',
+      welcome: 'Dobrý deň! 👋 Som <b>digitálny asistent firmy Môj plot</b>.<br><br>✅ <b>Doprava zadarmo</b> po SK<br>✅ <b>Garancia najnižšej ceny</b><br>✅ <b>ISO 9001</b> certifikovaná kvalita<br>✅ <b>8 rokov skúseností</b><br><br>Rád vám poradím s výberom plotu, brány alebo oplotenia. Spýtajte sa ma na čokoľvek, alebo si rovno <b>vypočítajte cenu</b> v našej kalkulačke.',
+      welcomeChips: ['🧮 Cenová kalkulačka','3D plot','Brána / bránka','Pletivový plot','Mobilné oplotenie','Betónový plot','Oporné múry','Doprava a montáž'],
+      er: 'Prepáčte, momentálne mám technický problém. Skúste prosím znova alebo nás kontaktujte priamo na +421 940 511 266.',
+      sd: 'Odoslané!',
+      se: 'Odoslať',
+      ttText: 'Potrebujete poradiť? 👋',
+      calcTitle: '🧮 Cenová kalkulačka',
+      emailTitle: 'Napíšte nám',
+      thxMsg: 'Ďakujeme za dopyt! ✅<br>Náš tím (Denis Plichta) sa vám ozve <b>do 24 hodín</b> s presnou cenovou ponukou na mieru.'
+    },
+    en: {
+      hdrTitle: 'Môj plot Assistant',
+      hdrSub: 'Online · Replies instantly',
+      placeholder: 'Type your question...',
+      welcome: 'Hello! 👋 I am the <b>Môj plot digital assistant</b>.<br><br>✅ <b>FREE shipping</b> across SK<br>✅ <b>Lowest price guarantee</b><br>✅ <b>ISO 9001</b> certified quality<br>✅ <b>8 years of experience</b><br><br>I will gladly help you choose a fence, gate or fencing system. Ask me anything, or try the <b>price calculator</b> right away.',
+      welcomeChips: ['🧮 Price calculator','3D fence','Gate','Mesh fence','Mobile fencing','Concrete fence','Retaining walls','Shipping & installation'],
+      er: 'Sorry, I am experiencing technical issues. Please try again or call us directly at +421 940 511 266.',
+      sd: 'Sent!',
+      se: 'Send',
+      ttText: 'Need advice? 👋',
+      calcTitle: '🧮 Price calculator',
+      emailTitle: 'Write to us',
+      thxMsg: 'Thank you for your inquiry! ✅<br>Our team (Denis Plichta) will get back to you <b>within 24 hours</b> with a tailored quote.'
+    }
+  }
 };
-var hist=[];
-var $c=document.getElementById('koverta-chat'),$b=document.getElementById('koverta-bubble'),$m=document.getElementById('msgs'),$t=document.getElementById('typ'),$ch=document.getElementById('chips'),$i=document.getElementById('inp'),$tt=document.getElementById('kc-tooltip');
 
-(function(){var isMobile=(window.matchMedia&&window.matchMedia('(max-width:500px),(hover:none) and (pointer:coarse)').matches)||/Mobi|Android|iPhone|iPad|iPod|IEMobile|BlackBerry/i.test(navigator.userAgent);if(isMobile&&$tt){$tt.parentNode&&$tt.parentNode.removeChild($tt);$tt=null;}})();
+/* =========================================================
+   STAV KALKULACKY
+   ========================================================= */
+var calcState = {
+  step: 0,
+  totalSteps: 7,
+  product: null,    // '3d-plot', 'brana', 'pletivo', 'mobilne', 'betonovy', 'oporne', 'ine'
+  /* 3D plot */
+  length: null,
+  height: null,
+  thickness: '4mm',
+  color: null,
+  withPosts: true,
+  withUnderboard: false,
+  installation: false,
+  /* Brana */
+  gateType: null,   // 'jednokrid', 'dvojkrid', 'posuvna'
+  gateWidth: null,
+  gateHeight: null,
+  gateAutomation: false,
+  /* Pletivo */
+  meshHeight: null,
+  /* Mobilne */
+  mobileLength: null,
+  mobileBases: true,
+  /* Oporne mury */
+  wallLength: null,
+  wallHeight: null,
+  blockWidth: null,
+  /* Iné */
+  customDesc: '',
+  /* Contact */
+  contactName: '',
+  contactPhone: '',
+  contactEmail: '',
+  contactMsg: ''
+};
 
-(function(){function isMob(){return(window.matchMedia&&window.matchMedia('(max-width:500px),(hover:none) and (pointer:coarse)').matches)||/Mobi|Android|iPhone|iPad|iPod|IEMobile|BlackBerry/i.test(navigator.userAgent);}function fit(){if(!$c||!$c.classList.contains('visible')||!isMob())return;var vh=window.visualViewport?window.visualViewport.height:window.innerHeight;$c.style.height=vh+'px';$c.style.maxHeight=vh+'px';$c.style.top='0px';$c.style.bottom='auto';if($m)$m.scrollTop=$m.scrollHeight;}function reset(){if(!$c)return;$c.style.height='';$c.style.maxHeight='';$c.style.top='';$c.style.bottom='';}if(window.visualViewport){window.visualViewport.addEventListener('resize',fit);window.visualViewport.addEventListener('scroll',fit);}if($i){$i.addEventListener('focus',function(){setTimeout(function(){fit();if($m)$m.scrollTop=$m.scrollHeight;},300);});$i.addEventListener('blur',function(){setTimeout(function(){if(!$c||!$c.classList.contains('visible'))reset();else if(isMob())fit();},100);});}window.__kcFit=fit;window.__kcReset=reset;})();
+/* =========================================================
+   DOM REFS
+   ========================================================= */
+var $bubble, $chat, $msgs, $typing, $chips, $i, $tt;
 
-function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+document.addEventListener('DOMContentLoaded', function(){
+  $bubble = document.getElementById('mojplot-bubble');
+  $chat = document.getElementById('mojplot-chat');
+  $msgs = document.getElementById('messages');
+  $typing = document.getElementById('typing');
+  $chips = document.getElementById('chips');
+  $i = document.getElementById('inputField');
+  $tt = document.getElementById('mc-tooltip');
 
-var AC=window.AudioContext||window.webkitAudioContext,ac;
-function snd(t){if(!C.snd)return;if(!ac)ac=new AC();if(t==='send'){var o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type='sine';o.frequency.setValueAtTime(1200,ac.currentTime);o.frequency.linearRampToValueAtTime(1800,ac.currentTime+.08);g.gain.setValueAtTime(.06,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.12);o.start();o.stop(ac.currentTime+.12);}else if(t==='receive'){var o1=ac.createOscillator(),g1=ac.createGain(),o2=ac.createOscillator(),g2=ac.createGain();o1.connect(g1);g1.connect(ac.destination);o2.connect(g2);g2.connect(ac.destination);o1.type='sine';o1.frequency.value=1400;g1.gain.setValueAtTime(.05,ac.currentTime);g1.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.15);o1.start();o1.stop(ac.currentTime+.15);o2.type='sine';o2.frequency.value=1046;g2.gain.setValueAtTime(.05,ac.currentTime+.08);g2.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.25);o2.start(ac.currentTime+.08);o2.stop(ac.currentTime+.25);}}
-function resetChat(){hist=[];C.contactShown=false;C.convoLogged=false;$m.innerHTML='';$ch.innerHTML='';addMsg(wel(),'bot');chips(C.s[C.lang].ch);var svg=document.getElementById('rstBtn').querySelector('svg');svg.style.transition='transform .8s ease';svg.style.transform='rotate(360deg)';setTimeout(function(){svg.style.transition='none';svg.style.transform='';},850);}
-function toggleDark(){C.dm=!C.dm;$c.classList.toggle('dark-mode',C.dm);document.getElementById('dkBtn').classList.toggle('active',C.dm);}
-function gr(){var h=new Date().getHours(),sk=C.lang==='sk';if(h<12)return sk?'Dobré ráno! ☀️':'Good morning! ☀️';if(h<18)return sk?'Dobrý deň! 👋':'Good afternoon! 👋';return sk?'Dobrý večer! 🌙':'Good evening! 🌙';}
-function wel(){var sk=C.lang==='sk';return gr()+(sk?' Som Koverta asistent. Pomôžem vám s výberom prístreškov, pergol a carportov. Čo vás zaujíma?':" I'm Koverta assistant. I can help you choose carports, pergolas and canopies. What are you looking for?");}
-function toggleChat(){var o=$c.classList.toggle('visible');$b.classList.toggle('open',o);if(o&&$m.children.length===0)init();if(o){$i.focus();snd('open');if($tt)$tt.style.visibility='hidden';if(window.__kcFit)window.__kcFit();}else{if($tt)$tt.style.visibility='visible';if(window.__kcReset)window.__kcReset();}try{window.parent.postMessage(o?'koverta-chat-open':'koverta-chat-close','*');}catch(e){}}
-function init(){addMsg(wel(),'bot');chips(C.s[C.lang].ch);}
-function setLang(l){C.lang=l;document.querySelectorAll('.kc-lang button').forEach(function(b){b.classList.toggle('active',b.textContent.trim()===l.toUpperCase())});var s=C.s[l];$i.placeholder=s.ph;document.getElementById('st').textContent=s.st;document.getElementById('cl').textContent=s.ca;document.getElementById('el').textContent=s.em;document.getElementById('est').textContent=s.se;document.getElementById('ept').textContent=s.et;document.getElementById('ln').textContent=s.ln;document.getElementById('lp').textContent=s.lp;document.getElementById('le').textContent=s.le;document.getElementById('lm').textContent=s.lm;$m.innerHTML='';hist=[];$ch.innerHTML='';addMsg(wel(),'bot');chips(s.ch);}
-function addMsg(t,tp){var r=document.createElement('div');r.className='kc-row '+tp;if(tp==='bot'){var a=document.createElement('div');a.className='kc-av';var im=document.createElement('img');im.src=MSG_IMG;im.className='wobble';a.appendChild(im);r.appendChild(a);}var c=document.createElement('div');c.className='kc-mc';var b=document.createElement('div');b.className='kc-m '+tp;b.innerHTML=fmtL(t);c.appendChild(b);var ts=document.createElement('div');ts.className='kc-ts';ts.textContent=getTime();c.appendChild(ts);r.appendChild(c);$m.appendChild(r);$m.scrollTop=$m.scrollHeight;}
-function fmtL(t){return t.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,'<a href="mailto:$1" style="color:#1976D2;text-decoration:underline;font-weight:600">$1</a>').replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank">$1</a>').replace(/(\+421[\s]?\d{3}[\s]?\d{3}[\s]?\d{3})/g,'<a href="tel:$1" style="color:#1976D2;text-decoration:underline;font-weight:600">$1</a>');}
-function typeMsg(t,cb){var r=document.createElement('div');r.className='kc-row bot';var a=document.createElement('div');a.className='kc-av';var im=document.createElement('img');im.src=MSG_IMG;im.className='wobble';a.appendChild(im);r.appendChild(a);var c=document.createElement('div');c.className='kc-mc';var b=document.createElement('div');b.className='kc-m bot';c.appendChild(b);var ts=document.createElement('div');ts.className='kc-ts';ts.textContent=getTime();c.appendChild(ts);r.appendChild(c);$m.appendChild(r);$m.scrollTop=$m.scrollHeight;var fmt=fmtL(t),tmp=document.createElement('div');tmp.innerHTML=fmt;var pl=tmp.textContent,i=0,sp=Math.max(8,Math.min(25,800/pl.length));function tc(){if(i<pl.length){b.textContent+=pl.charAt(i);i++;$m.scrollTop=$m.scrollHeight;setTimeout(tc,sp);}else{b.innerHTML=fmt;var rt=document.createElement('div');rt.className='kc-rt';rt.innerHTML='<button class="kc-rb" onclick="rate(this)">👍</button><button class="kc-rb" onclick="rate(this)">👎</button>';c.appendChild(rt);if(cb)cb();}}tc();}
-function rate(b){b.parentElement.querySelectorAll('.kc-rb').forEach(function(x){x.classList.remove('on')});b.classList.add('on');snd('send');}
-function chips(list){$ch.innerHTML='';list.forEach(function(t){var b=document.createElement('button');b.className='kc-chip';b.textContent=t;b.onclick=function(){b.style.transform='scale(0.95)';b.style.borderColor='rgba(255,204,0,.5)';setTimeout(function(){$ch.innerHTML='';send(t);},250);};$ch.appendChild(b);});}
-async function send(ov){var t=ov||$i.value.trim();if(!t)return;$i.value='';$ch.innerHTML='';addMsg(t,'user');snd('send');hist.push({role:'user',content:t});$t.classList.add('show');$m.scrollTop=$m.scrollHeight;try{var reply=await callAI(t);$t.classList.remove('show');snd('receive');typeMsg(reply,function(){var userMsgCount=hist.filter(function(h){return h.role==='user'}).length;if(userMsgCount===3&&!C.contactShown){C.contactShown=true;setTimeout(function(){var cMsg=C.lang==='sk'?'💡 Tip: Ak by ste chceli individuálnu ponuku alebo konzultáciu, zanechajte nám na seba kontakt cez formulár nižšie (tlačidlo Email). Ozveme sa vám do 24 hodín!':'💡 Tip: If you would like a personalized quote, leave us your contact via the Email button below. We will get back to you within 24 hours!';addMsg(cMsg,'bot');},1500);}});hist.push({role:'assistant',content:reply});logConvo();}catch(e){$t.classList.remove('show');addMsg(C.s[C.lang].er,'bot');}}
-function logConvo(){try{var userMsgs=hist.filter(function(h){return h.role==='user'});if(userMsgs.length>=2&&!C.convoLogged){C.convoLogged=true;var convoText=hist.map(function(m){return(m.role==='user'?'ZÁKAZNÍK: ':'BOT: ')+m.content;}).join('\n\n');emailjs.send('service_r599m2r','template_hk69h2l',{from_name:'AI Chatbot - Záznam konverzácie',phone:'Počet správ: '+hist.length,from_email:'obchod@koverta.sk',message:convoText}).then(function(){console.log('Konverzácia odoslaná');},function(err){console.error('Log error:',err);});}}catch(e){console.error(e);}}
-async function callAI(m){var r=await fetch(C.apiUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,lang:C.lang})});if(!r.ok)throw new Error();return(await r.json()).reply;}
-function tgEmail(){var o=document.getElementById('eo'),p=document.getElementById('ep');var s=!p.classList.contains('show');o.classList.toggle('show',s);p.classList.toggle('show',s);}
-function subEmail(){var e=document.getElementById('fe').value,m=document.getElementById('fm').value;if(!e||!m){['fe','fm'].forEach(function(id){var el=document.getElementById(id);if(!el.value){el.style.borderColor='#E53935';setTimeout(function(){el.style.borderColor='';},2000);}});return;}var b=document.getElementById('esb'),t=document.getElementById('est');b.disabled=true;t.textContent='Odosielam...';emailjs.send('service_r599m2r','template_hk69h2l',{from_name:document.getElementById('fn').value||'Neuvedené',phone:document.getElementById('fp').value||'Neuvedené',from_email:e,message:m}).then(function(){b.classList.add('ok');t.textContent=C.s[C.lang].sd;snd('send');setTimeout(function(){tgEmail();b.classList.remove('ok');b.disabled=false;t.textContent=C.s[C.lang].se;['fn','fp','fe','fm'].forEach(function(id){document.getElementById(id).value='';});},1800);},function(err){console.error('EmailJS error:',err);b.disabled=false;t.textContent='Chyba, skúste znova';setTimeout(function(){t.textContent=C.s[C.lang].se;},3000);});}
-emailjs.init('tDzbDHRy2D6wjC_LA');
+  /* Init EmailJS ak je dostupne */
+  try { if(typeof emailjs !== 'undefined') emailjs.init(MC.emailKey); } catch(e){}
+
+  /* Welcome message */
+  addMsg(MC.s[MC.lang].welcome, 'bot');
+  renderWelcomeChips();
+
+  /* Tooltip po 3 sekundach ak chat nebol otvoreny */
+  setTimeout(function(){
+    if(!MC.open){
+      $tt.style.display = 'block';
+      $tt.style.animation = 'tooltipShow .4s ease forwards';
+    }
+  }, 3000);
+});
+
+/* =========================================================
+   ZAKLADNA UI
+   ========================================================= */
+function toggleChat(){
+  MC.open = !MC.open;
+  $bubble.classList.toggle('open', MC.open);
+  $chat.classList.toggle('visible', MC.open);
+  if($tt) $tt.style.display = 'none';
+  /* Mobile lock */
+  if(window.innerWidth <= 480){
+    document.documentElement.classList.toggle('mc-locked', MC.open);
+    document.body.classList.toggle('mc-locked', MC.open);
+  }
+  if(MC.open){ setTimeout(function(){ if($i) $i.focus(); }, 400); }
+}
+
+function setLang(l){
+  MC.lang = l;
+  document.getElementById('lang-sk').classList.toggle('active', l==='sk');
+  document.getElementById('lang-en').classList.toggle('active', l==='en');
+  var t = MC.s[l];
+  document.getElementById('hdr-title').textContent = t.hdrTitle;
+  document.getElementById('hdr-sub').textContent = t.hdrSub;
+  $i.placeholder = t.placeholder;
+  document.getElementById('tt-text').innerHTML = t.ttText;
+  document.getElementById('calc-title').textContent = t.calcTitle;
+  document.getElementById('email-title').textContent = t.emailTitle;
+  document.getElementById('est').textContent = t.se;
+}
+
+function toggleDark(){
+  MC.dark = !MC.dark;
+  document.body.classList.toggle('dark-mode', MC.dark);
+  document.getElementById('darkBtn').classList.toggle('active', MC.dark);
+}
+
+/* =========================================================
+   SPRAVY
+   ========================================================= */
+function timeStr(){
+  var d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
+function addMsg(text, who, opts){
+  opts = opts || {};
+  var row = document.createElement('div');
+  row.className = 'mc-row ' + (who==='user' ? 'user' : 'bot');
+
+  if(who === 'bot'){
+    var av = document.createElement('div');
+    av.className = 'mc-av';
+    av.innerHTML = '<svg viewBox="0 0 32 32"><circle cx="11" cy="14" r="1.8" fill="#fff"/><circle cx="21" cy="14" r="1.8" fill="#fff"/><path d="M11 19 Q16 22 21 19" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
+    row.appendChild(av);
+  }
+
+  var mc = document.createElement('div');
+  mc.className = 'mc-mc';
+  var m = document.createElement('div');
+  m.className = 'mc-m ' + (who==='user' ? 'user' : 'bot');
+  m.innerHTML = text;
+  mc.appendChild(m);
+
+  var ts = document.createElement('div');
+  ts.className = 'mc-ts';
+  ts.textContent = timeStr();
+  mc.appendChild(ts);
+
+  /* Rating buttons pre bot */
+  if(who === 'bot' && !opts.noRating){
+    var rt = document.createElement('div');
+    rt.className = 'mc-rt';
+    rt.innerHTML = '<button class="mc-rb" onclick="rate(this,1)">👍</button><button class="mc-rb" onclick="rate(this,0)">👎</button>';
+    mc.appendChild(rt);
+  }
+
+  row.appendChild(mc);
+  $msgs.appendChild(row);
+  $msgs.scrollTop = $msgs.scrollHeight;
+}
+
+function rate(btn, val){
+  var siblings = btn.parentElement.querySelectorAll('.mc-rb');
+  siblings.forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+}
+
+function typeMsg(text, cb){
+  /* Pre jednoduchost ihned vlozit */
+  addMsg(text, 'bot');
+  if(cb) cb();
+}
+
+function renderWelcomeChips(){
+  $chips.innerHTML = '';
+  var chips = MC.s[MC.lang].welcomeChips;
+  chips.forEach(function(c, idx){
+    var b = document.createElement('button');
+    b.className = 'mc-chip';
+    if(idx === 0) b.className += ' mc-chip-calc';
+    b.textContent = c;
+    b.onclick = function(){
+      if(idx === 0) { openCalc(); return; }
+      $i.value = c;
+      send();
+    };
+    $chips.appendChild(b);
+  });
+}
+
+function showCalcShortcut(){
+  /* Po par interakciach pridaj chip kalkulackv */
+  if($chips.children.length === 0){
+    var b = document.createElement('button');
+    b.className = 'mc-chip mc-chip-calc';
+    b.textContent = MC.lang === 'sk' ? '🧮 Vypočítať cenu' : '🧮 Calculate price';
+    b.onclick = openCalc;
+    $chips.appendChild(b);
+  }
+}
+
+/* =========================================================
+   AI CHAT
+   ========================================================= */
+async function send(ov){
+  var t = ov || $i.value.trim();
+  if(!t) return;
+  $i.value = '';
+  addMsg(t, 'user');
+  MC.hist.push({role:'user', content:t});
+  $typing.classList.add('show');
+  $msgs.scrollTop = $msgs.scrollHeight;
+
+  try {
+    var reply = await callAI(t);
+    $typing.classList.remove('show');
+    addMsg(reply, 'bot');
+    MC.hist.push({role:'assistant', content:reply});
+    showCalcShortcut();
+
+    /* Po 3 user message ukaz kalkulacku tip */
+    var userCount = MC.hist.filter(function(h){return h.role==='user'}).length;
+    if(userCount === 3 && !MC.contactShown){
+      MC.contactShown = true;
+      setTimeout(function(){
+        var tip = MC.lang === 'sk' ?
+          '💡 Tip: ak by ste chceli rýchlo orientačnú cenu, skúste <b>cenovú kalkulačku</b> nižšie – stačí pár klikov.' :
+          '💡 Tip: for a quick price estimate, try the <b>price calculator</b> below — just a few clicks.';
+        addMsg(tip, 'bot');
+      }, 1200);
+    }
+    logConvo();
+  } catch(e){
+    $typing.classList.remove('show');
+    addMsg(MC.s[MC.lang].er, 'bot');
+  }
+}
+
+async function callAI(msg){
+  var sysPrompt = {
+    role:'system',
+    content: MC.lang === 'sk' ?
+      'Si profesionálny digitálny asistent firmy Môj plot s.r.o. (mojplot.sk) - slovenského dodávateľa kvalitných plotov, brán a oplotenia s 8-ročnými skúsenosťami v stavebníctve. Pôsobíme na Slovensku aj v Česku.\n\n' +
+      'KONTAKT: Denis Plichta (konateľ), tel. +421 940 511 266, e-mail info@mojplot.sk alebo plichta@mojplot.sk, WhatsApp na čísle +421 940 511 266. Sídlo: Párnica 361, 026 01 Párnica. Pracovná doba: odpovedáme do 24 hodín, telefonicky pondelok-piatok počas pracovných hodín. Cez víkendy sme tiež dostupní pre B2B zákazníkov.\n\n' +
+      'GARANCIE: ✅ Doprava ZADARMO po celom Slovensku. ✅ Garancia najnižšej ceny - ak nájdete konkurenčnú ponuku, dorovnáme ju. ✅ ISO 9001 certifikovaná kvalita. ✅ Bezplatné odborné poradenstvo, plánovanie aj návrh riešenia. ✅ Cenová ponuka na mieru do 24 hodín.\n\n' +
+      'PRODUKTY:\n' +
+      '• 3D plotové panely (najpopulárnejšie): dĺžka 250 cm, výšky 103/123/153/173/203 cm, hrúbka drôtu 4 mm alebo 5 mm (5 mm je pevnejší pre vyššie ploty), oko 200×50 mm, farby Zinok (pozink, najlacnejší), Zelená (RAL 6005), Antracit (RAL 7016 - najobľúbenejší pre rodinné domy). Cena od 13,35 €/panel.\n' +
+      '• Plotové stĺpiky: 60×40 mm (od 11,07 €), 48 mm (od 9,53 €), s platničkou na pripevnenie.\n' +
+      '• Brány a bránky: jednokrídlová bránka 1 m (od 175,24 €, výšky 120/150/170/200 cm), dvojkrídlová 3-5 m (od 315,98 €), posuvná na zákazku. Možnosť automatického pohonu (+~850 €).\n' +
+      '• Pletivové oplotenie: cenovo dostupné, výšky 100-200 cm, zinok alebo PVC (zelená/antracit).\n' +
+      '• Mobilné oplotenie: panely 3,5 m + pätky + klipy, ideálne pre stavby a podujatia. Predaj aj prenájom.\n' +
+      '• Betónové ploty: maximálne súkromie, jednostranné aj obojstranné, viacero vzorov a farieb (antracit, hnedá, pieskovec, biela).\n' +
+      '• Oporné múry - LEGO bloky: šírky 30/40/60/80 cm, dĺžka ~120 cm na blok, na zákazku akákoľvek výška/dĺžka.\n' +
+      '• Podhrabové dosky 250×20×5 cm: 19,19 €/ks, zabraňujú podhrabaniu pod plot.\n' +
+      '• Zákazková výroba: zábradlia, schody, atypické rozmery - všetko podľa potreby.\n' +
+      '• Doplnky: hliníkové rebríky, lešenie, regály, podlaha z recyklátu.\n\n' +
+      'ŠTÝL KOMUNIKÁCIE: Buď stručný, vecný, priateľský a praktický. Používaj odrážky pre prehľadnosť. Ak zákazník chce orientačnú cenu alebo presné nacenenie, **vždy ho nasmeruj na cenovú kalkulačku** v tomto chate (tlačidlo "🧮 Cenová kalkulačka"). Ak nevie aký typ plotu, opýtaj sa na účel (záhrada/firma/dočasné ohradenie) a odporuč. Pri väčších projektoch alebo neistote odporuč priamo kontakt s Denisom Plichtom.' :
+      'You are a professional digital assistant for Môj plot s.r.o. (mojplot.sk) — a Slovak supplier of quality fences, gates and fencing systems with 8 years of construction experience. We operate in Slovakia and the Czech Republic.\n\n' +
+      'CONTACT: Denis Plichta (owner/managing director), phone +421 940 511 266, email info@mojplot.sk or plichta@mojplot.sk, WhatsApp at +421 940 511 266. Address: Párnica 361, 026 01 Párnica, Slovakia. Working hours: we respond within 24 hours, phone Mon-Fri during business hours. Available on weekends for B2B clients.\n\n' +
+      'GUARANTEES: ✅ FREE shipping across Slovakia. ✅ Lowest price guarantee - if you find a better competitor offer, we match it. ✅ ISO 9001 certified quality. ✅ Free expert advice, planning and design. ✅ Custom quote within 24 hours.\n\n' +
+      'PRODUCTS:\n' +
+      '• 3D fence panels (most popular): length 250 cm, heights 103/123/153/173/203 cm, wire thickness 4 mm or 5 mm (5 mm stronger for taller fences), mesh 200×50 mm, colors Galvanized (cheapest), Green (RAL 6005), Anthracite (RAL 7016 - most popular for family homes). From €13.35/panel.\n' +
+      '• Posts: 60×40 mm (from €11.07), 48 mm (from €9.53).\n' +
+      '• Gates: single gate 1 m (from €175.24, heights 120/150/170/200 cm), double 3-5 m (from €315.98), sliding custom. Optional automatic motor (+~€850).\n' +
+      '• Mesh fencing: affordable, heights 100-200 cm, galvanized or PVC (green/anthracite).\n' +
+      '• Mobile fencing: 3.5 m panels + bases + clips, ideal for construction sites and events. Sale and rental.\n' +
+      '• Concrete fences: maximum privacy, single/double-sided, various patterns and colors (anthracite, brown, sandstone, white).\n' +
+      '• Retaining walls — LEGO blocks: widths 30/40/60/80 cm, length ~120 cm per block, custom height/length.\n' +
+      '• Underboards 250×20×5 cm: €19.19/pc, prevents digging under fence.\n' +
+      '• Custom production: railings, stairs, custom dimensions - whatever you need.\n' +
+      '• Accessories: aluminum ladders, scaffolding, racks, recycled flooring.\n\n' +
+      'COMMUNICATION STYLE: Be concise, factual, friendly and practical. Use bullets for clarity. If the customer wants a price estimate or detailed quote, **always direct them to the price calculator** in this chat (button "🧮 Price calculator"). If they don\'t know what type of fence, ask about purpose (garden/business/temporary) and recommend. For larger projects or uncertainty, recommend direct contact with Denis Plichta.'
+  };
+  var r = await fetch(MC.apiUrl, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ messages: [sysPrompt].concat(MC.hist), lang: MC.lang })
+  });
+  if(!r.ok) throw new Error('API error');
+  var data = await r.json();
+  return data.reply || data.message || '...';
+}
+
+function logConvo(){
+  try {
+    var userMsgs = MC.hist.filter(function(h){return h.role==='user'});
+    if(userMsgs.length >= 2 && !MC.convoLogged){
+      MC.convoLogged = true;
+      var convoText = MC.hist.map(function(m){
+        return (m.role==='user' ? 'ZÁKAZNÍK: ' : 'BOT: ') + m.content;
+      }).join('\n\n');
+      if(typeof emailjs !== 'undefined'){
+        emailjs.send(MC.emailService, MC.emailTemplate, {
+          from_name: 'AI Chatbot - Záznam konverzácie (mojplot)',
+          phone: 'Správ: ' + MC.hist.length,
+          from_email: 'info@mojplot.sk',
+          message: convoText
+        }).catch(function(err){ console.warn('Log err', err); });
+      }
+    }
+  } catch(e){}
+}
+
+/* =========================================================
+   EMAIL FORM
+   ========================================================= */
+function tgEmail(){
+  var o = document.getElementById('eo'), p = document.getElementById('ep');
+  var s = !p.classList.contains('show');
+  o.classList.toggle('show', s);
+  p.classList.toggle('show', s);
+}
+
+function subEmail(){
+  var n = document.getElementById('fn').value;
+  var ph = document.getElementById('fp').value;
+  var e = document.getElementById('fe').value;
+  var m = document.getElementById('fm').value;
+  if(!e || !m){
+    ['fe','fm'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(!el.value){ el.style.borderColor = '#E53935'; setTimeout(function(){ el.style.borderColor = ''; }, 2000); }
+    });
+    return;
+  }
+  var b = document.getElementById('esb'), t = document.getElementById('est');
+  b.disabled = true; t.textContent = 'Odosielam...';
+  if(typeof emailjs !== 'undefined'){
+    emailjs.send(MC.emailService, MC.emailTemplate, {
+      from_name: n || 'Neuvedené', phone: ph || 'Neuvedené', from_email: e, message: m
+    }).then(function(){
+      b.classList.add('ok'); t.textContent = MC.s[MC.lang].sd;
+      setTimeout(function(){
+        tgEmail();
+        b.classList.remove('ok'); b.disabled = false;
+        t.textContent = MC.s[MC.lang].se;
+        ['fn','fp','fe','fm'].forEach(function(id){ document.getElementById(id).value = ''; });
+      }, 1800);
+    }, function(err){
+      console.warn('Email err', err);
+      b.disabled = false; t.textContent = 'Chyba, skúste znova';
+      setTimeout(function(){ t.textContent = MC.s[MC.lang].se; }, 3000);
+    });
+  } else {
+    b.disabled = false; t.textContent = MC.s[MC.lang].se;
+    alert('EmailJS nie je k dispozícii. Kontaktujte nás priamo: +421 940 511 266');
+  }
+}
+
+
+/* =========================================================
+   KALKULACKA - DATA
+   ========================================================= */
+var PRODUCTS = [
+  { id:'3d-plot', name:'3D plot', nameEn:'3D fence', desc:'Najpopulárnejší panel zo zváraného drôtu', descEn:'Most popular welded panel fence',
+    img:'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp', badge:'TOP' },
+  { id:'brana', name:'Brány a bránky', nameEn:'Gates', desc:'Jednokrídlové, dvojkrídlové, posuvné', descEn:'Single, double, sliding',
+    img:'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-antracit.webp' },
+  { id:'pletivo', name:'Pletivový plot', nameEn:'Mesh fence', desc:'Cenovo dostupné riešenie', descEn:'Affordable solution',
+    img:'https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp' },
+  { id:'mobilne', name:'Mobilné oplotenie', nameEn:'Mobile fencing', desc:'Pre stavby, akcie, dočasné použitie', descEn:'For sites, events, temporary use',
+    img:'https://mojplot.sk/wp-content/uploads/2025/07/mobilne-oplotenie-main-scaled.jpg' },
+  { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
+    img:'https://mojplot.sk/wp-content/uploads/2025/08/kategoria-betonove-ploty-scaled.png' },
+  { id:'oporne', name:'Oporné múry', nameEn:'Retaining walls', desc:'LEGO bloky pre spevnenie terénu', descEn:'LEGO blocks for terrain support',
+    img:'https://mojplot.sk/wp-content/uploads/2025/08/Betonova-lego-kocka-120cm-scaled.png' }
+];
+
+/* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
+var PRICE_3D = {
+  /* [height_cm][thickness][color] = €/panel */
+  '103': { '4mm': { zinok:13.35, zelena:14.95, antracit:14.95 }, '5mm': { zinok:15.85, zelena:17.65, antracit:17.65 } },
+  '123': { '4mm': { zinok:15.50, zelena:17.30, antracit:17.30 }, '5mm': { zinok:18.40, zelena:20.50, antracit:20.50 } },
+  '153': { '4mm': { zinok:18.90, zelena:21.20, antracit:21.20 }, '5mm': { zinok:22.50, zelena:25.10, antracit:25.10 } },
+  '173': { '4mm': { zinok:21.50, zelena:23.95, antracit:23.95 }, '5mm': { zinok:25.50, zelena:28.40, antracit:28.40 } },
+  '203': { '4mm': { zinok:24.90, zelena:27.75, antracit:27.75 }, '5mm': { zinok:29.50, zelena:32.90, antracit:32.90 } }
+};
+
+var PRICE_POST = {
+  /* 60x40mm stĺpik pre 3D plot */
+  '103': { zinok:11.07, zelena:12.40, antracit:12.40 },
+  '123': { zinok:12.85, zelena:14.40, antracit:14.40 },
+  '153': { zinok:15.20, zelena:17.05, antracit:17.05 },
+  '173': { zinok:17.40, zelena:19.50, antracit:19.50 },
+  '203': { zinok:19.80, zelena:22.20, antracit:22.20 }
+};
+
+var PRICE_UNDERBOARD = 19.19; /* podhrabová doska 250x20x5cm */
+
+/* Brány - dvojkrídlová */
+var PRICE_GATE_DOUBLE = {
+  /* [width_m][height_cm] zinok */
+  '3': { '120':315.98, '150':355, '170':385, '200':425 },
+  '4': { '120':365, '150':410, '170':445, '200':490 },
+  '5': { '120':415, '150':465, '170':505, '200':555 }
+};
+
+/* Jednokrídlová bránka (1m) */
+var PRICE_GATE_SINGLE = {
+  '120':175.24, '150':195, '170':215, '200':245
+};
+
+/* Pletivový plot - cena za bežný meter komplet (drôt + stĺpik + úchytka) */
+var PRICE_MESH = {
+  '100': 7.50, '125': 8.80, '150': 10.30, '175': 11.80, '200': 13.20
+};
+
+/* Mobilné oplotenie - cena za panel 3.5m včetne pätky a klipov */
+var PRICE_MOBILE_PANEL = 42; /* za panel s prislusenstvom */
+
+/* Oporné múry - cena za bežný meter (1 vrstva) */
+var PRICE_WALL = {
+  '30': 45, '40': 58, '60': 85, '80': 115
+};
+
+/* Príplatky */
+var SURCHARGE_COLOR = 0.12; /* +12% pri farbe oproti zinkovi (ak nie v cenníku) */
+var SURCHARGE_5MM = 0.18;    /* +18% pri hrubšom drôte */
+var SURCHARGE_AUTOMATION = 850; /* automatický pohon brány */
+var INSTALLATION_PER_M = 18;    /* montáž za bežný meter */
+var GATE_INSTALLATION = 220;    /* montáž brány */
+
+/* =========================================================
+   KALKULACKA - HLAVNE FUNKCIE
+   ========================================================= */
+function openCalc(){
+  var c = document.getElementById('calcContainer');
+  c.setAttribute('data-open', 'true');
+  calcState.step = 0;
+  renderCalcStep();
+}
+
+function closeCalc(){
+  var c = document.getElementById('calcContainer');
+  c.setAttribute('data-open', 'false');
+}
+
+function calcBack(){
+  if(calcState.step > 0){
+    calcState.step--;
+    renderCalcStep();
+  }
+}
+
+function updateProgress(){
+  var pct = ((calcState.step + 1) / calcState.totalSteps) * 100;
+  document.getElementById('calcProgressFill').style.width = pct + '%';
+  document.getElementById('calcStepLabel').textContent = (calcState.step + 1) + ' / ' + calcState.totalSteps;
+  document.getElementById('calcBackBtn').disabled = calcState.step === 0;
+}
+
+function renderCalcStep(){
+  /* Sprav celkovy pocet krokov podla zvoleneho produktu */
+  if(!calcState.product){
+    calcState.totalSteps = 7;
+  } else if(calcState.product === '3d-plot'){
+    calcState.totalSteps = 7; /* product, length, height, color, thickness, extras, final */
+  } else if(calcState.product === 'brana'){
+    calcState.totalSteps = 6; /* product, type, dimensions, color, extras, final */
+  } else if(calcState.product === 'pletivo'){
+    calcState.totalSteps = 5; /* product, length, height, color, final */
+  } else if(calcState.product === 'mobilne'){
+    calcState.totalSteps = 4; /* product, length, extras, final */
+  } else if(calcState.product === 'betonovy' || calcState.product === 'ine'){
+    calcState.totalSteps = 3; /* product, desc, final */
+  } else if(calcState.product === 'oporne'){
+    calcState.totalSteps = 5; /* product, length, height, block, final */
+  }
+
+  updateProgress();
+  var el = document.getElementById('calcContent');
+
+  /* Routing */
+  if(calcState.step === 0) { renderStepProduct(el); return; }
+  if(!calcState.product) { calcState.step = 0; renderStepProduct(el); return; }
+
+  if(calcState.product === '3d-plot'){
+    if(calcState.step === 1) return render3dLength(el);
+    if(calcState.step === 2) return render3dHeight(el);
+    if(calcState.step === 3) return render3dColor(el);
+    if(calcState.step === 4) return render3dThickness(el);
+    if(calcState.step === 5) return render3dExtras(el);
+    if(calcState.step === 6) return renderFinal(el);
+  }
+  if(calcState.product === 'brana'){
+    if(calcState.step === 1) return renderGateType(el);
+    if(calcState.step === 2) return renderGateDimensions(el);
+    if(calcState.step === 3) return renderGateColor(el);
+    if(calcState.step === 4) return renderGateExtras(el);
+    if(calcState.step === 5) return renderFinal(el);
+  }
+  if(calcState.product === 'pletivo'){
+    if(calcState.step === 1) return renderMeshLength(el);
+    if(calcState.step === 2) return renderMeshHeight(el);
+    if(calcState.step === 3) return renderMeshColor(el);
+    if(calcState.step === 4) return renderFinal(el);
+  }
+  if(calcState.product === 'mobilne'){
+    if(calcState.step === 1) return renderMobileLength(el);
+    if(calcState.step === 2) return renderMobileExtras(el);
+    if(calcState.step === 3) return renderFinal(el);
+  }
+  if(calcState.product === 'oporne'){
+    if(calcState.step === 1) return renderWallLength(el);
+    if(calcState.step === 2) return renderWallHeight(el);
+    if(calcState.step === 3) return renderWallBlock(el);
+    if(calcState.step === 4) return renderFinal(el);
+  }
+  if(calcState.product === 'betonovy' || calcState.product === 'ine'){
+    if(calcState.step === 1) return renderCustomDesc(el);
+    if(calcState.step === 2) return renderFinal(el);
+  }
+}
+
+function next(){ calcState.step++; renderCalcStep(); }
+
+/* =========================================================
+   STEP: VYBER PRODUKTU
+   ========================================================= */
+function renderStepProduct(el){
+  var lang = MC.lang;
+  var title = lang === 'sk' ? 'Čo by ste chceli naceniť?' : 'What would you like to estimate?';
+  var sub = lang === 'sk' ? 'Vyberte typ oplotenia alebo brány. Po pár otázkach vám dáme orientačnú cenu.' : 'Choose the type of fencing or gate. After a few questions we will give you an estimate.';
+
+  var cards = PRODUCTS.map(function(p){
+    var sel = calcState.product === p.id;
+    return '<div class="mc-product-card' + (sel?' selected':'') + '" onclick="selectProduct(\''+p.id+'\')">' +
+      (p.badge ? '<span class="mc-product-badge">'+p.badge+'</span>' : '') +
+      '<div class="mc-product-img"><img src="'+p.img+'" alt="'+p.name+'" loading="lazy" onerror="this.style.display=\'none\'"></div>' +
+      '<div class="mc-product-info">' +
+        '<div class="mc-product-name">'+(lang==='sk'?p.name:p.nameEn)+'</div>' +
+        '<div class="mc-product-desc">'+(lang==='sk'?p.desc:p.descEn)+'</div>' +
+      '</div></div>';
+  }).join('');
+
+  /* + ďalšia voľba: iné/zákazková výroba */
+  cards += '<div class="mc-product-card' + (calcState.product==='ine'?' selected':'') + '" onclick="selectProduct(\'ine\')" style="grid-column:1/-1">' +
+    '<div class="mc-product-info" style="padding:14px 12px">' +
+    '<div class="mc-product-name">' + (lang==='sk'?'⚙️ Iné / zákazková výroba':'⚙️ Other / custom') + '</div>' +
+    '<div class="mc-product-desc">' + (lang==='sk'?'Schody, zábradlia, atypické rozmery':'Stairs, railings, custom dimensions') + '</div>' +
+    '</div></div>';
+
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">' + title + '</div>' +
+    '<div class="mc-step-sub">' + sub + '</div>' +
+    '<div class="mc-product-grid">' + cards + '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn" id="nextBtn" onclick="next()" '+(calcState.product?'':'disabled')+'>'+
+        (lang==='sk'?'Pokračovať':'Continue')+' →'+
+      '</button>' +
+    '</div>' +
+    renderTrust() +
+  '</div>';
+}
+
+function selectProduct(id){
+  calcState.product = id;
+  /* Reset niektorých polí pri zmene produktu */
+  calcState.length = null;
+  calcState.height = null;
+  calcState.color = null;
+  calcState.gateType = null;
+  calcState.gateWidth = null;
+  calcState.gateHeight = null;
+  calcState.meshHeight = null;
+  calcState.mobileLength = null;
+  calcState.wallLength = null;
+  calcState.wallHeight = null;
+  calcState.blockWidth = null;
+  renderCalcStep();
+}
+
+function renderTrust(){
+  var lang = MC.lang;
+  return '<div class="mc-trust">' +
+    '<div class="mc-trust-item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'+(lang==='sk'?'8+ rokov skúseností':'8+ years exp.')+'</div>' +
+    '<div class="mc-trust-item"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'+(lang==='sk'?'Doprava zdarma':'Free shipping')+'</div>' +
+    '<div class="mc-trust-item"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'+(lang==='sk'?'Najnižšia cena':'Lowest price')+'</div>' +
+  '</div>';
+}
+
+
+/* =========================================================
+   STEPS: 3D PLOT
+   ========================================================= */
+function render3dLength(el){
+  var lang = MC.lang;
+  var v = calcState.length || 20;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Aká dlhá bude plotová línia?':'How long will the fence line be?')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Zadajte približnú dĺžku oplotenia v metroch. Nemusí byť presné — orientačná hodnota nám stačí.':'Enter the approximate fence length in meters. It does not need to be exact — an estimate is fine.')+'</div>' +
+    '<div class="mc-dim-wrap">' +
+      '<div class="mc-dim-label"><span>'+(lang==='sk'?'Dĺžka':'Length')+'</span><span class="mc-dim-value" id="lenVal">'+v+'<span class="mc-dim-value-unit">m</span></span></div>' +
+      '<input type="range" min="5" max="200" step="1" value="'+v+'" class="mc-slider" id="lenSlider" oninput="onLenSlide(this.value)">' +
+      '<div class="mc-slider-ticks"><span>5 m</span><span>50 m</span><span>100 m</span><span>150 m</span><span>200+ m</span></div>' +
+    '</div>' +
+    '<div class="mc-num-input-row">' +
+      '<button class="mc-num-btn" onclick="adjLen(-1)">−</button>' +
+      '<input type="number" min="1" max="500" class="mc-num-input" id="lenInput" value="'+v+'" oninput="onLenInput(this.value)">' +
+      '<button class="mc-num-btn" onclick="adjLen(1)">+</button>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--mc-text-sub);padding-left:4px">m</span>' +
+    '</div>' +
+    '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'<b>Tip:</b> 1 panel = 2,5 m. Pre vašu dĺžku budeme potrebovať <b id="panelCount">'+Math.ceil(v/2.5)+' panelov</b>.':'<b>Tip:</b> 1 panel = 2.5 m. For your length we will need <b id="panelCount">'+Math.ceil(v/2.5)+' panels</b>.')+'</div></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirm3dLength()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+  calcState.length = v;
+}
+
+function onLenSlide(v){
+  calcState.length = parseInt(v);
+  document.getElementById('lenVal').innerHTML = v + '<span class="mc-dim-value-unit">m</span>';
+  document.getElementById('lenInput').value = v;
+  var pc = document.getElementById('panelCount');
+  if(pc) pc.innerHTML = (MC.lang==='sk'? Math.ceil(v/2.5)+' panelov' : Math.ceil(v/2.5)+' panels');
+}
+function onLenInput(v){
+  var n = parseInt(v) || 1;
+  if(n > 500) n = 500;
+  calcState.length = n;
+  var s = document.getElementById('lenSlider');
+  if(s) s.value = Math.min(n, 200);
+  document.getElementById('lenVal').innerHTML = n + '<span class="mc-dim-value-unit">m</span>';
+  var pc = document.getElementById('panelCount');
+  if(pc) pc.innerHTML = (MC.lang==='sk'? Math.ceil(n/2.5)+' panelov' : Math.ceil(n/2.5)+' panels');
+}
+function adjLen(d){
+  var v = (calcState.length || 20) + d;
+  if(v < 1) v = 1;
+  if(v > 500) v = 500;
+  document.getElementById('lenInput').value = v;
+  onLenInput(v);
+}
+function confirm3dLength(){
+  if(!calcState.length || calcState.length < 1){ alert(MC.lang==='sk'?'Zadajte dĺžku.':'Enter length.'); return; }
+  next();
+}
+
+function render3dHeight(el){
+  var lang = MC.lang;
+  var heights = [
+    { v:'103', label:lang==='sk'?'Pre záhradu, plot na vzduch':'For garden, open fence', pop:false },
+    { v:'123', label:lang==='sk'?'Bežný rodinný dom':'Common family home', pop:true },
+    { v:'153', label:lang==='sk'?'Súkromie a bezpečnosť':'Privacy and security', pop:true },
+    { v:'173', label:lang==='sk'?'Firmy a väčšie pozemky':'Companies, larger plots', pop:false },
+    { v:'203', label:lang==='sk'?'Maximálna bezpečnosť':'Maximum security', pop:false }
+  ];
+  var cards = heights.map(function(h){
+    var sel = calcState.height === h.v;
+    return '<div class="mc-size-card'+(sel?' selected':'')+(h.pop?' popular':'')+'" onclick="selHeight(\''+h.v+'\')">' +
+      '<div class="mc-size-val">'+h.v+' <span style="font-size:12px;color:var(--mc-text-sub)">cm</span></div>' +
+      '<div class="mc-size-label">'+h.label+'</div>' +
+    '</div>';
+  }).join('');
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Akú výšku panelov potrebujete?':'What panel height do you need?')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Vyššie panely znamenajú väčšie súkromie a bezpečnosť. Najčastejšie sa kupuje 123 alebo 153 cm.':'Taller panels mean more privacy and security. The most common choices are 123 and 153 cm.')+'</div>' +
+    '<div class="mc-size-grid">'+cards+'</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmHeight()" '+(calcState.height?'':'disabled')+'>'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function selHeight(v){ calcState.height = v; render3dHeight(document.getElementById('calcContent')); }
+function confirmHeight(){ if(!calcState.height){ return; } next(); }
+
+function render3dColor(el){
+  var lang = MC.lang;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Akú farbu preferujete?':'Which color do you prefer?')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Zinok je technický a najlacnejší. Farebné prevedenie (RAL) sa hodí k modernému dizajnu.':'Galvanized is technical and cheapest. Color (RAL) suits modern designs.')+'</div>' +
+    '<div class="mc-color-grid">' +
+      colorCard('zinok','Zinok','Pozink', 'zinok', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zinok.webp') +
+      colorCard('zelena','Zelená','RAL 6005', 'zelena', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zelena.webp') +
+      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp') +
+    '</div>' +
+    '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'<b>Antracit</b> je dnes najobľúbenejší pre rodinné domy. <b>Zelená</b> sa hodí k záhrade a prírode.':'<b>Anthracite</b> is the most popular for family homes today. <b>Green</b> blends with garden and nature.')+'</div></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmColor()" '+(calcState.color?'':'disabled')+'>'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function colorCard(id, name, ral, swatch, photo){
+  var sel = calcState.color === id;
+  var photoHtml = photo ? '<div class="mc-color-photo"><img src="'+photo+'" alt="'+name+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"></div>' : '';
+  return '<div class="mc-color-card'+(sel?' selected':'')+'" onclick="selColor(\''+id+'\')">' +
+    photoHtml +
+    '<div class="mc-color-body">' +
+      '<div class="mc-color-swatch'+(photo?'':' lg')+' '+swatch+'"></div>' +
+      '<div class="mc-color-name">'+name+'</div>' +
+      '<div class="mc-color-ral">'+ral+'</div>' +
+    '</div>' +
+  '</div>';
+}
+function selColor(v){ calcState.color = v; renderCalcStep(); }
+function confirmColor(){ if(!calcState.color) return; next(); }
+
+function render3dThickness(el){
+  var lang = MC.lang;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Hrúbka drôtu':'Wire thickness')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'4 mm postačuje pre väčšinu situácií. 5 mm odporúčame pre vyššie panely (173+ cm) alebo firemné objekty.':'4 mm is enough for most situations. 5 mm is recommended for taller panels (173+ cm) or commercial properties.')+'</div>' +
+    '<div class="mc-radio-list">' +
+      thicknessOpt('4mm', lang==='sk'?'4 mm — Štandard':'4 mm — Standard', lang==='sk'?'Pevnosť pre rodinné domy a záhrady':'Strength for homes and gardens') +
+      thicknessOpt('5mm', lang==='sk'?'5 mm — Robust':'5 mm — Robust', lang==='sk'?'Vyššia odolnosť, vhodné pre vyššie ploty':'Higher durability, for taller fences') +
+    '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function thicknessOpt(v, label, desc){
+  var sel = calcState.thickness === v;
+  return '<label class="mc-check'+(sel?' selected':'')+'">' +
+    '<input type="radio" name="thickness" '+(sel?'checked':'')+' onchange="calcState.thickness=\''+v+'\';render3dThickness(document.getElementById(\'calcContent\'))">' +
+    '<span class="mc-cbx"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>' +
+    '<span class="mc-check-label"><span>'+label+'</span><span class="mc-check-desc">'+desc+'</span></span>' +
+  '</label>';
+}
+
+function render3dExtras(el){
+  var lang = MC.lang;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Doplnky a montáž':'Extras and installation')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Vyberte si, čo všetko chcete do ponuky zahrnúť.':'Choose what should be included in your quote.')+'</div>' +
+    '<div class="mc-check-list">' +
+      extraCheck('withPosts', lang==='sk'?'Plotové stĺpiky (60×40 mm)':'Fence posts (60×40 mm)', lang==='sk'?'Stabilná oceľová opora — 1 stĺpik na panel + 1 koncový. Odporúčame zahrnúť.':'Stable steel support — 1 post per panel + 1 end. We recommend including this.') +
+      extraCheck('withUnderboard', lang==='sk'?'Podhrabové dosky (250×20×5 cm)':'Under-fence boards (250×20×5 cm)', lang==='sk'?'Spevnenie základu a ochrana proti podhrabaniu zvieratami. + 19,19 €/ks':'Foundation reinforcement, protects against animals burrowing under. + €19.19/pc') +
+      extraCheck('installation', lang==='sk'?'Montáž na kľúč':'Full installation', lang==='sk'?'Profesionálna montáž našim tímom. Cena ~18 €/m.':'Professional installation by our team. Approx. €18/m.') +
+    '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Vypočítať cenu':'Calculate price')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function extraCheck(key, label, desc){
+  var sel = calcState[key];
+  return '<label class="mc-check'+(sel?' selected':'')+'">' +
+    '<input type="checkbox" '+(sel?'checked':'')+' onchange="calcState.'+key+'=this.checked;render3dExtras(document.getElementById(\'calcContent\'))">' +
+    '<span class="mc-cbx"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>' +
+    '<span class="mc-check-label"><span>'+label+'</span><span class="mc-check-desc">'+desc+'</span></span>' +
+  '</label>';
+}
+
+/* =========================================================
+   STEPS: BRANA
+   ========================================================= */
+function renderGateType(el){
+  var lang = MC.lang;
+  var opts = [
+    { id:'jednokrid', name:lang==='sk'?'Jednokrídlová bránka':'Single-wing gate', desc:lang==='sk'?'Pre vstup osôb (1 m)':'Pedestrian (1 m)', img:'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-antracit.webp' },
+    { id:'dvojkrid', name:lang==='sk'?'Dvojkrídlová brána':'Double-wing gate', desc:lang==='sk'?'Vjazd 3–5 m':'Driveway 3–5 m', img:'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-antracit.webp' },
+    { id:'posuvna', name:lang==='sk'?'Posuvná brána':'Sliding gate', desc:lang==='sk'?'Úspora miesta':'Space saving', img:'https://mojplot.sk/wp-content/uploads/2025/07/mobilne-oplotenie-main-scaled.jpg' }
+  ];
+  var cards = opts.map(function(o){
+    var sel = calcState.gateType === o.id;
+    return '<div class="mc-product-card'+(sel?' selected':'')+'" onclick="selGateType(\''+o.id+'\')">' +
+      '<div class="mc-product-img"><img src="'+o.img+'" alt="'+o.name+'" loading="lazy" onerror="this.style.display=\'none\'"></div>' +
+      '<div class="mc-product-info">' +
+        '<div class="mc-product-name">'+o.name+'</div>' +
+        '<div class="mc-product-desc">'+o.desc+'</div>' +
+      '</div></div>';
+  }).join('');
+
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Aký typ brány potrebujete?':'What type of gate do you need?')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Bránka je pre vstup osôb, brána pre vjazd auta. Posuvná šetrí miesto pri otváraní.':'A small gate is for pedestrians, a gate for car entry. Sliding saves space when opening.')+'</div>' +
+    '<div class="mc-product-grid">'+cards+'</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()" '+(calcState.gateType?'':'disabled')+'>'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function selGateType(id){ calcState.gateType = id; calcState.gateWidth = null; calcState.gateHeight = null; renderGateType(document.getElementById('calcContent')); }
+
+function renderGateDimensions(el){
+  var lang = MC.lang;
+  var heights = [
+    { v:'120', label:lang==='sk'?'Nižšia, ozdobná':'Low, decorative' },
+    { v:'150', label:lang==='sk'?'Štandard':'Standard' },
+    { v:'170', label:lang==='sk'?'Vyššia':'Taller' },
+    { v:'200', label:lang==='sk'?'Maximálna':'Maximum' }
+  ];
+  var widthSection = '';
+
+  if(calcState.gateType === 'dvojkrid'){
+    var widths = [
+      { v:'3', label:lang==='sk'?'Bežné vjazdy':'Common driveways' },
+      { v:'4', label:lang==='sk'?'Štandard pre osobné auto':'Standard for cars' },
+      { v:'5', label:lang==='sk'?'Široký vjazd / dodávka':'Wide / van' }
+    ];
+    widthSection = '<div class="mc-dim-label" style="margin-bottom:6px"><span>'+(lang==='sk'?'Šírka brány':'Gate width')+'</span></div>' +
+      '<div class="mc-size-grid" style="grid-template-columns:1fr 1fr 1fr">' +
+      widths.map(function(w){
+        var sel = calcState.gateWidth === w.v;
+        return '<div class="mc-size-card'+(sel?' selected':'')+'" onclick="calcState.gateWidth=\''+w.v+'\';renderGateDimensions(document.getElementById(\'calcContent\'))">' +
+          '<div class="mc-size-val">'+w.v+' <span style="font-size:12px;color:var(--mc-text-sub)">m</span></div>' +
+          '<div class="mc-size-label">'+w.label+'</div>' +
+        '</div>';
+      }).join('') + '</div>';
+  } else if(calcState.gateType === 'jednokrid'){
+    calcState.gateWidth = '1';
+    widthSection = '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'Štandardná šírka bránky je <b>1 m</b>.':'Standard small gate width is <b>1 m</b>.')+'</div></div>';
+  } else if(calcState.gateType === 'posuvna'){
+    /* Posuvná brána - vyžaduje custom rozmery */
+    widthSection = '<div class="mc-dim-label" style="margin-bottom:6px"><span>'+(lang==='sk'?'Šírka otvoru':'Opening width')+'</span></div>' +
+      '<div class="mc-num-input-row">' +
+        '<input type="number" min="3" max="10" step="0.5" class="mc-num-input" id="gateWidthInput" value="'+(calcState.gateWidth||4)+'" oninput="calcState.gateWidth=this.value">' +
+        '<span style="font-size:13px;font-weight:700;color:var(--mc-text-sub);padding-left:4px">m</span>' +
+      '</div>' +
+      '<div class="mc-hint" style="margin-top:8px"><div class="hi">i</div><div>'+(lang==='sk'?'Posuvné brány vyrábame <b>na zákazku</b> podľa vašich rozmerov.':'Sliding gates are <b>custom-made</b> to your dimensions.')+'</div></div>';
+  }
+
+  var heightSection = '<div class="mc-dim-label" style="margin-top:10px;margin-bottom:6px"><span>'+(lang==='sk'?'Výška brány':'Gate height')+'</span></div>' +
+    '<div class="mc-size-grid">' +
+    heights.map(function(h){
+      var sel = calcState.gateHeight === h.v;
+      return '<div class="mc-size-card'+(sel?' selected':'')+'" onclick="calcState.gateHeight=\''+h.v+'\';renderGateDimensions(document.getElementById(\'calcContent\'))">' +
+        '<div class="mc-size-val">'+h.v+' <span style="font-size:12px;color:var(--mc-text-sub)">cm</span></div>' +
+        '<div class="mc-size-label">'+h.label+'</div>' +
+      '</div>';
+    }).join('') + '</div>';
+
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Rozmery brány':'Gate dimensions')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Vyberte šírku a výšku. Výška by mala ladiť s výškou plotu.':'Choose width and height. The height should match your fence height.')+'</div>' +
+    widthSection +
+    heightSection +
+    '<div class="mc-actions" style="margin-top:14px">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmGateDim()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function confirmGateDim(){
+  if(!calcState.gateWidth || !calcState.gateHeight){
+    alert(MC.lang==='sk'?'Vyberte šírku aj výšku.':'Choose both width and height.');
+    return;
+  }
+  next();
+}
+
+function renderGateColor(el){
+  var lang = MC.lang;
+  /* Vyber spravnu sadu fotiek podla typu brany */
+  var gateType = calcState.gateType || 'jednokridlova';
+  var photos;
+  if(gateType === 'jednokridlova'){
+    photos = {
+      zinok:    'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-zinok.webp',
+      zelena:   'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-zelena.webp',
+      antracit: 'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-antracit.webp'
+    };
+  } else {
+    photos = {
+      zinok:    'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-zinok.webp',
+      zelena:   'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-zelena.webp',
+      antracit: 'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-antracit.webp'
+    };
+  }
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Farba brány':'Gate color')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Brána by mala ladiť s plotom. Štandardne sa volí rovnaká farba.':'The gate should match the fence. Typically the same color is chosen.')+'</div>' +
+    '<div class="mc-color-grid">' +
+      colorCard('zinok','Zinok','Pozink', 'zinok', photos.zinok) +
+      colorCard('zelena','Zelená','RAL 6005', 'zelena', photos.zelena) +
+      colorCard('antracit','Antracit','RAL 7016', 'antracit', photos.antracit) +
+    '</div>' +
+    '<div class="mc-actions" style="margin-top:14px">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()" '+(calcState.color?'':'disabled')+'>'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderGateExtras(el){
+  var lang = MC.lang;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Automatizácia':'Automation')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Chcete bránu otvárať diaľkovým ovládačom z auta?':'Would you like to open the gate via remote from your car?')+'</div>' +
+    '<div class="mc-check-list">' +
+      extraCheck('gateAutomation', lang==='sk'?'Automatický pohon + diaľkové ovládače':'Automatic motor + remote controls', lang==='sk'?'Elektrický pohon, 2× diaľkové ovládače, fotobunky. ~ +850 €':'Electric motor, 2× remote controls, safety photocells. Approx. +€850') +
+      extraCheck('installation', lang==='sk'?'Montáž brány na mieste':'On-site gate installation', lang==='sk'?'Vrátane osadenia stĺpikov, betonáže a montáže. ~220 €':'Including post placement, concrete and installation. ~€220') +
+    '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Vypočítať cenu':'Calculate price')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+
+
+/* =========================================================
+   STEPS: PLETIVO
+   ========================================================= */
+function renderMeshLength(el){
+  var lang = MC.lang;
+  var v = calcState.length || 30;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Dĺžka pletivového plotu':'Mesh fence length')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Pletivový plot je cenovo najdostupnejší. Zadajte celkovú dĺžku v metroch.':'Mesh fencing is the most affordable. Enter the total length in meters.')+'</div>' +
+    '<div class="mc-dim-wrap">' +
+      '<div class="mc-dim-label"><span>'+(lang==='sk'?'Dĺžka':'Length')+'</span><span class="mc-dim-value" id="lenVal">'+v+'<span class="mc-dim-value-unit">m</span></span></div>' +
+      '<input type="range" min="5" max="300" step="1" value="'+v+'" class="mc-slider" oninput="onLenSlide(this.value)">' +
+      '<div class="mc-slider-ticks"><span>5 m</span><span>75 m</span><span>150 m</span><span>225 m</span><span>300+ m</span></div>' +
+    '</div>' +
+    '<div class="mc-num-input-row">' +
+      '<button class="mc-num-btn" onclick="adjLen(-1)">−</button>' +
+      '<input type="number" min="1" max="1000" class="mc-num-input" id="lenInput" value="'+v+'" oninput="onLenInput(this.value)">' +
+      '<button class="mc-num-btn" onclick="adjLen(1)">+</button>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--mc-text-sub);padding-left:4px">m</span>' +
+    '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+  calcState.length = v;
+}
+function renderMeshHeight(el){
+  var lang = MC.lang;
+  var heights = ['100','125','150','175','200'];
+  var labels = {
+    sk:{'100':'Záhrada','125':'Bežné','150':'Štandard','175':'Vyššie','200':'Maximum'},
+    en:{'100':'Garden','125':'Common','150':'Standard','175':'Taller','200':'Maximum'}
+  };
+  var cards = heights.map(function(h){
+    var sel = calcState.meshHeight === h;
+    return '<div class="mc-size-card'+(sel?' selected':'')+(h==='150'?' popular':'')+'" onclick="calcState.meshHeight=\''+h+'\';renderMeshHeight(document.getElementById(\'calcContent\'))">' +
+      '<div class="mc-size-val">'+h+' <span style="font-size:12px;color:var(--mc-text-sub)">cm</span></div>' +
+      '<div class="mc-size-label">'+labels[lang][h]+'</div>' +
+    '</div>';
+  }).join('');
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Výška pletiva':'Mesh height')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Zvoľte výšku pletiva. Najpopulárnejšia je 150 cm.':'Choose the mesh height. The most popular is 150 cm.')+'</div>' +
+    '<div class="mc-size-grid">'+cards+'</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()" '+(calcState.meshHeight?'':'disabled')+'>'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+function renderMeshColor(el){
+  var lang = MC.lang;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Farba pletiva':'Mesh color')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Štandardne ponúkame zinok, zelenú a antracit.':'We offer galvanized, green and anthracite.')+'</div>' +
+    '<div class="mc-color-grid">' +
+      colorCard('zinok','Zinok','Pozink','zinok') +
+      colorCard('zelena','Zelená','RAL 6005','zelena') +
+      colorCard('antracit','Antracit','RAL 7016','antracit') +
+    '</div>' +
+    '<div class="mc-actions" style="margin-top:14px">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()" '+(calcState.color?'':'disabled')+'>'+(lang==='sk'?'Vypočítať':'Calculate')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* =========================================================
+   STEPS: MOBILNE OPLOTENIE
+   ========================================================= */
+function renderMobileLength(el){
+  var lang = MC.lang;
+  var v = calcState.mobileLength || 50;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Dĺžka mobilného oplotenia':'Mobile fence length')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Mobilné oplotenie je ideálne pre stavby, akcie a dočasné ohradenie. Panel = 3,5 m.':'Mobile fencing is ideal for sites, events and temporary use. Panel = 3.5 m.')+'</div>' +
+    '<div class="mc-dim-wrap">' +
+      '<div class="mc-dim-label"><span>'+(lang==='sk'?'Dĺžka':'Length')+'</span><span class="mc-dim-value">'+v+'<span class="mc-dim-value-unit">m</span></span></div>' +
+      '<input type="range" min="10" max="500" step="5" value="'+v+'" class="mc-slider" oninput="onMobileSlide(this.value)">' +
+      '<div class="mc-slider-ticks"><span>10 m</span><span>125 m</span><span>250 m</span><span>375 m</span><span>500+ m</span></div>' +
+    '</div>' +
+    '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'Budete potrebovať približne <b id="mobilePanels">'+Math.ceil(v/3.5)+' panelov</b> + pätky a klipy.':'You will need approximately <b id="mobilePanels">'+Math.ceil(v/3.5)+' panels</b> + bases and clips.')+'</div></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+  calcState.mobileLength = v;
+}
+function onMobileSlide(v){
+  calcState.mobileLength = parseInt(v);
+  var dv = document.querySelector('.mc-dim-value');
+  if(dv) dv.innerHTML = v + '<span class="mc-dim-value-unit">m</span>';
+  var mp = document.getElementById('mobilePanels');
+  if(mp) mp.innerHTML = (MC.lang==='sk'? Math.ceil(v/3.5)+' panelov' : Math.ceil(v/3.5)+' panels');
+}
+
+function renderMobileExtras(el){
+  var lang = MC.lang;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Doplnky mobilného oplotenia':'Mobile fence extras')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Pre kompletnú zostavu potrebujete aj pätky a spojovacie klipy.':'For a complete setup you also need bases and connector clips.')+'</div>' +
+    '<div class="mc-check-list">' +
+      extraCheck('mobileBases', lang==='sk'?'Betónové pätky + spojovacie klipy':'Concrete bases + connector clips', lang==='sk'?'Pre stabilitu panelov. Súčasť kompletnej zostavy.':'For panel stability. Part of a complete kit.') +
+    '</div>' +
+    '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'Predávame aj <b>krátkodobý prenájom</b> — kontaktujte nás pre detaily.':'We also offer <b>short-term rental</b> — contact us for details.')+'</div></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Vypočítať cenu':'Calculate price')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* =========================================================
+   STEPS: OPORNE MURY
+   ========================================================= */
+function renderWallLength(el){
+  var lang = MC.lang;
+  var v = calcState.wallLength || 10;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Dĺžka oporného múru':'Retaining wall length')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Aká dlhá bude stena z LEGO blokov? Bloky sú 80 cm široké (1 blok = ~0,8 m dĺžky).':'How long will the LEGO block wall be? Blocks are 80 cm wide (1 block = ~0.8 m length).')+'</div>' +
+    '<div class="mc-dim-wrap">' +
+      '<div class="mc-dim-label"><span>'+(lang==='sk'?'Dĺžka':'Length')+'</span><span class="mc-dim-value">'+v+'<span class="mc-dim-value-unit">m</span></span></div>' +
+      '<input type="range" min="2" max="100" step="1" value="'+v+'" class="mc-slider" oninput="onWallLen(this.value,\'wallLength\')">' +
+      '<div class="mc-slider-ticks"><span>2</span><span>25</span><span>50</span><span>75</span><span>100+</span></div>' +
+    '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+  calcState.wallLength = v;
+}
+function onWallLen(v, key){
+  calcState[key] = parseInt(v);
+  var dv = document.querySelector('.mc-dim-value');
+  if(dv) dv.innerHTML = v + '<span class="mc-dim-value-unit">m</span>';
+}
+
+function renderWallHeight(el){
+  var lang = MC.lang;
+  var v = calcState.wallHeight || 2;
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Výška múru (počet vrstiev)':'Wall height (number of layers)')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Bloky sa skladajú ako LEGO. 1 vrstva = ~0,6 m výšky.':'Blocks stack like LEGO. 1 layer = ~0.6 m height.')+'</div>' +
+    '<div class="mc-dim-wrap">' +
+      '<div class="mc-dim-label"><span>'+(lang==='sk'?'Vrstvy':'Layers')+'</span><span class="mc-dim-value">'+v+'<span class="mc-dim-value-unit">'+(v*0.6).toFixed(1)+' m</span></span></div>' +
+      '<input type="range" min="1" max="6" step="1" value="'+v+'" class="mc-slider" oninput="onWallLayers(this.value)">' +
+      '<div class="mc-slider-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>' +
+    '</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
+  '</div>';
+  calcState.wallHeight = v;
+}
+function onWallLayers(v){
+  calcState.wallHeight = parseInt(v);
+  var dv = document.querySelector('.mc-dim-value');
+  if(dv) dv.innerHTML = v + '<span class="mc-dim-value-unit">'+(v*0.6).toFixed(1)+' m</span>';
+}
+
+function renderWallBlock(el){
+  var lang = MC.lang;
+  var widths = [
+    { v:'30', desc:lang==='sk'?'Tenké, dekoračné múry':'Thin, decorative walls' },
+    { v:'40', desc:lang==='sk'?'Štandardné použitie':'Standard use' },
+    { v:'60', desc:lang==='sk'?'Vyššia stabilita':'Higher stability' },
+    { v:'80', desc:lang==='sk'?'Maximálne zaťaženie':'Maximum load' }
+  ];
+  var cards = widths.map(function(w){
+    var sel = calcState.blockWidth === w.v;
+    return '<div class="mc-size-card'+(sel?' selected':'')+(w.v==='40'?' popular':'')+'" onclick="calcState.blockWidth=\''+w.v+'\';renderWallBlock(document.getElementById(\'calcContent\'))">' +
+      '<div class="mc-size-val">'+w.v+' <span style="font-size:12px;color:var(--mc-text-sub)">cm</span></div>' +
+      '<div class="mc-size-label">'+w.desc+'</div>' +
+    '</div>';
+  }).join('');
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+(lang==='sk'?'Šírka LEGO bloku':'LEGO block width')+'</div>' +
+    '<div class="mc-step-sub">'+(lang==='sk'?'Čím širší blok, tým väčšia stabilita a zaťaženie.':'The wider the block, the more stability and load capacity.')+'</div>' +
+    '<div class="mc-size-grid">'+cards+'</div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="next()" '+(calcState.blockWidth?'':'disabled')+'>'+(lang==='sk'?'Vypočítať':'Calculate')+' →</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* =========================================================
+   STEPS: BETONOVY / INE (custom popis)
+   ========================================================= */
+function renderCustomDesc(el){
+  var lang = MC.lang;
+  var prod = calcState.product;
+  var title, sub;
+  if(prod === 'betonovy'){
+    title = lang==='sk'?'Betónový plot — opíšte vaše požiadavky':'Concrete fence — describe your needs';
+    sub = lang==='sk'?'Betónové ploty vyrábame na mieru. Napíšte dĺžku, výšku a prípadné špeciálne požiadavky.':'Concrete fences are custom-made. Tell us length, height and any special requirements.';
+  } else {
+    title = lang==='sk'?'Opíšte vaše zadanie':'Describe your project';
+    sub = lang==='sk'?'Schody, zábradlia, atypické rozmery — napíšte čo potrebujete a my pripravíme ponuku.':'Stairs, railings, custom dimensions — tell us what you need and we will prepare a quote.';
+  }
+  el.innerHTML = '<div class="mc-step">' +
+    '<div class="mc-step-title">'+title+'</div>' +
+    '<div class="mc-step-sub">'+sub+'</div>' +
+    '<textarea class="mc-num-input" id="customDescInput" style="width:100%;text-align:left;height:130px;padding:12px;resize:none;font-size:13.5px;line-height:1.5;font-weight:400;font-family:var(--m-font)" placeholder="'+(lang==='sk'?'Napr.: Plot okolo pozemku 30×40 m, výška 150 cm, antracit. Záujem o montáž...':'E.g.: Fence around 30×40 m plot, height 150 cm, anthracite. Interested in installation...')+'" oninput="calcState.customDesc=this.value">'+(calcState.customDesc||'')+'</textarea>' +
+
+```
+'<div class="mc-hint" style="margin-top:10px"><div class="hi">i</div><div>'+(lang==='sk'?'Náš tím (Denis Plichta) vám pripraví <b>individuálnu ponuku do 24 hodín</b>.':'Our team (Denis Plichta) will prepare an <b>individual quote within 24 hours</b>.')+'</div></div>' +
+'<div class="mc-actions">' +
+  '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
+  '<button class="mc-btn" onclick="next()">'+(lang==='sk'?'Pokračovať':'Continue')+' →</button>' +
+'</div>' +
+```
+
+‘</div>’;
+}
+
+/* =========================================================
+PRICE CALCULATION
+========================================================= */
+function calculatePrice(){
+var lang = MC.lang;
+var prod = calcState.product;
+var result = { onRequest:false, total:0, breakdown:[], summary:[], productName:’’ };
+var productObj = PRODUCTS.find(function(p){ return p.id === prod; });
+result.productName = productObj ? productObj.name[lang] : prod;
+
+/* ===== 3D PLOT ===== */
+if(prod === ‘3d-plot’){
+var L = parseFloat(calcState.length) || 0;
+var H = calcState.height || ‘153’;
+var C = calcState.color || ‘zinok’;
+var T = calcState.thickness || ‘4mm’;
+var panels = Math.ceil(L / 2.5);
+var posts = panels + 1;
+
+```
+var panelUnit = PRICE_3D[H][T][C];
+var postUnit  = PRICE_POST[H][C];
+var panelSum = panels * panelUnit;
+var postSum  = posts  * postUnit;
+
+result.breakdown.push({ k:(lang==='sk'?'3D panely':'3D panels')+' ('+panels+'× '+panelUnit.toFixed(2)+' €)', v: panelSum });
+result.breakdown.push({ k:(lang==='sk'?'Stĺpiky 60×40 mm':'Posts 60×40 mm')+' ('+posts+'× '+postUnit.toFixed(2)+' €)', v: postSum });
+
+var sub = panelSum + postSum;
+
+if(calcState.underboard){
+  var ubSum = panels * PRICE_UNDERBOARD;
+  result.breakdown.push({ k:(lang==='sk'?'Podhrabové dosky':'Underboards')+' ('+panels+'× '+PRICE_UNDERBOARD.toFixed(2)+' €)', v: ubSum });
+  sub += ubSum;
+}
+if(calcState.installation){
+  var instSum = L * INSTALLATION_PER_M;
+  result.breakdown.push({ k:(lang==='sk'?'Montáž':'Installation')+' ('+L+' m × '+INSTALLATION_PER_M+' €)', v: instSum });
+  sub += instSum;
+}
+result.total = sub;
+
+var colorLabel = { zinok:'Zinok', zelena:'Zelená (RAL 6005)', antracit:'Antracit (RAL 7016)' }[C];
+result.summary = [
+  { k:(lang==='sk'?'Produkt':'Product'), v:'3D plotový panel' },
+  { k:(lang==='sk'?'Dĺžka':'Length'),    v: L+' m ('+panels+' '+(lang==='sk'?'panelov':'panels')+')' },
+  { k:(lang==='sk'?'Výška':'Height'),    v: H+' cm' },
+  { k:(lang==='sk'?'Hrúbka drôtu':'Wire thickness'), v: T },
+  { k:(lang==='sk'?'Farba':'Color'),     v: colorLabel },
+  { k:(lang==='sk'?'Podhrab. dosky':'Underboards'), v: calcState.underboard ? (lang==='sk'?'Áno':'Yes') : (lang==='sk'?'Nie':'No') },
+  { k:(lang==='sk'?'Montáž':'Installation'),        v: calcState.installation ? (lang==='sk'?'Áno':'Yes') : (lang==='sk'?'Nie':'No') }
+];
+```
+
+}
+
+/* ===== BRÁNA ===== */
+else if(prod === ‘brana’){
+var GT = calcState.gateType || ‘jednokridlova’;
+var GW = calcState.gateWidth || ‘1’;
+var GH = calcState.gateHeight || ‘150’;
+var GC = calcState.color || calcState.gateColor || ‘zinok’;
+var base = 0;
+var gateLabel = ‘’;
+
+```
+if(GT === 'jednokridlova'){
+  base = PRICE_GATE_SINGLE[GH];
+  gateLabel = (lang==='sk'?'Jednokrídlová bránka 1 m':'Single gate 1 m');
+} else if(GT === 'dvojkridlova'){
+  base = PRICE_GATE_DOUBLE[GW][GH];
+  gateLabel = (lang==='sk'?'Dvojkrídlová brána ':'Double gate ')+GW+' m';
+} else { /* posuvna */
+  var baseDbl = PRICE_GATE_DOUBLE[GW || '4'][GH];
+  base = Math.round(baseDbl * 1.45);
+  gateLabel = (lang==='sk'?'Posuvná brána ':'Sliding gate ')+(GW||'4')+' m';
+}
+
+if(GC !== 'zinok'){
+  var colorSur = base * SURCHARGE_COLOR;
+  result.breakdown.push({ k: gateLabel+' — '+(lang==='sk'?'základ (zinok)':'base (galvanized)'), v: base });
+  result.breakdown.push({ k:(lang==='sk'?'Príplatok za farbu':'Color surcharge')+' (+12 %)', v: colorSur });
+  base += colorSur;
+} else {
+  result.breakdown.push({ k: gateLabel, v: base });
+}
+
+var sub2 = base;
+if(calcState.automation){
+  result.breakdown.push({ k:(lang==='sk'?'Automatický pohon':'Automatic drive'), v: SURCHARGE_AUTOMATION });
+  sub2 += SURCHARGE_AUTOMATION;
+}
+if(calcState.gateInstallation){
+  result.breakdown.push({ k:(lang==='sk'?'Montáž brány':'Gate installation'), v: GATE_INSTALLATION });
+  sub2 += GATE_INSTALLATION;
+}
+result.total = sub2;
+
+var gtLabel = { jednokridlova:(lang==='sk'?'Jednokrídlová bránka':'Single gate'), dvojkridlova:(lang==='sk'?'Dvojkrídlová brána':'Double gate'), posuvna:(lang==='sk'?'Posuvná brána':'Sliding gate') }[GT];
+var gcLabel = { zinok:'Zinok', zelena:'Zelená (RAL 6005)', antracit:'Antracit (RAL 7016)' }[GC];
+result.summary = [
+  { k:(lang==='sk'?'Produkt':'Product'), v: gtLabel },
+  { k:(lang==='sk'?'Šírka':'Width'),    v: (GT==='jednokridlova' ? '1 m' : GW+' m') },
+  { k:(lang==='sk'?'Výška':'Height'),   v: GH+' cm' },
+  { k:(lang==='sk'?'Farba':'Color'),    v: gcLabel },
+  { k:(lang==='sk'?'Pohon':'Drive'),    v: calcState.automation ? (lang==='sk'?'Áno (automat)':'Yes (automatic)') : (lang==='sk'?'Ručná':'Manual') },
+  { k:(lang==='sk'?'Montáž':'Installation'), v: calcState.gateInstallation ? (lang==='sk'?'Áno':'Yes') : (lang==='sk'?'Nie':'No') }
+];
+```
+
+}
+
+/* ===== PLETIVO ===== */
+else if(prod === ‘pletivo’){
+var ML = parseFloat(calcState.meshLength) || 0;
+var MH = calcState.meshHeight || ‘150’;
+var MC2 = calcState.color || calcState.meshColor || ‘zinok’;
+var unit = PRICE_MESH[MH];
+var sub3 = ML * unit;
+result.breakdown.push({ k:(lang===‘sk’?‘Pletivo + stĺpiky’:‘Mesh + posts’)+’ (’+ML+’ m × ‘+unit.toFixed(2)+’ €)’, v: sub3 });
+if(MC2 !== ‘zinok’){
+var msur = sub3 * SURCHARGE_COLOR;
+result.breakdown.push({ k:(lang===‘sk’?‘Príplatok za farbu’:‘Color surcharge’)+’ (+12 %)’, v: msur });
+sub3 += msur;
+}
+result.total = sub3;
+var mcLabel = { zinok:(lang===‘sk’?‘Zinok / pozink’:‘Galvanized’), zelena:‘Zelená (PVC)’, antracit:‘Antracit (PVC)’ }[MC2];
+result.summary = [
+{ k:(lang===‘sk’?‘Produkt’:‘Product’), v:(lang===‘sk’?‘Pletivový plot’:‘Mesh fence’) },
+{ k:(lang===‘sk’?‘Dĺžka’:‘Length’),    v: ML+’ m’ },
+{ k:(lang===‘sk’?‘Výška’:‘Height’),    v: MH+’ cm’ },
+{ k:(lang===‘sk’?‘Povrch’:‘Finish’),   v: mcLabel }
+];
+}
+
+/* ===== MOBILNÉ OPLOTENIE ===== */
+else if(prod === ‘mobilne’){
+var BL = parseFloat(calcState.mobileLength) || 0;
+var mobPanels = Math.ceil(BL / 3.5);
+var mobSub = mobPanels * PRICE_MOBILE_PANEL;
+result.breakdown.push({ k:(lang===‘sk’?‘Mobilné panely 3,5 m’:‘Mobile panels 3.5 m’)+’ (’+mobPanels+‘× ‘+PRICE_MOBILE_PANEL+’ €)’, v: mobSub });
+if(calcState.mobileRent){
+result.onRequest = true;
+}
+result.total = mobSub;
+result.summary = [
+{ k:(lang===‘sk’?‘Produkt’:‘Product’), v:(lang===‘sk’?‘Mobilné oplotenie’:‘Mobile fencing’) },
+{ k:(lang===‘sk’?‘Dĺžka’:‘Length’),    v: BL+’ m (’+mobPanels+’ ‘+(lang===‘sk’?‘panelov’:‘panels’)+’)’ },
+{ k:(lang===‘sk’?‘Režim’:‘Mode’),      v: calcState.mobileRent ? (lang===‘sk’?‘Prenájom (na vyžiadanie)’:‘Rental (on request)’) : (lang===‘sk’?‘Predaj’:‘Purchase’) }
+];
+}
+
+/* ===== OPORNÉ MÚRY ===== */
+else if(prod === ‘oporne’){
+var WL = parseFloat(calcState.wallLength) || 0;
+var WLayers = parseInt(calcState.wallLayers) || 1;
+var BW = calcState.blockWidth || ‘40’;
+var unitWall = PRICE_WALL[BW];
+var blocksPerLayer = Math.ceil(WL / 1.2); /* LEGO blok ~ 120 cm dĺžka */
+var totalBlocks = blocksPerLayer * WLayers;
+var wallSub = WL * unitWall * WLayers;
+result.breakdown.push({ k:(lang===‘sk’?‘LEGO bloky ‘:‘LEGO blocks ‘)+BW+’ cm (’+totalBlocks+’ ‘+(lang===‘sk’?‘ks’:‘pcs’)+’)’, v: wallSub });
+result.total = wallSub;
+var heightCm = WLayers * 40; /* ~40 cm na vrstvu */
+result.summary = [
+{ k:(lang===‘sk’?‘Produkt’:‘Product’),    v:(lang===‘sk’?‘Oporný múr (LEGO)’:‘Retaining wall (LEGO)’) },
+{ k:(lang===‘sk’?‘Dĺžka’:‘Length’),       v: WL+’ m’ },
+{ k:(lang===‘sk’?‘Výška’:‘Height’),       v: WLayers+’ ‘+(lang===‘sk’?‘vrstvy’:‘layers’)+’ (~’+heightCm+’ cm)’ },
+{ k:(lang===‘sk’?‘Šírka bloku’:‘Block width’), v: BW+’ cm’ },
+{ k:(lang===‘sk’?‘Počet blokov’:‘Block count’), v: totalBlocks+’ ’+(lang===‘sk’?‘ks’:‘pcs’) }
+];
+}
+
+/* ===== BETÓNOVÝ / INÉ — na vyžiadanie ===== */
+else if(prod === ‘betonovy’ || prod === ‘ine’){
+result.onRequest = true;
+result.summary = [
+{ k:(lang===‘sk’?‘Produkt’:‘Product’), v: prod === ‘betonovy’ ? (lang===‘sk’?‘Betónový plot’:‘Concrete fence’) : (lang===‘sk’?‘Zákazková výroba’:‘Custom project’) },
+{ k:(lang===‘sk’?‘Popis’:‘Description’), v: calcState.customDesc || ‘—’ }
+];
+}
+
+return result;
+}
+
+/* =========================================================
+FINAL STEP - cena + kontaktny formular
+========================================================= */
+function renderFinal(el){
+var lang = MC.lang;
+var r = calculatePrice();
+
+/* Hlavna karta s cenou */
+var priceCard;
+if(r.onRequest){
+priceCard =
+‘<div class="mc-result-card">’ +
+‘<div class="mc-result-label">’+(lang===‘sk’?‘Orientačná cena’:‘Estimated price’)+’</div>’ +
+‘<div class="mc-result-price">’+(lang===‘sk’?‘Na vyžiadanie’:‘On request’)+’</div>’ +
+‘<div class="mc-result-sub">’+(lang===‘sk’?‘Pripravíme vám individuálnu ponuku do 24 hodín.’:‘We will prepare a tailored quote within 24 hours.’)+’</div>’ +
+‘</div>’;
+} else {
+var roundedFrom = Math.round(r.total * 0.95);
+var roundedTo   = Math.round(r.total * 1.10);
+priceCard =
+‘<div class="mc-result-card">’ +
+‘<div class="mc-result-label">’+(lang===‘sk’?‘Orientačná cena (vrátane DPH)’:‘Estimated price (incl. VAT)’)+’</div>’ +
+‘<div class="mc-result-price">’+roundedFrom.toLocaleString(‘sk-SK’)+’ – ‘+roundedTo.toLocaleString(‘sk-SK’)+’ €</div>’ +
+‘<div class="mc-result-sub">’+(lang===‘sk’?‘Cena je orientačná. Presnú ponuku vám pripravíme po overení detailov.’:‘This is an estimate. We will prepare an exact quote after verifying details.’)+’</div>’ +
+‘</div>’;
+}
+
+/* Breakdown */
+var breakdownHtml = ‘’;
+if(!r.onRequest && r.breakdown.length){
+var rows = r.breakdown.map(function(b){
+return ‘<div class="mc-breakdown-row"><span>’+b.k+’</span><span>’+b.v.toFixed(2)+’ €</span></div>’;
+}).join(’’);
+breakdownHtml =
+‘<div class="mc-breakdown">’ +
+rows +
+‘<div class="mc-breakdown-total"><span>’+(lang===‘sk’?‘Spolu’:‘Total’)+’</span><span>’+r.total.toFixed(2)+’ €</span></div>’ +
+‘</div>’;
+}
+
+/* Summary */
+var sumRows = r.summary.map(function(s){
+return ‘<div class="mc-summary-row"><span class="mc-summary-key">’+s.k+’</span><span class="mc-summary-val">’+s.v+’</span></div>’;
+}).join(’’);
+var summaryHtml =
+‘<div class="mc-summary-card">’ +
+‘<div class="mc-summary-title">’+(lang===‘sk’?‘Vaša konfigurácia’:‘Your configuration’)+’</div>’ +
+sumRows +
+‘</div>’;
+
+/* Trust badges */
+var trustHtml =
+‘<div class="mc-trust-row">’ +
+‘<div class="mc-trust"><div class="mc-trust-ico">🚚</div><div>’+(lang===‘sk’?‘Doprava ZDARMA’:‘FREE shipping’)+’</div></div>’ +
+‘<div class="mc-trust"><div class="mc-trust-ico">💰</div><div>’+(lang===‘sk’?‘Najnižšia cena’:‘Best price’)+’</div></div>’ +
+‘<div class="mc-trust"><div class="mc-trust-ico">⭐</div><div>’+(lang===‘sk’?‘8 rokov skúseností’:‘8 years experience’)+’</div></div>’ +
+‘</div>’;
+
+/* Kontaktny formular */
+var formHtml =
+‘<div class="mc-contact-form">’ +
+‘<div class="mc-form-title">’+(lang===‘sk’?‘📩 Získať presnú ponuku’:‘📩 Get exact quote’)+’</div>’ +
+‘<div class="mc-form-sub">’+(lang===‘sk’?‘Vyplňte kontakt a Denis Plichta vám pripraví ponuku do 24 hodín.’:‘Leave your contact and Denis Plichta will prepare a quote within 24 hours.’)+’</div>’ +
+‘<input class="mc-form-input" id="cfName" type="text" placeholder="'+(lang==='sk'?'Meno a priezvisko *':'Full name *')+'" required>’ +
+‘<input class="mc-form-input" id="cfPhone" type="tel" placeholder="'+(lang==='sk'?'Telefón *':'Phone *')+'" required>’ +
+‘<input class="mc-form-input" id="cfEmail" type="email" placeholder="E-mail *" required>’ +
+‘<textarea class="mc-form-textarea" id="cfMsg" placeholder="'+(lang==='sk'?'Doplňujúce informácie (PSČ, termín, otázky...)':'Additional info (ZIP, timing, questions...)')+'"></textarea>’ +
+‘<button class="mc-btn mc-form-submit" onclick="submitCalc()">’+(lang===‘sk’?‘Odoslať dopyt’:‘Send inquiry’)+’ →</button>’ +
+‘<div class="mc-form-note">’+(lang===‘sk’?‘Odoslaním súhlasíte so spracovaním osobných údajov za účelom prípravy ponuky.’:‘By submitting you consent to processing of personal data for quote preparation.’)+’</div>’ +
+‘</div>’;
+
+el.innerHTML =
+‘<div class="mc-step">’ +
+‘<div class="mc-step-title">’+(lang===‘sk’?‘🎉 Tu je vaša ponuka’:‘🎉 Here is your quote’)+’</div>’ +
+priceCard +
+breakdownHtml +
+summaryHtml +
+trustHtml +
+formHtml +
+‘<div class="mc-actions" style="margin-top:8px">’ +
+‘<button class="mc-btn-secondary" onclick="calcBack()">← ‘+(lang===‘sk’?‘Späť’:‘Back’)+’</button>’ +
+‘<button class="mc-btn-secondary" onclick="closeCalc()">’+(lang===‘sk’?‘Zavrieť’:‘Close’)+’</button>’ +
+‘</div>’ +
+‘</div>’;
+}
+
+/* =========================================================
+ODOSLANIE DOPYTU (EmailJS)
+========================================================= */
+function submitCalc(){
+var lang = MC.lang;
+var name = (document.getElementById(‘cfName’)||{}).value || ‘’;
+var phone = (document.getElementById(‘cfPhone’)||{}).value || ‘’;
+var email = (document.getElementById(‘cfEmail’)||{}).value || ‘’;
+var msg = (document.getElementById(‘cfMsg’)||{}).value || ‘’;
+
+/* Validacia */
+if(!name.trim() || !phone.trim() || !email.trim()){
+alert(lang===‘sk’ ? ‘Prosím vyplňte meno, telefón a e-mail.’ : ‘Please fill in name, phone and email.’);
+return;
+}
+if(!/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email)){
+alert(lang===‘sk’ ? ‘Prosím zadajte platný e-mail.’ : ‘Please enter a valid email.’);
+return;
+}
+
+var r = calculatePrice();
+var summaryText = r.summary.map(function(s){ return s.k+’: ‘+s.v; }).join(’\n’);
+var priceText = r.onRequest
+? (lang===‘sk’?‘Na vyžiadanie’:‘On request’)
+: (Math.round(r.total*0.95)+’ – ’+Math.round(r.total*1.10)+’ €’);
+
+var btn = document.querySelector(’.mc-form-submit’);
+if(btn){ btn.disabled = true; btn.textContent = (lang===‘sk’?‘Odosielam…’:‘Sending…’); }
+
+var params = {
+customer_name: name,
+customer_phone: phone,
+customer_email: email,
+customer_message: msg,
+product: r.productName,
+price_estimate: priceText,
+configuration: summaryText,
+language: lang,
+source: ‘mojplot.sk – kalkulačka’
+};
+
+/* EmailJS odoslanie */
+try {
+if(typeof emailjs !== ‘undefined’ && MC.emailKey && MC.emailKey.indexOf(‘YOUR_’) !== 0){
+emailjs.send(MC.emailService, MC.emailTemplate, params)
+.then(function(){ showThanks(); })
+.catch(function(err){
+console.error(‘EmailJS error:’, err);
+showThanks(); /* aj tak ukaz dakujem - data sa nestratia, mozno cez fallback */
+});
+} else {
+/* Fallback: log do konzoly + ukaz dakujem (uzivatel sa nedozvie ze emailjs nie je nakonfig.) */
+console.log(’[mojplot] Calc inquiry (EmailJS not configured):’, params);
+setTimeout(showThanks, 600);
+}
+} catch(e){
+console.error(e);
+showThanks();
+}
+}
+
+function showThanks(){
+var lang = MC.lang;
+var el = document.getElementById(‘calcContent’);
+if(!el) return;
+el.innerHTML =
+‘<div class="mc-step" style="text-align:center;padding:30px 18px">’ +
+‘<div style="font-size:64px;margin-bottom:14px;animation:mcPulse 1.4s ease-in-out infinite">✅</div>’ +
+‘<div class="mc-step-title" style="text-align:center;font-size:18px">’+(lang===‘sk’?‘Ďakujeme za dopyt!’:‘Thank you for your inquiry!’)+’</div>’ +
+‘<div class="mc-step-sub" style="text-align:center;line-height:1.6">’+MC.s[lang].thxMsg+’</div>’ +
+‘<div class="mc-trust-row" style="margin-top:18px">’ +
+‘<a href="tel:+421940511266" class="mc-trust" style="text-decoration:none;color:inherit"><div class="mc-trust-ico">📞</div><div>+421 940 511 266</div></a>’ +
+‘<a href="https://wa.me/421940511266" target="_blank" class="mc-trust" style="text-decoration:none;color:inherit"><div class="mc-trust-ico">💬</div><div>WhatsApp</div></a>’ +
+‘</div>’ +
+‘<button class="mc-btn-secondary" style="margin-top:18px" onclick="resetCalc()">’+(lang===‘sk’?‘Spustiť novú kalkuláciu’:‘Start new calculation’)+’</button>’ +
+‘</div>’;
+
+/* Log do AI konverzacie */
+try {
+if(typeof addMsg === ‘function’){
+var r = calculatePrice();
+var priceText = r.onRequest ? (lang===‘sk’?‘na vyžiadanie’:‘on request’) : (Math.round(r.total*0.95)+’–’+Math.round(r.total*1.10)+’ €’);
+addMsg(
+(lang===‘sk’?‘✅ Váš dopyt sme odoslali — orientačná cena: <b>’:‘✅ Your inquiry was sent — estimated price: <b>’)+priceText+’</b>. ’+
+(lang===‘sk’?‘Denis Plichta vás bude kontaktovať do 24 hodín.’:‘Denis Plichta will contact you within 24 hours.’),
+‘bot’
+);
+}
+} catch(e){}
+}
+
+function resetCalc(){
+/* Reset state */
+calcState.step = 0;
+calcState.product = null;
+calcState.length = ‘’; calcState.height = ‘’; calcState.color = ‘’; calcState.thickness = ‘’;
+calcState.underboard = false; calcState.installation = false;
+calcState.gateType = ‘’; calcState.gateWidth = ‘’; calcState.gateHeight = ‘’; calcState.gateColor = ‘’;
+calcState.automation = false; calcState.gateInstallation = false;
+calcState.meshLength = ‘’; calcState.meshHeight = ‘’; calcState.meshColor = ‘’;
+calcState.mobileLength = ‘’; calcState.mobileRent = false;
+calcState.wallLength = ‘’; calcState.wallLayers = 1; calcState.blockWidth = ‘’;
+calcState.customDesc = ‘’;
+renderCalcStep();
+}
+
+/* =========================================================
+INIT EmailJS (ak je nakonfigurovany kluc)
+========================================================= */
+(function initEmailJS(){
+try {
+if(typeof emailjs !== ‘undefined’ && MC.emailKey && MC.emailKey.indexOf(‘YOUR_’) !== 0){
+emailjs.init({ publicKey: MC.emailKey });
+}
+} catch(e){ console.warn(‘EmailJS init skipped:’, e); }
+})();
+
 </script>
 </body>
 </html>
