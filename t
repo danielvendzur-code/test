@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="sk">
 <head>
 <meta charset="UTF-8" />
@@ -6,1067 +7,2970 @@
 <title>Chat — odvoznabytku.sk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #0284c7;          /* sky-600 */
-    --primary-hover: #0369a1;    /* sky-700 */
-    --primary-deep: #075985;     /* sky-800 */
-    --accent: #38bdf8;           /* sky-400 */
-    --accent-soft: #bae6fd;      /* sky-200 */
-    --bg: #ffffff;
-    --surface: #f8fafc;
-    --surface-2: #f0f9ff;        /* sky-50 */
-    --text: #0f172a;
-    --text-muted: #64748b;
-    --border: #cbd5e1;
-    --bot-bubble-bg: #e0f2fe;    /* sky-100 */
-    --bot-bubble-text: #075985;
-    --bot-bubble-border: #7dd3fc; /* sky-300 */
-    --radius: 18px;
-    --transition: cubic-bezier(0.22,0.61,0.36,1);
-    --glow: 0 0 24px rgba(2, 132, 199, 0.32);
-  }
-  * { box-sizing: border-box; }
-  *::before, *::after { box-sizing: border-box; }
-  html, body { margin:0; padding:0; }
-  body {
-    font-family: 'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;
-    color: var(--text);
-    background: #f0f9ff;
-    min-height: 100dvh;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* Flat blue gradient for "branded" surfaces (header, CTA, send, user bubble) */
-  .cbw-dynamic-green, .cbw-input:focus {
-    background-color: var(--primary) !important;
-    background-image: linear-gradient(145deg, #0ea5e9 0%, #0284c7 50%, #075985 100%) !important;
-    color: #fff !important;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.22),
-      inset 0 -1px 2px rgba(0,0,0,0.18),
-      0 6px 18px -6px rgba(2, 132, 199, 0.55) !important;
-    border: none !important;
-  }
-
   /* ============================================================
-     WIDGET WAPPER
+     DESIGN TOKENS — refined ocean-blue with warm amber accents
      ============================================================ */
-  .cbw-root {
-    --z: 2147483000;
-    position: fixed; bottom: 24px; right: 24px;
-    z-index: var(--z);
+  :root {
+    /* Primary — deep ocean blue */
+    --primary: #0369a1;
+    --primary-hover: #075985;
+    --primary-deep: #0c4a6e;
+    --primary-soft: #e0f2fe;
+    --primary-bright: #0ea5e9;
+
+```
+/* Accent — warm amber for CTAs and energy */
+--accent: #f59e0b;
+--accent-hover: #d97706;
+--accent-soft: #fef3c7;
+--accent-bright: #fbbf24;
+
+/* Surfaces — warm whites, not cold */
+--bg: #ffffff;
+--surface: #f8fafc;
+--surface-warm: #fefdfb;
+--surface-blue: #f0f9ff;
+--surface-cream: #fffbf5;
+
+/* Text */
+--text: #0f172a;
+--text-muted: #64748b;
+--text-light: #94a3b8;
+--border: #e2e8f0;
+--border-strong: #cbd5e1;
+
+/* Semantic */
+--good: #10b981;
+--warn: #f59e0b;
+--bad: #ef4444;
+
+/* Bubbles */
+--bot-bubble-bg: #f0f9ff;
+--bot-bubble-text: #0c4a6e;
+--bot-bubble-border: #bae6fd;
+
+/* Geometry */
+--radius: 20px;
+--radius-sm: 12px;
+--radius-md: 16px;
+--radius-lg: 24px;
+--transition: cubic-bezier(0.22, 0.61, 0.36, 1);
+--bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+/* Shadows */
+--shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+--shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+--shadow-lg: 0 20px 50px -16px rgba(15, 23, 42, 0.25);
+--shadow-xl: 0 30px 70px -20px rgba(15, 23, 42, 0.35);
+--shadow-glow: 0 0 30px rgba(3, 105, 161, 0.25);
+```
+
+}
+
+- { box-sizing: border-box; }
+  *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+  font-family: ‘Plus Jakarta Sans’, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(–text);
+  background: linear-gradient(135deg, #f0f9ff 0%, #fef3c7 100%);
+  min-height: 100dvh;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
   }
 
-  .cbw-launcher {
-    position: relative; width: 72px; height: 72px;
-    border: none; cursor: pointer; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 250ms var(--transition), filter 200ms ease;
-  }
-  .cbw-launcher:hover { transform: translateY(-3px) scale(1.04); filter: brightness(1.1); }
-  .cbw-launcher:active { transform: scale(0.95); }
-  .cbw-root[data-open="true"] .cbw-launcher {
-    opacity: 0; pointer-events: none; transition: opacity 200ms ease 100ms;
-  }
+/* Brand gradient — refined */
+.cbw-brand-gradient {
+background-color: var(–primary) !important;
+background-image: linear-gradient(135deg, #0ea5e9 0%, #0369a1 55%, #0c4a6e 100%) !important;
+color: #fff !important;
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.25),
+inset 0 -1px 2px rgba(0, 0, 0, 0.18),
+0 8px 24px -8px rgba(3, 105, 161, 0.55) !important;
+border: none !important;
+}
 
-  /* Notifikačný odznak */
-  .cbw-badge {
-    position: absolute; top: -2px; right: 2px;
-    width: 24px; height: 24px; border-radius: 50%;
-    background: #ef4444; border: 2.5px solid #fff;
-    color: #fff; font-size: 12px; font-weight: bold;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transform: scale(0);
-    animation: cbw-badge-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 5s forwards, cbw-pulse-badge 2s infinite 5s;
-  }
-  @keyframes cbw-badge-appear { 100% { opacity: 1; transform: scale(1); } }
-  @keyframes cbw-pulse-badge {
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-  }
+/* Accent gradient — warm amber */
+.cbw-accent-gradient {
+background-image: linear-gradient(135deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%) !important;
+color: #fff !important;
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.3),
+inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+0 8px 24px -8px rgba(245, 158, 11, 0.5) !important;
+border: none !important;
+}
 
-  /* Zelené Konfety */
-  .cbw-confetti {
-    position: fixed; width: 6px; height: 6px; border-radius: 50%;
-    pointer-events: none; z-index: 2147483005;
-    animation: cbw-confetti-anim 0.6s ease-out forwards;
-  }
-  @keyframes cbw-confetti-anim {
-    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-  }
+/* ============================================================
+WIDGET WRAPPER
+============================================================ */
+.cbw-root {
+–z: 2147483000;
+position: fixed; bottom: 24px; right: 24px;
+z-index: var(–z);
+}
 
-  /* ---------- BOX ROBOT (cardboard box with stuff poking out) ---------- */
-  .cbw-robot { width: 48px; height: 48px; display: block; overflow: visible; }
-  .cbw-robot.cbw-robot-sm { width: 36px; height: 36px; }
-  .cbw-robot-head { transition: transform .3s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: 40px 50px; }
-  .cbw-eye, .cbw-eyes, .cbw-mouth { transition: transform .3s ease; transform-origin: center; transform-box: fill-box; }
-  .cbw-flap-left  { transform-origin: 40px 32px; transform-box: fill-box; transition: transform .3s ease; }
-  .cbw-flap-right { transform-origin: 40px 32px; transform-box: fill-box; transition: transform .3s ease; }
-  .cbw-stuff      { transform-origin: 40px 34px; transform-box: fill-box; transition: transform .3s ease; }
+/* ============================================================
+LAUNCHER — new simple delivery icon
+============================================================ */
+.cbw-launcher {
+position: relative; width: 72px; height: 72px;
+border: none; cursor: pointer; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+transition: transform 280ms var(–bounce), filter 220ms ease;
+}
+.cbw-launcher:hover { transform: translateY(-3px) scale(1.05); filter: brightness(1.08); }
+.cbw-launcher:active { transform: scale(0.95); }
+.cbw-root[data-open=“true”] .cbw-launcher {
+opacity: 0; pointer-events: none;
+transition: opacity 200ms ease 100ms;
+}
 
-  .is-idle .cbw-robot-head { animation: cbw-box-wobble 4s ease-in-out infinite; }
-  .is-idle .cbw-eye        { animation: cbw-blink-cute 4s infinite; }
-  .is-idle .cbw-stuff      { animation: cbw-stuff-jiggle 3s ease-in-out infinite; }
+/* Launcher icon — delivery van/box */
+.cbw-launcher-icon {
+width: 42px; height: 42px;
+display: block;
+color: #fff;
+}
+.cbw-launcher-icon .cbw-van { transform-box: fill-box; transform-origin: center; }
+.cbw-launcher:hover .cbw-van { animation: cbw-van-bob 1.4s ease-in-out infinite; }
+@keyframes cbw-van-bob {
+0%, 100% { transform: translateX(0); }
+50% { transform: translateX(2px); }
+}
+.cbw-launcher-icon .cbw-wheel-1 { animation: cbw-wheel-spin 1.8s linear infinite; transform-box: fill-box; transform-origin: center; }
+.cbw-launcher-icon .cbw-wheel-2 { animation: cbw-wheel-spin 1.8s linear infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes cbw-wheel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  .is-greeting .cbw-robot-head { animation: cbw-box-hop .8s ease-in-out; }
-  .is-greeting .cbw-eye        { transform: scaleY(1.15) scaleX(1.1); }
-  .is-greeting .cbw-mouth      { transform: scaleY(1.4); }
-  .is-greeting .cbw-flap-left  { transform: rotate(-12deg); }
-  .is-greeting .cbw-flap-right { transform: rotate(12deg); }
+/* Notification badge + invitation */
+.cbw-badge {
+position: absolute; top: -2px; right: 2px;
+width: 26px; height: 26px; border-radius: 50%;
+background: var(–accent); border: 2.5px solid #fff;
+color: #fff; font-size: 12px; font-weight: 700;
+display: flex; align-items: center; justify-content: center;
+opacity: 0; transform: scale(0);
+transition: opacity 180ms ease, transform 220ms var(–bounce);
+}
+.cbw-root.cbw-has-unread .cbw-badge {
+opacity: 1; transform: scale(1);
+animation: cbw-pulse-badge 2s infinite;
+}
+.cbw-launcher-tip {
+position: absolute;
+right: 84px; bottom: 12px;
+min-width: 200px; max-width: 260px;
+padding: 12px 16px;
+border-radius: 16px;
+background: #fff;
+color: var(–text);
+border: 1.5px solid var(–accent);
+box-shadow: var(–shadow-lg), 0 0 0 4px rgba(245, 158, 11, 0.08);
+font-size: 13.5px; font-weight: 700; line-height: 1.4;
+white-space: nowrap;
+opacity: 0; transform: translateY(8px) scale(0.96);
+pointer-events: none;
+transition: opacity 240ms ease, transform 280ms var(–transition);
+}
+.cbw-launcher-tip::before {
+content: “💰”; margin-right: 6px; font-size: 14px;
+}
+.cbw-launcher-tip::after {
+content: “”; position: absolute; right: -8px; bottom: 20px;
+width: 14px; height: 14px; background: #fff;
+border-right: 1.5px solid var(–accent); border-bottom: 1.5px solid var(–accent);
+transform: rotate(-45deg);
+}
+.cbw-root.cbw-has-unread .cbw-launcher-tip,
+.cbw-launcher:hover ~ .cbw-launcher-tip,
+.cbw-launcher:hover .cbw-launcher-tip { opacity: 1; transform: translateY(0) scale(1); }
+/* Persistent tip on desktop after page idle */
+.cbw-root[data-open=“false”]:not(.cbw-mobile-touch) .cbw-launcher-tip {
+opacity: 1; transform: translateY(0) scale(1);
+}
+@keyframes cbw-pulse-badge {
+0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
 
-  .is-listening .cbw-robot-head { transform: rotate(-4deg) translateY(2px); animation: none; }
-  .is-listening .cbw-eyes       { transform: translate(-1px, 2px); }
-  .is-listening .cbw-mouth      { transform: scaleY(0.55); }
+/* ============================================================
+LANGUAGE SWITCHER
+============================================================ */
+.cbw-lang-switch {
+display: inline-flex;
+align-items: center;
+gap: 2px;
+background: rgba(255, 255, 255, 0.18);
+border: 1px solid rgba(255, 255, 255, 0.22);
+border-radius: 999px;
+padding: 2px;
+margin-right: 6px;
+}
+.cbw-lang-btn {
+appearance: none;
+border: 0;
+background: transparent;
+color: rgba(255, 255, 255, 0.85);
+font-family: inherit;
+font-size: 11px;
+font-weight: 800;
+letter-spacing: 0.4px;
+padding: 5px 9px;
+border-radius: 999px;
+cursor: pointer;
+transition: background 180ms ease, color 180ms ease, transform 120ms ease;
+min-width: 26px;
+}
+.cbw-lang-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+.cbw-lang-btn:active { transform: scale(0.95); }
+.cbw-lang-btn.cbw-lang-active {
+background: #fff;
+color: var(–primary-deep);
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
 
-  .is-thinking .cbw-robot-head { transform: rotate(3deg) translateY(-2px); animation: none; }
-  .is-thinking .cbw-eyes       { animation: cbw-scan 1.5s infinite alternate ease-in-out; }
-  .is-thinking .cbw-stuff      { animation: cbw-stuff-jiggle .9s ease-in-out infinite; }
+/* ============================================================
+MOBILE CHOICE MODAL — appears between tapping launcher and panel
+============================================================ */
+.cbw-choice-overlay {
+position: fixed;
+inset: 0;
+background: rgba(15, 23, 42, 0.55);
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
+z-index: 2147483004;
+opacity: 0;
+visibility: hidden;
+transition: opacity 240ms ease, visibility 0ms 240ms;
+display: flex;
+align-items: flex-end;
+justify-content: center;
+}
+.cbw-choice-overlay[data-open=“true”] {
+opacity: 1;
+visibility: visible;
+transition: opacity 240ms ease, visibility 0ms;
+}
+.cbw-choice-sheet {
+background: #fff;
+width: 100%;
+max-width: 440px;
+border-radius: 24px 24px 0 0;
+padding: 14px 20px 24px;
+position: relative;
+box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+transform: translateY(100%);
+transition: transform 320ms var(–transition);
+padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+}
+.cbw-choice-overlay[data-open=“true”] .cbw-choice-sheet {
+transform: translateY(0);
+}
+.cbw-choice-grip {
+width: 40px;
+height: 4px;
+border-radius: 999px;
+background: var(–border);
+margin: 0 auto 18px;
+}
+.cbw-choice-close {
+position: absolute;
+top: 14px;
+right: 14px;
+width: 32px;
+height: 32px;
+border: 0;
+background: var(–surface);
+color: var(–text-muted);
+border-radius: 50%;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.cbw-choice-close svg { width: 16px; height: 16px; }
+.cbw-choice-title {
+margin: 0 0 6px;
+font-size: 22px;
+font-weight: 800;
+color: var(–text);
+text-align: center;
+}
+.cbw-choice-sub {
+margin: 0 0 22px;
+font-size: 14px;
+color: var(–text-muted);
+text-align: center;
+font-weight: 500;
+}
+.cbw-choice-options {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin-bottom: 16px;
+}
+.cbw-choice-opt {
+display: flex;
+align-items: center;
+gap: 14px;
+width: 100%;
+padding: 16px 18px;
+border: 2px solid var(–border);
+border-radius: 18px;
+background: #fff;
+cursor: pointer;
+text-align: left;
+transition: transform 160ms var(–bounce), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+font-family: inherit;
+}
+.cbw-choice-opt:hover,
+.cbw-choice-opt:focus-visible {
+border-color: var(–primary);
+background: var(–primary-soft);
+transform: translateY(-2px);
+box-shadow: 0 6px 18px -8px rgba(3, 105, 161, 0.4);
+}
+.cbw-choice-opt:active { transform: scale(0.98); }
+.cbw-choice-opt-calc {
+background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+border-color: var(–accent);
+}
+.cbw-choice-opt-calc:hover {
+background: linear-gradient(135deg, #fde68a 0%, #fef3c7 100%);
+border-color: var(–accent-hover);
+}
+.cbw-choice-opt-icon {
+width: 48px;
+height: 48px;
+flex-shrink: 0;
+border-radius: 14px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #fff;
+}
+.cbw-choice-opt-calc .cbw-choice-opt-icon {
+background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+}
+.cbw-choice-opt-chat .cbw-choice-opt-icon {
+background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+}
+.cbw-choice-opt-icon svg { width: 26px; height: 26px; }
+.cbw-choice-opt-text {
+flex: 1;
+min-width: 0;
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+.cbw-choice-opt-text strong {
+font-size: 16.5px;
+font-weight: 800;
+color: var(–text);
+line-height: 1.2;
+}
+.cbw-choice-opt-text small {
+font-size: 13px;
+color: var(–text-muted);
+font-weight: 500;
+line-height: 1.3;
+}
+.cbw-choice-opt-arrow {
+width: 18px;
+height: 18px;
+color: var(–text-light);
+flex-shrink: 0;
+}
+.cbw-choice-cancel {
+appearance: none;
+width: 100%;
+border: 0;
+background: transparent;
+color: var(–text-muted);
+font-family: inherit;
+font-size: 14px;
+font-weight: 700;
+padding: 12px;
+cursor: pointer;
+border-radius: 12px;
+transition: background 160ms ease;
+}
+.cbw-choice-cancel:hover { background: var(–surface); }
 
-  .is-action .cbw-robot-head { animation: cbw-box-bounce .5s ease; }
-  .is-action .cbw-eye        { transform: scaleY(0.3) translateY(-1px); }
-  .is-action .cbw-mouth      { transform: scaleY(1.4) translateY(-1px); }
+/* Confetti */
+.cbw-confetti {
+position: fixed; width: 7px; height: 7px; border-radius: 50%;
+pointer-events: none; z-index: 2147483005;
+animation: cbw-confetti-anim 0.7s ease-out forwards;
+}
+@keyframes cbw-confetti-anim {
+0% { transform: translate(0, 0) scale(1); opacity: 1; }
+100% { transform: translate(var(–dx), var(–dy)) scale(0); opacity: 0; }
+}
 
-  .is-talking .cbw-robot-head { animation: cbw-box-wobble-fast .6s infinite alternate ease-in-out; }
-  .is-talking .cbw-mouth      { animation: cbw-mouth-talk .35s infinite alternate ease-in-out; }
+/* ============================================================
+PANEL
+============================================================ */
+.cbw-panel {
+position: absolute; bottom: 88px; right: 0;
+width: min(400px, calc(100vw - 32px));
+height: min(680px, calc(100vh - 120px));
+background: #fff;
+border-radius: var(–radius);
+border: 1px solid var(–border);
+box-shadow: var(–shadow-xl);
+display: flex; flex-direction: column; overflow: hidden;
+transform-origin: 100% 100%;
+opacity: 0;
+transform: scale(0.85) translateY(28px);
+pointer-events: none;
+will-change: transform, opacity;
+transition:
+transform 480ms cubic-bezier(0.22, 1.4, 0.36, 1),
+opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cbw-root[data-open=“true”] .cbw-panel {
+opacity: 1;
+transform: scale(1) translateY(0);
+pointer-events: auto;
+}
 
-  @keyframes cbw-box-wobble      { 0%,100% { transform: rotate(-1deg) translateY(0); } 50% { transform: rotate(1deg) translateY(-2px); } }
-  @keyframes cbw-box-wobble-fast { 0% { transform: rotate(-1.5deg) translateY(0); } 100% { transform: rotate(1.5deg) translateY(-1px); } }
-  @keyframes cbw-blink-cute      { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
-  @keyframes cbw-box-hop         { 0%,100% { transform: translateY(0); } 35% { transform: translateY(-4px) rotate(-3deg); } 65% { transform: translateY(-2px) rotate(3deg); } }
-  @keyframes cbw-scan            { 0% { transform: translate(-3px, 0); } 100% { transform: translate(3px, 0); } }
-  @keyframes cbw-box-bounce      { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07) translateY(-3px); } }
-  @keyframes cbw-stuff-jiggle    { 0%,100% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-2deg) translateY(-1px); } 75% { transform: rotate(2deg) translateY(-1px); } }
-  @keyframes cbw-mouth-talk      { 0% { transform: scaleY(0.5); } 100% { transform: scaleY(1.3); } }
+/* ============================================================
+HEADER
+============================================================ */
+.cbw-header {
+position: relative;
+padding: 16px 14px 16px 18px;
+display: flex; align-items: center; gap: 12px;
+flex-shrink: 0;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.cbw-header-avatar {
+position: relative;
+width: 46px; height: 46px;
+border-radius: 14px;
+background: rgba(255, 255, 255, 0.18);
+border: 1px solid rgba(255, 255, 255, 0.28);
+display: flex; align-items: center; justify-content: center;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+.cbw-header-avatar::after {
+content: “”; position: absolute;
+width: 11px; height: 11px;
+bottom: -2px; right: -2px;
+background: #34d399;
+border: 2px solid var(–primary-deep);
+border-radius: 50%;
+}
+.cbw-header-avatar svg { width: 26px; height: 26px; color: #fff; }
+.cbw-header-avatar svg .cbw-van-hdr { animation: cbw-van-bob 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 
-  /* ---------- PANEL — silky open/close (transform + opacity only) ---------- */
-  /*
-   * Avoid filter:blur and complex multi-keyframe animations during the open —
-   * those caused visible jank on slower devices. A single transition with an
-   * overshoot easing on transform feels lively without dropping frames.
-   */
-  .cbw-panel {
-    position: absolute; bottom: 88px; right: 0;
-    width: min(390px, calc(100vw - 32px));
-    height: min(640px, calc(100vh - 120px));
-    background: #fff; border-radius: var(--radius); border: 1px solid var(--border);
-    box-shadow: 0 24px 60px -16px rgba(2,44,34,.3), 0 8px 24px -10px rgba(15,23,42,.15);
-    display: flex; flex-direction: column; overflow: hidden;
-    transform-origin: 100% 100%;
-    opacity: 0;
-    transform: scale(0.85) translateY(28px);
-    pointer-events: none;
-    will-change: transform, opacity;
-    transition:
-      transform 460ms cubic-bezier(0.22, 1.4, 0.36, 1),
-      opacity   320ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .cbw-root[data-open="true"] .cbw-panel {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    pointer-events: auto;
-  }
+.cbw-title-wrap { flex: 1; min-width: 0; line-height: 1.2; }
+.cbw-title {
+font-weight: 700; font-size: 16px;
+text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+letter-spacing: -0.01em;
+}
+.cbw-subtitle {
+font-size: 12px; opacity: 0.92;
+display: flex; align-items: center; gap: 6px;
+margin-top: 2px;
+}
+.cbw-subtitle::before {
+content: “”; width: 6px; height: 6px; border-radius: 50%;
+background: #34d399; box-shadow: 0 0 8px #fff;
+animation: cbw-online 2s ease-in-out infinite;
+}
+@keyframes cbw-online {
+0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); }
+50% { box-shadow: 0 0 0 5px rgba(52, 211, 153, 0); }
+}
 
-  /* ---------- HEADER ---------- */
-  .cbw-header { position: relative; padding: 14px 14px 14px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
-  .cbw-header-avatar {
-    position: relative; width: 48px; height: 48px; border-radius: 50%;
-    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
-    display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,.15);
-  }
-  .cbw-header-avatar::after { content:""; position:absolute; width:11px; height:11px; bottom:-2px; right:-2px; background:var(--accent); border:2px solid #0f172a; border-radius:50%; }
-  .cbw-title-wrap { flex:1; min-width:0; line-height:1.2; }
-  .cbw-title { font-weight:700; font-size:15.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-  .cbw-subtitle { font-size:12px; opacity:.92; display:flex; align-items:center; gap:6px; margin-top:1px; }
-  .cbw-subtitle::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow: 0 0 8px #fff; }
-  .cbw-actions { display:flex; gap:2px; align-items:center; }
-  .cbw-icon-btn { background: transparent; border: none; color:#fff; cursor: pointer; padding: 8px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: background 150ms ease; }
-  .cbw-icon-btn:hover { background: rgba(255,255,255,.2); }
-  .cbw-icon-btn svg { width:18px; height:18px; transition: transform 200ms ease; }
+.cbw-actions { display: flex; gap: 2px; align-items: center; }
+.cbw-icon-btn {
+background: transparent; border: none;
+color: #fff; cursor: pointer;
+padding: 8px; border-radius: 10px;
+display: flex; align-items: center; justify-content: center;
+transition: background 150ms ease;
+}
+.cbw-icon-btn:hover { background: rgba(255, 255, 255, 0.2); }
+.cbw-icon-btn svg { width: 18px; height: 18px; transition: transform 200ms ease; }
 
-  /* Refresh — full-rotation spin on click */
-  #cbwRefresh.cbw-spinning svg {
-    animation: cbw-spin-360 720ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  @keyframes cbw-spin-360 {
-    0%   { transform: rotate(0deg)   scale(1); }
-    50%  { transform: rotate(180deg) scale(1.12); }
-    100% { transform: rotate(360deg) scale(1); }
-  }
+#cbwRefresh.cbw-spinning svg {
+animation: cbw-spin-360 720ms var(–bounce);
+}
+@keyframes cbw-spin-360 {
+0% { transform: rotate(0deg) scale(1); }
+50% { transform: rotate(180deg) scale(1.12); }
+100% { transform: rotate(360deg) scale(1); }
+}
 
-  /* ---------- MESSAGES ---------- */
-  .cbw-messages { flex:1; padding: 16px 14px; overflow-y: auto; background: var(--surface); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-  .cbw-messages::-webkit-scrollbar { width: 6px; }
-  .cbw-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
-  
-  .cbw-msg { 
-    max-width: 85%; padding: 10px 14px; border-radius: 14px; 
-    font-size: 14px; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; 
-    animation: cbw-balloon-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; 
-    transform-origin: bottom center;
-  }
-  
-  @keyframes cbw-balloon-in { 
-    0% { opacity: 0; transform: scale(0.4) translateY(20px); filter: blur(4px); } 
-    60% { opacity: 1; transform: scale(1.05) translateY(-2px); filter: blur(0); }
-    100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } 
-  }
-  
-  .cbw-msg.cbw-bot {
-    align-self: flex-start;
-    background: linear-gradient(180deg, var(--bot-bubble-bg), #cce9f9);
-    color: var(--bot-bubble-text);
-    border: 1px solid var(--bot-bubble-border);
-    border-bottom-left-radius: 4px;
-    transform-origin: bottom left;
-    box-shadow: 0 2px 6px -2px rgba(2, 132, 199, 0.18);
-  }
-  .cbw-msg.cbw-user {
-    align-self: flex-end;
-    background: linear-gradient(145deg, #0ea5e9, #075985);
-    color: #fff;
-    border-bottom-right-radius: 4px;
-    transform-origin: bottom right;
-    box-shadow: 0 4px 12px -4px rgba(2, 132, 199, 0.45);
-  }
+/* ============================================================
+MESSAGES
+============================================================ */
+.cbw-messages {
+flex: 1; padding: 16px 14px;
+overflow-y: auto;
+background: var(–surface);
+display: flex; flex-direction: column; gap: 10px;
+scroll-behavior: smooth;
+}
+.cbw-messages::-webkit-scrollbar { width: 6px; }
+.cbw-messages::-webkit-scrollbar-thumb { background: var(–border-strong); border-radius: 6px; }
 
-  .cbw-typing { align-self:flex-start; display:inline-flex; gap:5px; padding:13px 16px; border-radius:14px; border-bottom-left-radius:4px; animation: cbw-balloon-in 0.4s ease both; transform-origin: bottom left; }
-  .cbw-typing span { width:7px; height:7px; border-radius:50%; background: #fff; opacity:.95; box-shadow: 0 0 6px rgba(255,255,255,.8); animation: cbw-bounce 1.2s infinite ease-in-out; }
-  .cbw-typing span:nth-child(2) { animation-delay:.15s; } .cbw-typing span:nth-child(3) { animation-delay:.3s; }
+.cbw-msg {
+max-width: 85%;
+padding: 11px 15px;
+border-radius: 16px;
+font-size: 14px;
+line-height: 1.5;
+word-wrap: break-word;
+white-space: pre-wrap;
+animation: cbw-balloon-in 0.45s var(–bounce) both;
+transform-origin: bottom center;
+}
+@keyframes cbw-balloon-in {
+0% { opacity: 0; transform: scale(0.4) translateY(20px); }
+60% { opacity: 1; transform: scale(1.04) translateY(-2px); }
+100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.cbw-msg.cbw-bot {
+align-self: flex-start;
+background: linear-gradient(180deg, var(–bot-bubble-bg), #d8eefb);
+color: var(–bot-bubble-text);
+border: 1px solid var(–bot-bubble-border);
+border-bottom-left-radius: 4px;
+transform-origin: bottom left;
+box-shadow: 0 2px 6px -2px rgba(2, 132, 199, 0.18);
+}
+.cbw-msg.cbw-user {
+align-self: flex-end;
+background: linear-gradient(135deg, #0ea5e9, #075985);
+color: #fff;
+border-bottom-right-radius: 4px;
+transform-origin: bottom right;
+box-shadow: 0 4px 12px -4px rgba(3, 105, 161, 0.45);
+}
 
-  /* ---------- CHIPS ---------- */
-  .cbw-chips { display:flex; flex-wrap:wrap; gap:6px; padding: 0 14px 10px; background: var(--surface); }
-  .cbw-chip { border: 1px solid var(--border); background: #fff; color: var(--text); padding: 7px 12px; border-radius: 999px; font: inherit; font-size: 12.5px; cursor: pointer; position: relative; overflow: hidden; transition: all 150ms ease; display: inline-flex; align-items: center; gap: 6px; }
-  .cbw-chip svg { width:14px; height:14px; flex-shrink:0; }
-  .cbw-chip:hover { background: var(--surface-2); transform: translateY(-1px); border-color: var(--primary); }
-  
-  .cbw-chip-highlight { border-color: transparent !important; font-weight: 600; }
-  .cbw-chip-quote .cbw-chip-progress { position: absolute; bottom: 0; left: 0; height: 3px; width: 0%; background: rgba(255,255,255,0.7); transition: width 600ms var(--transition); }
-  .cbw-chip-quote[data-stage="0"] .cbw-chip-progress { width: 0%; }
-  .cbw-chip-quote[data-stage="1"] .cbw-chip-progress { width: 25%; }
-  .cbw-chip-quote[data-stage="2"] .cbw-chip-progress { width: 50%; }
-  .cbw-chip-quote[data-stage="3"] .cbw-chip-progress { width: 75%; }
-  .cbw-chip-quote[data-stage="4"] .cbw-chip-progress { width: 100%; }
+.cbw-typing {
+align-self: flex-start;
+display: inline-flex; gap: 5px;
+padding: 13px 16px;
+border-radius: 16px;
+border-bottom-left-radius: 4px;
+animation: cbw-balloon-in 0.4s ease both;
+transform-origin: bottom left;
+}
+.cbw-typing span {
+width: 7px; height: 7px; border-radius: 50%;
+background: #fff; opacity: 0.95;
+box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+animation: cbw-bounce 1.2s infinite ease-in-out;
+}
+.cbw-typing span:nth-child(2) { animation-delay: 0.15s; }
+.cbw-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes cbw-bounce {
+0%, 80%, 100% { transform: translateY(0); opacity: 0.65; }
+40% { transform: translateY(-6px); opacity: 1; }
+}
 
-  /* ---------- FORMS ---------- */
-  .cbw-form { display:none; margin: 4px 14px 10px; padding: 14px; background: #fff; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 8px 20px -10px rgba(15,23,42,.1); animation: cbw-balloon-in 0.4s var(--transition); transform-origin: top center; }
-  .cbw-form[data-open="true"] { display: block; }
-  .cbw-form-head { display:flex; justify-content:space-between; margin-bottom:10px; }
-  .cbw-form-title { font-size:14px; font-weight:700; margin:0; }
-  .cbw-form-subtitle { font-size:12px; color: var(--text-muted); margin:2px 0 0; }
-  .cbw-form-close { cursor:pointer; background:none; border:none; font-size:18px; color: var(--text-muted); }
-  .cbw-field { width: 100%; padding: 9px 12px; margin-bottom: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font: inherit; font-size: 13.5px; }
-  .cbw-field:focus { border-color: var(--primary); outline: none; }
-  textarea.cbw-field { resize:vertical; min-height:64px; }
-  .cbw-form-submit { width:100%; padding:11px; background: #0f766e; border:none; border-radius:10px; color:#fff; font:inherit; font-weight:600; cursor:pointer; transition: 150ms ease; }
-  .cbw-form-submit:hover { background: var(--primary-hover); }
-  .cbw-calc-progress { height:6px; border-radius:999px; background: var(--surface-2); margin-bottom: 12px; overflow: hidden; }
-  .cbw-calc-progress-bar { height: 100%; background: var(--accent); border-radius: 999px; width: 33%; transition: width 500ms var(--transition); }
-  .cbw-calc-step { display:none; animation: cbw-balloon-in 0.3s var(--transition); }
-  .cbw-calc-step[data-active="true"] { display:block; }
-  .cbw-calc-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-  .cbw-calc-helper { font-size:11.5px; color: var(--text-muted); margin: 4px 0 10px; }
-  .cbw-calc-actions { display:flex; gap:8px; margin-top:6px; }
-  .cbw-calc-back { flex: 0 0 auto; padding: 11px 16px; background: var(--surface-2); border:1px solid var(--border); border-radius:10px; font:inherit; font-size:13.5px; font-weight:600; cursor:pointer; }
-  .cbw-calc-result { background: var(--surface-2); border: 1px solid var(--accent); border-radius: 12px; padding: 14px; margin: 10px 0; text-align: center; }
-  .cbw-calc-result-value { font-size: 24px; font-weight: 700; color: #0f766e; margin: 4px 0 6px; }
+/* ============================================================
+QUICK CHIPS
+============================================================ */
+.cbw-chips {
+display: flex; flex-wrap: wrap; gap: 6px;
+padding: 0 14px 10px;
+background: var(–surface);
+}
+.cbw-chip {
+border: 1px solid var(–border-strong);
+background: #fff; color: var(–text);
+padding: 8px 13px;
+border-radius: 999px;
+font: inherit; font-size: 12.5px; font-weight: 600;
+cursor: pointer;
+position: relative; overflow: hidden;
+transition: all 180ms ease;
+display: inline-flex; align-items: center; gap: 6px;
+}
+.cbw-chip:hover {
+background: var(–surface-blue);
+transform: translateY(-1px);
+border-color: var(–primary);
+color: var(–primary-deep);
+}
 
-  /* ---------- CONTACT BAR ---------- */
-  .cbw-contact-bar { display: flex; gap: 6px; padding: 8px 12px; background: #fff; border-top: 1px solid var(--border); }
-  .cbw-contact-bar:empty { display: none; }
-  .cbw-contact-icon { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px; min-height: 40px; border-radius: 11px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); text-decoration: none; font-size: 12px; font-weight: 600; transition: all 200ms ease; }
-  .cbw-contact-icon svg { width: 16px; height: 16px; flex-shrink: 0; }
-  .cbw-contact-icon[data-kind="phone"]:hover { color: #f97316; border-color: rgba(249,115,22,.5); background: rgba(249,115,22,.08); }
-  .cbw-contact-icon[data-kind="whatsapp"]:hover { color: #16a34a; border-color: rgba(22,163,74,.5); background: rgba(22,163,74,.08); }
-  .cbw-contact-icon[data-kind="email"]:hover { color: #3b82f6; border-color: rgba(59,130,246,.5); background: rgba(59,130,246,.08); }
+/* ============================================================
+CTA BAR — opens calculator
+============================================================ */
+.cbw-cta-bar {
+flex-shrink: 0;
+padding: 12px 14px 4px;
+background: linear-gradient(180deg, #fff 0%, var(–surface) 100%);
+border-bottom: 1px solid var(–border);
+position: relative;
+z-index: 3;
+}
+.cbw-cta-btn {
+width: 100%;
+display: flex; align-items: center; gap: 12px;
+padding: 14px 16px;
+border-radius: var(–radius-md);
+border: none; cursor: pointer;
+font: inherit; font-size: 15px; font-weight: 700;
+text-align: left;
+color: #fff;
+position: relative; overflow: hidden;
+transition: transform 200ms ease, filter 200ms ease;
+}
+.cbw-cta-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.cbw-cta-btn:active { transform: scale(0.98); }
+.cbw-cta-btn::after {
+content: “”; position: absolute; inset: 0;
+background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+transform: translateX(-100%);
+transition: transform 0.6s;
+}
+.cbw-cta-btn:hover::after { transform: translateX(100%); }
+.cbw-cta-icon {
+width: 38px; height: 38px;
+border-radius: 11px;
+background: rgba(255, 255, 255, 0.2);
+border: 1px solid rgba(255, 255, 255, 0.3);
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+animation: cbw-cta-pulse 2.4s ease-in-out infinite;
+}
+@keyframes cbw-cta-pulse {
+0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 0 rgba(255, 255, 255, 0); }
+50% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 6px rgba(255, 255, 255, 0.08); }
+}
+.cbw-cta-icon svg { width: 22px; height: 22px; color: #fff; }
+.cbw-cta-text { flex: 1; line-height: 1.25; }
+.cbw-cta-text small {
+display: block; font-size: 11.5px; font-weight: 500;
+opacity: 0.9; margin-top: 2px;
+}
+.cbw-cta-arrow {
+width: 20px; height: 20px; color: #fff;
+opacity: 0.85;
+transition: transform 220ms ease;
+flex-shrink: 0;
+}
+.cbw-cta-btn:hover .cbw-cta-arrow { transform: translateX(4px); }
 
-  /* ---------- STICKY CTA (always visible during chat) ---------- */
-  .cbw-cta-bar {
-    flex-shrink: 0;
-    padding: 10px 14px;
-    background: linear-gradient(180deg, #ffffff 0%, var(--surface) 100%);
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    z-index: 3;
-  }
-  .cbw-cta-btn {
-    width: 100%;
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 16px;
-    border-radius: 14px;
-    border: none; cursor: pointer;
-    font: inherit; font-size: 15px; font-weight: 700;
-    text-align: left;
-    color: #fff;
-    position: relative; overflow: hidden;
-    transition: transform 200ms ease, filter 200ms ease;
-  }
-  .cbw-cta-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
-  .cbw-cta-btn:active { transform: scale(0.98); }
-  .cbw-cta-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.30);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.30);
-    animation: cbw-cta-pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes cbw-cta-pulse {
-    0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), 0 0 0 0 rgba(255,255,255,0); }
-    50%      { box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), 0 0 0 6px rgba(255,255,255,0.06); }
-  }
-  .cbw-cta-icon svg { width: 20px; height: 20px; color: #fff; }
-  .cbw-cta-text { flex: 1; line-height: 1.25; }
-  .cbw-cta-text small { display: block; font-size: 11.5px; font-weight: 500; opacity: 0.88; margin-top: 1px; }
-  .cbw-cta-arrow { width: 20px; height: 20px; color: #fff; opacity: 0.85; transition: transform 220ms ease; flex-shrink: 0; }
-  .cbw-cta-btn:hover .cbw-cta-arrow { transform: translateX(4px); }
+.cbw-cta-hint {
+margin: 8px 4px 0;
+font-size: 11.5px;
+color: var(–text-muted);
+text-align: center;
+}
+.cbw-cta-hint::before {
+content: “”; display: inline-block;
+width: 6px; height: 6px; border-radius: 50%;
+background: var(–accent);
+margin-right: 6px; vertical-align: middle;
+animation: cbw-online 2s ease-in-out infinite;
+}
 
-  /* Hide CTA bar when calc is active (already inside calc) */
-  .cbw-root.cbw-calc-active .cbw-cta-bar,
-  .cbw-root.cbw-calc-active .cbw-messages,
-  .cbw-root.cbw-calc-active .cbw-chips { display: none !important; }
-  /* Subtle fade for chips while user is typing */
-  .cbw-root.cbw-typing-active .cbw-chips { opacity: 0.4; pointer-events: none; transition: opacity 240ms ease; }
+/* Hide chat parts when calc is active */
+.cbw-root.cbw-calc-active .cbw-cta-bar,
+.cbw-root.cbw-calc-active .cbw-messages,
+.cbw-root.cbw-calc-active .cbw-chips,
+.cbw-root.cbw-calc-active .cbw-composer,
+.cbw-root.cbw-calc-active .cbw-contact-bar { display: none !important; }
 
-  /* ---------- CALCULATOR — service cards + multi-step wizard ---------- */
-  .cbw-calc-wizard {
-    display: none;
-    flex-direction: column;
-    flex: 1;
-    background: var(--surface);
-    overflow: hidden;
-  }
-  .cbw-calc-wizard[data-open="true"] { display: flex; }
-  .cbw-calc-head {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px;
-    background: #fff;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .cbw-calc-head-back {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1px solid var(--border); background: #fff; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text); transition: all 150ms ease;
-    flex-shrink: 0;
-  }
-  .cbw-calc-head-back:hover { background: var(--surface); }
-  .cbw-calc-head-back svg { width: 16px; height: 16px; }
-  .cbw-calc-head-info { flex: 1; line-height: 1.2; }
-  .cbw-calc-head-title { font-size: 14px; font-weight: 700; color: var(--text); }
-  .cbw-calc-head-step  { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
-  .cbw-calc-head-x {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: none; background: transparent; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); transition: background 150ms ease;
-  }
-  .cbw-calc-head-x:hover { background: var(--surface); color: var(--text); }
-  .cbw-calc-head-x svg { width: 16px; height: 16px; }
+/* ============================================================
+CALCULATOR WIZARD
+============================================================ */
+.cbw-calc-wizard {
+display: none;
+flex-direction: column;
+flex: 1;
+background: var(–surface);
+overflow: hidden;
+}
+.cbw-calc-wizard[data-open=“true”] { display: flex; }
 
-  .cbw-calc-bar {
-    height: 4px; background: var(--surface-2);
-    flex-shrink: 0;
-  }
-  .cbw-calc-bar > span {
-    display: block; height: 100%;
-    background: linear-gradient(90deg, var(--accent), #14b8a6);
-    border-radius: 0 4px 4px 0;
-    transition: width 480ms cubic-bezier(0.22,1,0.36,1);
-    box-shadow: 0 0 8px rgba(20,184,166,0.5);
-  }
+.cbw-calc-head {
+display: flex; align-items: center; gap: 10px;
+padding: 13px 14px;
+background: #fff;
+border-bottom: 1px solid var(–border);
+flex-shrink: 0;
+}
+.cbw-calc-head-back {
+width: 34px; height: 34px;
+border-radius: 10px;
+border: 1px solid var(–border);
+background: #fff;
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+color: var(–text);
+transition: all 150ms ease;
+flex-shrink: 0;
+}
+.cbw-calc-head-back:hover { background: var(–surface-blue); border-color: var(–primary); color: var(–primary); }
+.cbw-calc-head-back svg { width: 16px; height: 16px; }
+.cbw-calc-head-info { flex: 1; line-height: 1.2; min-width: 0; }
+.cbw-calc-head-title {
+font-size: 14.5px; font-weight: 800;
+color: var(–text);
+letter-spacing: -0.01em;
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cbw-calc-head-step { font-size: 11.5px; color: var(–text-muted); margin-top: 2px; font-weight: 600; }
+.cbw-calc-head-x {
+width: 34px; height: 34px; border-radius: 10px;
+border: none; background: transparent; cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+color: var(–text-muted);
+transition: all 150ms ease;
+}
+.cbw-calc-head-x:hover { background: var(–surface); color: var(–bad); }
+.cbw-calc-head-x svg { width: 16px; height: 16px; }
 
-  .cbw-calc-body {
-    flex: 1;
-    padding: 18px 16px 16px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .cbw-calc-body::-webkit-scrollbar { width: 6px; }
-  .cbw-calc-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+/* Progress bar */
+.cbw-calc-bar {
+height: 12px;
+padding: 4px 14px;
+background: #fff;
+border-bottom: 1px solid var(–border);
+flex-shrink: 0;
+}
+.cbw-calc-bar-track {
+position: relative;
+height: 4px;
+overflow: hidden;
+border-radius: 999px;
+background: linear-gradient(90deg, #e2e8f0, #f1f5f9);
+}
+.cbw-calc-bar-track > span {
+display: block; height: 100%;
+background: linear-gradient(90deg, var(–primary), #0ea5e9, var(–accent));
+border-radius: 999px;
+transition: width 380ms cubic-bezier(0.22, 1, 0.36, 1);
+box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 4px 10px -6px rgba(3, 105, 161, 0.85);
+}
 
-  .cbw-calc-prompt {
-    font-size: 17px; font-weight: 700;
-    color: var(--text); line-height: 1.3;
-    margin: 0 0 4px;
-  }
-  .cbw-calc-hint {
-    font-size: 12.5px; color: var(--text-muted);
-    margin: 0 0 14px;
-  }
+.cbw-calc-body {
+flex: 1;
+padding: 18px 16px 18px;
+overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+}
+.cbw-calc-body::-webkit-scrollbar { width: 6px; }
+.cbw-calc-body::-webkit-scrollbar-thumb { background: var(–border-strong); border-radius: 6px; }
 
-  /* Service cards (step 1) */
-  .cbw-svc-grid {
-    display: flex; flex-direction: column; gap: 10px;
-    margin-bottom: 4px;
-  }
-  .cbw-svc-card {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px;
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    cursor: pointer;
-    text-align: left;
-    font: inherit;
-    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
-    position: relative; overflow: hidden;
-  }
-  .cbw-svc-card:hover {
-    transform: translateY(-2px);
-    border-color: #0f766e;
-    background: #f0fdfa;
-    box-shadow: 0 8px 24px -10px rgba(2, 44, 34, 0.30);
-  }
-  .cbw-svc-card:active { transform: scale(0.99); }
-  .cbw-svc-icon {
-    width: 56px; height: 56px;
-    border-radius: 14px;
-    background: linear-gradient(145deg, #d1fae5, #a7f3d0);
-    border: 1px solid #86efac;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    color: #064e3b;
-    transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .cbw-svc-card:hover .cbw-svc-icon {
-    background: linear-gradient(145deg, #064e3b, #022c22);
-    color: #d1fae5;
-    transform: scale(1.06) rotate(-3deg);
-    box-shadow: 0 6px 16px -6px rgba(2, 44, 34, 0.55);
-  }
-  .cbw-svc-icon svg { width: 30px; height: 30px; }
-  .cbw-svc-text { flex: 1; min-width: 0; }
-  .cbw-svc-title { font-size: 14.5px; font-weight: 700; color: var(--text); }
-  .cbw-svc-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .cbw-svc-card .cbw-svc-arrow {
-    width: 20px; height: 20px; color: var(--text-muted);
-    transition: transform 220ms ease, color 200ms ease;
-    flex-shrink: 0;
-  }
-  .cbw-svc-card:hover .cbw-svc-arrow { color: #0f766e; transform: translateX(4px); }
+.cbw-calc-prompt {
+font-family: ‘DM Serif Display’, serif;
+font-size: 22px; font-weight: 400;
+color: var(–text); line-height: 1.2;
+margin: 0 0 6px;
+letter-spacing: -0.01em;
+}
+.cbw-calc-hint {
+font-size: 13px; color: var(–text-muted);
+margin: 0 0 16px;
+line-height: 1.45;
+}
 
-  /* Service icons (landscape) — slightly larger so animations have room */
-  .cbw-svc-icon { width: 72px; height: 54px; border-radius: 14px; padding: 4px; }
-  .cbw-svc-icon svg { width: 100%; height: 100%; }
+/* ============================================================
+DIRECTION CARDS — odvoz vs dovoz with rich animations
+============================================================ */
+.cbw-dir-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: 12px;
+margin-bottom: 4px;
+}
+.cbw-dir-card {
+position: relative;
+display: flex; align-items: center; gap: 14px;
+padding: 16px 16px;
+background: linear-gradient(135deg, #fff 0%, var(–surface-blue) 100%);
+border: 2px solid var(–border);
+border-radius: var(–radius-md);
+cursor: pointer;
+text-align: left;
+font: inherit;
+transition: transform 250ms var(–bounce), border-color 200ms ease, box-shadow 250ms ease;
+overflow: hidden;
+}
+.cbw-dir-card::before {
+content: “”; position: absolute; inset: 0;
+background: linear-gradient(135deg, transparent 40%, rgba(14, 165, 233, 0.06) 100%);
+opacity: 0; transition: opacity 300ms ease;
+}
+.cbw-dir-card:hover {
+transform: translateY(-3px);
+border-color: var(–primary);
+box-shadow: var(–shadow-lg);
+}
+.cbw-dir-card:hover::before { opacity: 1; }
+.cbw-dir-card:active { transform: scale(0.99); }
 
-  /* Hover-only animations on service icons */
-  .cbw-svc-card:hover .cbw-anim-truck-body,
-  .cbw-svc-card:hover .cbw-anim-truck-rev    { animation: cbw-bounce-soft .45s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-wheel        { animation: cbw-spin .7s linear infinite; transform-origin: center; transform-box: fill-box; }
-  .cbw-svc-card:hover .cbw-anim-house        { animation: cbw-fade-pulse 1.6s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-box-fly      { animation: cbw-box-fly 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-out-1        { animation: cbw-eject 1.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-out-2        { animation: cbw-eject 1.5s ease-in-out .2s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-out-3        { animation: cbw-eject 1.5s ease-in-out .4s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-broom        { animation: cbw-broom-sweep .85s ease-in-out infinite alternate; transform-origin: 100% 0; transform-box: fill-box; }
-  .cbw-svc-card:hover .cbw-anim-spark-pop    { animation: cbw-spark 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-fall-1       { animation: cbw-drop 1.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-fall-2       { animation: cbw-drop 1.5s ease-in-out .35s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-fall-3       { animation: cbw-drop 1.5s ease-in-out .7s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-lid          { animation: cbw-lid 1.5s ease-in-out infinite; transform-origin: 0 100%; transform-box: fill-box; }
-  .cbw-svc-card:hover .cbw-anim-recycle-spin { animation: cbw-spin 2s linear infinite; transform-origin: center; transform-box: fill-box; }
-  .cbw-svc-card:hover .cbw-anim-road         { animation: cbw-road-flow .55s linear infinite; }
-  .cbw-svc-card:hover .cbw-anim-smoke        { animation: cbw-smoke 1.1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.cbw-dir-visual {
+width: 110px; height: 80px;
+flex-shrink: 0;
+border-radius: var(–radius-sm);
+background: linear-gradient(135deg, var(–primary-soft) 0%, #fff 100%);
+border: 1px solid #bae6fd;
+padding: 8px;
+display: flex; align-items: center; justify-content: center;
+overflow: hidden;
+position: relative;
+}
+.cbw-dir-visual svg { width: 100%; height: 100%; display: block; }
 
-  /* Direction (odvoz/dovoz) + new category icon animations */
-  .cbw-svc-card:hover .cbw-anim-house        { animation: cbw-fade-pulse 1.6s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-house-dest   { animation: cbw-fade-pulse 1.6s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-box-out      { animation: cbw-pkg-out 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-box-in       { animation: cbw-pkg-in  1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-door         { animation: cbw-door-blink 1.4s ease-in-out infinite; }
-  .cbw-svc-card:hover .cbw-anim-motion       { animation: cbw-motion-flow .6s linear infinite; }
-  .cbw-svc-card:hover .cbw-anim-wardrobe     { animation: cbw-bounce-soft .55s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-door-l       { animation: cbw-door-open 2.4s ease-in-out infinite; transform-origin: 0 50%; transform-box: fill-box; }
-  .cbw-svc-card:hover .cbw-anim-knob         { animation: cbw-knob-pulse 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-sofa         { animation: cbw-bounce-soft .55s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-fridge       { animation: cbw-bounce-soft .55s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-fridge-light { animation: cbw-light-blink 2.4s ease-in-out infinite; }
-  .cbw-svc-card:hover .cbw-anim-fridge-door  { animation: cbw-fridge-door 2.4s ease-in-out infinite; transform-origin: 0 50%; transform-box: fill-box; }
-  .cbw-svc-card:hover .cbw-anim-snow         { animation: cbw-spin 4s linear infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-brick-1      { animation: cbw-drop 1.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-brick-2      { animation: cbw-drop 1.5s ease-in-out .35s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-brick-3      { animation: cbw-drop 1.5s ease-in-out .7s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-dust         { animation: cbw-spark 1.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-pallet       { animation: cbw-lift .9s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-forklift     { animation: cbw-bounce-soft .45s ease-in-out infinite alternate; }
-  .cbw-svc-card:hover .cbw-anim-other        { animation: cbw-other-pulse 2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-dot-1        { animation: cbw-spark 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-dot-2        { animation: cbw-spark 1.4s ease-in-out .25s infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-dot-3        { animation: cbw-spark 1.4s ease-in-out .5s  infinite; transform-box: fill-box; transform-origin: center; }
-  .cbw-svc-card:hover .cbw-anim-dot-4        { animation: cbw-spark 1.4s ease-in-out .75s infinite; transform-box: fill-box; transform-origin: center; }
+.cbw-dir-text { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.cbw-dir-title {
+display: block;
+font-size: 17px; font-weight: 800;
+color: var(–text);
+letter-spacing: -0.01em;
+}
+.cbw-dir-sub {
+display: block;
+font-size: 12.5px; color: var(–text-muted);
+margin-top: 4px; line-height: 1.4;
+font-weight: 500;
+}
 
-  @keyframes cbw-pkg-out {
-    0%, 100% { transform: translate(0, 0); opacity: 1; }
-    40%      { transform: translate(8px, -1px); opacity: 1; }
-    55%      { transform: translate(8px, -1px); opacity: 0; }
-    56%      { transform: translate(0, 0); opacity: 0; }
-    70%      { transform: translate(0, 0); opacity: 1; }
-  }
-  @keyframes cbw-pkg-in {
-    0%, 100% { transform: translate(0, 0); opacity: 1; }
-    40%      { transform: translate(10px, -1px); opacity: 1; }
-    55%      { transform: translate(10px, -1px); opacity: 0; }
-    56%      { transform: translate(0, 0); opacity: 0; }
-    70%      { transform: translate(0, 0); opacity: 1; }
-  }
-  @keyframes cbw-door-blink   { 0%, 70%, 100% { opacity: .5; } 78% { opacity: 1; } }
-  @keyframes cbw-motion-flow  { from { transform: translateX(0); } to { transform: translateX(-6px); } }
-  @keyframes cbw-door-open    { 0%, 60%, 100% { transform: scaleX(1); } 75%, 88% { transform: scaleX(0.25); } }
-  @keyframes cbw-knob-pulse   { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
-  @keyframes cbw-light-blink  { 0%, 60%, 100% { opacity: 0; } 72%, 88% { opacity: 0.85; } }
-  @keyframes cbw-fridge-door  { 0%, 60%, 100% { transform: scaleX(1); } 75%, 90% { transform: scaleX(0.3); } }
-  @keyframes cbw-lift         { 0% { transform: translateY(0); } 100% { transform: translateY(-3px); } }
-  @keyframes cbw-other-pulse  { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.cbw-dir-arrow {
+width: 22px; height: 22px;
+color: var(–text-light);
+transition: all 220ms ease;
+flex-shrink: 0;
+position: relative; z-index: 1;
+}
+.cbw-dir-card:hover .cbw-dir-arrow { color: var(–primary); transform: translateX(5px); }
 
-  /* Photo upload UI */
-  .cbw-photo-drop {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
-    background: var(--surface-2);
-    border: 1.5px dashed var(--primary);
-    border-radius: 12px;
-    color: var(--primary-deep);
-    font-size: 13.5px; font-weight: 600;
-    cursor: pointer;
-    transition: all 150ms ease;
-  }
-  .cbw-photo-drop:hover { background: var(--accent-soft); border-style: solid; }
-  .cbw-photo-drop svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .cbw-photo-thumbs {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    margin-top: 8px;
-  }
-  .cbw-photo-thumb {
-    position: relative;
-    width: 64px; height: 64px;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: #fff;
-  }
-  .cbw-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .cbw-photo-thumb button {
-    position: absolute; top: 2px; right: 2px;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(15, 23, 42, 0.7);
-    color: #fff;
-    cursor: pointer;
-    font: bold 14px sans-serif;
-    line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .cbw-photo-thumb button:hover { background: rgba(220, 38, 38, 0.85); }
+/* Direction SVG animations */
+.cbw-dir-card .cbw-dir-van { transform-box: fill-box; transform-origin: center; }
+.cbw-dir-card:hover .cbw-dir-van-anim {
+animation: cbw-dir-drive 2.4s ease-in-out infinite;
+}
+@keyframes cbw-dir-drive {
+0% { transform: translateX(0); }
+50% { transform: translateX(var(–drive-x, 8px)); }
+100% { transform: translateX(0); }
+}
 
-  /* GDPR note */
-  .cbw-gdpr {
-    font-size: 11.5px; color: var(--text-muted);
-    margin: 8px 0 0; line-height: 1.4;
-  }
+.cbw-dir-card .cbw-dir-road-dash {
+stroke-dasharray: 5 5;
+animation: cbw-road-dash 1.2s linear infinite;
+opacity: 0.4;
+}
+@keyframes cbw-road-dash {
+from { stroke-dashoffset: 0; }
+to { stroke-dashoffset: -10; }
+}
 
-  /* Direction cards — slightly bigger */
-  .cbw-dir-card { padding: 18px 14px; }
-  .cbw-dir-card .cbw-svc-icon { width: 90px; height: 60px; }
+.cbw-dir-card .cbw-dir-package {
+transform-box: fill-box; transform-origin: center bottom;
+opacity: 0;
+}
+.cbw-dir-card:hover .cbw-dir-pkg-1 { animation: cbw-pkg-load 2.4s ease-in-out infinite 0s; }
+.cbw-dir-card:hover .cbw-dir-pkg-2 { animation: cbw-pkg-load 2.4s ease-in-out infinite 0.3s; }
+.cbw-dir-card:hover .cbw-dir-pkg-3 { animation: cbw-pkg-load 2.4s ease-in-out infinite 0.6s; }
+@keyframes cbw-pkg-load {
+0% { opacity: 0; transform: translateY(-6px) scale(0.6); }
+20% { opacity: 1; transform: translateY(0) scale(1); }
+80% { opacity: 1; transform: translateY(0) scale(1); }
+100% { opacity: 0; transform: translateY(6px) scale(0.6); }
+}
 
-  /* Sticky call-now bar (above composer) */
-  .cbw-callbar {
-    flex-shrink: 0;
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 12px;
-    background: linear-gradient(180deg, #f0f9ff, #e0f2fe);
-    border-top: 1px solid var(--bot-bubble-border);
-  }
-  .cbw-callbar-text {
-    flex: 1;
-    font-size: 12px;
-    color: var(--bot-bubble-text);
-    line-height: 1.3;
-  }
-  .cbw-callbar-text strong { display: block; font-size: 13px; color: var(--primary-deep); }
-  .cbw-callbar-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: var(--primary);
-    color: #fff;
-    text-decoration: none;
-    font-size: 12.5px; font-weight: 700;
-    transition: filter 150ms ease, transform 150ms ease;
-    flex-shrink: 0;
-  }
-  .cbw-callbar-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
-  .cbw-callbar-btn svg { width: 14px; height: 14px; }
-  .cbw-callbar:empty,
-  .cbw-root.cbw-calc-active .cbw-callbar { display: none; }
+/* Arrival package animation for dovoz (reverse direction) */
+.cbw-dir-card:hover .cbw-dir-pkg-deliver-1 { animation: cbw-pkg-deliver 2.4s ease-in-out infinite 0s; }
+.cbw-dir-card:hover .cbw-dir-pkg-deliver-2 { animation: cbw-pkg-deliver 2.4s ease-in-out infinite 0.3s; }
+.cbw-dir-card:hover .cbw-dir-pkg-deliver-3 { animation: cbw-pkg-deliver 2.4s ease-in-out infinite 0.6s; }
+@keyframes cbw-pkg-deliver {
+0% { opacity: 0; transform: translateY(-8px) scale(0.6); }
+25% { opacity: 1; transform: translateY(0) scale(1); }
+75% { opacity: 1; transform: translateY(0) scale(1); }
+100% { opacity: 0; transform: translateY(0) scale(1.1); }
+}
 
-  /* CTA helper text under the CTA bar */
-  .cbw-cta-hint {
-    margin: 6px 4px 0;
-    font-size: 11.5px;
-    color: var(--text-muted);
-    text-align: center;
-  }
-  .cbw-cta-hint::before {
-    content: ""; display: inline-block;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #22c55e;
-    margin-right: 5px; vertical-align: middle;
-    animation: cbw-online-dot 2s ease-in-out infinite;
-  }
-  @keyframes cbw-online-dot {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-    50%      { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
-  }
+/* Wheels */
+.cbw-dir-card:hover .cbw-dir-wheel {
+animation: cbw-wheel-spin 0.6s linear infinite;
+transform-box: fill-box; transform-origin: center;
+}
 
-  /* Invalid field state (used by phone/name/email validators) */
-  .cbw-invalid { border-color: #f87171 !important; box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.18) !important; }
+/* ============================================================
+SEARCH BAR — service browser
+============================================================ */
+.cbw-search-hero {
+position: relative;
+margin-bottom: 14px;
+}
+.cbw-search-hero-input {
+width: 100%;
+padding: 14px 16px 14px 46px;
+background: #fff;
+border: 2px solid var(–border);
+border-radius: var(–radius-md);
+font: inherit; font-size: 14.5px; font-weight: 500;
+color: var(–text);
+outline: none;
+transition: all 200ms ease;
+box-shadow: var(–shadow-sm);
+}
+.cbw-search-hero-input::placeholder { color: var(–text-light); font-weight: 500; }
+.cbw-search-hero-input:focus {
+border-color: var(–primary);
+box-shadow: 0 0 0 4px rgba(3, 105, 161, 0.12), var(–shadow-md);
+}
+.cbw-search-hero-icon {
+position: absolute;
+left: 16px; top: 50%;
+transform: translateY(-50%);
+color: var(–text-light);
+pointer-events: none;
+transition: color 200ms ease;
+}
+.cbw-search-hero-input:focus + .cbw-search-hero-icon { color: var(–primary); }
+.cbw-search-hero-icon svg { width: 18px; height: 18px; display: block; }
 
-  @keyframes cbw-bounce-soft { 0% { transform: translateY(0); } 100% { transform: translateY(-1.4px); } }
-  @keyframes cbw-spin        { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes cbw-fade-pulse  { 0% { opacity: 1; } 100% { opacity: .65; } }
-  @keyframes cbw-box-fly {
-    0%, 100% { transform: translate(0, 0); opacity: 1; }
-    35%      { transform: translate(8px, -2px); opacity: 1; }
-    50%      { transform: translate(8px, -2px); opacity: 0; }
-    51%      { transform: translate(0, 0); opacity: 0; }
-    65%      { transform: translate(0, 0); opacity: 1; }
-  }
-  @keyframes cbw-eject {
-    0%, 65%, 100% { transform: translate(0, 0) scale(1); opacity: .7; }
-    78%           { transform: translate(0, -10px) scale(.6); opacity: .15; }
-    82%           { transform: translate(0, 0) scale(1); opacity: 0; }
-    90%           { transform: translate(0, 0) scale(1); opacity: .7; }
-  }
-  @keyframes cbw-broom-sweep { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
-  @keyframes cbw-spark { 0%, 100% { opacity: 0; transform: scale(.3); } 50% { opacity: 1; transform: scale(1.15); } }
-  @keyframes cbw-drop {
-    0%   { transform: translateY(0);   opacity: 0; }
-    8%   { opacity: .7; }
-    55%  { transform: translateY(20px); opacity: .7; }
-    65%  { opacity: 0; }
-    100% { transform: translateY(0);   opacity: 0; }
-  }
-  @keyframes cbw-lid { 0%, 30%, 100% { transform: rotate(0deg); } 14% { transform: rotate(-12deg); } }
-  @keyframes cbw-road-flow { from { transform: translateX(0); } to { transform: translateX(-12px); } }
-  @keyframes cbw-smoke {
-    0%   { transform: translate(0, 0) scale(1);    opacity: .45; }
-    60%  { transform: translate(2px, -6px) scale(1.4); opacity: 0; }
-    100% { transform: translate(0, 0) scale(1);    opacity: 0; }
-  }
+.cbw-search-results {
+margin-bottom: 14px;
+background: var(–accent-soft);
+border: 1px solid #fde68a;
+border-radius: var(–radius-md);
+padding: 12px 14px;
+display: none;
+}
+.cbw-search-results[data-active=“true”] { display: block; animation: cbw-balloon-in 0.3s var(–bounce) both; }
+.cbw-search-results-label {
+font-size: 11.5px;
+font-weight: 800;
+text-transform: uppercase;
+color: #92400e;
+letter-spacing: 0.04em;
+margin-bottom: 8px;
+}
+.cbw-search-results-list {
+display: flex; flex-wrap: wrap; gap: 6px;
+}
+.cbw-search-result-chip {
+padding: 7px 12px;
+background: #fff;
+border: 1px solid #fbbf24;
+border-radius: 999px;
+font: inherit; font-size: 12.5px; font-weight: 600;
+color: var(–text);
+cursor: pointer;
+transition: all 180ms ease;
+}
+.cbw-search-result-chip:hover {
+background: var(–accent);
+color: #fff;
+transform: translateY(-1px);
+}
 
-  /* Tone variants for option cards (semantic color-coding) */
-  .cbw-q-card[data-tone="good"]  { border-color: #86efac; background: #f0fdf4; color: #166534; }
-  .cbw-q-card[data-tone="good"]:hover { background: #dcfce7; border-color: #4ade80; color: #14532d; }
-  .cbw-q-card[data-tone="good"][aria-pressed="true"] {
-    background: linear-gradient(145deg, #16a34a, #14532d);
-    border-color: #14532d; color: #fff;
-    box-shadow: 0 4px 12px -4px rgba(20,83,45,0.45);
-  }
-  .cbw-q-card[data-tone="warn"]  { border-color: #fde68a; background: #fffbeb; color: #854d0e; }
-  .cbw-q-card[data-tone="warn"]:hover { background: #fef3c7; border-color: #facc15; color: #713f12; }
-  .cbw-q-card[data-tone="warn"][aria-pressed="true"] {
-    background: linear-gradient(145deg, #d97706, #78350f);
-    border-color: #78350f; color: #fff;
-    box-shadow: 0 4px 12px -4px rgba(120,53,15,0.45);
-  }
-  .cbw-q-card[data-tone="bad"]   { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
-  .cbw-q-card[data-tone="bad"]:hover { background: #fee2e2; border-color: #f87171; color: #7f1d1d; }
-  .cbw-q-card[data-tone="bad"][aria-pressed="true"] {
-    background: linear-gradient(145deg, #dc2626, #7f1d1d);
-    border-color: #7f1d1d; color: #fff;
-    box-shadow: 0 4px 12px -4px rgba(127,29,29,0.45);
-  }
-  .cbw-q-card-custom { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-  .cbw-q-card-custom svg { width: 14px; height: 14px; }
-  .cbw-q-custom-wrap { margin-top: 8px; animation: cbw-msg-in 220ms ease both; }
+/* ============================================================
+SERVICE CATEGORY CARDS
+============================================================ */
+.cbw-svc-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-bottom: 4px;
+}
+.cbw-svc-card {
+position: relative;
+display: flex; flex-direction: column; align-items: center;
+gap: 10px;
+padding: 16px 12px 14px;
+background: #fff;
+border: 2px solid var(–border);
+border-radius: var(–radius-md);
+cursor: pointer;
+text-align: center;
+font: inherit;
+transition: transform 200ms var(–bounce), border-color 200ms ease, box-shadow 250ms ease, background 200ms ease;
+overflow: hidden;
+}
+.cbw-svc-card::before {
+content: “”; position: absolute; inset: 0;
+background: linear-gradient(180deg, transparent 60%, rgba(3, 105, 161, 0.05) 100%);
+opacity: 0;
+transition: opacity 300ms ease;
+}
+.cbw-svc-card:hover {
+transform: translateY(-3px);
+border-color: var(–primary);
+box-shadow: var(–shadow-lg);
+background: linear-gradient(180deg, #fff 0%, var(–surface-blue) 100%);
+}
+.cbw-svc-card:hover::before { opacity: 1; }
+.cbw-svc-card:active { transform: scale(0.98); }
 
-  /* Multi-select chip — inline icon */
-  .cbw-q-chip { display: inline-flex; align-items: center; gap: 6px; }
-  .cbw-q-chip-ico { width: 16px; height: 16px; display: inline-flex; flex-shrink: 0; }
-  .cbw-q-chip-ico svg { width: 100%; height: 100%; }
+.cbw-svc-icon-wrap {
+width: 64px; height: 64px;
+border-radius: 16px;
+background: linear-gradient(135deg, var(–primary-soft) 0%, #fff 100%);
+border: 1px solid #bae6fd;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+transition: all 280ms var(–bounce);
+position: relative;
+z-index: 1;
+}
+.cbw-svc-card:hover .cbw-svc-icon-wrap {
+background: linear-gradient(135deg, var(–primary) 0%, var(–primary-deep) 100%);
+transform: scale(1.08) rotate(-3deg);
+border-color: var(–primary-deep);
+box-shadow: 0 8px 20px -8px rgba(3, 105, 161, 0.55);
+}
+.cbw-svc-icon-wrap svg {
+width: 36px; height: 36px;
+color: var(–primary-deep);
+transition: color 250ms ease;
+}
+.cbw-svc-card:hover .cbw-svc-icon-wrap svg { color: #fff; }
 
-  /* Question inputs — radio cards */
-  .cbw-q-cards {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    margin-bottom: 4px;
-  }
-  .cbw-q-cards.cbw-q-cards-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .cbw-q-card {
-    padding: 12px 10px;
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    text-align: center;
-    cursor: pointer;
-    font: inherit; font-size: 13px; font-weight: 600;
-    color: var(--text);
-    transition: all 180ms ease;
-    line-height: 1.25;
-  }
-  .cbw-q-card:hover { border-color: #0f766e; background: #f0fdfa; }
-  .cbw-q-card[aria-pressed="true"] {
-    border-color: #064e3b;
-    background: linear-gradient(145deg, #064e3b, #022c22);
-    color: #fff;
-    box-shadow: 0 4px 12px -4px rgba(2,44,34,0.45);
-  }
-  .cbw-q-card small { display: block; font-weight: 500; font-size: 11px; opacity: 0.8; margin-top: 2px; }
+.cbw-svc-text { position: relative; z-index: 1; }
+.cbw-svc-title {
+display: block;
+font-size: 14px; font-weight: 800;
+color: var(–text);
+letter-spacing: -0.01em;
+}
+.cbw-svc-sub {
+display: block;
+font-size: 11.5px; color: var(–text-muted);
+margin-top: 3px; line-height: 1.35;
+font-weight: 500;
+}
 
-  /* Question — multi-select chips */
-  .cbw-q-multi { display: flex; flex-wrap: wrap; gap: 6px; }
-  .cbw-q-chip {
-    padding: 8px 12px;
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: 999px;
-    cursor: pointer;
-    font: inherit; font-size: 13px; font-weight: 500;
-    color: var(--text);
-    transition: all 160ms ease;
-  }
-  .cbw-q-chip:hover { border-color: #0f766e; background: #f0fdfa; }
-  .cbw-q-chip[aria-pressed="true"] {
-    border-color: #064e3b;
-    background: linear-gradient(145deg, #064e3b, #022c22);
-    color: #fff;
-    box-shadow: 0 3px 10px -4px rgba(2,44,34,0.45);
-  }
+/* ============================================================
+QUESTION CARDS — fillout hover effect
+============================================================ */
+.cbw-q-cards {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-bottom: 4px;
+}
+.cbw-q-cards.cbw-q-cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cbw-q-cards.cbw-q-cards-1 { grid-template-columns: 1fr; }
 
-  /* Question — toggle (yes/no) */
-  .cbw-q-toggle { display: flex; gap: 8px; }
-  .cbw-q-toggle .cbw-q-card { flex: 1; }
+.cbw-q-card {
+position: relative;
+min-height: 64px;
+padding: 14px 14px 14px 44px;
+background: #fff;
+border: 2px solid var(–border);
+border-radius: var(–radius-md);
+text-align: left;
+cursor: pointer;
+font: inherit; font-size: 14px; font-weight: 700;
+color: var(–text);
+transition: transform 180ms ease, border-color 180ms ease, box-shadow 200ms ease;
+line-height: 1.3;
+overflow: hidden;
+}
 
-  /* Question — text/number/date */
-  .cbw-q-input {
-    width: 100%;
-    padding: 12px 14px;
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    font: inherit; font-size: 14.5px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 180ms ease, box-shadow 180ms ease;
-  }
-  .cbw-q-input::placeholder { color: var(--text-muted); }
-  .cbw-q-input:focus {
-    border-color: #064e3b;
-    box-shadow: 0 0 0 3px rgba(6,78,59,0.15);
-  }
+/* Radio circle */
+.cbw-q-card::before {
+content: “”;
+position: absolute;
+left: 14px; top: 50%;
+transform: translateY(-50%);
+width: 20px; height: 20px;
+border-radius: 50%;
+border: 2.5px solid var(–border-strong);
+background: #fff;
+transition: all 200ms ease;
+z-index: 2;
+}
 
-  /* Question — group (sub-fields) */
-  .cbw-q-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .cbw-q-group-item label { display: block; font-size: 11.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+/* Fillout effect — sweeps from left to right */
+.cbw-q-card .cbw-fill {
+position: absolute;
+inset: 0;
+width: 0%;
+background: linear-gradient(90deg, rgba(186, 230, 253, 0.65) 0%, rgba(240, 249, 255, 0.3) 100%);
+transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+z-index: 1;
+pointer-events: none;
+}
+.cbw-q-card > *:not(.cbw-fill) { position: relative; z-index: 2; }
 
-  /* Wizard footer (Back / Next) */
-  .cbw-calc-foot {
-    display: flex; gap: 8px;
-    padding: 12px 14px;
-    background: #fff;
-    border-top: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .cbw-calc-foot button {
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font: inherit; font-size: 14px; font-weight: 600;
-    cursor: pointer;
-    transition: all 180ms ease;
-    border: 1.5px solid var(--border);
-    background: #fff;
-    color: var(--text);
-  }
-  .cbw-calc-foot .cbw-calc-back-btn:hover { background: var(--surface-2); }
-  .cbw-calc-foot .cbw-calc-next-btn {
-    flex: 2;
-    border: none;
-    color: #fff;
-  }
-  .cbw-calc-foot .cbw-calc-next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .cbw-calc-foot .cbw-calc-next-btn:hover:not(:disabled) { filter: brightness(1.08); }
+.cbw-q-card:hover {
+transform: translateY(-1px);
+border-color: #93c5fd;
+box-shadow: var(–shadow-md);
+}
+.cbw-q-card:hover .cbw-fill { width: 100%; }
+.cbw-q-card:hover::before { border-color: var(–primary); }
 
-  /* Summary */
-  .cbw-sum-card {
-    background: #fff;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
-  }
-  .cbw-sum-row {
-    display: flex; justify-content: space-between; gap: 12px;
-    padding: 6px 0;
-    font-size: 13px;
-    border-bottom: 1px dashed var(--border);
-  }
-  .cbw-sum-row:last-child { border-bottom: none; }
-  .cbw-sum-row > span:first-child { color: var(--text-muted); }
-  .cbw-sum-row > span:last-child  { color: var(--text); font-weight: 600; text-align: right; max-width: 60%; }
-  .cbw-sum-price {
-    margin: 12px 0 14px;
-    padding: 16px;
-    border-radius: 14px;
-    text-align: center;
-    color: #fff;
-    /* leather background applied via class */
-  }
-  .cbw-sum-price-label { font-size: 12px; opacity: 0.85; margin-bottom: 4px; }
-  .cbw-sum-price-value { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
-  .cbw-sum-price-note  { font-size: 11px; opacity: 0.78; margin-top: 4px; }
+/* Selected state */
+.cbw-q-card[aria-pressed=“true”] {
+border-color: var(–primary);
+background: linear-gradient(135deg, #fff 0%, var(–surface-blue) 100%);
+box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.12), var(–shadow-md);
+}
+.cbw-q-card[aria-pressed=“true”] .cbw-fill {
+width: 100%;
+background: linear-gradient(90deg, rgba(14, 165, 233, 0.18) 0%, rgba(240, 249, 255, 0.05) 100%);
+}
+.cbw-q-card[aria-pressed=“true”]::before {
+border-color: var(–primary);
+background: var(–primary);
+}
+.cbw-q-card[aria-pressed=“true”]::after {
+content: “”;
+position: absolute;
+left: 20px; top: 50%;
+transform: translate(0, calc(-50% + 1px)) rotate(45deg);
+width: 5px; height: 9px;
+border-right: 2.5px solid #fff;
+border-bottom: 2.5px solid #fff;
+z-index: 3;
+}
 
-  /* Thank-you screen */
-  .cbw-thanks {
-    text-align: center;
-    padding: 24px 16px;
-  }
-  .cbw-thanks-emoji {
-    font-size: 48px; margin-bottom: 12px;
-    animation: cbw-thanks-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  @keyframes cbw-thanks-pop { 0% { transform: scale(0); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
-  .cbw-thanks-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
-  .cbw-thanks-text  { font-size: 14px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+/* Tone variants */
+.cbw-q-card[data-tone=“good”]:hover { border-color: var(–good); }
+.cbw-q-card[data-tone=“good”][aria-pressed=“true”] {
+border-color: var(–good);
+box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12), var(–shadow-md);
+background: linear-gradient(135deg, #fff 0%, #ecfdf5 100%);
+}
+.cbw-q-card[data-tone=“good”][aria-pressed=“true”]::before { background: var(–good); border-color: var(–good); }
 
-  /* ---------- COMPOSER & ZMENA FARIEB INPUT BOXU ---------- */
-  .cbw-composer { border-top: 1px solid var(--border); background: #fff; padding: 10px 14px 12px; display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-  .cbw-composer-wrap { flex: 1; position: relative; }
-  
-  .cbw-input { 
-    width: 100%; resize: none; border: 1px solid var(--border); outline: none; 
-    border-radius: 20px; padding: 10px 14px; font: inherit; font-size: 14.5px; 
-    line-height: 1.4; max-height: 120px; min-height: 42px; 
-    background: #ffffff; color: var(--text); transition: all 200ms ease; 
-  }
-  .cbw-input::placeholder { color: var(--text-muted); }
-  
-  /* Po kliknutí sa input zmení na prémiovú kožu s bielym textom */
-  .cbw-input:focus { border-color: #022c22; box-shadow: 0 0 0 3px rgba(17,94,89,0.2); }
-  .cbw-input:focus::placeholder { color: rgba(255,255,255,0.7); }
-  
-  .cbw-send { width: 42px; height: 42px; border-radius: 50%; border: none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform 150ms ease, filter 150ms ease; flex-shrink: 0; }
-  .cbw-send:hover:not(:disabled) { filter: brightness(1.1); }
-  .cbw-send:disabled { opacity:.5; cursor:not-allowed; }
-  .cbw-send svg { width:18px; height:18px; }
+.cbw-q-card[data-tone=“warn”] {
+border-color: #fde68a;
+background: linear-gradient(180deg, #fff 0%, #fffbeb 100%);
+}
+.cbw-q-card[data-tone=“warn”]::before { border-color: var(–warn); }
+.cbw-q-card[data-tone=“warn”][aria-pressed=“true”] {
+border-color: var(–accent-hover);
+box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14), var(–shadow-md);
+}
+.cbw-q-card[data-tone=“warn”][aria-pressed=“true”]::before { background: var(–accent-hover); border-color: var(–accent-hover); }
 
-  /* MOBILE */
-  @media (max-width: 480px) {
-    .cbw-root { bottom:16px; right:16px; }
-    .cbw-launcher { width:62px; height:62px; }
-    .cbw-root[data-open="true"] .cbw-panel { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; border-radius: 0 !important; }
-  }
+.cbw-q-card[data-tone=“bad”] {
+border-color: #fecaca;
+background: linear-gradient(180deg, #fff 0%, #fef2f2 100%);
+}
+.cbw-q-card[data-tone=“bad”]::before { border-color: var(–bad); }
+.cbw-q-card[data-tone=“bad”][aria-pressed=“true”] {
+border-color: #dc2626;
+box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.13), var(–shadow-md);
+}
+.cbw-q-card[data-tone=“bad”][aria-pressed=“true”]::before { background: #dc2626; border-color: #dc2626; }
+
+.cbw-q-card small {
+display: block;
+font-weight: 500; font-size: 11.5px;
+color: var(–text-muted);
+margin-top: 5px;
+line-height: 1.4;
+}
+
+/* Custom answer card with + icon */
+.cbw-q-card-custom {
+display: flex; align-items: center; gap: 8px;
+padding-left: 44px;
+}
+.cbw-q-card-custom svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.cbw-q-custom-wrap {
+margin-top: 10px;
+animation: cbw-balloon-in 0.3s ease both;
+}
+
+/* ============================================================
+QUESTION — TEXT/NUMBER/DATE inputs
+============================================================ */
+.cbw-q-input {
+width: 100%;
+padding: 13px 15px;
+background: #fff;
+border: 2px solid var(–border);
+border-radius: var(–radius-sm);
+font: inherit; font-size: 14.5px;
+color: var(–text);
+outline: none;
+transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.cbw-q-input::placeholder { color: var(–text-light); }
+.cbw-q-input:focus {
+border-color: var(–primary);
+box-shadow: 0 0 0 4px rgba(3, 105, 161, 0.12);
+}
+textarea.cbw-q-input { resize: vertical; min-height: 84px; line-height: 1.5; }
+
+.cbw-q-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cbw-q-group-item label {
+display: block;
+font-size: 12px;
+color: var(–text-muted);
+font-weight: 700;
+margin-bottom: 6px;
+}
+
+.cbw-invalid {
+border-color: var(–bad) !important;
+box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+}
+.cbw-invalid-msg {
+color: var(–bad);
+font-size: 12px;
+font-weight: 600;
+margin-top: 4px;
+}
+
+/* ============================================================
+SEARCH PICKER (item selection)
+============================================================ */
+.cbw-search-pick { display: grid; gap: 12px; }
+
+.cbw-search-box { position: relative; }
+.cbw-search-box::before {
+content: “”;
+position: absolute;
+left: 16px; top: 50%;
+transform: translateY(-50%);
+width: 18px; height: 18px;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ viewBox=‘0 0 24 24’ fill=‘none’ stroke=’%2364748b’ stroke-width=‘2.4’ stroke-linecap=‘round’ stroke-linejoin=‘round’%3E%3Ccircle cx=‘11’ cy=‘11’ r=‘8’/%3E%3Cline x1=‘21’ y1=‘21’ x2=‘16.65’ y2=‘16.65’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-size: contain;
+pointer-events: none;
+}
+.cbw-search-input { padding-left: 44px !important; }
+
+.cbw-search-tools {
+display: flex; align-items: center; justify-content: space-between;
+gap: 8px;
+min-height: 24px;
+}
+.cbw-search-count {
+color: var(–text-muted);
+font-size: 12px; font-weight: 700;
+}
+.cbw-clear-pick {
+border: none; background: transparent;
+color: var(–primary);
+font: inherit; font-size: 12px; font-weight: 800;
+cursor: pointer;
+padding: 4px 0;
+}
+.cbw-clear-pick:hover { color: var(–primary-deep); text-decoration: underline; }
+
+.cbw-search-filters, .cbw-selected-pills {
+display: flex; flex-wrap: wrap; gap: 7px;
+}
+.cbw-selected-pills:empty { display: none; }
+
+.cbw-search-section-label {
+margin-top: 4px;
+color: var(–text-muted);
+font-size: 11px;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+}
+
+.cbw-filter-chip, .cbw-add-custom {
+border: 1.5px solid var(–border-strong);
+background: #fff;
+color: var(–text);
+border-radius: 999px;
+padding: 7px 12px;
+font: inherit; font-size: 12px; font-weight: 700;
+cursor: pointer;
+transition: all 180ms ease;
+}
+.cbw-filter-chip:hover, .cbw-add-custom:hover {
+transform: translateY(-1px);
+border-color: var(–primary);
+background: var(–surface-blue);
+color: var(–primary-deep);
+}
+.cbw-filter-chip[aria-pressed=“true”] {
+border-color: var(–primary);
+background: var(–primary);
+color: #fff;
+}
+
+.cbw-selected-pill {
+display: inline-flex; align-items: center; gap: 6px;
+background: var(–accent-soft);
+border: 1.5px solid var(–accent);
+color: #92400e;
+border-radius: 999px;
+padding: 7px 10px 7px 12px;
+font: inherit; font-size: 12px; font-weight: 700;
+cursor: pointer;
+transition: all 180ms ease;
+}
+.cbw-selected-pill:hover { background: var(–accent); color: #fff; }
+.cbw-selected-pill span { font-size: 14px; line-height: 1; opacity: 0.7; }
+
+.cbw-result-list {
+display: grid;
+gap: 8px;
+max-height: 320px;
+overflow-y: auto;
+padding-right: 4px;
+}
+.cbw-result-list::-webkit-scrollbar { width: 6px; }
+.cbw-result-list::-webkit-scrollbar-thumb { background: var(–border-strong); border-radius: 6px; }
+
+.cbw-result-option {
+display: flex; align-items: center; gap: 12px;
+padding: 12px;
+border: 1.5px solid var(–border);
+border-radius: var(–radius-sm);
+background: #fff;
+cursor: pointer;
+text-align: left;
+font: inherit; font-size: 13.5px; font-weight: 700;
+color: var(–text);
+transition: all 200ms ease;
+position: relative; overflow: hidden;
+}
+.cbw-result-option::before {
+content: “”; position: absolute; inset: 0;
+background: linear-gradient(90deg, rgba(186, 230, 253, 0.45) 0%, transparent 100%);
+width: 0%;
+transition: width 360ms cubic-bezier(0.22, 1, 0.36, 1);
+pointer-events: none;
+}
+.cbw-result-option > * { position: relative; z-index: 1; }
+.cbw-result-option:hover {
+border-color: var(–primary);
+transform: translateY(-1px);
+}
+.cbw-result-option:hover::before { width: 100%; }
+.cbw-result-option[aria-pressed=“true”] {
+border-color: var(–primary);
+background: var(–surface-blue);
+color: var(–primary-deep);
+box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
+}
+.cbw-result-option[aria-pressed=“true”]::before { width: 100%; }
+
+.cbw-result-icon {
+width: 36px; height: 36px;
+border-radius: 10px;
+background: var(–primary-soft);
+border: 1px solid #bae6fd;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+color: var(–primary-deep);
+transition: all 200ms ease;
+}
+.cbw-result-option:hover .cbw-result-icon {
+background: var(–primary);
+color: #fff;
+border-color: var(–primary-deep);
+transform: scale(1.05);
+}
+.cbw-result-option[aria-pressed=“true”] .cbw-result-icon {
+background: var(–primary);
+color: #fff;
+border-color: var(–primary-deep);
+}
+.cbw-result-icon svg { width: 20px; height: 20px; }
+
+.cbw-result-label {
+flex: 1; min-width: 0;
+line-height: 1.3;
+}
+.cbw-result-label small {
+display: block;
+font-size: 11.5px;
+color: var(–text-muted);
+font-weight: 500;
+margin-top: 2px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.cbw-result-option[aria-pressed=“true”] .cbw-result-label small { color: var(–primary); }
+
+.cbw-result-check {
+flex: 0 0 auto;
+width: 22px; height: 22px;
+border-radius: 50%;
+border: 2px solid var(–border-strong);
+display: flex; align-items: center; justify-content: center;
+font-size: 13px; font-weight: 700;
+color: var(–text-muted);
+transition: all 200ms ease;
+}
+.cbw-result-option[aria-pressed=“true”] .cbw-result-check {
+border-color: var(–primary);
+background: var(–primary);
+color: #fff;
+}
+
+.cbw-search-empty {
+padding: 14px;
+border-radius: var(–radius-sm);
+background: var(–surface);
+color: var(–text-muted);
+font-size: 13px;
+font-weight: 600;
+line-height: 1.5;
+text-align: center;
+}
+
+/* ============================================================
+QUANTITY VISUAL — animated van loading
+============================================================ */
+.cbw-q-number-wrap { display: grid; gap: 10px; }
+.cbw-qty-visual {
+min-height: 130px;
+padding: 12px;
+border: 1.5px solid var(–border);
+border-radius: var(–radius-md);
+background: radial-gradient(circle at 50% 0%, #fff 0%, var(–surface) 70%, var(–surface-blue) 100%);
+display: grid; gap: 8px;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(–shadow-sm);
+overflow: hidden;
+}
+.cbw-qty-svg {
+width: 100%; max-width: 320px; height: 92px;
+margin: 0 auto; display: block;
+}
+.cbw-load-fill, .cbw-load-boxes, .cbw-bag-stack {
+transform-box: fill-box;
+transform-origin: left center;
+transform: scaleX(var(–fill-ratio, 0.08));
+transition: transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cbw-pile-grow {
+transform-box: fill-box;
+transform-origin: bottom center;
+transform: scale(var(–pile-scale, 0.35));
+transition: transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cbw-qty-meta {
+font-size: 12.5px;
+color: var(–text-muted);
+font-weight: 700;
+text-align: center;
+}
+.cbw-qty-warning .cbw-qty-meta { color: var(–accent-hover); }
+.cbw-qty-road { stroke-dasharray: 10 8; animation: cbw-road-drift 1.2s linear infinite; }
+@keyframes cbw-road-drift {
+from { stroke-dashoffset: 0; }
+to { stroke-dashoffset: -18; }
+}
+
+/* ============================================================
+PHOTO UPLOAD
+============================================================ */
+.cbw-photo-drop {
+display: inline-flex; align-items: center; gap: 8px;
+padding: 11px 16px;
+background: var(–surface-blue);
+border: 1.5px dashed var(–primary);
+border-radius: var(–radius-sm);
+color: var(–primary-deep);
+font-size: 13.5px; font-weight: 700;
+cursor: pointer;
+transition: all 200ms ease;
+}
+.cbw-photo-drop:hover {
+background: var(–primary-soft);
+border-style: solid;
+transform: translateY(-1px);
+}
+.cbw-photo-drop svg { width: 18px; height: 18px; flex-shrink: 0; }
+.cbw-photo-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.cbw-photo-thumb {
+position: relative;
+width: 70px; height: 70px;
+border-radius: var(–radius-sm);
+overflow: hidden;
+border: 1.5px solid var(–border);
+background: #fff;
+box-shadow: var(–shadow-sm);
+}
+.cbw-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cbw-photo-thumb button {
+position: absolute; top: 4px; right: 4px;
+width: 22px; height: 22px;
+border-radius: 50%;
+border: none;
+background: rgba(15, 23, 42, 0.7);
+color: #fff;
+cursor: pointer;
+font: bold 14px sans-serif;
+line-height: 1;
+display: flex; align-items: center; justify-content: center;
+transition: background 180ms ease;
+}
+.cbw-photo-thumb button:hover { background: var(–bad); }
+
+/* ============================================================
+GDPR CONSENT
+============================================================ */
+.cbw-gdpr-wrap {
+display: flex; align-items: flex-start; gap: 10px;
+padding: 12px 14px;
+background: var(–surface);
+border: 1.5px solid var(–border);
+border-radius: var(–radius-sm);
+margin-top: 12px;
+cursor: pointer;
+transition: all 200ms ease;
+}
+.cbw-gdpr-wrap:hover { border-color: var(–primary); background: var(–surface-blue); }
+.cbw-gdpr-wrap[data-checked=“true”] {
+border-color: var(–primary);
+background: var(–surface-blue);
+}
+.cbw-gdpr-check {
+width: 22px; height: 22px;
+border-radius: 6px;
+border: 2px solid var(–border-strong);
+background: #fff;
+flex-shrink: 0;
+position: relative;
+transition: all 200ms ease;
+margin-top: 1px;
+}
+.cbw-gdpr-wrap[data-checked=“true”] .cbw-gdpr-check {
+background: var(–primary);
+border-color: var(–primary);
+}
+.cbw-gdpr-wrap[data-checked=“true”] .cbw-gdpr-check::after {
+content: “”;
+position: absolute;
+left: 6px; top: 2px;
+width: 6px; height: 11px;
+border-right: 2.5px solid #fff;
+border-bottom: 2.5px solid #fff;
+transform: rotate(45deg);
+}
+.cbw-gdpr-text {
+flex: 1;
+font-size: 12.5px;
+color: var(–text-muted);
+line-height: 1.5;
+font-weight: 500;
+}
+.cbw-gdpr-text strong { color: var(–text); font-weight: 700; }
+.cbw-gdpr-text a { color: var(–primary); text-decoration: underline; }
+
+/* ============================================================
+WIZARD FOOTER
+============================================================ */
+.cbw-calc-foot {
+display: flex; gap: 10px;
+padding: 12px 14px 14px;
+background: #fff;
+border-top: 1px solid var(–border);
+flex-shrink: 0;
+}
+.cbw-calc-foot button {
+flex: 1;
+padding: 13px 16px;
+border-radius: var(–radius-sm);
+font: inherit; font-size: 14.5px; font-weight: 700;
+cursor: pointer;
+transition: all 200ms ease;
+border: 1.5px solid var(–border-strong);
+background: #fff;
+color: var(–text);
+}
+.cbw-calc-back-btn:hover { background: var(–surface-blue); border-color: var(–primary); color: var(–primary); }
+.cbw-calc-next-btn {
+flex: 2;
+border: none;
+color: #fff;
+position: relative;
+overflow: hidden;
+}
+.cbw-calc-next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.cbw-calc-next-btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.cbw-calc-next-btn:active:not(:disabled) { transform: scale(0.98); }
+
+/* ============================================================
+SUMMARY
+============================================================ */
+.cbw-sum-card {
+background: #fff;
+border: 1.5px solid var(–border);
+border-radius: var(–radius-md);
+padding: 16px;
+margin-bottom: 14px;
+box-shadow: var(–shadow-sm);
+}
+.cbw-sum-row {
+display: flex; justify-content: space-between; gap: 12px;
+padding: 8px 0;
+font-size: 13.5px;
+border-bottom: 1px dashed var(–border);
+}
+.cbw-sum-row:last-child { border-bottom: none; padding-bottom: 0; }
+.cbw-sum-row:first-child { padding-top: 0; }
+.cbw-sum-row > span:first-child {
+color: var(–text-muted);
+font-weight: 600;
+flex-shrink: 0;
+}
+.cbw-sum-row > span:last-child {
+color: var(–text);
+font-weight: 700;
+text-align: right;
+max-width: 65%;
+}
+
+.cbw-sum-price {
+margin: 14px 0;
+padding: 22px 16px;
+border-radius: var(–radius-md);
+text-align: center;
+color: #fff;
+position: relative;
+overflow: hidden;
+}
+.cbw-sum-price::before {
+content: “”;
+position: absolute;
+top: -50%; left: -50%;
+width: 200%; height: 200%;
+background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+animation: cbw-price-glow 4s ease-in-out infinite;
+}
+@keyframes cbw-price-glow {
+0%, 100% { transform: translate(0, 0) scale(1); }
+50% { transform: translate(10px, 10px) scale(1.1); }
+}
+.cbw-sum-price-label {
+font-size: 12.5px;
+font-weight: 700;
+opacity: 0.9;
+margin-bottom: 4px;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+position: relative;
+}
+.cbw-sum-price-value {
+font-family: ‘DM Serif Display’, serif;
+font-size: 38px;
+font-weight: 400;
+letter-spacing: -0.02em;
+position: relative;
+}
+.cbw-sum-price-note {
+font-size: 12px;
+opacity: 0.85;
+margin-top: 6px;
+line-height: 1.4;
+position: relative;
+}
+
+/* ============================================================
+THANKS SCREEN
+============================================================ */
+.cbw-thanks {
+text-align: center;
+padding: 32px 16px;
+}
+.cbw-thanks-icon {
+width: 80px; height: 80px;
+margin: 0 auto 16px;
+border-radius: 50%;
+background: linear-gradient(135deg, var(–good) 0%, #059669 100%);
+display: flex; align-items: center; justify-content: center;
+box-shadow: 0 8px 24px -8px rgba(16, 185, 129, 0.5);
+animation: cbw-thanks-pop 0.7s var(–bounce);
+}
+.cbw-thanks-icon svg { width: 44px; height: 44px; color: #fff; }
+@keyframes cbw-thanks-pop {
+0% { transform: scale(0); }
+60% { transform: scale(1.15); }
+100% { transform: scale(1); }
+}
+.cbw-thanks-title {
+font-family: ‘DM Serif Display’, serif;
+font-size: 26px;
+color: var(–text);
+margin-bottom: 8px;
+letter-spacing: -0.01em;
+}
+.cbw-thanks-text {
+font-size: 14px;
+color: var(–text-muted);
+margin-bottom: 20px;
+line-height: 1.5;
+}
+
+/* ============================================================
+CONTACT BAR
+============================================================ */
+.cbw-contact-bar {
+display: flex; gap: 8px;
+padding: 10px 14px;
+background: #fff;
+border-top: 1px solid var(–border);
+}
+.cbw-contact-bar:empty { display: none; }
+.cbw-contact-icon {
+flex: 1;
+display: inline-flex; align-items: center; justify-content: center;
+gap: 6px;
+padding: 10px 8px;
+min-height: 42px;
+border-radius: var(–radius-sm);
+border: 1.5px solid var(–border);
+background: var(–surface);
+color: var(–text-muted);
+text-decoration: none;
+font-size: 12px;
+font-weight: 700;
+transition: all 200ms ease;
+}
+.cbw-contact-icon svg { width: 16px; height: 16px; flex-shrink: 0; }
+.cbw-contact-icon[data-kind=“phone”]:hover {
+color: var(–accent-hover);
+border-color: var(–accent);
+background: var(–accent-soft);
+transform: translateY(-1px);
+}
+.cbw-contact-icon[data-kind=“whatsapp”]:hover {
+color: #16a34a;
+border-color: #86efac;
+background: #f0fdf4;
+transform: translateY(-1px);
+}
+.cbw-contact-icon[data-kind=“email”]:hover {
+color: var(–primary);
+border-color: #93c5fd;
+background: var(–surface-blue);
+transform: translateY(-1px);
+}
+
+/* ============================================================
+COMPOSER
+============================================================ */
+.cbw-composer {
+border-top: 1px solid var(–border);
+background: #fff;
+padding: 12px 14px;
+display: flex; align-items: flex-end; gap: 10px;
+flex-shrink: 0;
+}
+.cbw-composer-wrap { flex: 1; position: relative; }
+.cbw-input {
+width: 100%; resize: none;
+border: 1.5px solid var(–border);
+outline: none;
+border-radius: 22px;
+padding: 11px 16px;
+font: inherit; font-size: 14.5px;
+line-height: 1.4;
+max-height: 120px;
+min-height: 44px;
+background: #fff;
+color: var(–text);
+transition: all 200ms ease;
+}
+.cbw-input::placeholder { color: var(–text-light); }
+.cbw-input:focus {
+border-color: var(–primary);
+box-shadow: 0 0 0 4px rgba(3, 105, 161, 0.12);
+}
+.cbw-send {
+width: 44px; height: 44px;
+border-radius: 50%;
+border: none;
+color: #fff;
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+transition: all 200ms ease;
+flex-shrink: 0;
+}
+.cbw-send:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.cbw-send:disabled { opacity: 0.5; cursor: not-allowed; }
+.cbw-send svg { width: 18px; height: 18px; }
+
+/* ============================================================
+MOBILE
+============================================================ */
+@media (max-width: 480px) {
+.cbw-root { bottom: 16px; right: 16px; }
+.cbw-launcher { width: 64px; height: 64px; }
+.cbw-launcher-icon { width: 36px; height: 36px; }
+.cbw-root[data-open=“true”] .cbw-panel {
+position: fixed !important;
+inset: 0 !important;
+width: 100vw !important;
+height: 100dvh !important;
+border-radius: 0 !important;
+}
+.cbw-svc-grid { grid-template-columns: 1fr 1fr; }
+.cbw-q-cards { grid-template-columns: 1fr; }
+.cbw-q-cards.cbw-q-cards-3 { grid-template-columns: 1fr 1fr; }
+.cbw-dir-visual { width: 90px; height: 70px; }
+.cbw-sum-price-value { font-size: 32px; }
+}
+
+/* ============================================================
+BLUE CALCULATOR OVERRIDES — clean, consistent calculator UI
+============================================================ */
+.cbw-cta-btn.cbw-accent-gradient,
+.cbw-small-btn.cbw-accent-gradient {
+background-color: var(–primary) !important;
+background-image: linear-gradient(135deg, #0ea5e9 0%, #0369a1 58%, #0c4a6e 100%) !important;
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,.28),
+inset 0 -1px 2px rgba(0,0,0,.18),
+0 8px 24px -8px rgba(3,105,161,.55) !important;
+}
+.cbw-cta-hint::before { background: var(–primary-bright); }
+.cbw-search-results {
+background: var(–surface-blue) !important;
+border-color: #bae6fd !important;
+}
+.cbw-search-results-label { color: var(–primary-deep) !important; }
+.cbw-search-result-chip {
+border-color: #93c5fd !important;
+color: var(–primary-deep) !important;
+}
+.cbw-search-result-chip:hover {
+background: var(–primary) !important;
+color: #fff !important;
+}
+.cbw-selected-pill {
+background: var(–surface-blue) !important;
+border-color: #93c5fd !important;
+color: var(–primary-deep) !important;
+}
+.cbw-selected-pill:hover { background: var(–primary) !important; color: #fff !important; }
+.cbw-inline-warning {
+background: var(–surface-blue) !important;
+border-color: #bae6fd !important;
+color: var(–primary-deep) !important;
+}
+.cbw-simple-help {
+display: flex; gap: 10px; align-items: flex-start;
+padding: 12px 14px; margin: 0 0 12px;
+border-radius: var(–radius-sm);
+background: linear-gradient(135deg, #fff 0%, var(–surface-blue) 100%);
+border: 1.5px solid #bae6fd;
+color: var(–primary-deep);
+font-size: 12.5px; font-weight: 700; line-height: 1.45;
+}
+.cbw-simple-help svg { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; }
+.cbw-result-list.cbw-result-list-simple { max-height: 360px; }
+.cbw-result-option.cbw-result-option-simple {
+padding: 13px 12px;
+border-width: 2px;
+}
+.cbw-result-option-simple .cbw-result-label { font-size: 14px; }
+.cbw-custom-block {
+margin-top: 12px;
+padding: 12px;
+border-radius: var(–radius-md);
+background: #fff;
+border: 1.5px solid var(–border);
+}
+.cbw-custom-title {
+font-size: 12px; font-weight: 800; color: var(–text-muted);
+text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px;
+}
+
+/* ============================================================
+UX V3 — faster, clearer customer-first calculator
+============================================================ */
+.cbw-cta-bar { padding-bottom: 12px !important; }
+.cbw-cta-hint { display: none !important; }
+.cbw-launcher-icon { width: 44px; height: 44px; }
+.cbw-launcher-icon .cbw-bubble-mark,
+.cbw-header-avatar .cbw-bubble-mark { transform-box: fill-box; transform-origin: center; }
+.cbw-launcher:hover .cbw-bubble-mark { animation: cbw-van-bob 1.35s ease-in-out infinite; }
+.cbw-dir-card[aria-pressed=“true”] {
+border-color: var(–primary);
+background: linear-gradient(135deg, #ffffff 0%, var(–surface-blue) 100%);
+box-shadow: 0 0 0 3px rgba(3,105,161,.12), var(–shadow-md);
+}
+.cbw-fast-search-row {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 8px;
+align-items: stretch;
+}
+.cbw-fast-search-row .cbw-search-box { min-width: 0; }
+.cbw-fast-search-row .cbw-small-btn { min-width: 86px; }
+.cbw-fast-note {
+margin-top: -2px;
+font-size: 12px;
+color: var(–text-muted);
+font-weight: 650;
+line-height: 1.4;
+}
+.cbw-picked-bar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 8px;
+padding: 10px 12px;
+border-radius: var(–radius-sm);
+background: #fff;
+border: 1.5px solid #bae6fd;
+color: var(–primary-deep);
+font-size: 12.5px;
+font-weight: 800;
+box-shadow: var(–shadow-sm);
+}
+.cbw-picked-bar strong { font-size: 13px; }
+.cbw-result-list.cbw-result-list-simple { max-height: 300px !important; grid-template-columns: 1fr; }
+.cbw-result-option.cbw-result-option-simple { min-height: 62px; padding: 11px 12px !important; }
+.cbw-result-option-simple .cbw-result-label small {
+white-space: normal;
+display: -webkit-box;
+-webkit-line-clamp: 1;
+-webkit-box-orient: vertical;
+}
+.cbw-service-fast-add { display: grid; grid-template-columns: 1fr; gap: 8px; margin: 8px 0 12px; }
+.cbw-service-fast-add .cbw-small-btn { width: 100%; }
+.cbw-search-empty strong { color: var(–primary-deep); }
+.cbw-calc-prompt { font-size: 21px; }
+.cbw-calc-hint { margin-bottom: 12px; }
+@media (max-width: 440px) {
+.cbw-fast-search-row { grid-template-columns: 1fr; }
+.cbw-fast-search-row .cbw-small-btn { width: 100%; }
+.cbw-result-list.cbw-result-list-simple { max-height: 270px !important; }
+.cbw-picked-bar { align-items: flex-start; flex-direction: column; }
+}
+
+/* ============================================================
+UX V4 — quick room presets + cleaner non-robot launcher
+============================================================ */
+.cbw-launcher-icon .cbw-helper-mark,
+.cbw-header-avatar .cbw-helper-mark { transform-box: fill-box; transform-origin: center; }
+.cbw-launcher:hover .cbw-helper-mark { animation: cbw-van-bob 1.35s ease-in-out infinite; }
+/* Hide tip ONLY on touch/mobile — desktop keeps the helpful bubble */
+@media (hover: none) and (pointer: coarse) {
+.cbw-launcher-tip { display: none !important; }
+}
+.cbw-chips { display: none !important; }
+.cbw-messages:empty { display: none !important; }
+.cbw-root:not(.cbw-calc-active) .cbw-panel { height: auto; min-height: 0; }
+.cbw-root:not(.cbw-calc-active) .cbw-composer { display: none; }
+.cbw-root:not(.cbw-calc-active) .cbw-contact-bar { border-top: none; }
+
+.cbw-preset-wrap {
+display: grid;
+gap: 8px;
+margin-bottom: 12px;
+}
+.cbw-preset-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+}
+.cbw-preset-btn {
+position: relative;
+min-height: 68px;
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 11px 12px;
+border-radius: var(–radius-sm);
+border: 2px solid #bae6fd;
+background: linear-gradient(135deg, #fff 0%, var(–surface-blue) 100%);
+color: var(–text);
+cursor: pointer;
+font: inherit;
+text-align: left;
+box-shadow: var(–shadow-sm);
+transition: transform 180ms var(–bounce), border-color 180ms ease, box-shadow 220ms ease, background 180ms ease;
+}
+.cbw-preset-btn:hover {
+transform: translateY(-2px);
+border-color: var(–primary);
+box-shadow: var(–shadow-md);
+background: linear-gradient(135deg, var(–surface-blue) 0%, #fff 100%);
+}
+.cbw-preset-btn[aria-pressed=“true”] {
+border-color: var(–primary);
+background: linear-gradient(135deg, #e0f2fe 0%, #fff 100%);
+box-shadow: 0 0 0 3px rgba(3,105,161,.11), var(–shadow-md);
+}
+.cbw-preset-icon {
+width: 38px;
+height: 38px;
+border-radius: 11px;
+background: var(–primary);
+color: #fff;
+display: flex;
+align-items: center;
+justify-content: center;
+flex: 0 0 auto;
+}
+.cbw-preset-icon svg { width: 22px; height: 22px; }
+.cbw-preset-text { min-width: 0; line-height: 1.25; }
+.cbw-preset-title { display:block; font-size: 13.5px; font-weight: 850; letter-spacing: -.01em; }
+.cbw-preset-sub { display:block; margin-top: 3px; color: var(–text-muted); font-size: 11px; font-weight: 600; }
+.cbw-preset-badge {
+position: absolute;
+top: 7px;
+right: 8px;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+background: var(–primary);
+color: #fff;
+font-size: 12px;
+font-weight: 900;
+opacity: 0;
+transform: scale(.7);
+transition: all 180ms var(–bounce);
+}
+.cbw-preset-btn[aria-pressed=“true”] .cbw-preset-badge { opacity: 1; transform: scale(1); }
+.cbw-choice-divider {
+display: flex;
+align-items: center;
+gap: 10px;
+color: var(–text-muted);
+font-size: 11px;
+font-weight: 850;
+text-transform: uppercase;
+letter-spacing: .05em;
+margin: 6px 0 2px;
+}
+.cbw-choice-divider::before,
+.cbw-choice-divider::after { content:””; height:1px; background: var(–border); flex:1; }
+.cbw-fast-search-row .cbw-q-input { min-height: 48px; }
+.cbw-fast-search-row .cbw-small-btn { min-height: 48px; font-weight: 850; }
+.cbw-result-list.cbw-result-list-simple { max-height: 250px !important; }
+.cbw-calc-hint strong { color: var(–primary-deep); }
+@media (max-width: 440px) {
+.cbw-preset-grid { grid-template-columns: 1fr; }
+.cbw-preset-btn { min-height: 60px; }
+.cbw-result-list.cbw-result-list-simple { max-height: 220px !important; }
+}
+
+/* ============================================================
+UX V5 — restore full chat + simple bubble-face launcher
+============================================================ */
+.cbw-launcher-icon { width: 42px !important; height: 42px !important; }
+.cbw-launcher-icon .cbw-face-mark,
+.cbw-header-avatar .cbw-face-mark { transform-box: fill-box; transform-origin: center; }
+.cbw-launcher:hover .cbw-face-mark { animation: cbw-van-bob 1.35s ease-in-out infinite; }
+
+/* V4 hid too much of the chat. Keep calculator-first CTA, but restore conversation. */
+.cbw-root:not(.cbw-calc-active) .cbw-panel {
+height: min(680px, calc(100vh - 120px)) !important;
+min-height: 520px !important;
+}
+.cbw-root:not(.cbw-calc-active) .cbw-messages {
+display: flex !important;
+flex: 1 !important;
+min-height: 190px;
+}
+.cbw-root:not(.cbw-calc-active) .cbw-chips {
+display: flex !important;
+}
+.cbw-root:not(.cbw-calc-active) .cbw-composer {
+display: flex !important;
+}
+.cbw-root:not(.cbw-calc-active) .cbw-contact-bar {
+border-top: 1px solid var(–border) !important;
+}
+.cbw-messages:empty { display: flex !important; }
+
+/* Keep the annoying CTA hint removed, as requested earlier. */
+.cbw-cta-hint { display: none !important; }
+
+/* Make the one-tap room buttons visibly primary in the item step. */
+.cbw-preset-wrap {
+padding: 12px;
+border: 1.5px solid #bae6fd;
+background: linear-gradient(180deg, #ffffff 0%, var(–surface-blue) 100%);
+border-radius: var(–radius-md);
+}
+.cbw-preset-btn {
+min-height: 74px;
+background: #fff;
+}
+.cbw-choice-divider {
+text-align: center;
+color: var(–text-muted);
+font-size: 12px;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: .04em;
+margin: 4px 0 2px;
+}
+
 </style>
 </head>
 <body>
 
 <div class="cbw-root" id="cbwRoot" data-position="right" data-open="false">
 
-  <!-- Panel -->
+  <!-- ============================================================
+       PANEL
+       ============================================================ -->
+
   <div class="cbw-panel" id="cbwPanel" role="dialog" aria-label="Chat">
-    
-    <div class="cbw-header cbw-dynamic-green">
-      <div class="cbw-header-avatar" aria-hidden="true">
-        <!-- BOX ROBOT — animated cardboard box with items poking out -->
-        <svg class="cbw-robot is-idle" viewBox="0 0 80 80" fill="none">
-          <g class="cbw-robot-head">
-            <!-- Stuff sticking out of the top of the box -->
-            <g class="cbw-stuff">
-              <!-- Lamp (left) -->
-              <line x1="22" y1="18" x2="22" y2="32" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-              <path d="M17 18 L27 18 L25 12 L19 12 Z" fill="#fef3c7" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-              <!-- Book/box (middle right) -->
-              <rect x="38" y="20" width="14" height="14" rx="1" fill="#fde68a" stroke="#fff" stroke-width="1.4"/>
-              <line x1="42" y1="20" x2="42" y2="34" stroke="#fff" stroke-width="1.2"/>
-              <!-- Plush ears (right) -->
-              <ellipse cx="60" cy="22" rx="3" ry="4" fill="#fca5a5" stroke="#fff" stroke-width="1.4"/>
-              <ellipse cx="66" cy="22" rx="3" ry="4" fill="#fca5a5" stroke="#fff" stroke-width="1.4"/>
-            </g>
-            <!-- Top flaps of the cardboard box (slightly open) -->
-            <path class="cbw-flap-left"  d="M12 32 L40 28 L40 36 L12 36 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-            <path class="cbw-flap-right" d="M68 32 L40 28 L40 36 L68 36 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-            <!-- Main box body -->
-            <path d="M12 36 L68 36 L66 66 L14 66 Z" fill="#e2e8f0" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
-            <!-- Tape strip -->
-            <rect x="36" y="36" width="8" height="30" fill="#94a3b8" opacity="0.6"/>
-            <!-- Vertical seam line -->
-            <line x1="40" y1="36" x2="40" y2="66" stroke="#94a3b8" stroke-width="1" opacity="0.5"/>
-            <!-- Eyes (drawn on box) -->
-            <g class="cbw-eyes">
-              <ellipse class="cbw-eye" cx="28" cy="50" rx="3" ry="4" fill="#0f172a"/>
-              <ellipse class="cbw-eye" cx="52" cy="50" rx="3" ry="4" fill="#0f172a"/>
-              <circle cx="28.7" cy="48.6" r="1" fill="#fff"/>
-              <circle cx="52.7" cy="48.6" r="1" fill="#fff"/>
-            </g>
-            <!-- Smile -->
-            <path class="cbw-mouth" d="M32 58 Q40 62 48 58" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-            <!-- Tiny "FRAGILE" label -->
-            <text x="40" y="74" text-anchor="middle" fill="#fff" opacity="0.6" font-size="6" font-family="monospace" font-weight="700" letter-spacing="0.5">BOX</text>
-          </g>
-        </svg>
-      </div>
-      <div class="cbw-title-wrap">
-        <div class="cbw-title" id="cbwTitle">Asistent</div>
-        <div class="cbw-subtitle">online</div>
-      </div>
-      <div class="cbw-actions">
-        <button class="cbw-icon-btn" id="cbwRefresh" type="button" aria-label="Reštartovať chat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-          </svg>
-        </button>
-        <button class="cbw-icon-btn" id="cbwClose" type="button" aria-label="Zavrieť">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
+
+```
+<!-- Header -->
+<div class="cbw-header cbw-brand-gradient">
+  <div class="cbw-header-avatar" aria-hidden="true">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <g class="cbw-face-mark">
+        <path d="M5 12.2C5 7.7 8.7 4 13.2 4h5.9C23.5 4 27 7.5 27 11.9v3.5c0 4.4-3.5 7.9-7.9 7.9h-3.6l-5.1 4.1c-.8.6-1.9 0-1.8-1l.5-4.2C6.6 20.8 5 18.2 5 15.3v-3.1Z" fill="#fff"/>
+        <circle cx="13" cy="14" r="1.35" fill="#0c4a6e"/>
+        <circle cx="20" cy="14" r="1.35" fill="#0c4a6e"/>
+        <path d="M13.2 18.6c1.7 1.5 4.5 1.5 6.2 0" stroke="#0c4a6e" stroke-width="1.8" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+  <div class="cbw-title-wrap">
+    <div class="cbw-title">odvoznabytku.sk</div>
+    <div class="cbw-subtitle">online — odpovieme do pár minút</div>
+  </div>
+  <div class="cbw-actions">
+    <div class="cbw-lang-switch" role="group" aria-label="Language">
+      <button class="cbw-lang-btn" data-lang="sk" type="button" aria-label="Slovenčina">SK</button>
+      <button class="cbw-lang-btn" data-lang="en" type="button" aria-label="English">EN</button>
+      <button class="cbw-lang-btn" data-lang="de" type="button" aria-label="Deutsch">DE</button>
     </div>
+    <button class="cbw-icon-btn" id="cbwRefresh" type="button" aria-label="Reštartovať chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+      </svg>
+    </button>
+    <button class="cbw-icon-btn" id="cbwClose" type="button" aria-label="Zavrieť">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</div>
 
-    <!-- Sticky CTA — always visible during chat -->
-    <div class="cbw-cta-bar" id="cbwCtaBar">
-      <button class="cbw-cta-btn cbw-dynamic-green" id="cbwOpenCalc" type="button">
-        <span class="cbw-cta-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="2" width="16" height="20" rx="3"/>
-            <line x1="8" y1="6" x2="16" y2="6"/>
-            <circle cx="8.5" cy="11.5" r="0.6"/>
-            <circle cx="12" cy="11.5" r="0.6"/>
-            <circle cx="15.5" cy="11.5" r="0.6"/>
-            <circle cx="8.5" cy="15" r="0.6"/>
-            <circle cx="12" cy="15" r="0.6"/>
-            <line x1="8" y1="18.5" x2="16" y2="18.5"/>
-          </svg>
-        </span>
-        <span class="cbw-cta-text">
-          Spočítať cenu zdarma
-          <small>Odvoz / dovoz nábytku, zariadenia, materiálu…</small>
-        </span>
-        <svg class="cbw-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </button>
-      <p class="cbw-cta-hint">Bratislava · zvyčajne reagujeme do 30 minút</p>
+<!-- CTA Bar -->
+<div class="cbw-cta-bar" id="cbwCtaBar">
+  <button class="cbw-cta-btn cbw-accent-gradient" id="cbwOpenCalc" type="button">
+    <span class="cbw-cta-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="3"/>
+        <line x1="8" y1="6" x2="16" y2="6"/>
+        <circle cx="8.5" cy="11" r="0.6" fill="currentColor"/>
+        <circle cx="12" cy="11" r="0.6" fill="currentColor"/>
+        <circle cx="15.5" cy="11" r="0.6" fill="currentColor"/>
+        <circle cx="8.5" cy="14.5" r="0.6" fill="currentColor"/>
+        <circle cx="12" cy="14.5" r="0.6" fill="currentColor"/>
+        <line x1="8" y1="18" x2="16" y2="18"/>
+      </svg>
+    </span>
+    <span class="cbw-cta-text">
+      Spočítať cenu za 1 minútu
+      <small>Bezplatne a nezáväzne</small>
+    </span>
+    <svg class="cbw-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Messages -->
+<div class="cbw-messages" id="cbwMessages" role="log" aria-live="polite"></div>
+
+<!-- Quick chips -->
+<div class="cbw-chips" id="cbwChips">
+  <button class="cbw-chip" data-msg="Aké služby ponúkate?" type="button">
+    <span>Naše služby</span>
+  </button>
+  <button class="cbw-chip" data-msg="Aké sú vaše ceny?" type="button">
+    <span>Ceny</span>
+  </button>
+  <button class="cbw-chip" data-msg="Aké sú vaše otváracie hodiny?" type="button">
+    <span>Otváracie hodiny</span>
+  </button>
+</div>
+
+<!-- Calculator wizard -->
+<div class="cbw-calc-wizard" id="cbwCalcWizard" data-open="false">
+  <div class="cbw-calc-head">
+    <button class="cbw-calc-head-back" id="cbwCalcBack" type="button" aria-label="Späť" style="visibility:hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <div class="cbw-calc-head-info">
+      <div class="cbw-calc-head-title" id="cbwCalcTitle">Cenová kalkulačka</div>
+      <div class="cbw-calc-head-step" id="cbwCalcStep">Začnime výberom služby</div>
     </div>
+    <button class="cbw-calc-head-x" id="cbwCalcExit" type="button" aria-label="Zatvoriť">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div class="cbw-calc-bar" role="progressbar" aria-label="Priebeh kalkulačky" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
+    <div class="cbw-calc-bar-track"><span id="cbwCalcBarFill" style="width:5%"></span></div>
+  </div>
+  <div class="cbw-calc-body" id="cbwCalcBody"></div>
+  <div class="cbw-calc-foot" id="cbwCalcFoot" style="display:none">
+    <button type="button" class="cbw-calc-back-btn" id="cbwCalcPrev">Späť</button>
+    <button type="button" class="cbw-calc-next-btn cbw-brand-gradient" id="cbwCalcNext" disabled>Pokračovať</button>
+  </div>
+</div>
 
-    <!-- Messages -->
-    <div class="cbw-messages" id="cbwMessages" role="log" aria-live="polite"></div>
+<!-- Contact bar -->
+<div class="cbw-contact-bar" id="cbwContactBar"></div>
 
-    <!-- Quick chips (FAQ) -->
-    <div class="cbw-chips" id="cbwChips">
-      <button class="cbw-chip action-chip" data-msg="Aké služby ponúkate?" type="button">
-        <span>Naše služby</span>
-      </button>
-      <button class="cbw-chip action-chip" data-msg="Povedzte mi o vašej firme." type="button">
-        <span>O nás</span>
-      </button>
-      <button class="cbw-chip action-chip" data-msg="Aké sú vaše otváracie hodiny?" type="button">
-        <span>Otváracie hodiny</span>
-      </button>
-      <button class="cbw-chip action-chip" id="cbwChipContact" type="button">
-        <span>Zanechať kontakt</span>
-      </button>
-    </div>
+<!-- Composer -->
+<div class="cbw-composer">
+  <div class="cbw-composer-wrap">
+    <textarea class="cbw-input" id="cbwInput" rows="1" placeholder="Napíš správu…"></textarea>
+  </div>
+  <button class="cbw-send cbw-brand-gradient" id="cbwSend" type="button" disabled>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+  </button>
+</div>
+```
 
-    <!-- Lead form (simple contact, separate from calculator flow) -->
-    <form class="cbw-form" id="cbwLeadForm" data-open="false" novalidate>
-      <div class="cbw-form-head">
-        <div><h4 class="cbw-form-title">Zanechajte nám kontakt</h4></div>
-        <button type="button" class="cbw-form-close" id="cbwLeadClose">×</button>
-      </div>
-      <input class="cbw-field" id="cbwLeadName" type="text" placeholder="Vaše meno" />
-      <input class="cbw-field" id="cbwLeadEmail" type="email" placeholder="E-mail" />
-      <input class="cbw-field" id="cbwLeadPhone" type="tel" placeholder="Telefón (nepovinné)" />
-      <textarea class="cbw-field" id="cbwLeadMsg" rows="2" placeholder="Správa (nepovinné)"></textarea>
-      <button type="button" class="cbw-form-submit action-btn" id="cbwLeadSubmit">Odoslať</button>
-    </form>
-
-    <!-- Calculator wizard — services → questions → summary → contact → done -->
-    <div class="cbw-calc-wizard" id="cbwCalcWizard" data-open="false">
-      <div class="cbw-calc-head">
-        <button class="cbw-calc-head-back" id="cbwCalcBack" type="button" aria-label="Späť" style="visibility:hidden">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </button>
-        <div class="cbw-calc-head-info">
-          <div class="cbw-calc-head-title" id="cbwCalcTitle">Cenová kalkulačka</div>
-          <div class="cbw-calc-head-step"  id="cbwCalcStep">Vyberte službu</div>
-        </div>
-        <button class="cbw-calc-head-x" id="cbwCalcExit" type="button" aria-label="Zatvoriť kalkulačku">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
-      <div class="cbw-calc-bar"><span id="cbwCalcBarFill" style="width:5%"></span></div>
-      <div class="cbw-calc-body" id="cbwCalcBody"></div>
-      <div class="cbw-calc-foot" id="cbwCalcFoot" style="display:none">
-        <button type="button" class="cbw-calc-back-btn" id="cbwCalcPrev">Späť</button>
-        <button type="button" class="cbw-calc-next-btn cbw-dynamic-green" id="cbwCalcNext" disabled>Pokračovať</button>
-      </div>
-    </div>
-
-    <!-- Direct contact icons -->
-    <div class="cbw-contact-bar" id="cbwContactBar"></div>
-
-    <!-- Sticky 'Zavolaj teraz' bar -->
-    <div class="cbw-callbar" id="cbwCallBar"></div>
-
-    <!-- Composer -->
-    <div class="cbw-composer">
-      <div class="cbw-composer-wrap">
-        <textarea class="cbw-input" id="cbwInput" rows="1" placeholder="Napíš správu…"></textarea>
-      </div>
-      <button class="cbw-send cbw-dynamic-green" id="cbwSend" type="button" disabled>
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </div>
   </div>
 
-  <!-- Launcher -->
-  <button class="cbw-launcher cbw-dynamic-green" id="cbwLauncher" type="button" aria-label="Otvoriť chat">
-    <svg class="cbw-robot is-idle" viewBox="0 0 80 80" fill="none">
-      <g class="cbw-robot-head">
-        <g class="cbw-stuff">
-          <line x1="22" y1="18" x2="22" y2="32" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <path d="M17 18 L27 18 L25 12 L19 12 Z" fill="#fef3c7" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-          <rect x="38" y="20" width="14" height="14" rx="1" fill="#fde68a" stroke="#fff" stroke-width="1.4"/>
-          <line x1="42" y1="20" x2="42" y2="34" stroke="#fff" stroke-width="1.2"/>
-          <ellipse cx="60" cy="22" rx="3" ry="4" fill="#fca5a5" stroke="#fff" stroke-width="1.4"/>
-          <ellipse cx="66" cy="22" rx="3" ry="4" fill="#fca5a5" stroke="#fff" stroke-width="1.4"/>
-        </g>
-        <path class="cbw-flap-left"  d="M12 32 L40 28 L40 36 L12 36 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-        <path class="cbw-flap-right" d="M68 32 L40 28 L40 36 L68 36 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
-        <path d="M12 36 L68 36 L66 66 L14 66 Z" fill="#e2e8f0" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
-        <rect x="36" y="36" width="8" height="30" fill="#94a3b8" opacity="0.6"/>
-        <line x1="40" y1="36" x2="40" y2="66" stroke="#94a3b8" stroke-width="1" opacity="0.5"/>
-        <g class="cbw-eyes">
-          <ellipse class="cbw-eye" cx="28" cy="50" rx="3" ry="4" fill="#0f172a"/>
-          <ellipse class="cbw-eye" cx="52" cy="50" rx="3" ry="4" fill="#0f172a"/>
-          <circle cx="28.7" cy="48.6" r="1" fill="#fff"/>
-          <circle cx="52.7" cy="48.6" r="1" fill="#fff"/>
-        </g>
-        <path class="cbw-mouth" d="M32 58 Q40 62 48 58" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <!-- ============================================================
+       LAUNCHER — simple chat bubble face
+       ============================================================ -->
+
+  <button class="cbw-launcher cbw-brand-gradient" id="cbwLauncher" type="button" aria-label="Otvoriť chat">
+    <svg class="cbw-launcher-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <g class="cbw-face-mark">
+        <path d="M7 19.1C7 11.9 12.9 6 20.1 6h8.2C35.3 6 41 11.7 41 18.7v4.9C41 30.6 35.3 36.3 28.3 36.3h-5.1l-8.1 6.1c-1.2.9-2.8 0-2.6-1.5l.8-6.3C9.5 32.1 7 27.8 7 23v-3.9Z" fill="#fff"/>
+        <circle cx="20" cy="21" r="2.05" fill="#0c4a6e"/>
+        <circle cx="29" cy="21" r="2.05" fill="#0c4a6e"/>
+        <path d="M19.2 27.2c2.6 2.3 7.2 2.3 9.8 0" stroke="#0c4a6e" stroke-width="2.8" stroke-linecap="round"/>
       </g>
     </svg>
     <span class="cbw-badge" id="cbwBadge">1</span>
+    <span class="cbw-launcher-tip" id="cbwLauncherTip">Cenová kalkulačka</span>
   </button>
+
+  <!-- ============================================================
+       MOBILE CHOICE MODAL — appears on mobile after tapping launcher
+       Lets user pick between calculator and chat before opening full panel
+       ============================================================ -->
+
+  <div class="cbw-choice-overlay" id="cbwChoiceOverlay" aria-hidden="true">
+    <div class="cbw-choice-sheet" role="dialog" aria-modal="true" aria-labelledby="cbwChoiceTitle">
+      <button class="cbw-choice-close" id="cbwChoiceClose" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="cbw-choice-grip" aria-hidden="true"></div>
+      <h3 class="cbw-choice-title" id="cbwChoiceTitle">Ako vám môžeme pomôcť?</h3>
+      <p class="cbw-choice-sub" id="cbwChoiceSub">Vyberte si, čo potrebujete</p>
+      <div class="cbw-choice-options">
+        <button class="cbw-choice-opt cbw-choice-opt-calc" id="cbwChoiceCalc" type="button">
+          <span class="cbw-choice-opt-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="2" width="16" height="20" rx="3"/>
+              <line x1="8" y1="6" x2="16" y2="6"/>
+              <circle cx="8.5" cy="11" r="0.6" fill="currentColor"/>
+              <circle cx="12" cy="11" r="0.6" fill="currentColor"/>
+              <circle cx="15.5" cy="11" r="0.6" fill="currentColor"/>
+              <circle cx="8.5" cy="14.5" r="0.6" fill="currentColor"/>
+              <circle cx="12" cy="14.5" r="0.6" fill="currentColor"/>
+              <line x1="8" y1="18" x2="16" y2="18"/>
+            </svg>
+          </span>
+          <span class="cbw-choice-opt-text">
+            <strong id="cbwChoiceCalcT">Cenová kalkulačka</strong>
+            <small id="cbwChoiceCalcS">Spočítajte si cenu za 1 minútu</small>
+          </span>
+          <svg class="cbw-choice-opt-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+        <button class="cbw-choice-opt cbw-choice-opt-chat" id="cbwChoiceChat" type="button">
+          <span class="cbw-choice-opt-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+          </span>
+          <span class="cbw-choice-opt-text">
+            <strong id="cbwChoiceChatT">Napísať otázku</strong>
+            <small id="cbwChoiceChatS">Spýtajte sa čokoľvek</small>
+          </span>
+          <svg class="cbw-choice-opt-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+      <button class="cbw-choice-cancel" id="cbwChoiceCancel" type="button">Zatvoriť</button>
+    </div>
+  </div>
 </div>
 
 <script>
 (function () {
   'use strict';
-  
+
+  // ============================================================
+  // I18N — multi-language support (SK / EN / DE)
+  // ============================================================
+  const I18N = {
+    sk: {
+      // Launcher / mobile choice
+      launcher_aria: 'Otvoriť chat',
+      tip_calc: 'Cenová kalkulačka',
+      tip_chat: 'Spýtať sa otázku',
+      choice_title: 'Ako vám môžeme pomôcť?',
+      choice_sub: 'Vyberte si, čo potrebujete',
+      choice_calc: 'Cenová kalkulačka',
+      choice_calc_sub: 'Spočítajte si cenu za 1 minútu',
+      choice_chat: 'Napísať otázku',
+      choice_chat_sub: 'Spýtajte sa čokoľvek',
+      choice_cancel: 'Zatvoriť',
+      // Header
+      header_title: 'odvoznabytku.sk',
+      header_subtitle: 'online — odpovieme do pár minút',
+      header_refresh: 'Reštartovať chat',
+      header_close: 'Zavrieť',
+      header_lang: 'Jazyk',
+      // CTA
+      cta_calc: 'Spočítať cenu za 1 minútu',
+      cta_calc_sub: 'Bezplatne a nezáväzne',
+      // Chips
+      chip_services: 'Naše služby',
+      chip_prices: 'Ceny',
+      chip_hours: 'Otváracie hodiny',
+      chip_services_msg: 'Aké služby ponúkate?',
+      chip_prices_msg: 'Aké sú vaše ceny?',
+      chip_hours_msg: 'Aké sú vaše otváracie hodiny?',
+      // Composer
+      composer_placeholder: 'Napíš správu…',
+      // Calculator
+      calc_title: 'Cenová kalkulačka',
+      calc_start_step: 'Začnime výberom služby',
+      calc_back: 'Späť',
+      calc_next: 'Pokračovať',
+      calc_send: 'Odoslať dopyt',
+      calc_sending: 'Odosielam…',
+      calc_progress: 'Priebeh kalkulačky',
+      calc_close: 'Zatvoriť',
+      // Step meta titles
+      step1_title: 'Smer služby', step1_sub: 'Vyberte odvoz alebo dovoz',
+      step2_title: 'Typ služby', step2_sub: 'Čo presne potrebujete riešiť?',
+      step3_title: 'Položky', step3_sub: 'Vyberte veci alebo ich nájdite cez vyhľadávanie',
+      step4_title: 'Rozsah práce', step4_sub: 'Množstvo, poschodie a prístup',
+      step5_title: 'Termín a miesto', step5_sub: 'Adresa, vzdialenosť a doplnkové info',
+      step6_title: 'Kontakt', step6_sub: 'Kam máme poslať ponuku?',
+      step7_title: 'Súhrn a cena', step7_sub: 'Skontrolujte údaje a odošlite dopyt',
+      // Directions
+      dir_odvoz: 'Odvoz', dir_odvoz_sub: 'Odvezieme od vás staré veci',
+      dir_dovoz: 'Dovoz', dir_dovoz_sub: 'Privezieme tovar / nábytok k vám',
+      dir_stahovanie: 'Sťahovanie', dir_stahovanie_sub: 'Byt, dom, kancelária, firma',
+      dir_vypratavanie: 'Vypratávanie', dir_vypratavanie_sub: 'Byt, pivnica, sklad, garáž',
+      // Services
+      svc_furniture: 'Nábytok', svc_furniture_sub: 'Sedačky, postele, skrine…',
+      svc_appliance: 'Spotrebiče', svc_appliance_sub: 'Chladnička, práčka, TV…',
+      svc_construction: 'Odpad / suť', svc_construction_sub: 'Drevo, kov, zmesný',
+      svc_material: 'Materiál / tovar', svc_material_sub: 'Hornbach, OBI, IKEA…',
+      svc_moving_flat: 'Sťahovanie bytu/domu', svc_moving_flat_sub: 'Kompletné sťahovanie',
+      svc_moving_office: 'Sťahovanie kancelárie/firmy', svc_moving_office_sub: 'Kancelárie, firmy, prevádzky',
+      svc_heavy: 'Ťažké bremená', svc_heavy_sub: 'Trezor, klavír, stroje',
+      svc_clearance_flat: 'Vypratanie bytu/domu', svc_clearance_flat_sub: 'Komplet vrátane odvozu',
+      svc_clearance_storage: 'Vypratanie pivnice/garáže', svc_clearance_storage_sub: 'Sklad, povala, pivnica',
+      svc_assembly: 'Demontáž / montáž', svc_assembly_sub: 'Nábytok, IKEA, kuchyňa',
+      svc_other: 'Iné', svc_other_sub: 'Niečo iné? Popíšte',
+      // Quick presets (rooms)
+      preset_living: 'Celá obývačka', preset_living_sub: 'gauč, kreslá, TV, stolík, skrinky',
+      preset_bedroom: 'Celá spálňa', preset_bedroom_sub: 'posteľ, matrac, skriňa, komoda',
+      preset_kitchen: 'Kuchyňa', preset_kitchen_sub: 'linka, stôl, spotrebiče',
+      preset_basement: 'Pivnica / garáž', preset_basement_sub: 'krabice, regály, náradie, pneumatiky',
+      preset_full_flat: 'Vypratať byt / dom', preset_full_flat_sub: 'veľa rôznych vecí naraz',
+      preset_appliances: 'Viac spotrebičov', preset_appliances_sub: 'práčka, chladnička, sušička, rúra',
+      preset_construction: 'Suť / stavebný odpad', preset_construction_sub: 'vrecia, drevo, zmiešaný odpad',
+      preset_store: 'Dovoz z obchodu', preset_store_sub: 'IKEA, Möbelix, OBI, Hornbach',
+      preset_building: 'Materiál na stavbu', preset_building_sub: 'dosky, dlažba, paleta, profily',
+      preset_office: 'Kancelária', preset_office_sub: 'stoly, stoličky, archív, IT',
+      // Greetings & bot replies
+      greeting: 'Dobrý deň! Môžete si rýchlo vypočítať cenu odvozu/dovozu alebo mi napísať otázku.',
+      restart: 'Konverzácia bola obnovená. Môžete spustiť kalkulačku alebo sa opýtať na cenu, termín či služby.',
+      thanks_calc: 'Ďakujeme, dopyt je pripravený. Ak chcete doplniť ďalšie informácie, napíšte ich sem do chatu.',
+      thanks_send: 'Ďakujeme, dopyt máme pripravený. Ak potrebujete doplniť ďalšie info, pokojne nám napíšte sem do chatu.',
+      reply_price: 'Cenu vypočítame orientačne podľa vecí, množstva, poschodia, výťahu, parkovania a vzdialenosti. Najrýchlejšie je kliknúť na modré tlačidlo „Spočítať cenu za 1 minútu".',
+      reply_services: 'Pomáhame s odvozom nábytku a spotrebičov, sťahovaním bytov, domov, kancelárií a firiem, vypratávaním pivníc/garáží, odvozom sute a dovozom tovaru či materiálu z obchodov.',
+      reply_hours: 'Dopyt môžete poslať kedykoľvek. Termín sa potom potvrdí podľa dostupnosti auta a posádky.',
+      reply_photos: 'Fotky môžete pridať v kalkulačke v kroku „Kde a kedy". Pomôžu presnejšie odhadnúť cenu a náročnosť nosenia.',
+      reply_contact: 'Kontakt môžete nechať v kalkulačke. Ak je na webe nastavený telefón, zobrazí sa aj tlačidlo na zavolanie pod chatom.',
+      reply_default: 'Rozumiem. Najistejšie je vyplniť krátku kalkulačku — zistí veci, prístup, miesto a kontakt, potom pripraví orientačnú cenu.',
+      // Common UI labels
+      label_name: 'Meno',
+      label_phone: 'Telefón',
+      label_email: 'E-mail',
+      label_note: 'Poznámka',
+      label_from: 'Odkiaľ',
+      label_to: 'Kam',
+      ph_name: 'Vaše meno',
+      ph_phone: '+421…',
+      ph_email: 'email@domena.sk',
+      ph_note: 'Napr. treba demontovať, veľká sedačka, úzke schody…',
+      ph_from: 'napr. Bratislava, Petržalka',
+      ph_to: 'napr. Senec, centrum',
+      ph_search: 'Napr. gauč, práčka, skriňa, IKEA, suť…',
+      ph_search_item: 'Napr. gauč, práčka, skriňa, 10 vriec…',
+      search_empty: 'Vec nie je v zozname.',
+      search_empty_sub: 'Napíšte ju hore a kliknite na Pridať.',
+      btn_call: 'Zavolať',
+      btn_email: 'E-mail',
+      btn_whatsapp: 'WhatsApp',
+      contact_us: 'Alebo nás kontaktujte priamo:',
+      // Calculator step prompts and hints
+      prompt_direction: 'Čo potrebujete?',
+      hint_direction: 'Vyberte typ služby — odvoz, dovoz, sťahovanie alebo vypratávanie.',
+      prompt_service_pickup: 'Čo chcete odviezť?',
+      prompt_service_delivery: 'Čo chcete doviezť?',
+      prompt_service_moving: 'Aký typ sťahovania?',
+      prompt_service_clearance: 'Čo treba vypratať?',
+      hint_service: 'Vyberte najbližší typ služby. Konkrétne veci, celú izbu alebo vlastný text vyberiete hneď v ďalšom kroku.',
+      prompt_items: 'Čo všetko sa má presunúť?',
+      hint_items: '<strong>Najrýchlejšie:</strong> vyberte celý priestor jedným tlačidlom, alebo nižšie napíšte konkrétnu vec.',
+      tap_found: 'Ťuknite na nájdenú vec',
+      add_custom: 'Pridať „{name}" ako vlastnú položku',
+      add: 'Pridať',
+      preset_label: 'Rýchly výber — jedným klikom',
+      or_pick: 'alebo vyberte konkrétne veci',
+      fast_note: 'Môžete ťuknúť na hotový balík, vybrať položky zo zoznamu alebo dopísať vlastnú vec.',
+      selected_count: 'Vybrané: {n} položiek',
+      nothing_selected: 'Zatiaľ nič nevybrané',
+      clear_picks: 'Vymazať výber',
+      remove_item: 'Odstrániť položku',
+      dir_already_set: '{dir} je už nastavený.',
+      summary_items: 'Vlastný popis / iné',
+      // Step 4-6 prompts
+      prompt_scope: 'Aký je rozsah práce?',
+      hint_scope: 'Pomôžte odhadnúť čas a počet ľudí.',
+      prompt_location: 'Kam a kedy?',
+      hint_location: 'Adresa, dátum a doplnkové informácie pre vodiča.',
+      prompt_contact: 'Kam pošleme ponuku?',
+      hint_contact: 'Stačí telefón alebo email. Kontaktujeme vás obvykle do 1 hodiny.',
+      prompt_summary: 'Skontrolujte a odošlite',
+      hint_summary: 'Pred odoslaním si overte základné údaje.',
+      summary_total: 'Orientačná cena',
+      summary_disclaimer: 'Finálnu cenu potvrdíme telefonicky podľa presných detailov.',
+      // Step Details
+      details_quantity: 'Približný počet kusov / dávok',
+      details_floors: 'Poschodie',
+      details_access: 'Prístup',
+      access_standard: 'Bežný prístup',
+      access_standard_sub: 'prízemie alebo ľahký vstup',
+      access_stairs: 'Schody',
+      access_stairs_sub: 'bezproblémové, ale treba nosiť',
+      access_hard: 'Ťažký prístup',
+      access_hard_sub: 'úzke schody, dvor, dlhé nosenie',
+      elevator: 'Výťah',
+      yes: 'Áno',
+      no: 'Nie',
+      parking: 'Parkovanie pri vchode',
+      parking_near: 'Blízko',
+      parking_far: 'Ďalej',
+      details_hint: 'Základ je prednastavený. Zmeňte len to, čo nesedí — napríklad schody, výťah alebo parkovanie ďalej od vchodu.',
+      // Step Place
+      place_hint: 'Stačí mesto alebo stručná adresa. Presnú cenu vám firma vie potvrdiť po kontrole údajov.',
+      place_from: 'Odkiaľ odvážame?',
+      place_from_delivery: 'Odkiaľ dovážame? obchod / adresa',
+      place_to: 'Kam to má ísť? nepovinné',
+      place_to_delivery: 'Kam doručiť?',
+      place_date: 'Preferovaný termín',
+      place_distance: 'Vzdialenosť',
+      distance_city: 'V rámci mesta',
+      distance_near: 'Okolie',
+      distance_far: 'Ďalej',
+      photos_add: 'Pridať fotky nepovinne',
+      // Contact step
+      contact_hint: 'Telefón je najdôležitejší, aby sa dal dopyt rýchlo potvrdiť.',
+      gdpr_title: 'Súhlasím so spracovaním údajov',
+      gdpr_text: 'Údaje budú použité iba na vybavenie dopytu a kontaktovanie k cene služby.',
+      gdpr_required: 'Bez súhlasu nejde odoslať dopyt.',
+      // Summary
+      sum_label_dir: 'Smer',
+      sum_label_service: 'Služba',
+      sum_label_items: 'Položky',
+      sum_label_quantity: 'Množstvo',
+      sum_label_access: 'Prístup',
+      sum_label_route: 'Trasa',
+      sum_label_date: 'Termín',
+      sum_label_contact: 'Kontakt',
+      sum_price_label: 'Odhadovaná cena',
+      sum_price_note: 'podľa prístupu, poschodia, vzdialenosti a množstva',
+      sum_warning: 'Toto je automatický predbežný odhad. Finálnu cenu môže ovplyvniť presná váha, demontáž, čakacia doba alebo špeciálne bremeno.',
+      date_arrange: 'Dohodou',
+      qty_unit: 'ks/dávok',
+      thanks_step: 'Dopyt odoslaný',
+      thanks_done: 'Hotovo',
+      thanks_title: 'Dopyt je pripravený',
+      thanks_text: 'Orientácia ceny: <strong>{min}–{max} €</strong>.<br>Ak je napojený API endpoint, dopyt bol odoslaný. Inak je uložený lokálne v prehliadači ako záloha.',
+      thanks_close: 'Zavrieť kalkulačku',
+    },
+    en: {
+      launcher_aria: 'Open chat',
+      tip_calc: 'Price calculator',
+      tip_chat: 'Ask a question',
+      choice_title: 'How can we help?',
+      choice_sub: 'Choose what you need',
+      choice_calc: 'Price calculator',
+      choice_calc_sub: 'Get a price in 1 minute',
+      choice_chat: 'Ask a question',
+      choice_chat_sub: 'Ask us anything',
+      choice_cancel: 'Close',
+      header_title: 'odvoznabytku.sk',
+      header_subtitle: 'online — we reply within minutes',
+      header_refresh: 'Restart chat',
+      header_close: 'Close',
+      header_lang: 'Language',
+      cta_calc: 'Get price in 1 minute',
+      cta_calc_sub: 'Free and non-binding',
+      chip_services: 'Our services',
+      chip_prices: 'Prices',
+      chip_hours: 'Opening hours',
+      chip_services_msg: 'What services do you offer?',
+      chip_prices_msg: 'What are your prices?',
+      chip_hours_msg: 'What are your opening hours?',
+      composer_placeholder: 'Type a message…',
+      calc_title: 'Price calculator',
+      calc_start_step: "Let's start by choosing a service",
+      calc_back: 'Back',
+      calc_next: 'Continue',
+      calc_send: 'Send request',
+      calc_sending: 'Sending…',
+      calc_progress: 'Calculator progress',
+      calc_close: 'Close',
+      step1_title: 'Direction', step1_sub: 'Pickup or delivery',
+      step2_title: 'Service type', step2_sub: 'What exactly do you need?',
+      step3_title: 'Items', step3_sub: 'Pick items or find them by search',
+      step4_title: 'Scope', step4_sub: 'Quantity, floor and access',
+      step5_title: 'Date and place', step5_sub: 'Address, distance and notes',
+      step6_title: 'Contact', step6_sub: 'Where to send the quote?',
+      step7_title: 'Summary and price', step7_sub: 'Check the details and submit',
+      dir_odvoz: 'Pickup', dir_odvoz_sub: 'We pick up old things from you',
+      dir_dovoz: 'Delivery', dir_dovoz_sub: 'We deliver goods / furniture to you',
+      dir_stahovanie: 'Moving', dir_stahovanie_sub: 'Flat, house, office, company',
+      dir_vypratavanie: 'Clearance', dir_vypratavanie_sub: 'Flat, cellar, storage, garage',
+      svc_furniture: 'Furniture', svc_furniture_sub: 'Sofas, beds, wardrobes…',
+      svc_appliance: 'Appliances', svc_appliance_sub: 'Fridge, washer, TV…',
+      svc_construction: 'Waste / rubble', svc_construction_sub: 'Wood, metal, mixed',
+      svc_material: 'Materials / goods', svc_material_sub: 'Hornbach, OBI, IKEA…',
+      svc_moving_flat: 'Flat/house moving', svc_moving_flat_sub: 'Complete moving service',
+      svc_moving_office: 'Office/company moving', svc_moving_office_sub: 'Offices, companies, premises',
+      svc_heavy: 'Heavy loads', svc_heavy_sub: 'Safe, piano, machinery',
+      svc_clearance_flat: 'Flat/house clearance', svc_clearance_flat_sub: 'Including removal',
+      svc_clearance_storage: 'Cellar/garage clearance', svc_clearance_storage_sub: 'Storage, attic, cellar',
+      svc_assembly: 'Disassembly / assembly', svc_assembly_sub: 'Furniture, IKEA, kitchen',
+      svc_other: 'Other', svc_other_sub: 'Something else? Describe',
+      preset_living: 'Entire living room', preset_living_sub: 'sofa, chairs, TV, table, cabinets',
+      preset_bedroom: 'Entire bedroom', preset_bedroom_sub: 'bed, mattress, wardrobe, dresser',
+      preset_kitchen: 'Kitchen', preset_kitchen_sub: 'cabinets, table, appliances',
+      preset_basement: 'Cellar / garage', preset_basement_sub: 'boxes, racks, tools, tires',
+      preset_full_flat: 'Clear flat / house', preset_full_flat_sub: 'many different items at once',
+      preset_appliances: 'Multiple appliances', preset_appliances_sub: 'washer, fridge, dryer, oven',
+      preset_construction: 'Rubble / construction waste', preset_construction_sub: 'bags, wood, mixed waste',
+      preset_store: 'Delivery from shop', preset_store_sub: 'IKEA, Möbelix, OBI, Hornbach',
+      preset_building: 'Building materials', preset_building_sub: 'boards, tiles, pallet, profiles',
+      preset_office: 'Office', preset_office_sub: 'desks, chairs, archive, IT',
+      greeting: 'Hello! You can quickly calculate the price of pickup/delivery or send me a question.',
+      restart: 'Conversation reset. You can launch the calculator or ask about price, date or services.',
+      thanks_calc: 'Thanks, your request is ready. If you want to add more info, just write here in the chat.',
+      thanks_send: 'Thanks, we have your request. If you need to add more info, feel free to write here.',
+      reply_price: 'We calculate the price approximately based on items, quantity, floor, elevator, parking and distance. The fastest way is to click the blue "Get price in 1 minute" button.',
+      reply_services: 'We help with furniture and appliance removal, moving of flats, houses, offices and companies, cellar/garage clearance, rubble disposal and delivery of goods or materials from shops.',
+      reply_hours: 'You can send a request anytime. The date is confirmed based on truck and crew availability.',
+      reply_photos: 'You can add photos in the calculator in the "Where and when" step. They help us estimate the price and carrying difficulty more precisely.',
+      reply_contact: 'You can leave contact details in the calculator. If a phone is set on the site, a call button will appear below the chat.',
+      reply_default: 'Got it. The safest is to fill in the short calculator — it covers items, access, place and contact, then prepares an approximate price.',
+      label_name: 'Name',
+      label_phone: 'Phone',
+      label_email: 'E-mail',
+      label_note: 'Note',
+      label_from: 'From',
+      label_to: 'To',
+      ph_name: 'Your name',
+      ph_phone: '+421…',
+      ph_email: 'email@domain.com',
+      ph_note: 'E.g. needs disassembly, big sofa, narrow stairs…',
+      ph_from: 'e.g. Bratislava, Petržalka',
+      ph_to: 'e.g. Senec, center',
+      ph_search: 'E.g. sofa, washer, wardrobe, IKEA, rubble…',
+      ph_search_item: 'E.g. sofa, washer, wardrobe, 10 bags…',
+      search_empty: 'Item not in the list.',
+      search_empty_sub: 'Type it above and click Add.',
+      btn_call: 'Call',
+      btn_email: 'E-mail',
+      btn_whatsapp: 'WhatsApp',
+      contact_us: 'Or contact us directly:',
+      prompt_direction: 'What do you need?',
+      hint_direction: 'Choose a service — pickup, delivery, moving or clearance.',
+      prompt_service_pickup: 'What do you want to pick up?',
+      prompt_service_delivery: 'What do you want delivered?',
+      prompt_service_moving: 'What kind of moving?',
+      prompt_service_clearance: 'What needs to be cleared?',
+      hint_service: 'Choose the nearest service type. You will pick exact items, entire room or your own text in the next step.',
+      prompt_items: 'What should be moved?',
+      hint_items: '<strong>The fastest way:</strong> pick the whole space with one button, or type a specific item below.',
+      tap_found: 'Tap a found item',
+      add_custom: 'Add "{name}" as a custom item',
+      add: 'Add',
+      preset_label: 'Quick pick — one tap',
+      or_pick: 'or pick specific items',
+      fast_note: 'You can tap a preset, pick items from the list, or type your own.',
+      selected_count: 'Selected: {n} items',
+      nothing_selected: 'Nothing selected yet',
+      clear_picks: 'Clear selection',
+      remove_item: 'Remove item',
+      dir_already_set: '{dir} is already set.',
+      summary_items: 'Custom description / other',
+      prompt_scope: 'What is the scope?',
+      hint_scope: 'Help us estimate time and crew size.',
+      prompt_location: 'Where and when?',
+      hint_location: 'Address, date and extra info for the driver.',
+      prompt_contact: 'Where to send the quote?',
+      hint_contact: 'Phone or e-mail is enough. We usually reply within 1 hour.',
+      prompt_summary: 'Review and submit',
+      hint_summary: 'Double-check the basics before sending.',
+      summary_total: 'Estimated price',
+      summary_disclaimer: 'We will confirm the final price by phone based on exact details.',
+      details_quantity: 'Approximate number of pieces / loads',
+      details_floors: 'Floor',
+      details_access: 'Access',
+      access_standard: 'Standard access',
+      access_standard_sub: 'ground floor or easy entry',
+      access_stairs: 'Stairs',
+      access_stairs_sub: 'manageable, but needs carrying',
+      access_hard: 'Difficult access',
+      access_hard_sub: 'narrow stairs, courtyard, long carry',
+      elevator: 'Elevator',
+      yes: 'Yes',
+      no: 'No',
+      parking: 'Parking near entrance',
+      parking_near: 'Close',
+      parking_far: 'Further',
+      details_hint: 'Defaults are set. Change only what differs — e.g. stairs, elevator or parking further from entrance.',
+      place_hint: 'A city or short address is enough. The exact price can be confirmed after checking the details.',
+      place_from: 'Where are we picking up from?',
+      place_from_delivery: 'Where do we deliver from? shop / address',
+      place_to: 'Where should it go? optional',
+      place_to_delivery: 'Where to deliver?',
+      place_date: 'Preferred date',
+      place_distance: 'Distance',
+      distance_city: 'Within city',
+      distance_near: 'Surrounding area',
+      distance_far: 'Further',
+      photos_add: 'Add photos (optional)',
+      contact_hint: 'Phone is most important so we can quickly confirm the request.',
+      gdpr_title: 'I agree to data processing',
+      gdpr_text: 'Data will be used only to handle the request and contact you about the price.',
+      gdpr_required: "Can't send without consent.",
+      sum_label_dir: 'Direction',
+      sum_label_service: 'Service',
+      sum_label_items: 'Items',
+      sum_label_quantity: 'Quantity',
+      sum_label_access: 'Access',
+      sum_label_route: 'Route',
+      sum_label_date: 'Date',
+      sum_label_contact: 'Contact',
+      sum_price_label: 'Estimated price',
+      sum_price_note: 'depending on access, floor, distance and quantity',
+      sum_warning: 'This is an automatic preliminary estimate. The final price may depend on exact weight, disassembly, waiting time or special loads.',
+      date_arrange: 'By agreement',
+      qty_unit: 'pcs/loads',
+      thanks_step: 'Request sent',
+      thanks_done: 'Done',
+      thanks_title: 'Request is ready',
+      thanks_text: 'Estimated price: <strong>€{min}–{max}</strong>.<br>If an API endpoint is connected, the request was sent. Otherwise it is stored locally as a backup.',
+      thanks_close: 'Close calculator',
+    },
+    de: {
+      launcher_aria: 'Chat öffnen',
+      tip_calc: 'Preisrechner',
+      tip_chat: 'Frage stellen',
+      choice_title: 'Wie können wir helfen?',
+      choice_sub: 'Wählen Sie, was Sie brauchen',
+      choice_calc: 'Preisrechner',
+      choice_calc_sub: 'Preis in 1 Minute berechnen',
+      choice_chat: 'Frage stellen',
+      choice_chat_sub: 'Fragen Sie uns alles',
+      choice_cancel: 'Schließen',
+      header_title: 'odvoznabytku.sk',
+      header_subtitle: 'online — Antwort in wenigen Minuten',
+      header_refresh: 'Chat neu starten',
+      header_close: 'Schließen',
+      header_lang: 'Sprache',
+      cta_calc: 'Preis in 1 Minute berechnen',
+      cta_calc_sub: 'Kostenlos und unverbindlich',
+      chip_services: 'Unsere Leistungen',
+      chip_prices: 'Preise',
+      chip_hours: 'Öffnungszeiten',
+      chip_services_msg: 'Welche Dienstleistungen bieten Sie an?',
+      chip_prices_msg: 'Was sind Ihre Preise?',
+      chip_hours_msg: 'Was sind Ihre Öffnungszeiten?',
+      composer_placeholder: 'Nachricht eingeben…',
+      calc_title: 'Preisrechner',
+      calc_start_step: 'Wählen Sie zunächst eine Dienstleistung',
+      calc_back: 'Zurück',
+      calc_next: 'Weiter',
+      calc_send: 'Anfrage senden',
+      calc_sending: 'Sende…',
+      calc_progress: 'Rechner-Fortschritt',
+      calc_close: 'Schließen',
+      step1_title: 'Richtung', step1_sub: 'Abholung oder Lieferung',
+      step2_title: 'Art der Leistung', step2_sub: 'Was genau brauchen Sie?',
+      step3_title: 'Gegenstände', step3_sub: 'Wählen Sie Sachen oder suchen Sie',
+      step4_title: 'Umfang', step4_sub: 'Menge, Etage und Zugang',
+      step5_title: 'Termin und Ort', step5_sub: 'Adresse, Entfernung, Notizen',
+      step6_title: 'Kontakt', step6_sub: 'Wohin senden wir das Angebot?',
+      step7_title: 'Zusammenfassung', step7_sub: 'Daten prüfen und senden',
+      dir_odvoz: 'Abholung', dir_odvoz_sub: 'Wir holen alte Sachen bei Ihnen ab',
+      dir_dovoz: 'Lieferung', dir_dovoz_sub: 'Wir liefern Waren / Möbel zu Ihnen',
+      dir_stahovanie: 'Umzug', dir_stahovanie_sub: 'Wohnung, Haus, Büro, Firma',
+      dir_vypratavanie: 'Entrümpelung', dir_vypratavanie_sub: 'Wohnung, Keller, Lager, Garage',
+      svc_furniture: 'Möbel', svc_furniture_sub: 'Sofas, Betten, Schränke…',
+      svc_appliance: 'Geräte', svc_appliance_sub: 'Kühlschrank, Waschmaschine, TV…',
+      svc_construction: 'Abfall / Bauschutt', svc_construction_sub: 'Holz, Metall, Gemischt',
+      svc_material: 'Material / Waren', svc_material_sub: 'Hornbach, OBI, IKEA…',
+      svc_moving_flat: 'Wohnung/Haus Umzug', svc_moving_flat_sub: 'Kompletter Umzug',
+      svc_moving_office: 'Büro/Firma Umzug', svc_moving_office_sub: 'Büros, Firmen, Betriebe',
+      svc_heavy: 'Schwerlast', svc_heavy_sub: 'Tresor, Klavier, Maschinen',
+      svc_clearance_flat: 'Wohnung/Haus Entrümpelung', svc_clearance_flat_sub: 'Inkl. Entsorgung',
+      svc_clearance_storage: 'Keller/Garage Entrümpelung', svc_clearance_storage_sub: 'Lager, Dachboden, Keller',
+      svc_assembly: 'Demontage / Montage', svc_assembly_sub: 'Möbel, IKEA, Küche',
+      svc_other: 'Sonstiges', svc_other_sub: 'Etwas anderes? Beschreiben',
+      preset_living: 'Ganzes Wohnzimmer', preset_living_sub: 'Sofa, Sessel, TV, Tisch, Schränke',
+      preset_bedroom: 'Ganzes Schlafzimmer', preset_bedroom_sub: 'Bett, Matratze, Schrank, Kommode',
+      preset_kitchen: 'Küche', preset_kitchen_sub: 'Küchenzeile, Tisch, Geräte',
+      preset_basement: 'Keller / Garage', preset_basement_sub: 'Kisten, Regale, Werkzeug, Reifen',
+      preset_full_flat: 'Wohnung / Haus entrümpeln', preset_full_flat_sub: 'viele verschiedene Sachen auf einmal',
+      preset_appliances: 'Mehrere Geräte', preset_appliances_sub: 'Waschmaschine, Kühlschrank, Trockner, Ofen',
+      preset_construction: 'Bauschutt', preset_construction_sub: 'Säcke, Holz, gemischter Abfall',
+      preset_store: 'Lieferung aus Geschäft', preset_store_sub: 'IKEA, Möbelix, OBI, Hornbach',
+      preset_building: 'Baumaterial', preset_building_sub: 'Bretter, Fliesen, Palette, Profile',
+      preset_office: 'Büro', preset_office_sub: 'Schreibtische, Stühle, Archiv, IT',
+      greeting: 'Hallo! Sie können schnell den Preis für Abholung/Lieferung berechnen oder mir eine Frage senden.',
+      restart: 'Konversation zurückgesetzt. Sie können den Rechner starten oder nach Preis, Termin oder Leistungen fragen.',
+      thanks_calc: 'Danke, Ihre Anfrage ist bereit. Wenn Sie weitere Infos hinzufügen möchten, schreiben Sie einfach hier im Chat.',
+      thanks_send: 'Danke, wir haben Ihre Anfrage. Wenn Sie weitere Infos brauchen, schreiben Sie gerne hier.',
+      reply_price: 'Wir berechnen den Preis ungefähr nach Gegenständen, Menge, Etage, Aufzug, Parken und Entfernung. Am schnellsten ist der blaue Button „Preis in 1 Minute berechnen".',
+      reply_services: 'Wir helfen mit Möbel- und Geräteabholung, Umzug von Wohnungen, Häusern, Büros und Firmen, Keller-/Garagenentrümpelung, Bauschuttentsorgung und Lieferung von Waren oder Material aus Geschäften.',
+      reply_hours: 'Sie können jederzeit eine Anfrage senden. Der Termin wird je nach Verfügbarkeit von Fahrzeug und Team bestätigt.',
+      reply_photos: 'Sie können Fotos im Rechner im Schritt „Wo und wann" hinzufügen. Sie helfen, Preis und Tragschwierigkeit genauer einzuschätzen.',
+      reply_contact: 'Sie können Kontaktdaten im Rechner hinterlassen. Wenn auf der Webseite eine Telefonnummer angegeben ist, erscheint ein Anrufknopf unter dem Chat.',
+      reply_default: 'Verstanden. Am sichersten ist der kurze Rechner — er erfasst Gegenstände, Zugang, Ort und Kontakt und bereitet einen ungefähren Preis vor.',
+      label_name: 'Name',
+      label_phone: 'Telefon',
+      label_email: 'E-Mail',
+      label_note: 'Notiz',
+      label_from: 'Von',
+      label_to: 'Nach',
+      ph_name: 'Ihr Name',
+      ph_phone: '+49…',
+      ph_email: 'email@domain.de',
+      ph_note: 'Z. B. Demontage nötig, großes Sofa, enge Treppe…',
+      ph_from: 'z. B. Bratislava, Petržalka',
+      ph_to: 'z. B. Senec, Zentrum',
+      ph_search: 'Z. B. Sofa, Waschmaschine, Schrank, IKEA, Bauschutt…',
+      ph_search_item: 'Z. B. Sofa, Waschmaschine, 10 Säcke…',
+      search_empty: 'Gegenstand nicht in der Liste.',
+      search_empty_sub: 'Oben eintragen und Hinzufügen klicken.',
+      btn_call: 'Anrufen',
+      btn_email: 'E-Mail',
+      btn_whatsapp: 'WhatsApp',
+      contact_us: 'Oder kontaktieren Sie uns direkt:',
+      prompt_direction: 'Was brauchen Sie?',
+      hint_direction: 'Wählen Sie eine Leistung — Abholung, Lieferung, Umzug oder Entrümpelung.',
+      prompt_service_pickup: 'Was soll abgeholt werden?',
+      prompt_service_delivery: 'Was soll geliefert werden?',
+      prompt_service_moving: 'Welche Art Umzug?',
+      prompt_service_clearance: 'Was soll entrümpelt werden?',
+      hint_service: 'Wählen Sie den passenden Leistungstyp. Genaue Gegenstände, ganzes Zimmer oder eigenen Text wählen Sie im nächsten Schritt.',
+      prompt_items: 'Was soll bewegt werden?',
+      hint_items: '<strong>Am schnellsten:</strong> Wählen Sie den ganzen Raum mit einem Klick oder geben Sie unten einen Gegenstand ein.',
+      tap_found: 'Tippen Sie auf einen gefundenen Gegenstand',
+      add_custom: '„{name}" als eigenen Gegenstand hinzufügen',
+      add: 'Hinzufügen',
+      preset_label: 'Schnellauswahl — ein Klick',
+      or_pick: 'oder einzelne Sachen wählen',
+      fast_note: 'Sie können ein Set wählen, Gegenstände aus der Liste oder eigenen Text eingeben.',
+      selected_count: 'Ausgewählt: {n} Gegenstände',
+      nothing_selected: 'Noch nichts ausgewählt',
+      clear_picks: 'Auswahl löschen',
+      remove_item: 'Entfernen',
+      dir_already_set: '{dir} ist bereits gewählt.',
+      summary_items: 'Eigene Beschreibung / sonstiges',
+      prompt_scope: 'Wie viel Arbeit?',
+      hint_scope: 'Helfen Sie uns, Zeit und Teamgröße zu schätzen.',
+      prompt_location: 'Wo und wann?',
+      hint_location: 'Adresse, Datum und Zusatzinfos für den Fahrer.',
+      prompt_contact: 'Wohin senden wir das Angebot?',
+      hint_contact: 'Telefon oder E-Mail genügt. Wir melden uns meist innerhalb 1 Stunde.',
+      prompt_summary: 'Prüfen und senden',
+      hint_summary: 'Bitte überprüfen Sie die Angaben vor dem Senden.',
+      summary_total: 'Geschätzter Preis',
+      summary_disclaimer: 'Den finalen Preis bestätigen wir telefonisch nach genauen Details.',
+      details_quantity: 'Ungefähre Anzahl Stücke / Ladungen',
+      details_floors: 'Stockwerk',
+      details_access: 'Zugang',
+      access_standard: 'Standard-Zugang',
+      access_standard_sub: 'Erdgeschoss oder einfacher Zugang',
+      access_stairs: 'Treppe',
+      access_stairs_sub: 'machbar, aber zu tragen',
+      access_hard: 'Schwieriger Zugang',
+      access_hard_sub: 'enge Treppen, Hof, langes Tragen',
+      elevator: 'Aufzug',
+      yes: 'Ja',
+      no: 'Nein',
+      parking: 'Parken am Eingang',
+      parking_near: 'Nah',
+      parking_far: 'Weiter',
+      details_hint: 'Standardwerte sind voreingestellt. Ändern Sie nur, was nicht stimmt — z. B. Treppe, Aufzug oder Parken weiter weg.',
+      place_hint: 'Stadt oder kurze Adresse genügt. Den exakten Preis kann die Firma nach Prüfung der Daten bestätigen.',
+      place_from: 'Von wo holen wir ab?',
+      place_from_delivery: 'Von wo liefern wir? Geschäft / Adresse',
+      place_to: 'Wohin? optional',
+      place_to_delivery: 'Wohin liefern?',
+      place_date: 'Wunschtermin',
+      place_distance: 'Entfernung',
+      distance_city: 'Innerhalb der Stadt',
+      distance_near: 'Umgebung',
+      distance_far: 'Weiter',
+      photos_add: 'Fotos hinzufügen (optional)',
+      contact_hint: 'Telefon ist am wichtigsten, damit wir die Anfrage schnell bestätigen können.',
+      gdpr_title: 'Ich stimme der Datenverarbeitung zu',
+      gdpr_text: 'Die Daten werden nur zur Bearbeitung der Anfrage und Kontaktaufnahme zum Preis verwendet.',
+      gdpr_required: 'Ohne Zustimmung kann die Anfrage nicht gesendet werden.',
+      sum_label_dir: 'Richtung',
+      sum_label_service: 'Leistung',
+      sum_label_items: 'Gegenstände',
+      sum_label_quantity: 'Menge',
+      sum_label_access: 'Zugang',
+      sum_label_route: 'Route',
+      sum_label_date: 'Termin',
+      sum_label_contact: 'Kontakt',
+      sum_price_label: 'Geschätzter Preis',
+      sum_price_note: 'je nach Zugang, Stockwerk, Entfernung und Menge',
+      sum_warning: 'Dies ist eine automatische vorläufige Schätzung. Der finale Preis kann von Gewicht, Demontage, Wartezeit oder Spezialladung abhängen.',
+      date_arrange: 'Nach Vereinbarung',
+      qty_unit: 'Stk./Ladungen',
+      thanks_step: 'Anfrage gesendet',
+      thanks_done: 'Fertig',
+      thanks_title: 'Anfrage ist bereit',
+      thanks_text: 'Preisschätzung: <strong>{min}–{max} €</strong>.<br>Wenn ein API-Endpunkt verbunden ist, wurde die Anfrage gesendet. Sonst lokal im Browser gesichert.',
+      thanks_close: 'Rechner schließen',
+    }
+  };
+
+  // Item label translations (keyed by item id) — pre-translated common items
+  const I18N_ITEMS = {
+    sofa: { sk: ['Sedačka / gauč', 'rohová, rozkladacia, kreslá'], en: ['Sofa / couch', 'corner, sofa-bed, armchairs'], de: ['Sofa / Couch', 'Ecksofa, Schlafsofa, Sessel'] },
+    armchair: { sk: ['Kreslo / taburetka', 'aj viac kusov'], en: ['Armchair / stool', 'one or more pieces'], de: ['Sessel / Hocker', 'auch mehrere Stücke'] },
+    wardrobe: { sk: ['Skriňa / šatník', 'posuvná, masívna, vstavaná'], en: ['Wardrobe', 'sliding, solid, built-in'], de: ['Kleiderschrank', 'Schiebe-, Massiv-, Einbau-'] },
+    dresser: { sk: ['Komoda / botník', 'skrinky, zásuvky'], en: ['Dresser / shoe rack', 'cabinets, drawers'], de: ['Kommode / Schuhschrank', 'Schränke, Schubladen'] },
+    bed: { sk: ['Posteľ / rošt', 'jednolôžko, manželská'], en: ['Bed / frame', 'single, double'], de: ['Bett / Lattenrost', 'Einzel-, Doppelbett'] },
+    mattress: { sk: ['Matrac', 'jeden alebo viac kusov'], en: ['Mattress', 'one or more pieces'], de: ['Matratze', 'ein oder mehrere Stücke'] },
+    table: { sk: ['Stôl', 'jedálenský, konferenčný'], en: ['Table', 'dining, coffee'], de: ['Tisch', 'Ess-, Couchtisch'] },
+    chairs: { sk: ['Stoličky', 'jedálenské, kancelárske'], en: ['Chairs', 'dining, office'], de: ['Stühle', 'Ess-, Bürostühle'] },
+    desk: { sk: ['Písací / kancelársky stôl', 'aj s kontajnerom'], en: ['Desk / office desk', 'with container'], de: ['Schreibtisch', 'mit Container'] },
+    shelves: { sk: ['Police / knižnica', 'regál, knižnica, vitrína'], en: ['Shelves / bookcase', 'shelf, bookcase, cabinet'], de: ['Regale / Bücherregal', 'Regal, Vitrine'] },
+    kitchen: { sk: ['Kuchynská linka', 'skrinky, doska, drez'], en: ['Kitchen units', 'cabinets, worktop, sink'], de: ['Küchenzeile', 'Schränke, Arbeitsplatte, Spüle'] },
+    doors: { sk: ['Dvere / zárubne', 'interiérové, staré'], en: ['Doors / frames', 'interior, old'], de: ['Türen / Zargen', 'Innentüren, alte'] },
+    carpet: { sk: ['Koberec / podlaha', 'rolky, plávajúca podlaha'], en: ['Carpet / flooring', 'rolls, laminate'], de: ['Teppich / Boden', 'Rollen, Laminat'] },
+    bathroom: { sk: ['Kúpeľňový nábytok', 'skrinka, zrkadlo, sanita'], en: ['Bathroom furniture', 'cabinet, mirror, sanitary'], de: ['Badmöbel', 'Schrank, Spiegel, Sanitär'] },
+    boxes: { sk: ['Krabice / vrecia', 'balíky, textil, drobnosti'], en: ['Boxes / bags', 'packages, textiles, small items'], de: ['Kartons / Säcke', 'Pakete, Textil, Kleinteile'] },
+    clothes: { sk: ['Oblečenie / textil', 'vrecia, tašky, periny'], en: ['Clothes / textiles', 'bags, sacks, bedding'], de: ['Kleidung / Textil', 'Säcke, Taschen, Bettzeug'] },
+    books: { sk: ['Knihy / dokumenty', 'ťažšie krabice'], en: ['Books / documents', 'heavier boxes'], de: ['Bücher / Dokumente', 'schwere Kartons'] },
+    fridge: { sk: ['Chladnička / mraznička', 'aj americká chladnička'], en: ['Fridge / freezer', 'incl. American fridge'], de: ['Kühl- / Gefrierschrank', 'auch Side-by-Side'] },
+    washer: { sk: ['Práčka', 'ťažký spotrebič'], en: ['Washing machine', 'heavy appliance'], de: ['Waschmaschine', 'schweres Gerät'] },
+    dryer: { sk: ['Sušička', 'samostatná alebo set'], en: ['Dryer', 'standalone or set'], de: ['Trockner', 'einzeln oder Set'] },
+    dishwasher: { sk: ['Umývačka riadu', 'vstavaná aj voľne stojaca'], en: ['Dishwasher', 'built-in or freestanding'], de: ['Geschirrspüler', 'Einbau oder freistehend'] },
+    oven: { sk: ['Sporák / rúra', 'kuchynské spotrebiče'], en: ['Stove / oven', 'kitchen appliances'], de: ['Herd / Ofen', 'Küchengeräte'] },
+    tv: { sk: ['TV / elektronika', 'monitor, audio, káble'], en: ['TV / electronics', 'monitor, audio, cables'], de: ['TV / Elektronik', 'Monitor, Audio, Kabel'] },
+    garden_furniture: { sk: ['Záhradný nábytok', 'stôl, stoličky, lehátka'], en: ['Garden furniture', 'table, chairs, loungers'], de: ['Gartenmöbel', 'Tisch, Stühle, Liegen'] },
+    grill: { sk: ['Gril / kotlík', 'plynový, záhradný'], en: ['Grill / BBQ', 'gas, garden'], de: ['Grill', 'Gas-, Garten-'] },
+    branches: { sk: ['Konáre / zeleň', 'bio odpad, rastliny'], en: ['Branches / greenery', 'bio waste, plants'], de: ['Äste / Grünzeug', 'Bioabfall, Pflanzen'] },
+    pots: { sk: ['Kvetináče / kamene', 'ťažšie kvetináče'], en: ['Plant pots / stones', 'heavier pots'], de: ['Blumentöpfe / Steine', 'schwerere Töpfe'] },
+    mower: { sk: ['Kosačka / technika', 'záhradná technika'], en: ['Mower / equipment', 'garden equipment'], de: ['Rasenmäher / Geräte', 'Gartentechnik'] },
+    shed: { sk: ['Záhradný domček', 'plech, drevo, diely'], en: ['Garden shed', 'metal, wood, parts'], de: ['Gartenhäuschen', 'Blech, Holz, Teile'] },
+    racks: { sk: ['Regály / police', 'kovové, skladové'], en: ['Racks / shelves', 'metal, warehouse'], de: ['Regale', 'Metall, Lager'] },
+    tires: { sk: ['Pneumatiky / disky', 'auto veci, diely'], en: ['Tires / rims', 'car parts'], de: ['Reifen / Felgen', 'Autoteile'] },
+    tools: { sk: ['Náradie / stroje', 'pracovný stôl, stroje'], en: ['Tools / machines', 'workbench, machines'], de: ['Werkzeug / Maschinen', 'Werkbank, Maschinen'] },
+    paint: { sk: ['Farby / chemikálie', 'vedrá, riedidlá'], en: ['Paints / chemicals', 'buckets, thinners'], de: ['Farben / Chemikalien', 'Eimer, Verdünner'] },
+    bicycle: { sk: ['Bicykel / kočík / šport', 'lyže, sane, športové'], en: ['Bicycle / stroller / sport', 'skis, sleds, sports'], de: ['Fahrrad / Kinderwagen / Sport', 'Ski, Schlitten, Sport'] },
+    safe: { sk: ['Trezor', 'veľmi ťažký kus'], en: ['Safe', 'very heavy item'], de: ['Tresor', 'sehr schweres Stück'] },
+    piano: { sk: ['Klavír / piano', 'individuálne nacenenie'], en: ['Piano', 'individual quote'], de: ['Klavier', 'individuelles Angebot'] },
+    aquarium: { sk: ['Akvárium / sklo', 'krehké alebo ťažké'], en: ['Aquarium / glass', 'fragile or heavy'], de: ['Aquarium / Glas', 'zerbrechlich oder schwer'] },
+    full_clearance: { sk: ['Vypratanie priestoru', 'byt, dom, pivnica, garáž'], en: ['Space clearance', 'flat, house, cellar, garage'], de: ['Raumentrümpelung', 'Wohnung, Haus, Keller, Garage'] },
+    mixed: { sk: ['Veľa rôznych vecí', 'miešaný odvoz'], en: ['Many various items', 'mixed pickup'], de: ['Viele verschiedene Sachen', 'gemischte Abholung'] },
+    ikea_delivery: { sk: ['IKEA / Möbelix / obchod', 'balený nábytok, krabice, doplnky'], en: ['IKEA / Möbelix / shop', 'packed furniture, boxes, accessories'], de: ['IKEA / Möbelix / Geschäft', 'verpackte Möbel, Kartons, Zubehör'] },
+    building_material: { sk: ['Stavebný materiál', 'dosky, OSB, sadrokartón, profily'], en: ['Building material', 'boards, OSB, drywall, profiles'], de: ['Baumaterial', 'Bretter, OSB, Gipskarton, Profile'] },
+    tiles: { sk: ['Dlažba / obklad', 'ťažké balenia, kúpeľňa, kuchyňa'], en: ['Tiles', 'heavy packages, bathroom, kitchen'], de: ['Fliesen', 'schwere Pakete, Bad, Küche'] },
+    pallet: { sk: ['Paleta / väčší tovar', 'nutné preveriť váhu a prístup'], en: ['Pallet / larger goods', 'check weight and access'], de: ['Palette / größere Ware', 'Gewicht und Zugang prüfen'] },
+    doors_material: { sk: ['Dvere / dosky / lišty', 'dlhší materiál alebo balíky'], en: ['Doors / boards / strips', 'long material or packs'], de: ['Türen / Bretter / Leisten', 'langes Material oder Pakete'] },
+  };
+
+  // Current language (persisted in localStorage)
+  let LANG = (function () {
+    try {
+      const saved = localStorage.getItem('cbw_lang');
+      if (saved && I18N[saved]) return saved;
+      // Auto-detect from browser
+      const nav = (navigator.language || 'sk').toLowerCase().split('-')[0];
+      if (I18N[nav]) return nav;
+    } catch (e) {}
+    return 'sk';
+  })();
+
+  function t(key) {
+    return (I18N[LANG] && I18N[LANG][key]) || (I18N.sk && I18N.sk[key]) || key;
+  }
+  function tItem(id, field) {
+    // field: 0 = label, 1 = sub
+    const entry = I18N_ITEMS[id];
+    if (entry && entry[LANG]) return entry[LANG][field || 0];
+    if (entry && entry.sk) return entry.sk[field || 0];
+    return null;
+  }
+  // Wrap an item with translated label/sub for current language
+  function localItem(item) {
+    if (!item) return item;
+    const lbl = tItem(item.id, 0);
+    const sub = tItem(item.id, 1);
+    if (!lbl && !sub) return item;
+    return Object.assign({}, item, {
+      label: lbl || item.label,
+      sub: sub || item.sub
+    });
+  }
+  function setLang(newLang) {
+    if (!I18N[newLang]) return;
+    LANG = newLang;
+    try { localStorage.setItem('cbw_lang', newLang); } catch (e) {}
+    applyI18n();
+  }
+  // applyI18n is defined later (after DOM refs)
+
+  // ============================================================
+  // DOM REFERENCES
+  // ============================================================
   const root = document.getElementById('cbwRoot');
   const launcher = document.getElementById('cbwLauncher');
   const closeBtn = document.getElementById('cbwClose');
@@ -1075,48 +2979,92 @@
   const input = document.getElementById('cbwInput');
   const sendBtn = document.getElementById('cbwSend');
   const contactBar = document.getElementById('cbwContactBar');
-  const robots = () => document.querySelectorAll('.cbw-robot');
   const badge = document.getElementById('cbwBadge');
 
   const ICON_PHONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>';
   const ICON_WA = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
   const ICON_MAIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>';
 
-  // Sound disabled — no-op stub kept so existing call sites still work
-  function playSound() {}
+  function playSound() { /* disabled */ }
 
-  let robotStateTimer = null;
-  function setRobotState(state, duration = null) {
-    robots().forEach(r => {
-      r.classList.remove('is-idle', 'is-greeting', 'is-listening', 'is-thinking', 'is-action', 'is-talking');
-      r.classList.add(state ? `is-${state}` : 'is-idle');
+  // ============================================================
+  // APPLY I18N — update all static UI texts when language changes
+  // ============================================================
+  function applyI18n() {
+    // Document lang attribute
+    document.documentElement.setAttribute('lang', LANG);
+    // Launcher
+    if (launcher) launcher.setAttribute('aria-label', t('launcher_aria'));
+    const tip = document.getElementById('cbwLauncherTip');
+    if (tip) tip.textContent = t('tip_calc');
+    // Header
+    const titleEl = document.querySelector('.cbw-title');
+    const subEl = document.querySelector('.cbw-subtitle');
+    if (titleEl) titleEl.textContent = t('header_title');
+    if (subEl) subEl.textContent = t('header_subtitle');
+    if (refreshBtn) refreshBtn.setAttribute('aria-label', t('header_refresh'));
+    if (closeBtn) closeBtn.setAttribute('aria-label', t('header_close'));
+    // CTA
+    const ctaText = document.querySelector('.cbw-cta-text');
+    if (ctaText) {
+      const small = ctaText.querySelector('small');
+      ctaText.firstChild.nodeValue = t('cta_calc') + ' ';
+      if (small) small.textContent = t('cta_calc_sub');
+    }
+    // Chips
+    const chips = document.querySelectorAll('#cbwChips .cbw-chip');
+    if (chips[0]) { chips[0].querySelector('span').textContent = t('chip_services'); chips[0].dataset.msg = t('chip_services_msg'); }
+    if (chips[1]) { chips[1].querySelector('span').textContent = t('chip_prices'); chips[1].dataset.msg = t('chip_prices_msg'); }
+    if (chips[2]) { chips[2].querySelector('span').textContent = t('chip_hours'); chips[2].dataset.msg = t('chip_hours_msg'); }
+    // Composer
+    if (input) input.setAttribute('placeholder', t('composer_placeholder'));
+    // Calc header
+    const calcTitle = document.getElementById('cbwCalcTitle');
+    if (calcTitle) calcTitle.textContent = t('calc_title');
+    const calcExit = document.getElementById('cbwCalcExit');
+    if (calcExit) calcExit.setAttribute('aria-label', t('calc_close'));
+    const calcBack = document.getElementById('cbwCalcBack');
+    if (calcBack) calcBack.setAttribute('aria-label', t('calc_back'));
+    const calcPrev = document.getElementById('cbwCalcPrev');
+    if (calcPrev) calcPrev.textContent = t('calc_back');
+    // Lang switcher active state
+    document.querySelectorAll('.cbw-lang-btn').forEach(b => {
+      b.classList.toggle('cbw-lang-active', b.dataset.lang === LANG);
     });
-    if (duration) {
-      clearTimeout(robotStateTimer);
-      robotStateTimer = setTimeout(() => setRobotState(''), duration);
-    }
+    // Mobile choice modal
+    const cmTitle = document.getElementById('cbwChoiceTitle');
+    const cmSub = document.getElementById('cbwChoiceSub');
+    const cmCalcT = document.getElementById('cbwChoiceCalcT');
+    const cmCalcS = document.getElementById('cbwChoiceCalcS');
+    const cmChatT = document.getElementById('cbwChoiceChatT');
+    const cmChatS = document.getElementById('cbwChoiceChatS');
+    const cmCancel = document.getElementById('cbwChoiceCancel');
+    if (cmTitle) cmTitle.textContent = t('choice_title');
+    if (cmSub) cmSub.textContent = t('choice_sub');
+    if (cmCalcT) cmCalcT.textContent = t('choice_calc');
+    if (cmCalcS) cmCalcS.textContent = t('choice_calc_sub');
+    if (cmChatT) cmChatT.textContent = t('choice_chat');
+    if (cmChatS) cmChatS.textContent = t('choice_chat_sub');
+    if (cmCancel) cmCancel.textContent = t('choice_cancel');
+    // If calculator is open, re-render to refresh step labels
+    try {
+      if (typeof renderCalc === 'function') renderCalc();
+    } catch (e) {}
+    // Re-render contact bar (labels)
+    try { if (typeof renderContactBar === 'function') renderContactBar(); } catch (e) {}
+    // Re-translate the initial greeting bubble if it's the only message shown
+    try {
+      const bubbles = messagesEl ? messagesEl.querySelectorAll('.cbw-msg.cbw-bot') : [];
+      if (bubbles && bubbles.length === 1) {
+        // Only the auto-greeting is on screen; safely update it
+        bubbles[0].textContent = t('greeting');
+      }
+    } catch (e) {}
   }
 
-  // ---------- Zelené Konfety ----------
-  function spawnConfetti(el) {
-    const rect = el.getBoundingClientRect();
-    const colors = ['#0f766e', '#14b8a6', '#059669', '#34d399'];
-    for(let i = 0; i < 8; i++) {
-      const conf = document.createElement('div');
-      conf.className = 'cbw-confetti';
-      conf.style.left = (rect.left + rect.width / 2) + 'px';
-      conf.style.top = (rect.top + rect.height / 2) + 'px';
-      const dx = (Math.random() - 0.5) * 80;
-      const dy = (Math.random() - 0.5) * 80 - 20;
-      conf.style.setProperty('--dx', dx + 'px');
-      conf.style.setProperty('--dy', dy + 'px');
-      conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      document.body.appendChild(conf);
-      setTimeout(() => conf.remove(), 600);
-    }
-  }
-
-  // ---------- Chat Logic ----------
+  // ============================================================
+  // BUBBLES + TYPING
+  // ============================================================
   function appendBubble(role, text) {
     const bubble = document.createElement('div');
     bubble.className = 'cbw-msg cbw-' + role;
@@ -1127,1197 +3075,1539 @@
   }
 
   function showTyping() {
-    setRobotState('talking');
     const dots = document.createElement('div');
-    dots.className = 'cbw-typing cbw-dynamic-green'; 
+    dots.className = 'cbw-typing cbw-brand-gradient';
     dots.innerHTML = '<span></span><span></span><span></span>';
     messagesEl.appendChild(dots);
     messagesEl.scrollTop = messagesEl.scrollHeight;
     return dots;
   }
+  function hideTyping(el) { if (el) el.remove(); }
 
-  function hideTyping(el) {
-    if (el) el.remove();
+  // ============================================================
+  // CONFETTI
+  // ============================================================
+  function spawnConfetti(el) {
+    const rect = el.getBoundingClientRect();
+    const colors = ['#0369a1', '#f59e0b', '#0ea5e9', '#fbbf24', '#10b981'];
+    for (let i = 0; i < 10; i++) {
+      const conf = document.createElement('div');
+      conf.className = 'cbw-confetti';
+      conf.style.left = (rect.left + rect.width / 2) + 'px';
+      conf.style.top = (rect.top + rect.height / 2) + 'px';
+      const dx = (Math.random() - 0.5) * 100;
+      const dy = (Math.random() - 0.5) * 100 - 30;
+      conf.style.setProperty('--dx', dx + 'px');
+      conf.style.setProperty('--dy', dy + 'px');
+      conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      document.body.appendChild(conf);
+      setTimeout(() => conf.remove(), 700);
+    }
   }
 
+  // ============================================================
+  // PANEL OPEN/CLOSE
+  // ============================================================
   function togglePanel(open) {
     const next = open == null ? root.dataset.open !== 'true' : !!open;
     if (next === (root.dataset.open === 'true')) return;
     root.dataset.open = next ? 'true' : 'false';
     if (next) {
-      if (badge) badge.remove();
-      setRobotState('greeting', 2500);
+      clearTimeout(unreadTimer);
+      root.classList.remove('cbw-has-unread');
       if (messagesEl.children.length === 0) {
         setTimeout(() => {
-          appendBubble('bot', 'Ahoj! Som virtuálny asistent. Ako vám môžem pomôcť?');
-          playSound();
-        }, 700);
+          appendBubble('bot', t('greeting'));
+        }, 300);
       }
     }
   }
+
+  const unreadTimer = setTimeout(() => {
+    if (root.dataset.open === 'true') return;
+    root.classList.add('cbw-has-unread');
+  }, 4500);
+
+  // ============================================================
+  // MOBILE CHOICE MODAL — show on mobile when launcher is tapped
+  // ============================================================
+  const choiceOverlay = document.getElementById('cbwChoiceOverlay');
+  const choiceClose = document.getElementById('cbwChoiceClose');
+  const choiceCancel = document.getElementById('cbwChoiceCancel');
+  const choiceCalc = document.getElementById('cbwChoiceCalc');
+  const choiceChat = document.getElementById('cbwChoiceChat');
+
+  function isMobileDevice() {
+    // Treat narrow viewports and touch-primary devices as mobile
+    return window.matchMedia('(max-width: 640px), (hover: none) and (pointer: coarse)').matches;
+  }
+  function openChoiceModal() {
+    if (!choiceOverlay) return;
+    choiceOverlay.dataset.open = 'true';
+    choiceOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeChoiceModal() {
+    if (!choiceOverlay) return;
+    choiceOverlay.dataset.open = 'false';
+    choiceOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  launcher.addEventListener('click', () => {
+    if (isMobileDevice()) {
+      openChoiceModal();
+    } else {
+      togglePanel(true);
+    }
+  });
+  closeBtn.addEventListener('click', () => togglePanel(false));
+
+  if (choiceClose) choiceClose.addEventListener('click', closeChoiceModal);
+  if (choiceCancel) choiceCancel.addEventListener('click', closeChoiceModal);
+  if (choiceOverlay) choiceOverlay.addEventListener('click', (e) => {
+    if (e.target === choiceOverlay) closeChoiceModal();
+  });
+  if (choiceCalc) choiceCalc.addEventListener('click', () => {
+    closeChoiceModal();
+    togglePanel(true);
+    // Wait for panel animation, then open calculator
+    setTimeout(() => {
+      if (typeof openCalculator === 'function') openCalculator();
+    }, 320);
+  });
+  if (choiceChat) choiceChat.addEventListener('click', () => {
+    closeChoiceModal();
+    togglePanel(true);
+    // Focus input after panel opens
+    setTimeout(() => {
+      if (input) try { input.focus(); } catch (e) {}
+    }, 420);
+  });
 
   refreshBtn.addEventListener('click', () => {
     refreshBtn.classList.add('cbw-spinning');
     setTimeout(() => refreshBtn.classList.remove('cbw-spinning'), 740);
-    setRobotState('greeting', 1500);
     messagesEl.innerHTML = '';
-    closeForms();
-    appendBubble('bot', 'Konverzácia bola obnovená. Ako vám môžem pomôcť?');
-    playSound();
+    appendBubble('bot', t('restart'));
   });
 
-  launcher.addEventListener('click', () => togglePanel(true));
-  closeBtn.addEventListener('click', () => togglePanel(false));
-  
-  let typingTimer;
-  input.addEventListener('focus', () => {
-    input.classList.add('cbw-dynamic-green');
-  });
-  input.addEventListener('blur', () => {
-    if(!input.value.trim()) input.classList.remove('cbw-dynamic-green');
+  // Language switcher events
+  document.querySelectorAll('.cbw-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.dataset.lang));
   });
 
+  // ============================================================
+  // COMPOSER
+  // ============================================================
   input.addEventListener('input', () => {
     sendBtn.disabled = !input.value.trim();
-    setRobotState('listening');
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => setRobotState(''), 1000);
   });
 
-  sendBtn.addEventListener('click', () => {
+  async function sendUserMessage() {
     const text = input.value.trim();
     if (!text) return;
     input.value = '';
-    input.classList.remove('cbw-dynamic-green');
     sendBtn.disabled = true;
     appendBubble('user', text);
-    playSound();
-    
-    setRobotState('thinking');
-    setTimeout(() => {
-      const typing = showTyping();
-      setTimeout(() => {
-        setRobotState('');
-        hideTyping(typing);
-        appendBubble('bot', 'Ďakujem za správu! Tvoj podnet sme zaznamenali.');
-        playSound();
-      }, 2000);
-    }, 1000);
+    const typing = showTyping();
+    try {
+      let reply = '';
+      if (typeof CONFIG !== 'undefined' && CONFIG.chatEndpoint) {
+        const res = await fetch(CONFIG.chatEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, source: 'widget', companyName: CONFIG.companyName })
+        });
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          reply = data.reply || data.message || data.answer || '';
+        }
+      }
+      hideTyping(typing);
+      appendBubble('bot', reply || botReplyFor(text));
+    } catch (err) {
+      hideTyping(typing);
+      appendBubble('bot', botReplyFor(text));
+    }
+  }
+  sendBtn.addEventListener('click', sendUserMessage);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendUserMessage();
+    }
   });
 
-  document.querySelectorAll('.action-chip').forEach(btn => {
+  document.querySelectorAll('.cbw-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       spawnConfetti(btn);
-      setRobotState('action', 1500);
-      if(btn.dataset.msg) {
+      if (btn.dataset.msg) {
         input.value = btn.dataset.msg;
-        input.classList.add('cbw-dynamic-green');
         sendBtn.disabled = false;
-        sendBtn.click();
+        sendUserMessage();
       }
     });
   });
 
-  // ---------- Lead form (simple chip-driven) ----------
-  const leadForm = document.getElementById('cbwLeadForm');
-  function closeLead() { leadForm.dataset.open = 'false'; }
-  document.getElementById('cbwLeadClose').addEventListener('click', closeLead);
-  document.getElementById('cbwChipContact').addEventListener('click', () => {
-    leadForm.dataset.open = 'true';
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  });
-  document.getElementById('cbwLeadSubmit').addEventListener('click', async () => {
-    const name  = document.getElementById('cbwLeadName').value.trim();
-    const email = document.getElementById('cbwLeadEmail').value.trim();
-    const phone = document.getElementById('cbwLeadPhone').value.trim();
-    const msg   = document.getElementById('cbwLeadMsg').value.trim();
-    if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
-    setRobotState('action', 1500);
-    closeLead();
-    try {
-      await fetch(window.location.origin + '/api/lead', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone: phone || null, message: msg || null })
-      });
-    } catch (_) {}
-    appendBubble('bot', 'Ďakujeme, úspešne sme prijali vaše kontaktné údaje. Ozveme sa vám čo najskôr.');
-    playSound();
-  });
-
-  /* ============================================================
-     CALCULATOR WIZARD — sťahovanie / vypratávanie / odpad / klavír
-     ============================================================ */
-
-  // ---------- Tiny inline icons for multi-select options (replaces emojis) ----------
-  const ICN = {
-    box:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
-    tools:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
-    piano:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="1.5"/><line x1="6" y1="6" x2="6" y2="14"/><line x1="10" y1="6" x2="10" y2="14"/><line x1="14" y1="6" x2="14" y2="14"/><line x1="18" y1="6" x2="18" y2="14"/></svg>',
-    safe:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="14" cy="12" r="2.5"/><line x1="14" y1="9.5" x2="14" y2="7"/></svg>',
-    fish:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c5-7 13-7 18 0-5 7-13 7-18 0z"/><circle cx="16" cy="13" r="0.8" fill="currentColor"/></svg>',
-    kitchen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="9"/><line x1="15" y1="9" x2="15" y2="21"/></svg>',
-    bolt:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-    paint:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11h2v8a2 2 0 0 1-2 2h-2"/><path d="M3 21V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6H3"/><circle cx="9" cy="14" r="1"/></svg>',
-    barrel:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="2"/><path d="M3 5v14c0 1.1 4 2 9 2s9-.9 9-2V5"/></svg>',
-    plus:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  // ============================================================
+  // UNIFIED ITEM ICONS — consistent SVG set (24x24, stroke-based)
+  // ============================================================
+  const ITEM_ICONS = {
+    sofa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12v6a1 1 0 0 0 1 1h2v-2h12v2h2a1 1 0 0 0 1-1v-6a3 3 0 0 0-3-3v3H6V9a3 3 0 0 0-3 3z"/><path d="M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/></svg>',
+    armchair: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13v5h14v-5"/><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/><path d="M7 11V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4"/><line x1="6" y1="18" x2="6" y2="20"/><line x1="18" y1="18" x2="18" y2="20"/></svg>',
+    wardrobe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><line x1="12" y1="3" x2="12" y2="21"/><circle cx="10.5" cy="12" r="0.6" fill="currentColor"/><circle cx="13.5" cy="12" r="0.6" fill="currentColor"/></svg>',
+    dresser: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="15" x2="21" y2="15"/><circle cx="9" cy="7.5" r="0.5" fill="currentColor"/><circle cx="15" cy="7.5" r="0.5" fill="currentColor"/><circle cx="9" cy="12.5" r="0.5" fill="currentColor"/><circle cx="15" cy="12.5" r="0.5" fill="currentColor"/><circle cx="9" cy="17.5" r="0.5" fill="currentColor"/><circle cx="15" cy="17.5" r="0.5" fill="currentColor"/></svg>',
+    bed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12v6h20v-6"/><path d="M4 12V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><rect x="6" y="9" width="5" height="3" rx="0.5"/><rect x="13" y="9" width="5" height="3" rx="0.5"/></svg>',
+    mattress: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" stroke-dasharray="2 1.5" opacity="0.5"/></svg>',
+    table: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="5" y1="10" x2="5" y2="19"/><line x1="19" y1="10" x2="19" y2="19"/></svg>',
+    chairs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="9" rx="1"/><line x1="7" y1="12" x2="7" y2="20"/><line x1="17" y1="12" x2="17" y2="20"/><line x1="5" y1="14" x2="19" y2="14"/></svg>',
+    desk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="21" y2="9"/><line x1="5" y1="9" x2="5" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/><rect x="13" y="12" width="6" height="6" rx="0.5"/><line x1="13" y1="14" x2="19" y2="14"/></svg>',
+    shelves: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="13" x2="20" y2="13"/><line x1="4" y1="17" x2="20" y2="17"/></svg>',
+    kitchen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="9"/><line x1="15" y1="9" x2="15" y2="21"/><circle cx="6" cy="6" r="0.7" fill="currentColor"/><circle cx="12" cy="6" r="0.7" fill="currentColor"/></svg>',
+    doors: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><line x1="5" y1="21" x2="19" y2="21"/><circle cx="15" cy="12" r="0.8" fill="currentColor"/></svg>',
+    carpet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 6v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6"/><line x1="8" y1="11" x2="16" y2="11" stroke-dasharray="1.5 1.5"/><line x1="8" y1="15" x2="16" y2="15" stroke-dasharray="1.5 1.5"/></svg>',
+    bathroom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M7 12V7a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v0"/><line x1="5" y1="19" x2="5" y2="21"/><line x1="19" y1="19" x2="19" y2="21"/></svg>',
+    boxes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8"/><polyline points="3 8 12 3 21 8 12 13 3 8"/><line x1="12" y1="13" x2="12" y2="21"/></svg>',
+    clothes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l4 2 4-2 4 4-3 2v10H7V10L4 8z"/></svg>',
+    books: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    fridge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="6" y1="10" x2="18" y2="10"/><line x1="9" y1="6" x2="9" y2="7"/><line x1="9" y1="14" x2="9" y2="15"/></svg>',
+    washer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="14" r="4"/><circle cx="12" cy="14" r="1.5"/><circle cx="8" cy="6.5" r="0.7" fill="currentColor"/><circle cx="11" cy="6.5" r="0.7" fill="currentColor"/></svg>',
+    dryer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="14" r="4"/><path d="M10 13c0.5 -0.5 1.5 -0.5 2 0 s1.5 0.5 2 0"/><circle cx="8" cy="6.5" r="0.7" fill="currentColor"/><circle cx="11" cy="6.5" r="0.7" fill="currentColor"/></svg>',
+    dishwasher: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><line x1="4" y1="7" x2="20" y2="7"/><line x1="7" y1="5" x2="13" y2="5"/><circle cx="17" cy="5" r="0.7" fill="currentColor"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="8" y1="18" x2="16" y2="18"/></svg>',
+    oven: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="7" cy="6.5" r="0.7" fill="currentColor"/><circle cx="11" cy="6.5" r="0.7" fill="currentColor"/><circle cx="15" cy="6.5" r="0.7" fill="currentColor"/><rect x="7" y="12" width="10" height="6" rx="0.5"/></svg>',
+    tv: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="17" x2="12" y2="20"/></svg>',
+    garden_furniture: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="2"/><path d="M12 11v3"/><path d="M8 14h8l-1 5h-6z"/></svg>',
+    grill: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16l-2 8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="9" y1="4" x2="9" y2="6"/><line x1="15" y1="4" x2="15" y2="6"/></svg>',
+    branches: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9"/><path d="M12 12c-2 -3 -4 -3 -7 -3"/><path d="M12 9c2 -3 4 -3 7 -3"/><path d="M12 15c-2 -3 -4 -3 -7 -3"/></svg>',
+    pots: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h12l-1.5 10h-9z"/><line x1="5" y1="10" x2="19" y2="10"/><path d="M10 10C10 6 12 4 12 4s2 2 2 6"/></svg>',
+    mower: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16h14a2 2 0 0 0 2-2v-2H5"/><path d="M5 12V8a2 2 0 0 1 2-2h2v6"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+    shed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v10H3z"/><rect x="10" y="14" width="4" height="7"/></svg>',
+    racks: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="0.5"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><rect x="6" y="5" width="4" height="3" fill="currentColor" opacity="0.3" stroke="none"/><rect x="13" y="11" width="4" height="3" fill="currentColor" opacity="0.3" stroke="none"/></svg>',
+    tires: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><line x1="12" y1="3" x2="12" y2="8.5"/><line x1="12" y1="15.5" x2="12" y2="21"/><line x1="3" y1="12" x2="8.5" y2="12"/><line x1="15.5" y1="12" x2="21" y2="12"/></svg>',
+    tools: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+    paint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v3H7z"/><rect x="9" y="11" width="6" height="8" rx="0.5"/><line x1="9" y1="14" x2="15" y2="14"/></svg>',
+    bicycle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="M6 16l4-8h4l4 8"/><path d="M10 8l-2 -4h2"/></svg>',
+    safe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="14" cy="12" r="3"/><line x1="14" y1="9" x2="14" y2="7"/><line x1="6" y1="6" x2="8" y2="6"/><line x1="6" y1="18" x2="8" y2="18"/></svg>',
+    piano: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="1"/><line x1="6" y1="6" x2="6" y2="14"/><line x1="10" y1="6" x2="10" y2="14"/><line x1="14" y1="6" x2="14" y2="14"/><line x1="18" y1="6" x2="18" y2="14"/></svg>',
+    aquarium: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M5 13c4 -4 10 -4 14 0" opacity="0.5"/><circle cx="14" cy="11" r="0.8" fill="currentColor"/><path d="M9 10c1 1 3 1 4 0" opacity="0.5"/></svg>',
+    full_clearance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13"/><path d="M9 21v-6h6v6"/><rect x="9" y="9" width="2" height="3"/><rect x="13" y="9" width="2" height="3"/></svg>',
+    mixed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="11" width="9" height="9" rx="1"/><rect x="13" y="11" width="9" height="9" rx="1"/><rect x="7.5" y="3" width="9" height="9" rx="1"/></svg>',
+    default: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="12" y1="9" x2="12" y2="15"/></svg>',
   };
+  function itemIcon(key) { return ITEM_ICONS[key] || ITEM_ICONS.default; }
 
-  // ---------- Service catalog (4 services, placeholder pricing/questions) ----------
-  const DIRECTIONS = [
-    { id: 'odvoz', title: 'Odvoz', sub: 'Vyvezieme od vás staré veci', icon: iconOdvoz },
-    { id: 'dovoz', title: 'Dovoz', sub: 'Privezieme tovar / nábytok k vám', icon: iconDovoz },
-  ];
-
-  const SERVICES = [
-    {
-      id: 'furniture',
-      title: 'Nábytok',
-      sub:   'Sedačky, skrine, postele, stoly…',
-      base:  50,
-      icon:  iconFurniture,
-      directions: ['odvoz', 'dovoz'],
-      questions: [
-        { id: 'item_kind', label: 'Aký typ nábytku?', type: 'cards', cols: 2, allowCustom: true,
-          options: [
-            { value: 'sofa',     label: 'Sedačka',      mult: 1.2 },
-            { value: 'wardrobe', label: 'Skriňa',       mult: 1.1 },
-            { value: 'bed',      label: 'Posteľ',       mult: 1.0 },
-            { value: 'table',    label: 'Stôl + stoličky', mult: 1.0 },
-            { value: 'mixed',    label: 'Viac kusov',   mult: 1.5 },
-          ] },
-        { id: 'quantity', label: 'Počet kusov?', type: 'number', placeholder: 'napr. 2' },
-        { id: 'service_extra_odvoz', label: 'Potrebná demontáž?', type: 'cards', cols: 2, onlyDir: 'odvoz',
-          options: [
-            { value: 'yes', label: 'Áno, rozobrať',  add: 30 },
-            { value: 'no',  label: 'Nie, vcelku',    tone: 'good' },
-          ] },
-        { id: 'service_extra_dovoz', label: 'Potrebná montáž?', type: 'cards', cols: 2, onlyDir: 'dovoz',
-          options: [
-            { value: 'yes', label: 'Áno, zostaviť', add: 40 },
-            { value: 'no',  label: 'Nie, len doviezť', tone: 'good' },
-          ] },
-        { id: 'store', label: 'Z akej predajne?', type: 'cards', cols: 2, onlyDir: 'dovoz', allowCustom: true,
-          options: [
-            { value: 'momax',   label: 'Mömax' },
-            { value: 'ikea',    label: 'IKEA' },
-            { value: 'jysk',    label: 'JYSK' },
-            { value: 'kika',    label: 'Kika' },
-          ] },
-        { id: 'remove_old', label: 'Odvezieme aj starý nábytok?', type: 'cards', cols: 2, onlyDir: 'dovoz',
-          options: [
-            { value: 'yes', label: 'Áno, prosím', add: 40, tone: 'good' },
-            { value: 'no',  label: 'Nie, ďakujem' },
-          ] },
-        { id: 'from_address', label: 'Z akej adresy?', type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'to_address',   label: 'Kam doručiť?',  type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'floors', label: 'Poschodie z / na', type: 'group', sub: [
-            { id: 'floor_from', label: 'Z poschodia',  type: 'number', placeholder: '0' },
-            { id: 'floor_to',   label: 'Na poschodie', type: 'number', placeholder: '0' },
-          ] },
-        { id: 'elevator', label: 'Je k dispozícii výťah?', type: 'cards', cols: 3,
-          options: [
-            { value: 'both', label: 'Áno, oboje', tone: 'good' },
-            { value: 'one',  label: 'Iba jeden',  tone: 'warn' },
-            { value: 'none', label: 'Bez výťahu', tone: 'bad', addPct: 0.20 },
-          ] },
-        { id: 'date', label: 'Plánovaný termín?', hint: 'Voliteľné.', type: 'date' },
-      ]
-    },
-    {
-      id: 'appliance',
-      title: 'Zariadenie / spotrebič',
-      sub:   'Chladnička, práčka, sušička, sporák…',
-      base:  45,
-      icon:  iconAppliance,
-      directions: ['odvoz', 'dovoz'],
-      questions: [
-        { id: 'item_kind', label: 'Aký spotrebič?', type: 'cards', cols: 2, allowCustom: true,
-          options: [
-            { value: 'fridge',  label: 'Chladnička',      mult: 1.3 },
-            { value: 'washer',  label: 'Práčka',          mult: 1.0 },
-            { value: 'dryer',   label: 'Sušička',         mult: 1.0 },
-            { value: 'stove',   label: 'Sporák / rúra',   mult: 1.1 },
-            { value: 'dishw',   label: 'Umývačka',        mult: 1.0 },
-            { value: 'mixed',   label: 'Viac kusov',      mult: 1.6 },
-          ] },
-        { id: 'quantity', label: 'Počet kusov?', type: 'number', placeholder: 'napr. 1' },
-        { id: 'disconnect', label: 'Treba odpojiť od prípojok?', type: 'cards', cols: 2, onlyDir: 'odvoz',
-          options: [
-            { value: 'yes', label: 'Áno', add: 25 },
-            { value: 'no',  label: 'Nie, je odpojený', tone: 'good' },
-          ] },
-        { id: 'install', label: 'Inštalácia na mieste?', type: 'cards', cols: 2, onlyDir: 'dovoz',
-          options: [
-            { value: 'yes', label: 'Áno, prosím', add: 40 },
-            { value: 'no',  label: 'Nie, sám si to spravím', tone: 'good' },
-          ] },
-        { id: 'eco', label: 'Ekologická likvidácia?', type: 'cards', cols: 2, onlyDir: 'odvoz',
-          options: [
-            { value: 'yes', label: 'Áno (v cene)',  tone: 'good' },
-            { value: 'no',  label: 'Nie, len odviesť' },
-          ] },
-        { id: 'remove_old', label: 'Odvezieme aj starý spotrebič?', type: 'cards', cols: 2, onlyDir: 'dovoz',
-          options: [
-            { value: 'yes', label: 'Áno, prosím', add: 30, tone: 'good' },
-            { value: 'no',  label: 'Nie, ďakujem' },
-          ] },
-        { id: 'from_address', label: 'Z akej adresy?', type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'to_address',   label: 'Kam doručiť?',  type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'floors', label: 'Poschodie z / na', type: 'group', sub: [
-            { id: 'floor_from', label: 'Z poschodia',  type: 'number', placeholder: '0' },
-            { id: 'floor_to',   label: 'Na poschodie', type: 'number', placeholder: '0' },
-          ] },
-        { id: 'elevator', label: 'Je k dispozícii výťah?', type: 'cards', cols: 3,
-          options: [
-            { value: 'both', label: 'Áno, oboje', tone: 'good' },
-            { value: 'one',  label: 'Iba jeden',  tone: 'warn' },
-            { value: 'none', label: 'Bez výťahu', tone: 'bad', addPct: 0.20 },
-          ] },
-        { id: 'date', label: 'Plánovaný termín?', type: 'date' },
-      ]
-    },
-    {
-      id: 'construction',
-      title: 'Stavebný odpad',
-      sub:   'Suť, drevo, kov, zmesný odpad',
-      base:  70,
-      icon:  iconConstruction,
-      directions: ['odvoz'],
-      questions: [
-        { id: 'waste_type', label: 'Typ stavebného odpadu?', type: 'cards', cols: 2, allowCustom: true,
-          options: [
-            { value: 'rubble',   label: 'Suť / tehly',  mult: 1.0 },
-            { value: 'wood',     label: 'Drevo',        mult: 0.9 },
-            { value: 'metal',    label: 'Kov',          mult: 1.2, tone: 'warn' },
-            { value: 'mixed',    label: 'Zmesný',       mult: 1.1 },
-          ] },
-        { id: 'volume', label: 'Odhadovaný objem (m³)?', hint: 'Pomôže presnejšie naceniť.', type: 'number', placeholder: 'napr. 5' },
-        { id: 'bags', label: 'Alebo počet BIG-bagov?', type: 'number', placeholder: 'napr. 3' },
-        { id: 'access', label: 'Prístup pre nákladiak?', type: 'cards', cols: 2,
-          options: [
-            { value: 'yes', label: 'Áno, k vchodu',     tone: 'good' },
-            { value: 'no',  label: 'Iba pešo / ďaleko', tone: 'bad',  addPct: 0.30 },
-          ] },
-        { id: 'address', label: 'Adresa?', type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'date',    label: 'Plánovaný termín?', type: 'date' },
-      ]
-    },
-    {
-      id: 'material',
-      title: 'Materiál / tovar',
-      sub:   'Z Hornbachu, OBI, Baumaxu, IKEA…',
-      base:  40,
-      icon:  iconMaterial,
-      directions: ['dovoz'],
-      questions: [
-        { id: 'goods', label: 'Čo prevážame?', type: 'text', placeholder: 'napr. obklady, drevo, palety…' },
-        { id: 'store', label: 'Z akej predajne?', type: 'cards', cols: 2, allowCustom: true,
-          options: [
-            { value: 'hornbach', label: 'Hornbach' },
-            { value: 'obi',      label: 'OBI' },
-            { value: 'baumax',   label: 'Baumax' },
-            { value: 'ikea',     label: 'IKEA' },
-          ] },
-        { id: 'volume_est', label: 'Odhad objemu / hmotnosti', type: 'cards', cols: 2,
-          options: [
-            { value: 'small',  label: 'Menšie balenia', sub: 'do 50 kg',       mult: 0.8, tone: 'good' },
-            { value: 'medium', label: 'Bežná dodávka',  sub: '50 – 300 kg',     mult: 1.0 },
-            { value: 'large',  label: 'Palety',         sub: '300+ kg / palety', mult: 1.6, tone: 'warn' },
-          ] },
-        { id: 'carry_in', label: 'Vynáška do bytu / domu?', type: 'cards', cols: 2,
-          options: [
-            { value: 'yes', label: 'Áno, prosím',         add: 30 },
-            { value: 'no',  label: 'Stačí pred vchod',    tone: 'good' },
-          ] },
-        { id: 'to_address', label: 'Kam doručiť?', type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'floors', label: 'Na poschodie', type: 'number', placeholder: '0' },
-        { id: 'elevator', label: 'Je výťah?', type: 'cards', cols: 2,
-          options: [
-            { value: 'yes', label: 'Áno', tone: 'good' },
-            { value: 'no',  label: 'Nie', tone: 'bad', addPct: 0.20 },
-          ] },
-        { id: 'date', label: 'Plánovaný termín?', type: 'date' },
-      ]
-    },
-    {
-      id: 'other',
-      title: 'Iné…',
-      sub:   'Niečo iné? Popíšte vašu požiadavku',
-      base:  50,
-      icon:  iconOther,
-      directions: ['odvoz', 'dovoz'],
-      questions: [
-        { id: 'description', label: 'Popíšte čo potrebujete', hint: 'Čím podrobnejšie, tým presnejší odhad.', type: 'textarea', placeholder: 'Napr. odviesť starý gauč z 3. poschodia, alebo doviezť kvety zo záhradníctva…' },
-        { id: 'address', label: 'Adresa', type: 'text', placeholder: 'Mesto, ulica' },
-        { id: 'date',    label: 'Plánovaný termín?', type: 'date' },
-      ]
-    },
-  ];
-
-  // ---------- Animated direction + category icons ----------
+  // ============================================================
+  // DIRECTION VISUAL ICONS — odvoz / dovoz with rich animations
+  // ============================================================
   function iconOdvoz() {
-    // Truck loading boxes, driving AWAY (to the right)
+    // Odvoz: house on the left, van leaves to the right.
     return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
-      // House on the left (source of items)
-      + '<g class="cbw-anim-house">'
-      +   '<path d="M3 30 L11 20 L19 30 L19 46 L3 46 Z" fill="rgba(255,255,255,0.5)"/>'
-      +   '<rect x="8" y="36" width="6" height="10" fill="currentColor" opacity="0.35"/>'
+      + '<svg viewBox="0 0 110 80" fill="none" xmlns="http://www.w3.org/2000/svg">'
+      + '<path d="M8 50 L8 65 L26 65 L26 50" fill="#fbbf24" stroke="#92400e" stroke-width="1.5" stroke-linejoin="round"/>'
+      + '<path d="M5 50 L17 38 L29 50 Z" fill="#dc2626" stroke="#92400e" stroke-width="1.5" stroke-linejoin="round"/>'
+      + '<rect x="14" y="55" width="6" height="10" fill="#92400e"/>'
+      + '<line class="cbw-dir-road-dash" x1="2" y1="72" x2="108" y2="72" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-1" x="34" y="56" width="8" height="8" rx="1" fill="#0ea5e9"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-2" x="44" y="58" width="6" height="6" rx="1" fill="#0369a1"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-3" x="52" y="56" width="8" height="8" rx="1" fill="#0ea5e9"/>'
+      + '<g class="cbw-dir-van cbw-dir-van-anim" style="--drive-x:16px;">'
+      +   '<rect x="62" y="48" width="22" height="18" rx="1.5" fill="#fff" stroke="#0c4a6e" stroke-width="1.8"/>'
+      +   '<path d="M84 52 L94 52 L102 60 L102 66 L84 66 Z" fill="#fff" stroke="#0c4a6e" stroke-width="1.8" stroke-linejoin="round"/>'
+      +   '<path d="M86 54 L92 54 L98 60 L86 60 Z" fill="#0c4a6e" opacity="0.7"/>'
+      +   '<rect x="65" y="51" width="6" height="6" rx="0.5" stroke="#0c4a6e" stroke-width="1.2" fill="none"/>'
+      +   '<circle class="cbw-dir-wheel" cx="70" cy="68" r="3.5" fill="#0c4a6e"/>'
+      +   '<circle class="cbw-dir-wheel" cx="94" cy="68" r="3.5" fill="#0c4a6e"/>'
+      +   '<circle cx="70" cy="68" r="1.2" fill="#fff"/>'
+      +   '<circle cx="94" cy="68" r="1.2" fill="#fff"/>'
       + '</g>'
-      // Box leaving house, flying into truck
-      + '<g class="cbw-anim-box-out">'
-      +   '<rect x="22" y="28" width="9" height="9" rx="0.5" fill="#fde68a" stroke="currentColor" stroke-width="1.4"/>'
-      +   '<line x1="22" y1="32.5" x2="31" y2="32.5" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>'
-      + '</g>'
-      // Truck on the right
-      + '<g class="cbw-anim-truck-body">'
-      +   '<rect x="33" y="24" width="24" height="20" rx="1.5" fill="rgba(255,255,255,0.35)"/>'
-      +   '<path d="M57 28 L66 28 L74 36 L74 44 L57 44 Z" fill="rgba(255,255,255,0.35)"/>'
-      +   '<rect x="66" y="30" width="6" height="3.5" fill="currentColor" opacity="0.4"/>'
-      +   '<rect x="36" y="27" width="18" height="14" fill="currentColor" opacity="0.16"/>'
-      +   '<rect x="42" y="29" width="9" height="8" rx="0.5" fill="#fde68a" stroke="currentColor" stroke-width="1.2"/>'
-      + '</g>'
-      // Wheels
-      + '<g class="cbw-anim-wheel"><circle cx="40" cy="46" r="3.2"/><circle cx="40" cy="46" r="1" fill="currentColor"/></g>'
-      + '<g class="cbw-anim-wheel" style="animation-delay:.05s"><circle cx="67" cy="46" r="3.2"/><circle cx="67" cy="46" r="1" fill="currentColor"/></g>'
-      // Motion lines coming from behind
-      + '<g class="cbw-anim-motion"><line x1="30" y1="36" x2="24" y2="36" stroke-width="1.2"/><line x1="29" y1="40" x2="22" y2="40" stroke-width="1.2"/></g>'
+      + '<path d="M35 30 L53 30 M47 26 L53 30 L47 34" stroke="#0369a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>'
       + '</svg>';
   }
+
   function iconDovoz() {
-    // Truck DELIVERING — driving in from the left, package flying to the house door
+    // Dovoz: house on the left, van arrives from the right, opposite direction.
     return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
-      // Truck on the left, arriving
-      + '<g class="cbw-anim-truck-rev">'
-      +   '<rect x="3" y="24" width="24" height="20" rx="1.5" fill="rgba(255,255,255,0.35)"/>'
-      +   '<path d="M27 28 L36 28 L40 36 L40 44 L27 44 Z" fill="rgba(255,255,255,0.35)"/>'
-      +   '<rect x="29" y="30" width="6" height="3.5" fill="currentColor" opacity="0.4"/>'
-      +   '<rect x="6" y="27" width="18" height="14" fill="currentColor" opacity="0.16"/>'
+      + '<svg viewBox="0 0 110 80" fill="none" xmlns="http://www.w3.org/2000/svg">'
+      + '<path d="M8 50 L8 65 L26 65 L26 50" fill="#fbbf24" stroke="#92400e" stroke-width="1.5" stroke-linejoin="round"/>'
+      + '<path d="M5 50 L17 38 L29 50 Z" fill="#16a34a" stroke="#92400e" stroke-width="1.5" stroke-linejoin="round"/>'
+      + '<rect x="14" y="55" width="6" height="10" fill="#92400e"/>'
+      + '<line class="cbw-dir-road-dash" x1="2" y1="72" x2="108" y2="72" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-deliver-1" x="34" y="56" width="8" height="8" rx="1" fill="#0ea5e9"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-deliver-2" x="44" y="58" width="6" height="6" rx="1" fill="#0369a1"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-deliver-3" x="52" y="56" width="8" height="8" rx="1" fill="#0ea5e9"/>'
+      + '<g class="cbw-dir-van cbw-dir-van-anim" style="--drive-x:-18px;">'
+      +   '<rect x="64" y="48" width="22" height="18" rx="1.5" fill="#fff" stroke="#0c4a6e" stroke-width="1.8"/>'
+      +   '<path d="M64 52 L54 52 L46 60 L46 66 L64 66 Z" fill="#fff" stroke="#0c4a6e" stroke-width="1.8" stroke-linejoin="round"/>'
+      +   '<path d="M62 54 L56 54 L50 60 L62 60 Z" fill="#0c4a6e" opacity="0.7"/>'
+      +   '<rect x="72" y="51" width="6" height="6" rx="0.5" stroke="#0c4a6e" stroke-width="1.2" fill="none"/>'
+      +   '<circle class="cbw-dir-wheel" cx="54" cy="68" r="3.5" fill="#0c4a6e"/>'
+      +   '<circle class="cbw-dir-wheel" cx="78" cy="68" r="3.5" fill="#0c4a6e"/>'
+      +   '<circle cx="54" cy="68" r="1.2" fill="#fff"/>'
+      +   '<circle cx="78" cy="68" r="1.2" fill="#fff"/>'
       + '</g>'
-      // Wheels
-      + '<g class="cbw-anim-wheel"><circle cx="10" cy="46" r="3.2"/><circle cx="10" cy="46" r="1" fill="currentColor"/></g>'
-      + '<g class="cbw-anim-wheel" style="animation-delay:.05s"><circle cx="37" cy="46" r="3.2"/><circle cx="37" cy="46" r="1" fill="currentColor"/></g>'
-      // Package flying from truck to house
-      + '<g class="cbw-anim-box-in">'
-      +   '<rect x="42" y="30" width="9" height="9" rx="0.5" fill="#fde68a" stroke="currentColor" stroke-width="1.4"/>'
-      +   '<line x1="42" y1="34.5" x2="51" y2="34.5" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>'
-      + '</g>'
-      // House (destination) on the right
-      + '<g class="cbw-anim-house-dest">'
-      +   '<path d="M61 30 L69 20 L77 30 L77 46 L61 46 Z" fill="rgba(255,255,255,0.5)"/>'
-      +   '<rect class="cbw-anim-door" x="66" y="36" width="6" height="10" fill="currentColor" opacity="0.5"/>'
-      + '</g>'
-      + '</svg>';
-  }
-  function iconFurniture() {
-    // Sofa / wardrobe with opening doors
-    return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
-      // Wardrobe (left)
-      + '<g class="cbw-anim-wardrobe">'
-      +   '<rect x="6" y="10" width="28" height="40" rx="1.5" fill="rgba(255,255,255,0.4)"/>'
-      +   '<line x1="20" y1="10" x2="20" y2="50"/>'
-      +   '<circle class="cbw-anim-knob" cx="17" cy="30" r="1.2" fill="currentColor"/>'
-      +   '<circle class="cbw-anim-knob" cx="23" cy="30" r="1.2" fill="currentColor"/>'
-      // Opening left door
-      +   '<rect class="cbw-anim-door-l" x="6" y="10" width="14" height="40" fill="rgba(255,255,255,0.7)" stroke="currentColor" stroke-width="1.4"/>'
-      + '</g>'
-      // Sofa (right)
-      + '<g class="cbw-anim-sofa">'
-      +   '<rect x="40" y="28" width="34" height="14" rx="2" fill="rgba(255,255,255,0.4)"/>'
-      +   '<rect x="40" y="22" width="34" height="10" rx="2" fill="rgba(255,255,255,0.6)"/>'
-      +   '<rect x="38" y="26" width="4" height="18" rx="1.5" fill="rgba(255,255,255,0.5)"/>'
-      +   '<rect x="72" y="26" width="4" height="18" rx="1.5" fill="rgba(255,255,255,0.5)"/>'
-      +   '<rect x="42" y="42" width="2" height="6"/>'
-      +   '<rect x="70" y="42" width="2" height="6"/>'
-      + '</g>'
-      + '</svg>';
-  }
-  function iconAppliance() {
-    // Fridge with opening door + light blink
-    return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
-      // Fridge body
-      + '<g class="cbw-anim-fridge">'
-      +   '<rect x="22" y="6" width="36" height="46" rx="2" fill="rgba(255,255,255,0.4)"/>'
-      +   '<line x1="22" y1="22" x2="58" y2="22"/>'
-      +   '<rect x="54" y="12" width="2" height="6" rx="0.5" fill="currentColor" opacity="0.6"/>'
-      +   '<rect x="54" y="28" width="2" height="6" rx="0.5" fill="currentColor" opacity="0.6"/>'
-      // Inside (light)
-      +   '<rect class="cbw-anim-fridge-light" x="26" y="26" width="22" height="22" fill="#fde68a" opacity="0"/>'
-      // Door opening
-      +   '<rect class="cbw-anim-fridge-door" x="22" y="22" width="36" height="30" rx="1" fill="rgba(255,255,255,0.7)" stroke="currentColor" stroke-width="1.4"/>'
-      + '</g>'
-      // Snowflake
-      + '<g class="cbw-anim-snow">'
-      +   '<line x1="40" y1="10" x2="40" y2="18"/>'
-      +   '<line x1="36" y1="14" x2="44" y2="14"/>'
-      +   '<line x1="37" y1="11" x2="43" y2="17"/>'
-      +   '<line x1="43" y1="11" x2="37" y2="17"/>'
-      + '</g>'
-      + '</svg>';
-  }
-  function iconConstruction() {
-    // Bricks falling into a container
-    return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
-      // Falling bricks
-      + '<g class="cbw-anim-brick-1"><rect x="20" y="2" width="10" height="5" fill="currentColor" opacity="0.65"/></g>'
-      + '<g class="cbw-anim-brick-2"><rect x="38" y="2" width="10" height="5" fill="currentColor" opacity="0.55"/></g>'
-      + '<g class="cbw-anim-brick-3"><rect x="56" y="2" width="10" height="5" fill="currentColor" opacity="0.5"/></g>'
-      // Container body
-      + '<path d="M8 22 L72 22 L66 50 L14 50 Z" fill="rgba(255,255,255,0.5)" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>'
-      + '<line x1="14" y1="32" x2="66" y2="32"/>'
-      + '<line x1="14" y1="42" x2="66" y2="42"/>'
-      + '<line x1="32" y1="22" x2="32" y2="50"/>'
-      + '<line x1="48" y1="22" x2="48" y2="50"/>'
-      // Dust particles
-      + '<g class="cbw-anim-dust">'
-      +   '<circle cx="22" cy="26" r="1.4" fill="currentColor" opacity="0.5"/>'
-      +   '<circle cx="58" cy="28" r="1.2" fill="currentColor" opacity="0.45"/>'
-      + '</g>'
-      + '</svg>';
-  }
-  function iconMaterial() {
-    // Pallet being lifted by a forklift
-    return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
-      // Pallet + boxes
-      + '<g class="cbw-anim-pallet">'
-      +   '<rect x="38" y="20" width="34" height="16" rx="0.5" fill="rgba(255,255,255,0.5)"/>'
-      +   '<line x1="38" y1="28" x2="72" y2="28"/>'
-      +   '<line x1="50" y1="20" x2="50" y2="36"/>'
-      +   '<line x1="60" y1="20" x2="60" y2="36"/>'
-      +   '<rect x="40" y="10" width="14" height="10" rx="0.5" fill="#fde68a" stroke="currentColor" stroke-width="1.2"/>'
-      +   '<rect x="56" y="14" width="14" height="6"  rx="0.5" fill="#fde68a" stroke="currentColor" stroke-width="1.2"/>'
-      + '</g>'
-      // Pallet bottom slats
-      + '<g class="cbw-anim-pallet">'
-      +   '<rect x="38" y="36" width="34" height="3" fill="rgba(255,255,255,0.6)" stroke="currentColor" stroke-width="1.2"/>'
-      +   '<rect x="40" y="39" width="3" height="5" fill="rgba(255,255,255,0.6)" stroke="currentColor" stroke-width="1"/>'
-      +   '<rect x="52" y="39" width="3" height="5" fill="rgba(255,255,255,0.6)" stroke="currentColor" stroke-width="1"/>'
-      +   '<rect x="67" y="39" width="3" height="5" fill="rgba(255,255,255,0.6)" stroke="currentColor" stroke-width="1"/>'
-      + '</g>'
-      // Forklift
-      + '<g class="cbw-anim-forklift">'
-      +   '<rect x="6" y="24" width="14" height="14" rx="1" fill="rgba(255,255,255,0.5)"/>'
-      +   '<rect x="9" y="26" width="8" height="6" fill="currentColor" opacity="0.35"/>'
-      +   '<line x1="20" y1="42" x2="40" y2="42" stroke-width="2"/>'
-      +   '<line x1="20" y1="46" x2="40" y2="46" stroke-width="2"/>'
-      + '</g>'
-      // Wheels
-      + '<g class="cbw-anim-wheel"><circle cx="10" cy="44" r="2.4"/><circle cx="10" cy="44" r=".8" fill="currentColor"/></g>'
-      + '<g class="cbw-anim-wheel" style="animation-delay:.05s"><circle cx="17" cy="44" r="2.4"/><circle cx="17" cy="44" r=".8" fill="currentColor"/></g>'
-      + '</svg>';
-  }
-  function iconOther() {
-    // Big question mark with pulsing dots
-    return ''
-      + '<svg viewBox="0 0 80 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
-      + '<g class="cbw-anim-other">'
-      +   '<circle cx="40" cy="28" r="20" fill="rgba(255,255,255,0.4)"/>'
-      +   '<path d="M32 24 a8 8 0 0 1 16 0 c0 5 -8 6 -8 12" stroke-width="2.4"/>'
-      +   '<circle cx="40" cy="42" r="1.6" fill="currentColor"/>'
-      + '</g>'
-      + '<g class="cbw-anim-dot-1"><circle cx="14" cy="14" r="1.6" fill="currentColor" opacity="0.5"/></g>'
-      + '<g class="cbw-anim-dot-2"><circle cx="66" cy="14" r="1.6" fill="currentColor" opacity="0.5"/></g>'
-      + '<g class="cbw-anim-dot-3"><circle cx="20" cy="48" r="1.6" fill="currentColor" opacity="0.5"/></g>'
-      + '<g class="cbw-anim-dot-4"><circle cx="60" cy="48" r="1.6" fill="currentColor" opacity="0.5"/></g>'
+      + '<path d="M82 30 L52 30 M58 25 L52 30 L58 35" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>'
       + '</svg>';
   }
 
-  // ---------- Wizard state ----------
-  const wiz = document.getElementById('cbwCalcWizard');
-  const wizBody  = document.getElementById('cbwCalcBody');
-  const wizFoot  = document.getElementById('cbwCalcFoot');
-  const wizPrev  = document.getElementById('cbwCalcPrev');
-  const wizNext  = document.getElementById('cbwCalcNext');
-  const wizBack  = document.getElementById('cbwCalcBack');
-  const wizExit  = document.getElementById('cbwCalcExit');
-  const wizTitle = document.getElementById('cbwCalcTitle');
-  const wizStep  = document.getElementById('cbwCalcStep');
-  const wizBar   = document.getElementById('cbwCalcBarFill');
-  const ctaBtn   = document.getElementById('cbwOpenCalc');
+  function iconStahovanie() {
+    // Sťahovanie: house on left → big truck with stacked boxes → new house on right
+    return ''
+      + '<svg viewBox="0 0 110 80" fill="none" xmlns="http://www.w3.org/2000/svg">'
+      // Old house (left)
+      + '<path d="M5 50 L5 65 L20 65 L20 50" fill="#fde68a" stroke="#92400e" stroke-width="1.4" stroke-linejoin="round"/>'
+      + '<path d="M3 50 L12.5 40 L22 50 Z" fill="#dc2626" stroke="#92400e" stroke-width="1.4" stroke-linejoin="round"/>'
+      + '<rect x="9" y="55" width="5" height="10" fill="#92400e"/>'
+      // Road
+      + '<line class="cbw-dir-road-dash" x1="2" y1="72" x2="108" y2="72" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>'
+      // Truck in middle
+      + '<g class="cbw-dir-van cbw-dir-van-anim" style="--drive-x:14px;">'
+      +   '<rect x="32" y="44" width="34" height="22" rx="1.5" fill="#fff" stroke="#0c4a6e" stroke-width="1.7"/>'
+      // Stack of boxes inside truck (visible through "window")
+      +   '<rect x="36" y="48" width="8" height="8" rx="0.6" fill="#fbbf24" stroke="#92400e" stroke-width="0.8"/>'
+      +   '<rect x="46" y="50" width="9" height="6" rx="0.6" fill="#0ea5e9" stroke="#075985" stroke-width="0.8"/>'
+      +   '<rect x="57" y="48" width="7" height="8" rx="0.6" fill="#f97316" stroke="#92400e" stroke-width="0.8"/>'
+      +   '<rect x="38" y="58" width="10" height="6" rx="0.6" fill="#10b981" stroke="#065f46" stroke-width="0.8"/>'
+      +   '<rect x="50" y="58" width="14" height="6" rx="0.6" fill="#a855f7" stroke="#581c87" stroke-width="0.8"/>'
+      // Cab
+      +   '<path d="M66 48 L76 48 L84 56 L84 66 L66 66 Z" fill="#fff" stroke="#0c4a6e" stroke-width="1.7" stroke-linejoin="round"/>'
+      +   '<path d="M68 50 L74 50 L80 56 L68 56 Z" fill="#bae6fd" stroke="#0c4a6e" stroke-width="0.8"/>'
+      // Wheels
+      +   '<circle class="cbw-dir-wheel" cx="40" cy="68" r="3.5" fill="#1e293b"/>'
+      +   '<circle class="cbw-dir-wheel" cx="60" cy="68" r="3.5" fill="#1e293b"/>'
+      +   '<circle class="cbw-dir-wheel" cx="78" cy="68" r="3.5" fill="#1e293b"/>'
+      +   '<circle cx="40" cy="68" r="1.2" fill="#fff"/>'
+      +   '<circle cx="60" cy="68" r="1.2" fill="#fff"/>'
+      +   '<circle cx="78" cy="68" r="1.2" fill="#fff"/>'
+      + '</g>'
+      // New house (right)
+      + '<path d="M88 50 L88 65 L103 65 L103 50" fill="#a7f3d0" stroke="#065f46" stroke-width="1.4" stroke-linejoin="round"/>'
+      + '<path d="M86 50 L95.5 40 L105 50 Z" fill="#16a34a" stroke="#065f46" stroke-width="1.4" stroke-linejoin="round"/>'
+      + '<rect x="92" y="55" width="5" height="10" fill="#065f46"/>'
+      // Arrow at top
+      + '<path d="M14 30 L96 30 M88 25 L96 30 L88 35" stroke="#0369a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>'
+      + '</svg>';
+  }
 
-  /*
-   * Wizard state:
-   *   qIndex = -2  → pick direction (odvoz / dovoz)
-   *   qIndex = -1  → pick service category
-   *   qIndex 0..N-1 → service question (with onlyDir filter applied)
-   *   qIndex = N   → summary + contact form
-   *   qIndex = N+1 → thank-you screen
-   */
-  const RESUME_KEY = 'cbw_calc_resume_v1';
-  let wizState = {
-    direction: null,  // 'odvoz' | 'dovoz'
-    service:   null,
-    answers:   {},
-    qIndex:    -2,
+  function iconVypratavanie() {
+    // Vypratavanie: house full of clutter, broom + dumpster, truck taking it away
+    return ''
+      + '<svg viewBox="0 0 110 80" fill="none" xmlns="http://www.w3.org/2000/svg">'
+      // House being cleared
+      + '<path d="M8 50 L8 65 L32 65 L32 50" fill="#fde68a" stroke="#92400e" stroke-width="1.4" stroke-linejoin="round"/>'
+      + '<path d="M5 50 L20 38 L35 50 Z" fill="#dc2626" stroke="#92400e" stroke-width="1.4" stroke-linejoin="round"/>'
+      + '<rect x="17" y="56" width="6" height="9" fill="#92400e"/>'
+      // Pile of items inside (boxes, junk)
+      + '<rect x="10" y="58" width="5" height="6" rx="0.5" fill="#a855f7" opacity="0.85"/>'
+      + '<rect x="25" y="56" width="6" height="8" rx="0.5" fill="#0ea5e9" opacity="0.85"/>'
+      + '<rect x="11" y="52" width="4" height="4" rx="0.5" fill="#f97316" opacity="0.85"/>'
+      // Road
+      + '<line class="cbw-dir-road-dash" x1="2" y1="72" x2="108" y2="72" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>'
+      // Stuff being moved out (between house and truck)
+      + '<rect class="cbw-dir-package cbw-dir-pkg-1" x="40" y="58" width="7" height="6" rx="0.6" fill="#fbbf24" stroke="#92400e" stroke-width="0.8"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-2" x="49" y="60" width="5" height="5" rx="0.6" fill="#10b981" stroke="#065f46" stroke-width="0.8"/>'
+      + '<rect class="cbw-dir-package cbw-dir-pkg-3" x="56" y="58" width="6" height="7" rx="0.6" fill="#a855f7" stroke="#581c87" stroke-width="0.8"/>'
+      // Truck (going right)
+      + '<g class="cbw-dir-van cbw-dir-van-anim" style="--drive-x:14px;">'
+      +   '<rect x="66" y="48" width="22" height="18" rx="1.5" fill="#fff" stroke="#0c4a6e" stroke-width="1.7"/>'
+      +   '<path d="M88 52 L96 52 L103 60 L103 66 L88 66 Z" fill="#fff" stroke="#0c4a6e" stroke-width="1.7" stroke-linejoin="round"/>'
+      +   '<path d="M90 54 L94 54 L100 60 L90 60 Z" fill="#bae6fd" stroke="#0c4a6e" stroke-width="0.8"/>'
+      // Boxes peeking from truck
+      +   '<rect x="69" y="52" width="5" height="5" rx="0.4" fill="#fbbf24" opacity="0.7"/>'
+      +   '<rect x="76" y="52" width="5" height="5" rx="0.4" fill="#0ea5e9" opacity="0.7"/>'
+      +   '<rect x="69" y="58" width="5" height="5" rx="0.4" fill="#f97316" opacity="0.7"/>'
+      +   '<circle class="cbw-dir-wheel" cx="73" cy="68" r="3.5" fill="#1e293b"/>'
+      +   '<circle class="cbw-dir-wheel" cx="95" cy="68" r="3.5" fill="#1e293b"/>'
+      +   '<circle cx="73" cy="68" r="1.2" fill="#fff"/>'
+      +   '<circle cx="95" cy="68" r="1.2" fill="#fff"/>'
+      + '</g>'
+      // Arrow at top
+      + '<path d="M40 30 L88 30 M80 25 L88 30 L80 35" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>'
+      + '</svg>';
+  }
+
+  // ============================================================
+  // SERVICE CATEGORY ICONS  // ============================================================
+  // SERVICE CATEGORY ICONS — unified style
+  // ============================================================
+  const SVC_ICONS = {
+    furniture: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18v9a1 1 0 0 0 1 1h3v-2h18v2h3a1 1 0 0 0 1-1v-9a4 4 0 0 0-4-4v4H9v-4a4 4 0 0 0-4 4z"/><path d="M9 18v-5a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v5"/></svg>',
+    appliance: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="4" width="18" height="28" rx="2.5"/><line x1="9" y1="15" x2="27" y2="15"/><line x1="14" y1="9" x2="14" y2="11"/><circle cx="18" cy="23" r="5"/><circle cx="18" cy="23" r="2"/></svg>',
+    construction: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14h26l-3 16H8z"/><rect x="9" y="6" width="6" height="4" rx="0.5"/><rect x="17" y="6" width="6" height="4" rx="0.5"/><rect x="11" y="18" width="14" height="4"/><line x1="11" y1="26" x2="25" y2="26"/></svg>',
+    material: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14V8a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v6"/><rect x="6" y="14" width="24" height="16" rx="2"/><line x1="12" y1="14" x2="12" y2="30"/><line x1="24" y1="14" x2="24" y2="30"/></svg>',
+    moving_flat: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 18 6l14 12"/><path d="M7 16v14h22V16"/><rect x="15" y="20" width="6" height="10"/><path d="M11 22h2v3h-2zM23 22h2v3h-2z"/></svg>',
+    moving_office: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="26" height="24" rx="1.5"/><line x1="5" y1="13" x2="31" y2="13"/><rect x="9" y="17" width="4" height="4"/><rect x="16" y="17" width="4" height="4"/><rect x="23" y="17" width="4" height="4"/><rect x="9" y="24" width="4" height="4"/><rect x="16" y="24" width="4" height="4"/><rect x="23" y="24" width="4" height="4"/></svg>',
+    heavy: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14h18l-2 16H11z"/><path d="M14 14V9a4 4 0 0 1 8 0v5"/><path d="M14 21h8M14 25h8"/></svg>',
+    clearance_flat: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11h20l-1.5 17H9.5z"/><path d="M14 11V8a4 4 0 0 1 8 0v3"/><line x1="14" y1="16" x2="14" y2="24"/><line x1="22" y1="16" x2="22" y2="24"/><line x1="18" y1="16" x2="18" y2="24"/></svg>',
+    clearance_storage: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="26" height="22" rx="1"/><line x1="5" y1="16" x2="31" y2="16"/><line x1="5" y1="23" x2="31" y2="23"/><rect x="9" y="11" width="4" height="3"/><rect x="16" y="11" width="6" height="3"/><rect x="9" y="18" width="6" height="3"/><rect x="20" y="18" width="6" height="3"/></svg>',
+    assembly: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m24 7 5 5-11 11-7 2 2-7z"/><path d="m20 11 5 5"/><path d="M5 28h14"/></svg>',
+    other: '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="13"/><path d="M14 14a4 4 0 1 1 6 3.5c-1 0.7-2 1.5-2 3"/><circle cx="18" cy="25" r="1.3" fill="currentColor"/></svg>',
   };
 
-  function persistResume() {
-    try {
-      if (wizState.qIndex < 0 || wizState.qIndex >= (wizState.service ? wizState.service.questions.length + 2 : 0)) {
-        localStorage.removeItem(RESUME_KEY);
-        return;
-      }
-      localStorage.setItem(RESUME_KEY, JSON.stringify({
-        direction: wizState.direction,
-        serviceId: wizState.service && wizState.service.id,
-        answers:   wizState.answers,
-        qIndex:    wizState.qIndex,
-      }));
-    } catch (_) {}
+  // ============================================================
+  // SERVICE CATALOG — refined with consistent structure
+  // ============================================================
+  // DIRECTIONS — i18n via getter
+  function getDirections() {
+    return [
+      { id: 'odvoz', title: t('dir_odvoz'), sub: t('dir_odvoz_sub'), icon: iconOdvoz },
+      { id: 'dovoz', title: t('dir_dovoz'), sub: t('dir_dovoz_sub'), icon: iconDovoz },
+      { id: 'stahovanie', title: t('dir_stahovanie'), sub: t('dir_stahovanie_sub'), icon: iconStahovanie },
+      { id: 'vypratavanie', title: t('dir_vypratavanie'), sub: t('dir_vypratavanie_sub'), icon: iconVypratavanie },
+    ];
   }
-  function loadResume() {
-    try {
-      const raw = localStorage.getItem(RESUME_KEY);
-      if (!raw) return null;
-      const d = JSON.parse(raw);
-      if (!d || !d.direction || !d.serviceId) return null;
-      const svc = SERVICES.find(s => s.id === d.serviceId);
-      if (!svc) return null;
-      return { direction: d.direction, service: svc, answers: d.answers || {}, qIndex: typeof d.qIndex === 'number' ? d.qIndex : 0 };
-    } catch (_) { return null; }
-  }
-
-  function openCalc() {
-    root.classList.add('cbw-calc-active');
-    wiz.dataset.open = 'true';
-    const resumed = loadResume();
-    if (resumed && confirmResume()) {
-      wizState = { direction: resumed.direction, service: resumed.service, answers: resumed.answers, qIndex: resumed.qIndex };
-    } else {
-      wizState = { direction: null, service: null, answers: {}, qIndex: -2 };
+  const DIRECTIONS = new Proxy([], {
+    get(target, prop) {
+      const arr = getDirections();
+      if (prop === 'length') return arr.length;
+      if (typeof arr[prop] === 'function') return arr[prop].bind(arr);
+      return arr[prop];
     }
-    renderWizard();
-    setRobotState('greeting', 1500);
-  }
-  function confirmResume() {
-    // Lightweight resume — silent if there's saved progress for the same session.
-    // Could be replaced with a small banner; keeping it simple for now.
-    return true;
-  }
-  function closeCalc() {
-    root.classList.remove('cbw-calc-active');
-    wiz.dataset.open = 'false';
-  }
-  ctaBtn.addEventListener('click', openCalc);
-  wizExit.addEventListener('click', closeCalc);
+  });
 
-  // Skip questions whose onlyDir does not match the chosen direction.
-  function visibleQuestions() {
-    if (!wizState.service) return [];
-    return wizState.service.questions.filter(q => !q.onlyDir || q.onlyDir === wizState.direction);
-  }
+  // All searchable items — unified list across services
+  const ALL_ITEMS = [
+    { id: 'sofa', label: 'Sedačka / gauč', sub: 'rohová, rozkladacia, kreslá', cat: 'furniture', tags: ['popular', 'home'], weight: 1.0, base: 60 },
+    { id: 'armchair', label: 'Kreslo / taburetka', sub: 'aj viac kusov', cat: 'furniture', tags: ['home'], weight: 0.5, base: 30 },
+    { id: 'wardrobe', label: 'Skriňa / šatník', sub: 'posuvná, masívna, vstavaná', cat: 'furniture', tags: ['popular', 'home', 'heavy'], weight: 1.3, base: 70 },
+    { id: 'dresser', label: 'Komoda / botník', sub: 'skrinky, zásuvky', cat: 'furniture', tags: ['home'], weight: 0.8, base: 40 },
+    { id: 'bed', label: 'Posteľ / rošt', sub: 'jednolôžko, manželská', cat: 'furniture', tags: ['popular', 'home'], weight: 1.0, base: 55 },
+    { id: 'mattress', label: 'Matrac', sub: 'jeden alebo viac kusov', cat: 'furniture', tags: ['popular', 'home'], weight: 0.7, base: 35 },
+    { id: 'table', label: 'Stôl', sub: 'jedálenský, konferenčný', cat: 'furniture', tags: ['home'], weight: 0.8, base: 40 },
+    { id: 'chairs', label: 'Stoličky', sub: 'jedálenské, kancelárske', cat: 'furniture', tags: ['home'], weight: 0.3, base: 20 },
+    { id: 'desk', label: 'Písací / kancelársky stôl', sub: 'aj s kontajnerom', cat: 'furniture', tags: ['home'], weight: 0.9, base: 45 },
+    { id: 'shelves', label: 'Police / knižnica', sub: 'regál, knižnica, vitrína', cat: 'furniture', tags: ['home'], weight: 1.0, base: 50 },
+    { id: 'kitchen', label: 'Kuchynská linka', sub: 'skrinky, doska, drez', cat: 'furniture', tags: ['popular', 'home', 'heavy'], weight: 1.6, base: 90 },
+    { id: 'doors', label: 'Dvere / zárubne', sub: 'interiérové, staré', cat: 'furniture', tags: ['home'], weight: 0.6, base: 35 },
+    { id: 'carpet', label: 'Koberec / podlaha', sub: 'rolky, plávajúca podlaha', cat: 'furniture', tags: ['home'], weight: 0.5, base: 30 },
+    { id: 'bathroom', label: 'Kúpeľňový nábytok', sub: 'skrinka, zrkadlo, sanita', cat: 'furniture', tags: ['home'], weight: 0.7, base: 35 },
+    { id: 'boxes', label: 'Krabice / vrecia', sub: 'balíky, textil, drobnosti', cat: 'furniture', tags: ['popular', 'home'], weight: 0.2, base: 15 },
+    { id: 'clothes', label: 'Oblečenie / textil', sub: 'vrecia, tašky, periny', cat: 'furniture', tags: ['home'], weight: 0.2, base: 15 },
+    { id: 'books', label: 'Knihy / dokumenty', sub: 'ťažšie krabice', cat: 'furniture', tags: ['home'], weight: 0.4, base: 20 },
+    { id: 'fridge', label: 'Chladnička / mraznička', sub: 'aj americká chladnička', cat: 'appliance', tags: ['popular', 'appliances', 'heavy'], weight: 1.5, base: 70 },
+    { id: 'washer', label: 'Práčka', sub: 'ťažký spotrebič', cat: 'appliance', tags: ['popular', 'appliances', 'heavy'], weight: 1.4, base: 65 },
+    { id: 'dryer', label: 'Sušička', sub: 'samostatná alebo set', cat: 'appliance', tags: ['appliances'], weight: 1.2, base: 60 },
+    { id: 'dishwasher', label: 'Umývačka riadu', sub: 'vstavaná aj voľne stojaca', cat: 'appliance', tags: ['appliances'], weight: 1.1, base: 60 },
+    { id: 'oven', label: 'Sporák / rúra', sub: 'kuchynské spotrebiče', cat: 'appliance', tags: ['appliances'], weight: 1.2, base: 60 },
+    { id: 'tv', label: 'TV / elektronika', sub: 'monitor, audio, káble', cat: 'appliance', tags: ['appliances'], weight: 0.4, base: 25 },
+    { id: 'garden_furniture', label: 'Záhradný nábytok', sub: 'stôl, stoličky, lehátka', cat: 'furniture', tags: ['garden'], weight: 0.7, base: 35 },
+    { id: 'grill', label: 'Gril / kotlík', sub: 'plynový, záhradný', cat: 'appliance', tags: ['garden', 'heavy'], weight: 1.0, base: 50 },
+    { id: 'branches', label: 'Konáre / zeleň', sub: 'bio odpad, rastliny', cat: 'construction', tags: ['garden'], weight: 0.5, base: 30 },
+    { id: 'pots', label: 'Kvetináče / kamene', sub: 'ťažšie kvetináče', cat: 'construction', tags: ['garden', 'heavy'], weight: 1.0, base: 45 },
+    { id: 'mower', label: 'Kosačka / technika', sub: 'záhradná technika', cat: 'appliance', tags: ['garden'], weight: 0.8, base: 40 },
+    { id: 'shed', label: 'Záhradný domček', sub: 'plech, drevo, diely', cat: 'construction', tags: ['garden', 'heavy'], weight: 2.0, base: 120 },
+    { id: 'racks', label: 'Regály / police', sub: 'kovové, skladové', cat: 'furniture', tags: ['storage', 'heavy'], weight: 1.0, base: 50 },
+    { id: 'tires', label: 'Pneumatiky / disky', sub: 'auto veci, diely', cat: 'construction', tags: ['storage'], weight: 0.6, base: 30 },
+    { id: 'tools', label: 'Náradie / stroje', sub: 'pracovný stôl, stroje', cat: 'construction', tags: ['storage', 'heavy'], weight: 1.0, base: 50 },
+    { id: 'paint', label: 'Farby / chemikálie', sub: 'vedrá, riedidlá', cat: 'construction', tags: ['storage'], weight: 0.5, base: 35 },
+    { id: 'bicycle', label: 'Bicykel / kočík / šport', sub: 'lyže, sane, športové', cat: 'furniture', tags: ['storage'], weight: 0.6, base: 30 },
+    { id: 'safe', label: 'Trezor', sub: 'veľmi ťažký kus', cat: 'furniture', tags: ['heavy'], weight: 2.5, base: 150 },
+    { id: 'piano', label: 'Klavír / piano', sub: 'individuálne nacenenie', cat: 'furniture', tags: ['heavy'], weight: 3.0, base: 200 },
+    { id: 'aquarium', label: 'Akvárium / sklo', sub: 'krehké alebo ťažké', cat: 'furniture', tags: ['heavy'], weight: 1.2, base: 60 },
+    { id: 'full_clearance', label: 'Vypratanie priestoru', sub: 'byt, dom, pivnica, garáž', cat: 'furniture', tags: ['popular', 'storage'], weight: 3.0, base: 150 },
+    { id: 'mixed', label: 'Veľa rôznych vecí', sub: 'miešaný odvoz', cat: 'furniture', tags: ['popular', 'storage'], weight: 1.5, base: 80 },
+  ];
 
-  // Steps: 1 (direction) + 1 (service) + Nvisible (questions) + 1 (summary) + 1 (thanks)
-  function totalSteps() {
-    if (!wizState.service) return 1 + 1;
-    return 2 + visibleQuestions().length + 2;
+  // SERVICES — i18n via getter
+  function getServices() {
+    return [
+      {
+        id: 'furniture',
+        title: t('svc_furniture'),
+        sub: t('svc_furniture_sub'),
+        base: 50,
+        icon: SVC_ICONS.furniture,
+        directions: ['odvoz', 'dovoz', 'stahovanie', 'vypratavanie'],
+      },
+      {
+        id: 'appliance',
+        title: t('svc_appliance'),
+        sub: t('svc_appliance_sub'),
+        base: 45,
+        icon: SVC_ICONS.appliance,
+        directions: ['odvoz', 'dovoz', 'stahovanie', 'vypratavanie'],
+      },
+      {
+        id: 'moving_flat',
+        title: t('svc_moving_flat'),
+        sub: t('svc_moving_flat_sub'),
+        base: 150,
+        icon: SVC_ICONS.moving_flat,
+        directions: ['stahovanie'],
+      },
+      {
+        id: 'moving_office',
+        title: t('svc_moving_office'),
+        sub: t('svc_moving_office_sub'),
+        base: 200,
+        icon: SVC_ICONS.moving_office,
+        directions: ['stahovanie'],
+      },
+      {
+        id: 'clearance_flat',
+        title: t('svc_clearance_flat'),
+        sub: t('svc_clearance_flat_sub'),
+        base: 180,
+        icon: SVC_ICONS.clearance_flat,
+        directions: ['vypratavanie'],
+      },
+      {
+        id: 'clearance_storage',
+        title: t('svc_clearance_storage'),
+        sub: t('svc_clearance_storage_sub'),
+        base: 120,
+        icon: SVC_ICONS.clearance_storage,
+        directions: ['vypratavanie'],
+      },
+      {
+        id: 'construction',
+        title: t('svc_construction'),
+        sub: t('svc_construction_sub'),
+        base: 70,
+        icon: SVC_ICONS.construction,
+        directions: ['odvoz', 'vypratavanie'],
+      },
+      {
+        id: 'material',
+        title: t('svc_material'),
+        sub: t('svc_material_sub'),
+        base: 40,
+        icon: SVC_ICONS.material,
+        directions: ['dovoz'],
+      },
+      {
+        id: 'heavy',
+        title: t('svc_heavy'),
+        sub: t('svc_heavy_sub'),
+        base: 120,
+        icon: SVC_ICONS.heavy,
+        directions: ['odvoz', 'dovoz', 'stahovanie'],
+      },
+      {
+        id: 'assembly',
+        title: t('svc_assembly'),
+        sub: t('svc_assembly_sub'),
+        base: 50,
+        icon: SVC_ICONS.assembly,
+        directions: ['stahovanie', 'dovoz'],
+      },
+      {
+        id: 'other',
+        title: t('svc_other'),
+        sub: t('svc_other_sub'),
+        base: 50,
+        icon: SVC_ICONS.other,
+        directions: ['odvoz', 'dovoz', 'stahovanie', 'vypratavanie'],
+      },
+    ];
   }
-  function currentStepNumber() {
-    // direction = 1, service = 2, questions 3..N+2, summary N+3, thanks N+4
-    return wizState.qIndex + 3;
-  }
-  function setProgress() {
-    const pct = (currentStepNumber() / totalSteps()) * 100;
-    wizBar.style.width = pct + '%';
-  }
-  function setHeader(title, stepText) {
-    wizTitle.textContent = title;
-    wizStep.textContent  = stepText;
-    wizBack.style.visibility = (wizState.qIndex <= -2) ? 'hidden' : 'visible';
-  }
-
-  function renderWizard() {
-    wizBody.innerHTML = '';
-    wizFoot.style.display = 'none';
-
-    if (wizState.qIndex === -2) {
-      renderDirectionPicker();
-    } else if (wizState.qIndex === -1) {
-      renderServicePicker();
-    } else if (wizState.qIndex < wizState.service.questions.length) {
-      // Skip onlyDir-filtered questions automatically
-      const q = wizState.service.questions[wizState.qIndex];
-      if (q.onlyDir && q.onlyDir !== wizState.direction) {
-        wizState.qIndex += 1;
-        return renderWizard();
-      }
-      renderQuestion();
-    } else if (wizState.qIndex === wizState.service.questions.length) {
-      renderSummary();
-    } else {
-      renderThanks();
+  const SERVICES = new Proxy([], {
+    get(target, prop) {
+      const arr = getServices();
+      if (prop === 'length') return arr.length;
+      if (typeof arr[prop] === 'function') return arr[prop].bind(arr);
+      return arr[prop];
     }
-    setProgress();
-    persistResume();
+  });
+
+
+  // ============================================================
+  // MATERIAL FALLBACK ITEMS — fills the "Materiál / tovar" category
+  // ============================================================
+  ALL_ITEMS.push(
+    { id: 'ikea_delivery', label: 'IKEA / Möbelix / obchod', sub: 'balený nábytok, krabice, doplnky', cat: 'material', tags: ['popular', 'delivery'], weight: 0.8, base: 45 },
+    { id: 'building_material', label: 'Stavebný materiál', sub: 'dosky, OSB, sadrokartón, profily', cat: 'material', tags: ['heavy', 'delivery'], weight: 1.6, base: 85 },
+    { id: 'tiles', label: 'Dlažba / obklad', sub: 'ťažké balenia, kúpeľňa, kuchyňa', cat: 'material', tags: ['heavy', 'delivery'], weight: 1.7, base: 90 },
+    { id: 'pallet', label: 'Paleta / väčší tovar', sub: 'nutné preveriť váhu a prístup', cat: 'material', tags: ['heavy', 'delivery'], weight: 2.1, base: 120 },
+    { id: 'doors_material', label: 'Dvere / dosky / lišty', sub: 'dlhší materiál alebo balíky', cat: 'material', tags: ['delivery'], weight: 1.0, base: 65 }
+  );
+
+  // ============================================================
+  // QUICK PRESETS — one tap room/whole-space choices
+  // ============================================================
+  // QUICK_PRESETS — i18n via getter
+  function getQuickPresets() {
+    return [
+      { id: 'living_room', title: t('preset_living'), sub: t('preset_living_sub'), service: 'furniture', directions: ['odvoz', 'dovoz', 'stahovanie'], itemIds: ['sofa', 'armchair', 'tv', 'table', 'dresser', 'boxes'], icon: 'sofa', quantity: 6 },
+      { id: 'bedroom', title: t('preset_bedroom'), sub: t('preset_bedroom_sub'), service: 'furniture', directions: ['odvoz', 'dovoz', 'stahovanie'], itemIds: ['bed', 'mattress', 'wardrobe', 'dresser', 'boxes'], icon: 'bed', quantity: 5 },
+      { id: 'kitchen_room', title: t('preset_kitchen'), sub: t('preset_kitchen_sub'), service: 'furniture', services: ['appliance'], directions: ['odvoz', 'dovoz', 'stahovanie'], itemIds: ['kitchen', 'table', 'chairs', 'fridge', 'oven', 'dishwasher'], icon: 'kitchen', quantity: 6 },
+      { id: 'office', title: t('preset_office'), sub: t('preset_office_sub'), service: 'moving_office', directions: ['stahovanie', 'odvoz'], itemIds: ['desk', 'chairs', 'shelves', 'boxes', 'tv', 'books'], icon: 'desk', quantity: 8 },
+      { id: 'basement_garage', title: t('preset_basement'), sub: t('preset_basement_sub'), service: 'furniture', services: ['construction'], directions: ['odvoz', 'vypratavanie'], itemIds: ['boxes', 'racks', 'tools', 'tires', 'bicycle', 'mixed'], icon: 'racks', quantity: 8 },
+      { id: 'full_flat', title: t('preset_full_flat'), sub: t('preset_full_flat_sub'), service: 'clearance_flat', directions: ['vypratavanie', 'odvoz'], itemIds: ['full_clearance', 'mixed', 'sofa', 'wardrobe', 'bed', 'boxes'], icon: 'full_clearance', quantity: 10 },
+      { id: 'appliances_set', title: t('preset_appliances'), sub: t('preset_appliances_sub'), service: 'appliance', directions: ['odvoz', 'dovoz'], itemIds: ['washer', 'fridge', 'dryer', 'oven', 'dishwasher'], icon: 'washer', quantity: 4 },
+      { id: 'construction_waste', title: t('preset_construction'), sub: t('preset_construction_sub'), service: 'construction', directions: ['odvoz', 'vypratavanie'], itemIds: ['mixed', 'boxes', 'tools', 'paint'], icon: 'mixed', quantity: 8 },
+      { id: 'store_delivery', title: t('preset_store'), sub: t('preset_store_sub'), service: 'material', directions: ['dovoz'], itemIds: ['ikea_delivery', 'pallet', 'doors_material'], icon: 'ikea_delivery', quantity: 3 },
+      { id: 'building_delivery', title: t('preset_building'), sub: t('preset_building_sub'), service: 'material', directions: ['dovoz'], itemIds: ['building_material', 'tiles', 'pallet', 'doors_material'], icon: 'building_material', quantity: 4 }
+    ];
+  }
+  const QUICK_PRESETS = new Proxy([], {
+    get(target, prop) {
+      const arr = getQuickPresets();
+      if (prop === 'length') return arr.length;
+      if (typeof arr[prop] === 'function') return arr[prop].bind(arr);
+      return arr[prop];
+    }
+  });
+
+  // ============================================================
+  // WIZARD + LEAD STATE MACHINE — finished flow
+  // ============================================================
+  const calc = {
+    open: false,
+    step: 0,
+    sending: false,
+    search: '',
+    filter: 'all',
+    customText: '',
+    error: '',
+    data: {
+      direction: '',
+      service: '',
+      items: [],
+      quantity: 1,
+      access: 'standard',
+      floors: 0,
+      elevator: 'yes',
+      parking: 'near',
+      distance: 'city',
+      date: '',
+      cityFrom: '',
+      cityTo: '',
+      note: '',
+      photos: [],
+      name: '',
+      phone: '',
+      email: '',
+      gdpr: false
+    }
+  };
+
+  const CONFIG = Object.assign({
+    companyName: 'odvoznabytku.sk',
+    leadEndpoint: '',
+    chatEndpoint: '',
+    phone: '',
+    whatsapp: '',
+    email: ''
+  }, window.CBW_CONFIG || {});
+  CONFIG.leadEndpoint = window.CBW_LEAD_ENDPOINT || CONFIG.leadEndpoint || '';
+  CONFIG.chatEndpoint = window.CBW_CHAT_ENDPOINT || CONFIG.chatEndpoint || '';
+
+  const calcEls = {
+    openBtn: document.getElementById('cbwOpenCalc'),
+    wizard: document.getElementById('cbwCalcWizard'),
+    body: document.getElementById('cbwCalcBody'),
+    foot: document.getElementById('cbwCalcFoot'),
+    headBack: document.getElementById('cbwCalcBack'),
+    exit: document.getElementById('cbwCalcExit'),
+    prev: document.getElementById('cbwCalcPrev'),
+    next: document.getElementById('cbwCalcNext'),
+    title: document.getElementById('cbwCalcTitle'),
+    step: document.getElementById('cbwCalcStep'),
+    barFill: document.getElementById('cbwCalcBarFill'),
+    bar: document.querySelector('.cbw-calc-bar')
+  };
+
+  // STEP_META as a getter so it always uses current language
+  function getStepMeta() {
+    return [
+      [t('step1_title'), t('step1_sub')],
+      [t('step2_title'), t('step2_sub')],
+      [t('step3_title'), t('step3_sub')],
+      [t('step4_title'), t('step4_sub')],
+      [t('step5_title'), t('step5_sub')],
+      [t('step6_title'), t('step6_sub')],
+      [t('step7_title'), t('step7_sub')]
+    ];
+  }
+  const STEP_META = new Proxy([], {
+    get(target, prop) {
+      const arr = getStepMeta();
+      if (prop === 'length') return arr.length;
+      if (prop === 'map' || prop === 'forEach' || prop === 'filter' || prop === 'slice' || prop === Symbol.iterator) {
+        return arr[prop].bind(arr);
+      }
+      return arr[prop];
+    }
+  });
+
+  function addRuntimeStyles() {
+    if (document.getElementById('cbwRuntimeStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'cbwRuntimeStyles';
+    style.textContent = `
+      .cbw-muted-note{font-size:12.5px;color:var(--text-muted);line-height:1.45;margin:10px 0 0;font-weight:600}
+      .cbw-inline-warning{font-size:12.5px;color:#92400e;background:var(--accent-soft);border:1px solid #fde68a;border-radius:12px;padding:10px 12px;margin:10px 0;font-weight:650;line-height:1.45}
+      .cbw-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+      .cbw-mini-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow-sm)}
+      .cbw-mini-card strong{display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px}
+      .cbw-mini-card span{font-weight:800;color:var(--text)}
+      .cbw-field-stack{display:grid;gap:12px}
+      .cbw-field-label{display:block;font-size:12px;font-weight:800;color:var(--text-muted);margin-bottom:6px}
+      .cbw-required-star{color:var(--bad)}
+      .cbw-summary-note{font-size:12px;color:var(--text-muted);line-height:1.45;margin-top:10px;text-align:center}
+      .cbw-custom-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+      .cbw-custom-row .cbw-q-input{flex:1}
+      .cbw-small-btn{border:none;border-radius:12px;padding:12px 13px;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+      .cbw-photo-hidden{display:none!important}
+      .cbw-submit-error{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:10px 12px;font-size:12.5px;font-weight:700;line-height:1.45;margin-top:12px}
+      .cbw-q-card[data-compact="true"]{min-height:54px;padding-top:12px;padding-bottom:12px}
+      .cbw-result-option .cbw-result-plus{font-size:20px;line-height:1;font-weight:800;color:var(--primary)}
+      .cbw-result-option[aria-pressed="true"] .cbw-result-plus{color:#fff}
+      @media(max-width:440px){.cbw-svc-grid,.cbw-q-cards,.cbw-q-group,.cbw-mini-grid{grid-template-columns:1fr!important}.cbw-dir-card{flex-direction:column;align-items:flex-start}.cbw-dir-visual{width:100%;height:92px}}
+    `;
+    document.head.appendChild(style);
   }
 
-  function renderDirectionPicker() {
-    setHeader('Cenová kalkulačka', 'Krok 1 — odvoz alebo dovoz?');
-    const intro = document.createElement('p');
-    intro.className = 'cbw-calc-prompt';
-    intro.textContent = 'Čo pre vás zariadime?';
-    const hint = document.createElement('p');
-    hint.className = 'cbw-calc-hint';
-    hint.textContent = 'Vyberte smer — odviezť staré veci, alebo doviezť nový tovar.';
-    wizBody.appendChild(intro);
-    wizBody.appendChild(hint);
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
-    const grid = document.createElement('div');
-    grid.className = 'cbw-svc-grid';
-    DIRECTIONS.forEach(dir => {
-      const card = document.createElement('button');
-      card.className = 'cbw-svc-card cbw-dir-card';
-      card.type = 'button';
-      card.innerHTML =
-        '<span class="cbw-svc-icon">' + dir.icon() + '</span>'
-        + '<span class="cbw-svc-text"><span class="cbw-svc-title">' + dir.title + '</span><span class="cbw-svc-sub">' + dir.sub + '</span></span>'
-        + '<svg class="cbw-svc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
-      card.addEventListener('click', () => {
-        spawnConfetti(card);
-        setRobotState('action', 800);
-        wizState.direction = dir.id;
-        wizState.qIndex = -1;
-        renderWizard();
-      });
-      grid.appendChild(card);
+  function normalizeText(value) {
+    return String(value || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  function roundTo5(num) {
+    return Math.max(20, Math.round(num / 5) * 5);
+  }
+
+  function byId(list, id) {
+    return list.find(item => item.id === id) || null;
+  }
+
+  const ITEM_ALIASES = {
+    sofa: 'gauc gauč gauce sedačka sedacka sedacky sedačky rohovka rozkladaci rozkladacia couch sofa',
+    armchair: 'kreslo kresla kreslá stolicka stolička taburet taburetka',
+    wardrobe: 'skrina skriňa skrine satnik šatník vstavaná vstavana posuvna posuvná',
+    dresser: 'komoda botnik botník skrinka zasuvky zásuvky',
+    bed: 'postel posteľ postele rošt rost lozko ložko manzelska manželská',
+    mattress: 'matrac matrace',
+    table: 'stol stôl stolik stolík jedalensky jedálenský konferencny konferenčný',
+    chairs: 'stolicky stoličky stolicka stolička kresla kancelarske kancelárske',
+    desk: 'pisaci písací kancelarsky kancelársky stol stôl',
+    shelves: 'police polica regal regál kniznica knižnica vitrína vitrina',
+    kitchen: 'kuchyna kuchyňa linka kuchynska kuchynská drez doska',
+    boxes: 'krabice krabica vrecia vrece baliky balíky tasky tašky',
+    fridge: 'chladnicka chladnička mraznicka mraznička americka americká',
+    washer: 'pracka práčka pralka prádelka washing machine',
+    dryer: 'susicka sušička',
+    dishwasher: 'umyvacka umývačka riadu mycka myčka',
+    oven: 'sporak sporák rura rúra pec truba',
+    tv: 'televizor telka tv monitor elektronika audio',
+    branches: 'konare konáre zelen zeleň bioodpad bio odpad',
+    pots: 'kvetinace kvetináče kamene kamen',
+    tires: 'pneumatiky gumy disky kolesa',
+    tools: 'naradie náradie stroje dielna',
+    paint: 'farby chemikalie chemikálie vedra vedrá riedidla riedidlá',
+    bicycle: 'bicykel bike bajk kocik kočík sport šport lyze lyže',
+    safe: 'trezor sejf',
+    piano: 'klavir klavír piano',
+    full_clearance: 'vypratanie vypratat vypratať pivnica garaz garáž byt dom celý priestor',
+    mixed: 'rozne rôzne vela veľa vsetko všetko miesane miešané',
+    ikea_delivery: 'ikea möbelix mobelix obi hornbach obchod tovar balik balík nabytok nábytok',
+    building_material: 'stavebny stavebný material materiál osb sadrokarton sadrokartón dosky profily',
+    tiles: 'dlazba dlažba obklad obklady kachlicky kachličky',
+    pallet: 'paleta palety velky veľký tovar naklad náklad',
+    doors_material: 'dvere dosky listy lišty dlhy dlhý material materiál'
+  };
+
+  function itemSearchText(item) {
+    return normalizeText([
+      item.id,
+      item.label,
+      item.sub,
+      item.cat,
+      (item.tags || []).join(' '),
+      ITEM_ALIASES[item.id] || ''
+    ].join(' '));
+  }
+
+  function itemMatchesQuery(item, q) {
+    const nq = normalizeText(q);
+    if (!nq) return true;
+    const text = itemSearchText(item);
+    const words = nq.split(/\s+/).filter(Boolean);
+    return words.every(word => text.includes(word));
+  }
+
+  function itemSearchScore(item, q) {
+    const nq = normalizeText(q);
+    const label = normalizeText(item.label);
+    const text = itemSearchText(item);
+    let score = 0;
+    if ((item.tags || []).includes('popular')) score += 8;
+    if (!nq) return score;
+    if (label === nq) score += 60;
+    if (label.startsWith(nq)) score += 35;
+    if (label.includes(nq)) score += 25;
+    if (text.includes(nq)) score += 15;
+    nq.split(/\s+/).filter(Boolean).forEach(word => {
+      if (label.includes(word)) score += 8;
+      else if (text.includes(word)) score += 4;
     });
-    wizBody.appendChild(grid);
+    return score;
   }
 
-  function renderServicePicker() {
-    const dirLabel = wizState.direction === 'odvoz' ? 'Odvoz' : 'Dovoz';
-    setHeader(dirLabel, 'Krok 2 — vyberte kategóriu');
-    const intro = document.createElement('p');
-    intro.className = 'cbw-calc-prompt';
-    intro.textContent = 'Čo bude predmetom ' + (wizState.direction === 'odvoz' ? 'odvozu' : 'dovozu') + '?';
-    const hint = document.createElement('p');
-    hint.className = 'cbw-calc-hint';
-    hint.textContent = 'Vyberte kategóriu, alebo „Iné…" a popíšte to vlastnými slovami.';
-    wizBody.appendChild(intro);
-    wizBody.appendChild(hint);
-
-    const grid = document.createElement('div');
-    grid.className = 'cbw-svc-grid';
-    SERVICES
-      .filter(svc => !svc.directions || svc.directions.indexOf(wizState.direction) >= 0)
-      .forEach(svc => {
-        const card = document.createElement('button');
-        card.className = 'cbw-svc-card';
-        card.type = 'button';
-        card.innerHTML =
-          '<span class="cbw-svc-icon">' + svc.icon() + '</span>'
-          + '<span class="cbw-svc-text"><span class="cbw-svc-title">' + svc.title + '</span><span class="cbw-svc-sub">' + svc.sub + '</span></span>'
-          + '<svg class="cbw-svc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
-        card.addEventListener('click', () => {
-          spawnConfetti(card);
-          setRobotState('action', 800);
-          wizState.service = svc;
-          wizState.qIndex = 0;
-          renderWizard();
-        });
-        grid.appendChild(card);
-      });
-    wizBody.appendChild(grid);
+  function serviceAllowedForDirection(serviceId) {
+    const svc = byId(SERVICES, serviceId);
+    return !calc.data.direction || !svc || svc.directions.includes(calc.data.direction);
   }
 
-  function renderQuestion() {
-    const q = wizState.service.questions[wizState.qIndex];
-    const vis = visibleQuestions();
-    const visIdx = vis.indexOf(q) + 1; // 1-based
-    setHeader(wizState.service.title, 'Krok ' + (visIdx + 2) + ' z ' + (vis.length + 3));
+  function itemAllowedForDirection(item) {
+    return serviceAllowedForDirection(item.cat);
+  }
 
-    const prompt = document.createElement('p');
-    prompt.className = 'cbw-calc-prompt';
-    prompt.textContent = q.label;
-    wizBody.appendChild(prompt);
+  function selectedService() {
+    return byId(SERVICES, calc.data.service);
+  }
 
-    if (q.hint) {
-      const hint = document.createElement('p');
-      hint.className = 'cbw-calc-hint';
-      hint.textContent = q.hint;
-      wizBody.appendChild(hint);
+  function selectedDirection() {
+    return byId(DIRECTIONS, calc.data.direction);
+  }
+
+  function selectedItems() {
+    return calc.data.items || [];
+  }
+
+
+  function getVisiblePresets() {
+    const dir = calc.data.direction;
+    const svc = calc.data.service;
+    return QUICK_PRESETS.filter(preset => {
+      const directionOk = !dir || (preset.directions || []).includes(dir);
+      const serviceOk = !svc || svc === 'other' || preset.service === svc || (preset.services || []).includes(svc);
+      return directionOk && serviceOk;
+    }).slice(0, 6);
+  }
+
+  function presetIsSelected(preset) {
+    const ids = preset.itemIds || [];
+    return ids.length > 0 && ids.every(id => isSelectedItem(id));
+  }
+
+  function mergeItems(items) {
+    const map = new Map();
+    selectedItems().forEach(item => map.set(item.id, item));
+    items.forEach(item => { if (item && item.id) map.set(item.id, item); });
+    calc.data.items = Array.from(map.values());
+  }
+
+  function applyPreset(presetId) {
+    const preset = QUICK_PRESETS.find(p => p.id === presetId);
+    if (!preset) return;
+    if (!calc.data.service || calc.data.service === 'other') calc.data.service = preset.service || 'furniture';
+    const items = (preset.itemIds || [])
+      .map(id => byId(ALL_ITEMS, id))
+      .filter(Boolean)
+      .filter(itemAllowedForDirection);
+    mergeItems(items);
+    if (preset.quantity) calc.data.quantity = Math.max(Number(calc.data.quantity) || 1, preset.quantity);
+    calc.search = '';
+    calc.filter = 'all';
+    renderCalc();
+  }
+
+  function itemSearchPool() {
+    const svc = selectedService();
+    let pool = ALL_ITEMS.filter(itemAllowedForDirection);
+    if (svc && svc.id !== 'other' && !calc.search) {
+      pool = pool.filter(item => item.cat === svc.id);
     }
+    return pool;
+  }
 
-    if (q.type === 'cards') {
-      const grid = document.createElement('div');
-      grid.className = 'cbw-q-cards' + (q.cols === 3 ? ' cbw-q-cards-3' : '');
-      if (q.cols === 1) grid.style.gridTemplateColumns = '1fr';
-
-      // Custom answer panel (revealed when "Iné" is clicked, if allowed)
-      let customWrap = null;
-      let customInput = null;
-      if (q.allowCustom) {
-        customWrap = document.createElement('div');
-        customWrap.className = 'cbw-q-custom-wrap';
-        customWrap.style.display = 'none';
-        customInput = document.createElement('input');
-        customInput.className = 'cbw-q-input';
-        customInput.placeholder = 'Popíšte vašu situáciu…';
-        const existing = wizState.answers[q.id];
-        if (typeof existing === 'string' && existing.indexOf('__custom__:') === 0) {
-          customInput.value = existing.slice('__custom__:'.length);
-          customWrap.style.display = 'block';
-        }
-        customInput.addEventListener('input', () => {
-          wizState.answers[q.id] = '__custom__:' + customInput.value;
-          wizNext.disabled = !customInput.value.trim();
-        });
-        customWrap.appendChild(customInput);
-      }
-
-      q.options.forEach(opt => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'cbw-q-card';
-        if (opt.tone) b.dataset.tone = opt.tone;
-        b.setAttribute('aria-pressed', wizState.answers[q.id] === opt.value ? 'true' : 'false');
-        b.innerHTML = opt.label + (opt.sub ? '<small>' + opt.sub + '</small>' : '');
-        b.addEventListener('click', () => {
-          wizState.answers[q.id] = opt.value;
-          grid.querySelectorAll('.cbw-q-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
-          b.setAttribute('aria-pressed', 'true');
-          if (customWrap) customWrap.style.display = 'none';
-          wizNext.disabled = false;
-        });
-        grid.appendChild(b);
-      });
-
-      if (q.allowCustom) {
-        const cb = document.createElement('button');
-        cb.type = 'button';
-        cb.className = 'cbw-q-card cbw-q-card-custom';
-        const isCustom = typeof wizState.answers[q.id] === 'string'
-          && wizState.answers[q.id].indexOf('__custom__:') === 0;
-        cb.setAttribute('aria-pressed', isCustom ? 'true' : 'false');
-        cb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Iné…</span>';
-        cb.addEventListener('click', () => {
-          grid.querySelectorAll('.cbw-q-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
-          cb.setAttribute('aria-pressed', 'true');
-          customWrap.style.display = 'block';
-          setTimeout(() => customInput.focus(), 50);
-          wizState.answers[q.id] = '__custom__:' + (customInput.value || '');
-          wizNext.disabled = !customInput.value.trim();
-        });
-        grid.appendChild(cb);
-      }
-
-      wizBody.appendChild(grid);
-      if (customWrap) wizBody.appendChild(customWrap);
-    } else if (q.type === 'multi') {
-      const wrap = document.createElement('div');
-      wrap.className = 'cbw-q-multi';
-      const sel = wizState.answers[q.id] || [];
-      q.options.forEach(opt => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'cbw-q-chip';
-        b.setAttribute('aria-pressed', sel.includes(opt.value) ? 'true' : 'false');
-        const ico = (opt.icon && ICN[opt.icon])
-          ? '<span class="cbw-q-chip-ico">' + ICN[opt.icon] + '</span>'
-          : '';
-        b.innerHTML = ico + '<span>' + opt.label + '</span>';
-        b.addEventListener('click', () => {
-          const cur = wizState.answers[q.id] || [];
-          const i = cur.indexOf(opt.value);
-          if (i >= 0) cur.splice(i, 1); else cur.push(opt.value);
-          wizState.answers[q.id] = cur;
-          b.setAttribute('aria-pressed', cur.includes(opt.value) ? 'true' : 'false');
-        });
-        wrap.appendChild(b);
-      });
-      wizBody.appendChild(wrap);
-      wizNext.disabled = false; // multi-select is always optional
-    } else if (q.type === 'text' || q.type === 'number' || q.type === 'date') {
-      const inp = document.createElement('input');
-      inp.className = 'cbw-q-input';
-      inp.type = q.type === 'number' ? 'number' : (q.type === 'date' ? 'date' : 'text');
-      if (q.placeholder) inp.placeholder = q.placeholder;
-      if (wizState.answers[q.id] != null) inp.value = wizState.answers[q.id];
-      inp.addEventListener('input', () => {
-        wizState.answers[q.id] = inp.value;
-        wizNext.disabled = false;
-      });
-      wizBody.appendChild(inp);
-      // Optional fields are always passable; required ones gate Next.
-      wizNext.disabled = false;
-    } else if (q.type === 'group') {
-      const group = document.createElement('div');
-      group.className = 'cbw-q-group';
-      q.sub.forEach(sub => {
-        const item = document.createElement('div');
-        item.className = 'cbw-q-group-item';
-        const lab = document.createElement('label');
-        lab.textContent = sub.label;
-        const inp = document.createElement('input');
-        inp.className = 'cbw-q-input';
-        inp.type = sub.type || 'text';
-        if (sub.placeholder) inp.placeholder = sub.placeholder;
-        if (wizState.answers[sub.id] != null) inp.value = wizState.answers[sub.id];
-        inp.addEventListener('input', () => { wizState.answers[sub.id] = inp.value; });
-        item.appendChild(lab);
-        item.appendChild(inp);
-        group.appendChild(item);
-      });
-      wizBody.appendChild(group);
-      wizNext.disabled = false;
-    } else if (q.type === 'textarea') {
-      const ta = document.createElement('textarea');
-      ta.className = 'cbw-q-input';
-      ta.rows = 4;
-      if (q.placeholder) ta.placeholder = q.placeholder;
-      if (wizState.answers[q.id] != null) ta.value = wizState.answers[q.id];
-      ta.addEventListener('input', () => {
-        wizState.answers[q.id] = ta.value;
-        wizNext.disabled = !ta.value.trim();
-      });
-      wizBody.appendChild(ta);
-      wizNext.disabled = !(wizState.answers[q.id] && wizState.answers[q.id].trim());
+  function filteredItems(limit) {
+    const q = normalizeText(calc.search);
+    let pool = itemSearchPool();
+    if (calc.filter !== 'all') {
+      pool = pool.filter(item => item.tags && item.tags.includes(calc.filter));
     }
+    if (q) {
+      pool = ALL_ITEMS.filter(item => itemAllowedForDirection(item) && itemMatchesQuery(item, q));
+    }
+    pool = pool.sort((a, b) => {
+      const scoreDiff = itemSearchScore(b, q) - itemSearchScore(a, q);
+      if (scoreDiff) return scoreDiff;
+      const aSameCat = selectedService() && a.cat === selectedService().id ? 1 : 0;
+      const bSameCat = selectedService() && b.cat === selectedService().id ? 1 : 0;
+      if (bSameCat - aSameCat) return bSameCat - aSameCat;
+      return a.label.localeCompare(b.label, 'sk');
+    });
+    return limit ? pool.slice(0, limit) : pool;
+  }
 
-    wizFoot.style.display = 'flex';
-    wizPrev.textContent = wizState.qIndex === 0 ? 'Späť na výber' : 'Späť';
-    wizNext.textContent = (wizState.qIndex === wizState.service.questions.length - 1) ? 'Zobraziť cenu' : 'Pokračovať';
+  function isSelectedItem(id) {
+    return selectedItems().some(item => item.id === id);
+  }
+
+  function toggleItem(id) {
+    const item = byId(ALL_ITEMS, id) || selectedItems().find(x => x.id === id);
+    if (!item) return;
+    if (isSelectedItem(id)) {
+      calc.data.items = selectedItems().filter(x => x.id !== id);
+    } else {
+      calc.data.items = selectedItems().concat(item);
+    }
+    renderCalc();
+  }
+
+  function addCustomItem(label, targetStep) {
+    const clean = String(label || '').trim();
+    if (!clean) return;
+    if (!calc.data.service) calc.data.service = 'other';
+    const custom = {
+      id: 'custom_' + Date.now(),
+      label: clean,
+      sub: 'vlastná položka',
+      cat: calc.data.service || 'other',
+      tags: ['custom'],
+      weight: 1,
+      base: 50,
+      custom: true
+    };
+    calc.data.items = selectedItems().concat(custom);
+    calc.customText = '';
+    calc.search = '';
+    if (typeof targetStep === 'number') goStep(targetStep);
+    else renderCalc();
   }
 
   function calculatePrice() {
-    const svc = wizState.service;
-    let price = svc.base;
-    let mult  = 1.0;
-    let pctAdd = 0;
-    let extras = 0;
+    const svc = selectedService() || { base: 50 };
+    const items = selectedItems();
+    const quantity = Math.max(1, Number(calc.data.quantity) || 1);
+    const itemBase = items.reduce((sum, item) => sum + (Number(item.base) || 40), 0);
+    const itemWeight = items.reduce((sum, item) => sum + (Number(item.weight) || 1), 0);
+    const quantityMultiplier = quantity <= 1 ? 1 : 1 + Math.min(2.2, (quantity - 1) * 0.32);
 
-    svc.questions.forEach(q => {
-      if (q.onlyDir && q.onlyDir !== wizState.direction) return;
-      const a = wizState.answers[q.id];
-      if (q.type === 'cards' && a) {
-        const opt = q.options.find(o => o.value === a);
-        if (opt) {
-          if (opt.mult)   mult  *= opt.mult;
-          if (opt.add)    extras += opt.add;
-          if (opt.addPct) pctAdd += opt.addPct;
-        }
-      } else if (q.type === 'multi' && Array.isArray(a)) {
-        a.forEach(v => {
-          const opt = q.options.find(o => o.value === v);
-          if (opt && opt.add) extras += opt.add;
-        });
-      } else if (q.type === 'number' && a) {
-        const n = Number(a) || 0;
-        if (q.id === 'area' || q.id === 'volume' || q.id === 'bags') {
-          mult *= Math.max(0.6, Math.min(3.0, 0.6 + n / 50));
-        }
-        if (q.id === 'quantity' && n > 1) {
-          mult *= 1 + (n - 1) * 0.35;
-        }
-      }
-    });
+    let total = Number(svc.base || 50) + itemBase * quantityMultiplier;
 
-    price = price * mult * (1 + pctAdd) + extras;
-    return Math.max(40, Math.round(price / 10) * 10);
+    if (calc.data.direction === 'dovoz') total += 10;
+    if (calc.data.access === 'stairs') total += 25;
+    if (calc.data.access === 'hard') total += 45;
+    if (calc.data.elevator === 'no') total += 20;
+    total += Math.max(0, Number(calc.data.floors) || 0) * 8;
+    if (calc.data.parking === 'far') total += 15;
+    if (calc.data.distance === 'near') total += 20;
+    if (calc.data.distance === 'far') total += 45;
+    if (itemWeight * quantity > 3) total += 35;
+    if (items.some(item => (item.tags || []).includes('heavy'))) total += 25;
+
+    const min = roundTo5(total * 0.85);
+    const max = roundTo5(total * 1.2);
+    return { min, max, mid: roundTo5((min + max) / 2), weight: itemWeight * quantity };
   }
 
-  function formatAnswer(q, a) {
-    if (a == null || a === '' || (Array.isArray(a) && !a.length)) return '—';
-    if (q.type === 'cards') {
-      if (typeof a === 'string' && a.indexOf('__custom__:') === 0) {
-        const v = a.slice('__custom__:'.length).trim();
-        return v ? 'Iné — ' + v : 'Iné';
-      }
-      const opt = q.options.find(o => o.value === a);
-      return opt ? opt.label : String(a);
+  function validateStep(step) {
+    const d = calc.data;
+    if (step === 0) return !!d.direction;
+    if (step === 1) return !!d.service;
+    if (step === 2) return selectedItems().length > 0 || d.service === 'other';
+    if (step === 3) return Number(d.quantity) >= 1 && !!d.access && !!d.elevator && !!d.parking;
+    if (step === 4) {
+      if (!String(d.cityFrom || '').trim()) return false;
+      if (d.direction === 'dovoz' && !String(d.cityTo || '').trim()) return false;
+      return true;
     }
-    if (q.type === 'multi') {
-      return a.map(v => {
-        const opt = q.options.find(o => o.value === v);
-        return opt ? opt.label : v;
-      }).join(', ');
-    }
-    return String(a);
+    if (step === 5) return String(d.phone || '').trim().length >= 7 && d.gdpr;
+    return true;
   }
 
-  function renderSummary() {
-    setHeader(wizState.service.title, 'Zhrnutie a kontakt');
-    const svc = wizState.service;
+  function setProgress() {
+    const pct = Math.round(((calc.step + 1) / STEP_META.length) * 100);
+    calcEls.barFill.style.width = Math.min(100, Math.max(5, pct)) + '%';
+    if (calcEls.bar) calcEls.bar.setAttribute('aria-valuenow', String(pct));
+  }
+
+  function openCalculator() {
+    addRuntimeStyles();
+    calc.open = true;
+    calc.error = '';
+    root.classList.add('cbw-calc-active');
+    calcEls.wizard.dataset.open = 'true';
+    renderCalc();
+  }
+
+  function closeCalculator() {
+    calc.open = false;
+    root.classList.remove('cbw-calc-active');
+    calcEls.wizard.dataset.open = 'false';
+  }
+
+  function goStep(nextStep) {
+    calc.error = '';
+    calc.step = Math.max(0, Math.min(STEP_META.length - 1, nextStep));
+    renderCalc();
+  }
+
+  function setData(key, value, autoNext) {
+    calc.data[key] = value;
+    if (key === 'direction' && calc.data.service) {
+      const svc = selectedService();
+      if (svc && !svc.directions.includes(value)) {
+        calc.data.service = '';
+        calc.data.items = [];
+      }
+    }
+    if (key === 'service') {
+      calc.data.items = selectedItems().filter(item => item.cat === value || item.custom);
+      calc.search = '';
+      calc.filter = 'all';
+    }
+    if (autoNext) goStep(calc.step + 1);
+    else renderCalc();
+  }
+
+  function bind(selector, eventName, handler) {
+    calcEls.body.querySelectorAll(selector).forEach(el => el.addEventListener(eventName, handler));
+  }
+
+  function renderCardFill() {
+    return '<span class="cbw-fill" aria-hidden="true"></span>';
+  }
+
+  function renderStepDirection() {
+    return `
+      <h2 class="cbw-calc-prompt">${escapeHtml(t('prompt_direction'))}</h2>
+      <p class="cbw-calc-hint">${escapeHtml(t('hint_direction'))}</p>
+      <div class="cbw-dir-grid">
+        ${DIRECTIONS.map(dir => `
+          <button type="button" class="cbw-dir-card" data-direction="${dir.id}" aria-pressed="${calc.data.direction === dir.id}">
+            <span class="cbw-dir-visual">${dir.icon()}</span>
+            <span class="cbw-dir-text">
+              <span class="cbw-dir-title">${escapeHtml(dir.title)}</span>
+              <span class="cbw-dir-sub">${escapeHtml(dir.sub)}</span>
+            </span>
+            <svg class="cbw-dir-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderStepService() {
+    const q = normalizeText(calc.search);
+    const raw = String(calc.search || '').trim();
+    const allowed = SERVICES.filter(svc => !calc.data.direction || svc.directions.includes(calc.data.direction));
+    const results = q ? ALL_ITEMS
+      .filter(item => itemAllowedForDirection(item) && itemMatchesQuery(item, q))
+      .sort((a, b) => itemSearchScore(b, q) - itemSearchScore(a, q) || a.label.localeCompare(b.label, 'sk'))
+      .slice(0, 6) : [];
+    const dir = selectedDirection();
+    // Pick prompt based on direction
+    let prompt = t('prompt_service_pickup');
+    if (dir && dir.id === 'dovoz') prompt = t('prompt_service_delivery');
+    else if (dir && dir.id === 'stahovanie') prompt = t('prompt_service_moving');
+    else if (dir && dir.id === 'vypratavanie') prompt = t('prompt_service_clearance');
+    return `
+      <h2 class="cbw-calc-prompt">${escapeHtml(prompt)}</h2>
+      <p class="cbw-calc-hint">${escapeHtml(t('hint_service'))}</p>
+      <div class="cbw-search-hero">
+        <input class="cbw-search-hero-input" id="cbwServiceSearch" value="${escapeHtml(calc.search)}" placeholder="${escapeHtml(t('ph_search'))}" autocomplete="off">
+        <span class="cbw-search-hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      </div>
+      ${raw ? `<div class="cbw-service-fast-add"><button type="button" class="cbw-small-btn cbw-brand-gradient" id="cbwAddServiceCustom">${escapeHtml(t('add_custom').replace('{name}', raw))}</button></div>` : ''}
+      <div class="cbw-search-results" data-active="${results.length ? 'true' : 'false'}">
+        <div class="cbw-search-results-label">${escapeHtml(t('tap_found'))}</div>
+        <div class="cbw-search-results-list">
+          ${results.map(item => `<button type="button" class="cbw-search-result-chip" data-search-item="${item.id}">${escapeHtml(localItem(item).label)}</button>`).join('')}
+        </div>
+      </div>
+      <div class="cbw-fast-note">${dir ? escapeHtml(t('dir_already_set').replace('{dir}', dir.title)) : ''}</div>
+      <div class="cbw-svc-grid" style="margin-top:10px">
+        ${allowed.map(svc => `
+          <button type="button" class="cbw-svc-card" data-service="${svc.id}" aria-pressed="${calc.data.service === svc.id}">
+            <span class="cbw-svc-icon-wrap">${svc.icon}</span>
+            <span class="cbw-svc-text"><span class="cbw-svc-title">${escapeHtml(svc.title)}</span><span class="cbw-svc-sub">${escapeHtml(svc.sub)}</span></span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderStepItems() {
+    const hasSearch = !!normalizeText(calc.search);
+    const raw = String(calc.search || '').trim();
+    const results = filteredItems(hasSearch ? 30 : 10);
+    const selected = selectedItems();
+    const presets = getVisiblePresets();
+    return `
+      <h2 class="cbw-calc-prompt">${escapeHtml(t('prompt_items'))}</h2>
+      <p class="cbw-calc-hint">${t('hint_items')}</p>
+      <div class="cbw-search-pick">
+        ${presets.length ? `
+          <div class="cbw-preset-wrap">
+            <div class="cbw-search-section-label">${escapeHtml(t('preset_label'))}</div>
+            <div class="cbw-preset-grid">
+              ${presets.map(preset => `
+                <button type="button" class="cbw-preset-btn" data-preset="${escapeHtml(preset.id)}" aria-pressed="${presetIsSelected(preset)}">
+                  <span class="cbw-preset-icon">${itemIcon(preset.icon || 'mixed')}</span>
+                  <span class="cbw-preset-text">
+                    <span class="cbw-preset-title">${escapeHtml(preset.title)}</span>
+                    <span class="cbw-preset-sub">${escapeHtml(preset.sub)}</span>
+                  </span>
+                  <span class="cbw-preset-badge">✓</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+          <div class="cbw-choice-divider">${escapeHtml(t('or_pick'))}</div>
+        ` : ''}
+
+        <div class="cbw-fast-search-row">
+          <div class="cbw-search-box"><input class="cbw-q-input cbw-search-input" id="cbwItemSearch" value="${escapeHtml(calc.search)}" placeholder="${escapeHtml(t('ph_search_item'))}" autocomplete="off"></div>
+          <button type="button" class="cbw-small-btn cbw-brand-gradient" id="cbwAddSearchAsItem" ${raw ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'}>${escapeHtml(t('add'))}</button>
+        </div>
+        <div class="cbw-fast-note">${escapeHtml(t('fast_note'))}</div>
+
+        <div class="cbw-picked-bar">
+          <strong>${selected.length ? escapeHtml(t('selected_count').replace('{n}', selected.length)) : escapeHtml(t('nothing_selected'))}</strong>
+          ${selected.length ? `<button type="button" class="cbw-clear-pick" id="cbwClearItems">${escapeHtml(t('clear_picks'))}</button>` : ''}
+        </div>
+        <div class="cbw-selected-pills">
+          ${selected.map(item => { const li = localItem(item); return `<button type="button" class="cbw-selected-pill" data-remove-item="${escapeHtml(item.id)}" title="${escapeHtml(t('remove_item'))}">${escapeHtml(li.label)} <span>×</span></button>`; }).join('')}
+        </div>
+
+        <div class="cbw-search-section-label">${hasSearch ? (LANG === 'en' ? 'Search results' : LANG === 'de' ? 'Suchergebnisse' : 'Výsledky hľadania') : (LANG === 'en' ? 'Most common items' : LANG === 'de' ? 'Häufige Gegenstände' : 'Najčastejšie konkrétne veci')}</div>
+        <div class="cbw-result-list cbw-result-list-simple">
+          ${results.length ? results.map(item => { const li = localItem(item); return `
+            <button type="button" class="cbw-result-option cbw-result-option-simple" data-item="${escapeHtml(item.id)}" aria-pressed="${isSelectedItem(item.id)}">
+              <span class="cbw-result-icon">${itemIcon(item.id)}</span>
+              <span class="cbw-result-label">${escapeHtml(li.label)}<small>${escapeHtml(li.sub)}</small></span>
+              <span class="cbw-result-check">${isSelectedItem(item.id) ? '✓' : '+'}</span>
+            </button>
+          `; }).join('') : `<div class="cbw-search-empty"><strong>${escapeHtml(t('search_empty'))}</strong><br>${escapeHtml(t('search_empty_sub'))}</div>`}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderQuantityVisual() {
+    const quantity = Math.max(1, Number(calc.data.quantity) || 1);
     const price = calculatePrice();
-
-    // Summary rows
-    const sum = document.createElement('div');
-    sum.className = 'cbw-sum-card';
-    const dirRow = document.createElement('div');
-    dirRow.className = 'cbw-sum-row';
-    dirRow.innerHTML = '<span>Smer</span><span>' + (wizState.direction === 'odvoz' ? 'Odvoz' : 'Dovoz') + '</span>';
-    sum.appendChild(dirRow);
-    const headerRow = document.createElement('div');
-    headerRow.className = 'cbw-sum-row';
-    headerRow.innerHTML = '<span>Kategória</span><span>' + svc.title + '</span>';
-    sum.appendChild(headerRow);
-
-    svc.questions.forEach(q => {
-      if (q.onlyDir && q.onlyDir !== wizState.direction) return;
-      if (q.type === 'group') {
-        q.sub.forEach(sub => {
-          const v = wizState.answers[sub.id];
-          if (v == null || v === '') return;
-          const r = document.createElement('div');
-          r.className = 'cbw-sum-row';
-          r.innerHTML = '<span>' + sub.label + '</span><span>' + (v || '—') + '</span>';
-          sum.appendChild(r);
-        });
-      } else {
-        const v = wizState.answers[q.id];
-        if (v == null || v === '' || (Array.isArray(v) && !v.length)) return;
-        const r = document.createElement('div');
-        r.className = 'cbw-sum-row';
-        r.innerHTML = '<span>' + q.label + '</span><span>' + formatAnswer(q, v) + '</span>';
-        sum.appendChild(r);
-      }
-    });
-    wizBody.appendChild(sum);
-
-    // Price card
-    const priceCard = document.createElement('div');
-    priceCard.className = 'cbw-sum-price cbw-dynamic-green';
-    priceCard.innerHTML =
-      '<div class="cbw-sum-price-label">Orientačná cena</div>'
-      + '<div class="cbw-sum-price-value">' + price.toLocaleString('sk-SK') + ' €</div>'
-      + '<div class="cbw-sum-price-note">Konečnú cenu vám potvrdí konateľ po krátkom telefonáte / obhliadke.</div>';
-    wizBody.appendChild(priceCard);
-
-    // Photos upload (optional)
-    const photoBlock = document.createElement('div');
-    photoBlock.style.cssText = 'margin-bottom:10px;';
-    photoBlock.innerHTML =
-      '<p class="cbw-calc-prompt" style="font-size:14px;margin-bottom:6px">Fotky (voliteľné)</p>'
-      + '<p class="cbw-calc-hint" style="margin-bottom:6px">Pomôžete nám presnejšie naceniť. Max. 3 fotky.</p>'
-      + '<label for="cbwSumPhotos" class="cbw-photo-drop">'
-      +   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
-      +   '<span>Vybrať fotky</span>'
-      + '</label>'
-      + '<input id="cbwSumPhotos" type="file" accept="image/*" multiple style="display:none">'
-      + '<div id="cbwPhotoThumbs" class="cbw-photo-thumbs"></div>';
-    wizBody.appendChild(photoBlock);
-
-    const photoInput = document.getElementById('cbwSumPhotos');
-    const photoThumbs = document.getElementById('cbwPhotoThumbs');
-    wizState._photos = wizState._photos || [];
-    function renderThumbs() {
-      photoThumbs.innerHTML = '';
-      wizState._photos.forEach((p, i) => {
-        const t = document.createElement('div');
-        t.className = 'cbw-photo-thumb';
-        t.innerHTML = '<img src="' + p.url + '" alt=""><button type="button" aria-label="Odstrániť" data-idx="' + i + '">×</button>';
-        photoThumbs.appendChild(t);
-      });
-      photoThumbs.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          wizState._photos.splice(+btn.dataset.idx, 1);
-          renderThumbs();
-        });
-      });
-    }
-    photoInput.addEventListener('change', () => {
-      const files = Array.from(photoInput.files || []).slice(0, 3 - wizState._photos.length);
-      files.forEach(f => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          wizState._photos.push({ name: f.name, type: f.type, size: f.size, url: reader.result });
-          renderThumbs();
-        };
-        reader.readAsDataURL(f);
-      });
-      photoInput.value = '';
-    });
-    renderThumbs();
-
-    // Contact form
-    const form = document.createElement('div');
-    form.innerHTML =
-      '<p class="cbw-calc-prompt" style="font-size:15px;margin:6px 0 8px">Vaše kontaktné údaje</p>'
-      + '<input class="cbw-q-input" id="cbwSumName"  type="text"  placeholder="Vaše meno" required style="margin-bottom:8px">'
-      + '<input class="cbw-q-input" id="cbwSumEmail" type="email" placeholder="E-mail"     required style="margin-bottom:8px">'
-      + '<input class="cbw-q-input" id="cbwSumPhone" type="tel"   placeholder="Telefón (napr. +421 9XX XXX XXX)" required style="margin-bottom:8px">'
-      + '<textarea class="cbw-q-input" id="cbwSumMsg" rows="2" placeholder="Doplňujúca správa (nepovinné)"></textarea>'
-      + '<p class="cbw-gdpr">Odoslaním súhlasíte so spracovaním vašich kontaktných údajov za účelom vybavenia dopytu. Údaje neposkytujeme tretím stranám.</p>';
-    wizBody.appendChild(form);
-
-    const sName  = document.getElementById('cbwSumName');
-    const sEmail = document.getElementById('cbwSumEmail');
-    const sPhone = document.getElementById('cbwSumPhone');
-    function isSkPhoneValid(v) {
-      // Accepts +421 9XX XXX XXX, 09XX XXX XXX, with optional spaces / hyphens
-      const cleaned = v.replace(/[\s\-]/g, '');
-      return /^(?:\+421|421|0)9\d{8}$/.test(cleaned);
-    }
-    function validate() {
-      const nameOk  = sName.value.trim().length >= 2;
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sEmail.value.trim());
-      const phoneOk = isSkPhoneValid(sPhone.value.trim());
-      sName.classList.toggle('cbw-invalid',  !nameOk  && sName.value.length > 0);
-      sEmail.classList.toggle('cbw-invalid', !emailOk && sEmail.value.length > 0);
-      sPhone.classList.toggle('cbw-invalid', !phoneOk && sPhone.value.length > 0);
-      wizNext.disabled = !(nameOk && emailOk && phoneOk);
-    }
-    sName.addEventListener('input',  validate);
-    sEmail.addEventListener('input', validate);
-    sPhone.addEventListener('input', validate);
-    validate();
-
-    wizState._lastPrice = price;
-    wizFoot.style.display = 'flex';
-    wizPrev.textContent = 'Späť';
-    wizNext.textContent = 'Odoslať dopyt';
+    const ratio = Math.min(1, 0.12 + quantity * 0.08 + price.weight * 0.08);
+    const scale = Math.min(1, 0.35 + quantity * 0.08);
+    return `
+      <div class="cbw-qty-visual ${price.weight > 4 ? 'cbw-qty-warning' : ''}" style="--fill-ratio:${ratio};--pile-scale:${scale}">
+        <svg class="cbw-qty-svg" viewBox="0 0 320 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line class="cbw-qty-road" x1="8" y1="82" x2="312" y2="82" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+          <g class="cbw-pile-grow"><rect x="32" y="52" width="28" height="24" rx="3" fill="#fbbf24"/><rect x="64" y="44" width="30" height="32" rx="3" fill="#0ea5e9"/><rect x="98" y="56" width="24" height="20" rx="3" fill="#f59e0b"/></g>
+          <g transform="translate(150 24)">
+            <rect x="0" y="20" width="92" height="40" rx="5" fill="#fff" stroke="#0c4a6e" stroke-width="3"/>
+            <path d="M92 30h34l22 22v8H92z" fill="#fff" stroke="#0c4a6e" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M102 34h20l14 14h-34z" fill="#0c4a6e" opacity=".75"/>
+            <rect class="cbw-load-fill" x="8" y="29" width="76" height="22" rx="4" fill="#bae6fd"/>
+            <g class="cbw-load-boxes"><rect x="12" y="33" width="15" height="14" rx="2" fill="#0ea5e9"/><rect x="31" y="33" width="15" height="14" rx="2" fill="#f59e0b"/><rect x="50" y="33" width="15" height="14" rx="2" fill="#0369a1"/></g>
+            <circle class="cbw-dir-wheel" cx="25" cy="64" r="8" fill="#0c4a6e"/><circle class="cbw-dir-wheel" cx="120" cy="64" r="8" fill="#0c4a6e"/><circle cx="25" cy="64" r="3" fill="#fff"/><circle cx="120" cy="64" r="3" fill="#fff"/>
+          </g>
+        </svg>
+        <div class="cbw-qty-meta">Odhad záťaže: ${price.weight.toFixed(1)} bodu · orientačne ${price.min}–${price.max} €</div>
+      </div>
+    `;
   }
 
-  async function submitQuoteRequest() {
-    const svc = wizState.service;
-    const name  = (document.getElementById('cbwSumName')  || {}).value || '';
-    const email = (document.getElementById('cbwSumEmail') || {}).value || '';
-    const phone = (document.getElementById('cbwSumPhone') || {}).value || '';
-    const msg   = (document.getElementById('cbwSumMsg')   || {}).value || '';
-
-    // Build human-readable answers map for the email
-    const answersFlat = { 'Smer': wizState.direction === 'odvoz' ? 'Odvoz' : 'Dovoz' };
-    svc.questions.forEach(q => {
-      if (q.onlyDir && q.onlyDir !== wizState.direction) return;
-      if (q.type === 'group') {
-        q.sub.forEach(sub => {
-          const v = wizState.answers[sub.id];
-          if (v != null && v !== '') answersFlat[sub.label] = String(v);
-        });
-      } else {
-        const v = wizState.answers[q.id];
-        if (v == null || v === '' || (Array.isArray(v) && !v.length)) return;
-        answersFlat[q.label] = formatAnswer(q, v);
-      }
-    });
-
-    const photos = (wizState._photos || []).map(p => ({
-      name: p.name, type: p.type, size: p.size, data_url: p.url,
-    }));
-
-    const payload = {
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim() || null,
-      message: msg.trim() || null,
-      service_request: {
-        service: svc.id,
-        service_label: (wizState.direction === 'odvoz' ? 'Odvoz — ' : 'Dovoz — ') + svc.title,
-        answers: answersFlat,
-        estimated_price: wizState._lastPrice.toLocaleString('sk-SK') + ' €',
-        photos: photos,
-      },
-    };
-
-    wizNext.disabled = true;
-    wizNext.textContent = 'Odosielam…';
-    try {
-      await fetch(window.location.origin + '/api/lead', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (_) { /* best effort — still show thanks */ }
-
-    // Clear resume state after successful submit
-    try { localStorage.removeItem(RESUME_KEY); } catch (_) {}
-
-    wizState.qIndex = wizState.service.questions.length + 1;
-    renderWizard();
-
-    // Mirror in chat (so when user closes the calc, the conversation has a trace)
-    appendBubble('user', 'Cenová ponuka: ' + svc.title);
-    appendBubble('bot',  'Ďakujeme, ' + (name.trim() || 'priateľu') + '! Vašu požiadavku sme prijali. Konateľ vás bude čo najskôr kontaktovať. Potvrdenie sme vám zaslali na e-mail.');
-    playSound();
-    setRobotState('action', 2000);
+  function renderStepDetails() {
+    const d = calc.data;
+    const cards = [
+      ['standard', t('access_standard'), t('access_standard_sub'), 'good'],
+      ['stairs', t('access_stairs'), t('access_stairs_sub'), 'warn'],
+      ['hard', t('access_hard'), t('access_hard_sub'), 'bad']
+    ];
+    return `
+      <h2 class="cbw-calc-prompt">${escapeHtml(t('prompt_scope'))}</h2>
+      <p class="cbw-calc-hint">${escapeHtml(t('details_hint'))}</p>
+      <div class="cbw-q-number-wrap">
+        ${renderQuantityVisual()}
+        <div class="cbw-q-group">
+          <div class="cbw-q-group-item"><label>${escapeHtml(t('details_quantity'))}</label><input class="cbw-q-input" id="cbwQuantity" type="number" min="1" max="99" value="${escapeHtml(d.quantity)}"></div>
+          <div class="cbw-q-group-item"><label>${escapeHtml(t('details_floors'))}</label><input class="cbw-q-input" id="cbwFloors" type="number" min="0" max="30" value="${escapeHtml(d.floors)}"></div>
+        </div>
+        <div class="cbw-search-section-label">${escapeHtml(t('details_access'))}</div>
+        <div class="cbw-q-cards cbw-q-cards-1">
+          ${cards.map(([id, title, sub, tone]) => `<button type="button" class="cbw-q-card" data-access="${id}" data-tone="${tone}" aria-pressed="${d.access === id}">${renderCardFill()}${escapeHtml(title)}<small>${escapeHtml(sub)}</small></button>`).join('')}
+        </div>
+        <div class="cbw-q-group">
+          <div>
+            <label class="cbw-field-label">${escapeHtml(t('elevator'))}</label>
+            <div class="cbw-q-cards"><button type="button" class="cbw-q-card" data-elevator="yes" data-compact="true" aria-pressed="${d.elevator === 'yes'}">${renderCardFill()}${escapeHtml(t('yes'))}</button><button type="button" class="cbw-q-card" data-elevator="no" data-compact="true" aria-pressed="${d.elevator === 'no'}">${renderCardFill()}${escapeHtml(t('no'))}</button></div>
+          </div>
+          <div>
+            <label class="cbw-field-label">${escapeHtml(t('parking'))}</label>
+            <div class="cbw-q-cards"><button type="button" class="cbw-q-card" data-parking="near" data-compact="true" aria-pressed="${d.parking === 'near'}">${renderCardFill()}${escapeHtml(t('parking_near'))}</button><button type="button" class="cbw-q-card" data-parking="far" data-compact="true" aria-pressed="${d.parking === 'far'}">${renderCardFill()}${escapeHtml(t('parking_far'))}</button></div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
-  function renderThanks() {
-    setHeader(wizState.service.title, 'Hotovo');
-    const wrap = document.createElement('div');
-    wrap.className = 'cbw-thanks';
-    wrap.innerHTML =
-      '<div class="cbw-thanks-emoji">🎉</div>'
-      + '<div class="cbw-thanks-title">Ďakujeme!</div>'
-      + '<div class="cbw-thanks-text">Váš dopyt sme prijali a konateľ firmy vás bude čo najskôr kontaktovať.<br>Potvrdenie sme zaslali na váš e-mail.</div>';
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'cbw-calc-next-btn cbw-dynamic-green';
-    closeBtn.style.cssText = 'width:100%;padding:13px 16px;border:none;border-radius:12px;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;';
-    closeBtn.textContent = 'Späť do chatu';
-    closeBtn.addEventListener('click', closeCalc);
-    wrap.appendChild(closeBtn);
-    wizBody.appendChild(wrap);
-  }
+  function renderStepPlace() {
+    const d = calc.data;
+    const isDelivery = d.direction === 'dovoz';
+    return `
+      <h2 class="cbw-calc-prompt">${escapeHtml(t('prompt_location'))}</h2>
+      <p class="cbw-calc-hint">${escapeHtml(t('place_hint'))}</p>
+      <div class="cbw-field-stack">
+        <div>
+          <label class="cbw-field-label">${escapeHtml(isDelivery ? t('place_from_delivery') : t('place_from'))} <span class="cbw-required-star">*</span></label>
+          <input class="cbw-q-input" id="cbwCityFrom" value="${escapeHtml(d.cityFrom)}" placeholder="${escapeHtml(t('ph_from'))}">
+        </div>
+        <div>
+          <label class="cbw-field-label">${escapeHtml(isDelivery ? t('place_to_delivery') : t('place_to'))} ${isDelivery ? '<span class="cbw-required-star">*</span>' : ''}</label>
+          <input class="cbw-q-input" id="cbwCityTo" value="${escapeHtml(d.cityTo)}" placeholder="${escapeHtml(t('ph_to'))}">
+        </div>
+        <div class="cbw-q-group">
+          <div><label class="cbw-field-label">${escapeHtml(t('place_date'))}</label><input class="cbw-q-input" id="cbwDate" type="date" value="${escapeHtml(d.date)}"></div>
+          <div><label class="cbw-field-label">${escapeHtml(t('place_distance'))}</label><div class="cbw-q-cards cbw-q-cards-1"><button type="button" class="cbw-q-card" data-distance="city" data-compact="true" aria-pressed="${d.distance === 'city'}">${renderCardFill()}${escapeHtml(t('distance_city'))}</button><button type="button" class="cbw-q-card" data-distance="near" data-compact="true" aria-pressed="${d.distance === 'near'}">${renderCardFill()}${escapeHtml(t('distance_near'))}</button><button type="button" class="cbw-q-card" data-distance="far" data-compact="true" aria-pressed="${d.distance === 'far'}">${renderCardFill()}${escapeHtml(t('distance_far'))}</button></div></div>
+        </div>
+        <div><label class="cbw-field-label">${escapeHtml(t('label_note'))}</label><textarea class="cbw-q-input" id="cbwNote" placeholder="${escapeHtml(t('ph_note'))}">${escapeHtml(d.note)}</textarea></div>
 
-  // ---------- Wizard footer wiring ----------
-  function stepBackOnce() {
-    if (wizState.qIndex <= -2) return;
-    if (wizState.qIndex === -1) {
-      wizState.direction = null;
-      wizState.qIndex = -2;
-    } else if (wizState.qIndex === 0) {
-      wizState.service = null;
-      wizState.qIndex = -1;
-    } else {
-      // Skip backward over onlyDir-filtered questions
-      do { wizState.qIndex -= 1; }
-      while (wizState.qIndex >= 0
-             && wizState.service.questions[wizState.qIndex].onlyDir
-             && wizState.service.questions[wizState.qIndex].onlyDir !== wizState.direction);
-    }
-  }
-  wizPrev.addEventListener('click', () => {
-    stepBackOnce();
-    renderWizard();
+```
+    <div>
+      <label class="cbw-photo-drop" for="cbwPhotos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>${escapeHtml(t('photos_add'))}</label>
+      <input class="cbw-photo-hidden" id="cbwPhotos" type="file" accept="image/*" multiple>
+      <div class="cbw-photo-thumbs">${(d.photos || []).map((p, i) => `<span class="cbw-photo-thumb"><img src="${escapeHtml(p.dataUrl)}" alt="${i + 1}"><button type="button" data-remove-photo="${i}">×</button></span>`).join('')}</div>
+    </div>
+  </div>
+`;
+```
+
+}
+
+function renderStepContact() {
+const d = calc.data;
+return `<h2 class="cbw-calc-prompt">${escapeHtml(t('prompt_contact'))}</h2> <p class="cbw-calc-hint">${escapeHtml(t('contact_hint'))}</p> <div class="cbw-field-stack"> <div><label class="cbw-field-label">${escapeHtml(t('label_name'))}</label><input class="cbw-q-input" id="cbwName" value="${escapeHtml(d.name)}" placeholder="${escapeHtml(t('ph_name'))}"></div> <div><label class="cbw-field-label">${escapeHtml(t('label_phone'))} <span class="cbw-required-star">*</span></label><input class="cbw-q-input" id="cbwPhone" value="${escapeHtml(d.phone)}" inputmode="tel" placeholder="${escapeHtml(t('ph_phone'))}"></div> <div><label class="cbw-field-label">${escapeHtml(t('label_email'))}</label><input class="cbw-q-input" id="cbwEmail" type="email" value="${escapeHtml(d.email)}" placeholder="${escapeHtml(t('ph_email'))}"></div> <button type="button" class="cbw-gdpr-wrap" id="cbwGdpr" data-checked="${d.gdpr ? 'true' : 'false'}"> <span class="cbw-gdpr-check"></span> <span class="cbw-gdpr-text"><strong>${escapeHtml(t('gdpr_title'))}</strong><br>${escapeHtml(t('gdpr_text'))}</span> </button> ${!d.gdpr ?`<div class="cbw-muted-note">${escapeHtml(t(‘gdpr_required’))}</div>`: ''} </div>`;
+}
+
+function renderStepSummary() {
+const d = calc.data;
+const price = calculatePrice();
+const dir = selectedDirection();
+const svc = selectedService();
+const items = selectedItems().map(item => localItem(item).label).join(’, ’) || t(‘summary_items’);
+return `<h2 class="cbw-calc-prompt">${escapeHtml(t('prompt_summary'))}</h2> <p class="cbw-calc-hint">${escapeHtml(t('hint_summary'))}</p> <div class="cbw-sum-price cbw-brand-gradient"> <div class="cbw-sum-price-label">${escapeHtml(t('sum_price_label'))}</div> <div class="cbw-sum-price-value">${price.min}–${price.max} €</div> <div class="cbw-sum-price-note">${escapeHtml(t('sum_price_note'))}</div> </div> <div class="cbw-sum-card"> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_dir'))}</span><span>${escapeHtml(dir ? dir.title : '—')}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_service'))}</span><span>${escapeHtml(svc ? svc.title : '—')}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_items'))}</span><span>${escapeHtml(items)}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_quantity'))}</span><span>${escapeHtml(d.quantity)} ${escapeHtml(t('qty_unit'))}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_access'))}</span><span>${escapeHtml(d.access || '—')}, ${escapeHtml(t('details_floors').toLowerCase())} ${escapeHtml(d.floors || 0)}, ${escapeHtml(t('elevator').toLowerCase())} ${d.elevator === 'yes' ? t('yes').toLowerCase() : t('no').toLowerCase()}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_route'))}</span><span>${escapeHtml(d.cityFrom || '—')}${d.cityTo ? ' → ' + escapeHtml(d.cityTo) : ''}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_date'))}</span><span>${escapeHtml(d.date || t('date_arrange'))}</span></div> <div class="cbw-sum-row"><span>${escapeHtml(t('sum_label_contact'))}</span><span>${escapeHtml(d.name || '')} ${escapeHtml(d.phone || '')}</span></div> </div> <div class="cbw-inline-warning">${escapeHtml(t('sum_warning'))}</div> ${calc.error ?`<div class="cbw-submit-error">${escapeHtml(calc.error)}</div>`: ''}`;
+}
+
+function renderThanks() {
+const price = calculatePrice();
+calcEls.foot.style.display = ‘none’;
+calcEls.headBack.style.visibility = ‘hidden’;
+calcEls.step.textContent = t(‘thanks_step’);
+calcEls.title.textContent = t(‘thanks_done’);
+calcEls.barFill.style.width = ‘100%’;
+calcEls.body.innerHTML = `<div class="cbw-thanks"> <div class="cbw-thanks-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div> <div class="cbw-thanks-title">${escapeHtml(t('thanks_title'))}</div> <div class="cbw-thanks-text">${t('thanks_text').replace('{min}', price.min).replace('{max}', price.max)}</div> <button type="button" class="cbw-calc-next-btn cbw-brand-gradient" id="cbwThanksClose" style="width:100%;border:none;padding:13px 16px;border-radius:12px;font:inherit;font-weight:800;cursor:pointer">${escapeHtml(t('thanks_close'))}</button> </div>`;
+const closeThanks = document.getElementById(‘cbwThanksClose’);
+if (closeThanks) closeThanks.addEventListener(‘click’, () => {
+closeCalculator();
+appendBubble(‘bot’, t(‘thanks_send’));
+});
+}
+
+function renderCalc() {
+if (!calc.open) return;
+addRuntimeStyles();
+const meta = STEP_META[calc.step] || STEP_META[0];
+calcEls.title.textContent = meta[0];
+calcEls.step.textContent = meta[1];
+calcEls.headBack.style.visibility = calc.step > 0 ? ‘visible’ : ‘hidden’;
+calcEls.foot.style.display = ‘flex’;
+calcEls.prev.style.visibility = calc.step > 0 ? ‘visible’ : ‘hidden’;
+calcEls.next.textContent = calc.step === STEP_META.length - 1 ? (calc.sending ? t(‘calc_sending’) : t(‘calc_send’)) : t(‘calc_next’);
+calcEls.next.disabled = calc.sending || !validateStep(calc.step);
+setProgress();
+
+```
+let html = '';
+if (calc.step === 0) html = renderStepDirection();
+if (calc.step === 1) html = renderStepService();
+if (calc.step === 2) html = renderStepItems();
+if (calc.step === 3) html = renderStepDetails();
+if (calc.step === 4) html = renderStepPlace();
+if (calc.step === 5) html = renderStepContact();
+if (calc.step === 6) html = renderStepSummary();
+calcEls.body.innerHTML = html;
+calcEls.body.scrollTop = 0;
+bindCalcStepEvents();
+```
+
+}
+
+function rerenderKeepingFocus(inputId, value) {
+calc.search = value;
+renderCalc();
+requestAnimationFrame(() => {
+const el = document.getElementById(inputId);
+if (!el) return;
+el.focus();
+const pos = String(value || ‘’).length;
+try { el.setSelectionRange(pos, pos); } catch (_) {}
+});
+}
+
+function bindCalcStepEvents() {
+bind(’[data-direction]’, ‘click’, e => setData(‘direction’, e.currentTarget.dataset.direction, true));
+bind(’[data-service]’, ‘click’, e => setData(‘service’, e.currentTarget.dataset.service, true));
+bind(’[data-search-item]’, ‘click’, e => {
+const item = byId(ALL_ITEMS, e.currentTarget.dataset.searchItem);
+if (!item) return;
+const svc = byId(SERVICES, item.cat);
+if (svc && calc.data.direction && !svc.directions.includes(calc.data.direction)) return;
+calc.data.service = item.cat;
+calc.data.items = isSelectedItem(item.id) ? selectedItems() : selectedItems().concat(item);
+calc.search = ‘’;
+calc.filter = ‘all’;
+goStep(2);
+});
+const svcSearch = document.getElementById(‘cbwServiceSearch’);
+if (svcSearch) {
+svcSearch.addEventListener(‘input’, e => rerenderKeepingFocus(‘cbwServiceSearch’, e.target.value));
+svcSearch.addEventListener(‘keydown’, e => {
+if (e.key === ‘Enter’) {
+e.preventDefault();
+const first = filteredItems(1)[0];
+if (first && itemMatchesQuery(first, svcSearch.value)) {
+calc.data.service = first.cat;
+calc.data.items = [first];
+calc.search = ‘’;
+goStep(2);
+} else {
+addCustomItem(svcSearch.value, 2);
+}
+}
+});
+}
+const addServiceCustom = document.getElementById(‘cbwAddServiceCustom’);
+if (addServiceCustom) addServiceCustom.addEventListener(‘click’, () => addCustomItem((document.getElementById(‘cbwServiceSearch’) || {}).value, 2));
+const itemSearch = document.getElementById(‘cbwItemSearch’);
+if (itemSearch) {
+itemSearch.addEventListener(‘input’, e => rerenderKeepingFocus(‘cbwItemSearch’, e.target.value));
+itemSearch.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) { e.preventDefault(); addCustomItem(itemSearch.value); } });
+}
+const addSearchAsItem = document.getElementById(‘cbwAddSearchAsItem’);
+if (addSearchAsItem) addSearchAsItem.addEventListener(‘click’, () => addCustomItem((document.getElementById(‘cbwItemSearch’) || {}).value));
+bind(’[data-filter]’, ‘click’, e => { calc.filter = e.currentTarget.dataset.filter; renderCalc(); });
+bind(’[data-preset]’, ‘click’, e => applyPreset(e.currentTarget.dataset.preset));
+bind(’[data-item]’, ‘click’, e => toggleItem(e.currentTarget.dataset.item));
+bind(’[data-remove-item]’, ‘click’, e => toggleItem(e.currentTarget.dataset.removeItem));
+const clearItems = document.getElementById(‘cbwClearItems’);
+if (clearItems) clearItems.addEventListener(‘click’, () => { calc.data.items = []; renderCalc(); });
+const customInput = document.getElementById(‘cbwCustomItem’);
+if (customInput) {
+customInput.addEventListener(‘input’, e => { calc.customText = e.target.value; });
+customInput.addEventListener(‘keydown’, e => { if (e.key === ‘Enter’) { e.preventDefault(); addCustomItem(customInput.value); } });
+}
+const customAdd = document.getElementById(‘cbwAddCustom’);
+if (customAdd) customAdd.addEventListener(‘click’, () => addCustomItem((document.getElementById(‘cbwCustomItem’) || {}).value));
+
+```
+const quantity = document.getElementById('cbwQuantity');
+if (quantity) quantity.addEventListener('input', e => { calc.data.quantity = Math.max(1, Number(e.target.value) || 1); renderCalc(); });
+const floors = document.getElementById('cbwFloors');
+if (floors) floors.addEventListener('input', e => { calc.data.floors = Math.max(0, Number(e.target.value) || 0); renderCalc(); });
+bind('[data-access]', 'click', e => setData('access', e.currentTarget.dataset.access));
+bind('[data-elevator]', 'click', e => setData('elevator', e.currentTarget.dataset.elevator));
+bind('[data-parking]', 'click', e => setData('parking', e.currentTarget.dataset.parking));
+bind('[data-distance]', 'click', e => setData('distance', e.currentTarget.dataset.distance));
+
+['CityFrom', 'CityTo', 'Date', 'Note', 'Name', 'Phone', 'Email'].forEach(key => {
+  const el = document.getElementById('cbw' + key);
+  if (el) el.addEventListener('input', e => {
+    const map = { CityFrom: 'cityFrom', CityTo: 'cityTo', Date: 'date', Note: 'note', Name: 'name', Phone: 'phone', Email: 'email' };
+    calc.data[map[key]] = e.target.value;
+    calcEls.next.disabled = calc.sending || !validateStep(calc.step);
   });
-  wizNext.addEventListener('click', () => {
-    if (!wizState.service) return;
-    if (wizState.qIndex < wizState.service.questions.length - 1) {
-      wizState.qIndex += 1;
-      renderWizard();
-    } else if (wizState.qIndex === wizState.service.questions.length - 1) {
-      wizState.qIndex += 1;
-      renderWizard();
-    } else if (wizState.qIndex === wizState.service.questions.length) {
-      submitQuoteRequest();
-    }
-  });
-  wizBack.addEventListener('click', () => wizPrev.click());
+});
+const gdpr = document.getElementById('cbwGdpr');
+if (gdpr) gdpr.addEventListener('click', () => setData('gdpr', !calc.data.gdpr));
+const photoInput = document.getElementById('cbwPhotos');
+if (photoInput) photoInput.addEventListener('change', handlePhotos);
+bind('[data-remove-photo]', 'click', e => {
+  const idx = Number(e.currentTarget.dataset.removePhoto);
+  calc.data.photos.splice(idx, 1);
+  renderCalc();
+});
+```
 
-  // ---------- Kontakty Init (odvoznabytku.sk) ----------
-  function applyConfig() {
-    const c = { phone: '+421948841313', whatsapp: '+421948841313', email: 'info@odvoznabytku.sk' };
+}
 
-    if (c.phone) contactBar.insertAdjacentHTML('beforeend', '<a class="cbw-contact-icon contact-click" href="tel:' + c.phone + '" data-kind="phone">' + ICON_PHONE + '<span>Zavolať</span></a>');
-    if (c.whatsapp) {
-      const wa = c.whatsapp.replace(/[^\d]/g, '');
-      const waMsg = encodeURIComponent('Dobrý deň, mám záujem o vašu službu.');
-      contactBar.insertAdjacentHTML('beforeend', '<a class="cbw-contact-icon contact-click" href="https://wa.me/' + wa + '?text=' + waMsg + '" target="_blank" data-kind="whatsapp">' + ICON_WA + '<span>WhatsApp</span></a>');
-    }
-    if (c.email) contactBar.insertAdjacentHTML('beforeend', '<a class="cbw-contact-icon contact-click" href="mailto:' + c.email + '" data-kind="email">' + ICON_MAIL + '<span>Mail</span></a>');
+function handlePhotos(event) {
+const files = Array.from(event.target.files || []).slice(0, 5);
+if (!files.length) return;
+let pending = files.length;
+files.forEach(file => {
+if (!file.type.startsWith(‘image/’)) { pending–; return; }
+const reader = new FileReader();
+reader.onload = () => {
+calc.data.photos.push({ name: file.name, size: file.size, type: file.type, dataUrl: reader.result });
+if (–pending <= 0) renderCalc();
+};
+reader.onerror = () => { if (–pending <= 0) renderCalc(); };
+reader.readAsDataURL(file);
+});
+}
 
-    // Sticky call bar (above composer)
-    const callBar = document.getElementById('cbwCallBar');
-    if (callBar && c.phone) {
-      callBar.innerHTML =
-        '<div class="cbw-callbar-text">'
-        +   '<strong>Radšej zavoláte?</strong>'
-        +   'Sme dostupní každý pracovný deň.'
-        + '</div>'
-        + '<a class="cbw-callbar-btn contact-click" href="tel:' + c.phone + '" data-kind="phone">'
-        +   ICON_PHONE + '<span>' + c.phone.replace(/^\+421/, '+421 ') + '</span>'
-        + '</a>';
-    }
+function makeLeadPayload() {
+const price = calculatePrice();
+return {
+source: ‘widget’,
+companyName: CONFIG.companyName,
+createdAt: new Date().toISOString(),
+direction: calc.data.direction,
+service: selectedService(),
+items: selectedItems().map(item => ({ id: item.id, label: item.label, custom: !!item.custom })),
+quantity: calc.data.quantity,
+access: calc.data.access,
+floors: calc.data.floors,
+elevator: calc.data.elevator,
+parking: calc.data.parking,
+distance: calc.data.distance,
+date: calc.data.date,
+cityFrom: calc.data.cityFrom,
+cityTo: calc.data.cityTo,
+note: calc.data.note,
+contact: { name: calc.data.name, phone: calc.data.phone, email: calc.data.email },
+gdpr: calc.data.gdpr,
+priceEstimate: price,
+photos: (calc.data.photos || []).map(p => ({ name: p.name, size: p.size, type: p.type }))
+};
+}
 
-    document.querySelectorAll('.contact-click').forEach(btn => {
-      btn.addEventListener('click', () => setRobotState('action', 1500));
-    });
-  }
-  applyConfig();
+async function submitLead() {
+if (!validateStep(5) || calc.sending) return;
+calc.sending = true;
+calc.error = ‘’;
+renderCalc();
+const payload = makeLeadPayload();
+try {
+if (CONFIG.leadEndpoint) {
+const res = await fetch(CONFIG.leadEndpoint, {
+method: ‘POST’,
+headers: { ‘Content-Type’: ‘application/json’ },
+body: JSON.stringify(payload)
+});
+if (!res.ok) throw new Error(‘API vrátilo stav ’ + res.status);
+} else {
+try {
+const saved = JSON.parse(localStorage.getItem(‘cbw_leads’) || ‘[]’);
+saved.push(payload);
+localStorage.setItem(‘cbw_leads’, JSON.stringify(saved.slice(-20)));
+console.info(’[CBW] Lead endpoint nie je nastavený. Dopyt bol uložený lokálne.’, payload);
+} catch (storageErr) {
+console.info(’[CBW] Lead endpoint nie je nastavený a lokálne uloženie nie je dostupné v tomto prostredí.’, payload);
+}
+}
+calc.sending = false;
+spawnConfetti(calcEls.next);
+renderThanks();
+appendBubble(‘bot’, t(‘thanks_calc’));
+} catch (err) {
+calc.sending = false;
+calc.error = (LANG === ‘en’ ? ’Could not send the request via API. Check the endpoint or try again. Detail: ’ : LANG === ‘de’ ? ’Anfrage konnte nicht per API gesendet werden. Endpunkt prüfen oder erneut versuchen. Detail: ’ : ’Dopyt sa nepodarilo odoslať cez API. Skontrolujte endpoint alebo skúste odoslanie znova. Detail: ’) + (err && err.message ? err.message : ‘unknown error’);
+renderCalc();
+}
+}
+
+function resetCalculator() {
+calc.step = 0;
+calc.search = ‘’;
+calc.filter = ‘all’;
+calc.customText = ‘’;
+calc.error = ‘’;
+calc.sending = false;
+calc.data = {
+direction: ‘’, service: ‘’, items: [], quantity: 1, access: ‘standard’, floors: 0, elevator: ‘yes’, parking: ‘near’, distance: ‘city’,
+date: ‘’, cityFrom: ‘’, cityTo: ‘’, note: ‘’, photos: [], name: ‘’, phone: ‘’, email: ‘’, gdpr: false
+};
+}
+
+// ============================================================
+// CONTACT BAR + API-AWARE CHAT FALLBACK
+// ============================================================
+function renderContactBar() {
+const parts = [];
+if (CONFIG.phone) parts.push(`<a class="cbw-contact-icon" data-kind="phone" href="tel:${escapeHtml(CONFIG.phone)}">${ICON_PHONE}<span>${escapeHtml(t('btn_call'))}</span></a>`);
+if (CONFIG.whatsapp) parts.push(`<a class="cbw-contact-icon" data-kind="whatsapp" href="https://wa.me/${String(CONFIG.whatsapp).replace(/\D/g, '')}" target="_blank" rel="noopener">${ICON_WA}<span>${escapeHtml(t('btn_whatsapp'))}</span></a>`);
+if (CONFIG.email) parts.push(`<a class="cbw-contact-icon" data-kind="email" href="mailto:${escapeHtml(CONFIG.email)}">${ICON_MAIL}<span>${escapeHtml(t('btn_email'))}</span></a>`);
+contactBar.innerHTML = parts.join(’’);
+}
+
+function replaceComposerWithApiAwareVersion() {
+const oldSend = sendBtn.cloneNode(true);
+sendBtn.parentNode.replaceChild(oldSend, sendBtn);
+}
+
+// Smarter canned answers for chips and common questions.
+function botReplyFor(text) {
+const q = normalizeText(text);
+// Multi-lingual keyword matching
+if (q.includes(‘cen’) || q.includes(‘kolko’) || q.includes(‘kalkul’) || q.includes(‘eur’)
+|| q.includes(‘price’) || q.includes(‘cost’) || q.includes(‘how much’)
+|| q.includes(‘preis’) || q.includes(‘kosten’) || q.includes(‘wie viel’)) {
+return t(‘reply_price’);
+}
+if (q.includes(‘sluz’) || q.includes(‘ponuk’) || q.includes(‘odvoz’) || q.includes(‘dovoz’)
+|| q.includes(‘stahov’) || q.includes(‘vyprat’)
+|| q.includes(‘service’) || q.includes(‘offer’) || q.includes(‘moving’) || q.includes(‘removal’)
+|| q.includes(‘leistung’) || q.includes(‘angebot’) || q.includes(‘umzug’) || q.includes(‘entrumpel’)) {
+return t(‘reply_services’);
+}
+if (q.includes(‘hodin’) || q.includes(‘otvar’) || q.includes(‘kedy’)
+|| q.includes(‘hour’) || q.includes(‘open’) || q.includes(‘when’)
+|| q.includes(‘stund’) || q.includes(‘offnung’) || q.includes(‘wann’)) {
+return t(‘reply_hours’);
+}
+if (q.includes(‘foto’) || q.includes(‘fotk’) || q.includes(‘photo’) || q.includes(‘picture’) || q.includes(‘bild’)) {
+return t(‘reply_photos’);
+}
+if (q.includes(‘kontakt’) || q.includes(‘telefon’) || q.includes(‘volat’)
+|| q.includes(‘contact’) || q.includes(‘phone’) || q.includes(‘call’)
+|| q.includes(‘telefonnummer’) || q.includes(‘anruf’)) {
+return t(‘reply_contact’);
+}
+return t(‘reply_default’);
+}
+
+// ============================================================
+// EVENT WIRING
+// ============================================================
+if (calcEls.openBtn) calcEls.openBtn.addEventListener(‘click’, openCalculator);
+if (calcEls.exit) calcEls.exit.addEventListener(‘click’, closeCalculator);
+if (calcEls.headBack) calcEls.headBack.addEventListener(‘click’, () => goStep(calc.step - 1));
+if (calcEls.prev) calcEls.prev.addEventListener(‘click’, () => goStep(calc.step - 1));
+if (calcEls.next) calcEls.next.addEventListener(‘click’, () => {
+if (!validateStep(calc.step)) return;
+if (calc.step === STEP_META.length - 1) submitLead();
+else goStep(calc.step + 1);
+});
+
+// Make refresh reset both chat and calculator.
+refreshBtn.addEventListener(‘click’, () => {
+resetCalculator();
+closeCalculator();
+});
+
+renderContactBar();
+// Apply current language to all static UI texts (after DOM is built)
+applyI18n();
+
+// Open the panel once ready if embedded page wants it.
+window.CBWWidget = {
+open: () => togglePanel(true),
+close: () => togglePanel(false),
+openCalculator,
+resetCalculator,
+getLeadDraft: makeLeadPayload,
+setLang,
+config: CONFIG
+};
 
 })();
 </script>
