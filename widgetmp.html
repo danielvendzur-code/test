@@ -259,6 +259,7 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 .mc-check:hover{border-color:var(--m-green);background:var(--m-green-bg)}
 .mc-check input[type="checkbox"],.mc-check input[type="radio"]{position:absolute;opacity:0;pointer-events:none}
 .mc-check .mc-cbx{width:20px;height:20px;border:2px solid var(--mc-text-sub);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--mc-bg)}
+.mc-check .mc-cbx{align-self:center}
 .mc-check input[type="radio"] ~ .mc-cbx{border-radius:50%}
 .mc-check .mc-cbx svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .15s}
 .mc-check input:checked ~ .mc-cbx{background:var(--m-green);border-color:var(--m-green)}
@@ -530,6 +531,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-product-img{height:46px}
   .mc-live-viz{height:88px}
   .mc-choice-preview{grid-template-columns:82px 1fr}
+  .mc-header{align-items:flex-start;gap:8px}
+  .mc-hdr-title{font-size:13px;line-height:1.2}
+  .mc-hdr-sub{font-size:10px;line-height:1.2}
+  .mc-hdr-actions{flex-wrap:wrap;justify-content:flex-end;max-width:45%}
+  .mc-lang button{font-size:10px;padding:4px 6px}
 }
 
 /* Annotation polish: bigger previews, cleaner progress and richer visualisation */
@@ -1680,6 +1686,11 @@ var calcState = {
   /* Mobilne */
   mobileLength: null,
   mobileBases: true,
+  moveType: null,
+  moveArea: 60,
+  moveStairs: false,
+  moveSideRooms: false,
+  moveCompany: false,
   /* Oporne mury */
   wallLength: null,
   wallHeight: null,
@@ -2528,6 +2539,8 @@ var PRODUCTS = [
     img:'https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp' },
   { id:'mobilne', name:'Mobilné oplotenie', nameEn:'Mobile fencing', desc:'Pre stavby, akcie, dočasné použitie', descEn:'For sites, events, temporary use',
     img:'https://mojplot.sk/wp-content/uploads/2025/07/mobilne-oplotenie-main-scaled.jpg' },
+  { id:'stahovanie', name:'Sťahovanie / vypratávanie', nameEn:'Moving / clearance', desc:'Dom, byt, kancelária, pivnica, firma', descEn:'House, apartment, office, cellar, company',
+    img:'https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp', badge:'NEW' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
     img:'https://mojplot.sk/wp-content/uploads/2025/08/kategoria-betonove-ploty-scaled.png' },
   { id:'oporne', name:'Oporné múry', nameEn:'Retaining walls', desc:'LEGO bloky pre spevnenie terénu', descEn:'LEGO blocks for terrain support',
@@ -2646,6 +2659,8 @@ function renderCalcStep(){
     calcState.totalSteps = 5; /* product, length, height, color, final */
   } else if(calcState.product === 'mobilne'){
     calcState.totalSteps = 4; /* product, length, extras, final */
+  } else if(calcState.product === 'stahovanie'){
+    calcState.totalSteps = 4; /* product, type, details, final */
   } else if(calcState.product === 'betonovy' || calcState.product === 'ine'){
     calcState.totalSteps = 3; /* product, desc, final */
   } else if(calcState.product === 'oporne'){
@@ -2689,6 +2704,11 @@ function renderCalcStep(){
   else if(calcState.product === 'mobilne'){
     if(calcState.step === 1) renderMobileLength(el);
     else if(calcState.step === 2) renderMobileExtras(el);
+    else if(calcState.step === 3) renderFinal(el);
+  }
+  else if(calcState.product === 'stahovanie'){
+    if(calcState.step === 1) renderMoveType(el);
+    else if(calcState.step === 2) renderMoveDetails(el);
     else if(calcState.step === 3) renderFinal(el);
   }
   else if(calcState.product === 'oporne'){
@@ -3219,6 +3239,26 @@ function renderMobileExtras(el){
   '</div>';
 }
 
+function renderMoveType(el){
+  var lang = MC.lang;
+  var opts = [
+    { id:'byt', sk:'Byt', en:'Apartment', dsk:'Najčastejšie sťahovanie domácností', den:'Most common household moving' },
+    { id:'dom', sk:'Dom', en:'House', dsk:'Sťahovanie celého domu', den:'Full house move' },
+    { id:'vypratanie', sk:'Vypratávanie', en:'Clearance', dsk:'Pivnica, garáž, podkrovie, sklad', den:'Cellar, garage, attic, storage' },
+    { id:'firma', sk:'Firma / kancelária', en:'Company / office', dsk:'Presun kancelárie alebo prevádzky', den:'Office or business relocation' }
+  ];
+  el.innerHTML = '<div class="mc-step"><div class="mc-step-title">'+(lang==='sk'?'Čo potrebujete najčastejšie?':'What do you need most often?')+'</div><div class="mc-check-list">'+opts.map(function(o){var sel=calcState.moveType===o.id;return '<label class="mc-check'+(sel?' selected':'')+'" onclick="calcState.moveType=\''+o.id+'\';autoNext()"><input type="radio" '+(sel?'checked':'')+'><span class="mc-cbx"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12l5 5L20 7\"/></svg></span><span class=\"mc-check-label\"><span>'+(lang==='sk'?o.sk:o.en)+'</span><span class=\"mc-check-desc\">'+(lang==='sk'?o.dsk:o.den)+'</span></span></label>';}).join('')+'</div><div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button></div></div>';
+}
+function renderMoveDetails(el){
+  var lang = MC.lang, v = calcState.moveArea || 60;
+  el.innerHTML = '<div class="mc-step"><div class="mc-step-title">'+(lang==='sk'?'Veľkosť priestoru a detaily':'Area and details')+'</div><div class="mc-step-sub">'+(lang==='sk'?'Zadajte približnú plochu v m² a doplnky.':'Enter approximate area in m² and extras.')+'</div><div class="mc-dim-wrap"><div class="mc-dim-label"><span>m²</span><span class="mc-dim-value" id="moveAreaVal">'+v+'<span class="mc-dim-value-unit">m²</span></span></div><input type="range" min="10" max="400" step="5" value="'+v+'" class="mc-slider" oninput="onMoveArea(this.value)"></div><div class="mc-check-list">'+
+    extraCheck('moveSideRooms', lang==='sk'?'Vedľajšie priestory (pivnica/garáž)':'Side rooms (cellar/garage)', lang==='sk'?'Naloženie vecí navyše mimo hlavného priestoru.':'Loading extra items outside the main space.') +
+    extraCheck('moveStairs', lang==='sk'?'Schody bez výťahu':'Stairs without elevator', lang==='sk'?'Náročnejšia manipulácia, viac času.':'Harder handling, more time needed.') +
+    extraCheck('moveCompany', lang==='sk'?'Firemné vybavenie / archív':'Company equipment / archive', lang==='sk'?'Ťažšie predmety, vyššia opatrnosť.':'Heavier items, higher care needed.') +
+    '</div><div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button><button class="mc-btn" onclick="next()">'+(lang==='sk'?'Vypočítať cenu':'Calculate price')+' →</button></div></div>';
+}
+function onMoveArea(v){ calcState.moveArea = parseInt(v,10)||10; var m=document.getElementById('moveAreaVal'); if(m) m.innerHTML=calcState.moveArea+'<span class="mc-dim-value-unit">m²</span>'; }
+
 /* =========================================================
    STEPS: OPORNE MURY
    ========================================================= */
@@ -3423,6 +3463,25 @@ function calculatePrice(){
       { k:(lang==='sk'?'Pätky a klipy':'Bases and clips'), v:calcState.mobileBases ? (lang==='sk'?'Áno':'Yes') : (lang==='sk'?'Nie':'No') }
     ];
   }
+  else if(prod === 'stahovanie'){
+    var area = parseFloat(calcState.moveArea) || 60;
+    var type = calcState.moveType || 'byt';
+    var rate = { byt:18, dom:22, vypratanie:14, firma:26 }[type] || 18;
+    var subMove = area * rate;
+    if(calcState.moveSideRooms) subMove += 120;
+    if(calcState.moveStairs) subMove += 150;
+    if(calcState.moveCompany) subMove += 240;
+    result.breakdown.push({ k:(lang==='sk'?'Základ podľa plochy':'Base by area')+' ('+area+' m² × '+money(rate)+' €)', v:area*rate });
+    if(calcState.moveSideRooms) result.breakdown.push({ k:(lang==='sk'?'Vedľajšie priestory':'Side rooms'), v:120 });
+    if(calcState.moveStairs) result.breakdown.push({ k:(lang==='sk'?'Schody bez výťahu':'Stairs without elevator'), v:150 });
+    if(calcState.moveCompany) result.breakdown.push({ k:(lang==='sk'?'Firemné vybavenie':'Company equipment'), v:240 });
+    result.total = subMove;
+    result.summary = [
+      { k:(lang==='sk'?'Služba':'Service'), v:(lang==='sk'?'Sťahovanie / vypratávanie':'Moving / clearance') },
+      { k:(lang==='sk'?'Typ':'Type'), v:type },
+      { k:(lang==='sk'?'Plocha':'Area'), v:area+' m²' }
+    ];
+  }
   else if(prod === 'oporne'){
     var WL = parseFloat(calcState.wallLength) || 10;
     var layers = parseInt(calcState.wallHeight, 10) || 2;
@@ -3519,7 +3578,7 @@ function showThanks(){
 }
 
 function resetCalc(){
-  calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = ''; renderCalcStep();
+  calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.moveType = null; calcState.moveArea = 60; calcState.moveStairs = false; calcState.moveSideRooms = false; calcState.moveCompany = false; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = ''; renderCalcStep();
 }
 
 (function initEmailJS(){
