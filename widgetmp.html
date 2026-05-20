@@ -1439,94 +1439,149 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 }
 
 /* ============================================
-   FINAL POLISH 2026-05-20:
-   - Hide baked-in colour dots on product photos
-   - Unify product cards (incl. brana) on hover
-   - Hide old visualization caption
-   - Better visualization container
+   FINAL POLISH 2026-05-20 v2:
+   - Zero flicker, no constant scale on product photos
+   - Clean radial-gradient mask for baked-in color sample dot
+   - Unified hover on all cards (incl. Brany)
+   - Hide visualization caption + cleaner viz container
    ============================================ */
 
-/* Unify ALL product card photo backgrounds (incl. brana) so behavior is identical */
+/* All product card containers - white bg, flex centered, no overflow */
 .mc-product-img,
 .mc-product-card[data-product="brana"] .mc-product-img,
 .mc-product-card .mc-product-img{
   background:#FFFFFF !important;
   position:relative !important;
   overflow:hidden !important;
-}
-
-/* Mask the bottom-left corner colour dot baked into mojplot product photos.
-   Quarter-circle white shape that blends into the white card background. */
-.mc-product-card .mc-product-img::after{
-  content:""!important;
-  display:block!important;
-  position:absolute!important;
-  left:-10px!important;
-  bottom:-10px!important;
-  width:62px!important;
-  height:54px!important;
-  background:#FFFFFF!important;
-  border-radius:0 999px 0 0!important;
-  z-index:7!important;
-  pointer-events:none!important;
-  box-shadow:0 0 0 4px #FFFFFF, 0 0 8px 4px #FFFFFF !important;
-  border:none!important;
-  opacity:1!important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:120px !important;
+  padding:6px !important;
+  box-sizing:border-box !important;
 }
 @media (max-width:480px){
-  .mc-product-card .mc-product-img::after{
-    left:-8px!important;
-    bottom:-8px!important;
-    width:54px!important;
-    height:46px!important;
+  .mc-product-img,
+  .mc-product-card[data-product="brana"] .mc-product-img,
+  .mc-product-card .mc-product-img{
+    height:110px !important;
   }
 }
 
-/* Selected check stays visible above the mask */
-.mc-product-card.selected::before{
-  z-index:10!important;
-}
-
-/* Unified subtle hover effect on ALL product cards (incl. brana) */
+/* Product image - clean static display, no constant scale, no flicker. */
 .mc-product-img img,
 .mc-product-card .mc-product-img img,
 .mc-product-card[data-product="brana"] .mc-product-img img{
-  transform:scale(1.145)!important;
-  transition:transform .35s cubic-bezier(.34,1.2,.64,1)!important;
-}
-.mc-product-card:hover .mc-product-img img,
-.mc-product-card[data-product="brana"]:hover .mc-product-img img{
-  transform:scale(1.22)!important;
+  position:static !important;
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  padding:0 !important;
+  margin:auto !important;
+  inset:auto !important;
+  filter:none !important;
+  transform:scale(1) !important;
+  transition:transform .35s cubic-bezier(.4,0,.2,1) !important;
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
 }
 
-/* Lift entire card on hover - same for all */
+/* Subtle hover scale only, never constant scale (prevents flicker/crop) */
+.mc-product-card:hover .mc-product-img img,
+.mc-product-card[data-product="brana"]:hover .mc-product-img img{
+  transform:scale(1.06) !important;
+}
+
+/* COLOR SAMPLE DOT HIDER - white corner cover.
+   Container background is white, so this white square is invisible
+   except where it covers the dot baked into the source photo. */
+.mc-product-card .mc-product-img::after,
+.mc-product-card[data-product="brana"] .mc-product-img::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  bottom:0 !important;
+  width:42px !important;
+  height:42px !important;
+  background:#FFFFFF !important;
+  border-radius:0 0 0 8px !important;
+  z-index:5 !important;
+  pointer-events:none !important;
+  box-shadow:none !important;
+  border:none !important;
+}
+.mc-product-card .mc-product-img::before,
+.mc-product-card[data-product="brana"] .mc-product-img::before{
+  display:none !important;
+  content:none !important;
+}
+.mc-product-visual::after,
+.mc-product-visual::before,
+.mc-gate-thumb::after,
+.mc-gate-thumb::before{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+  box-shadow:none !important;
+  border:none !important;
+  width:0 !important;
+  height:0 !important;
+}
+/* Keep the green ✓ check mark on selected cards (uses ::before) */
+.mc-product-card.selected::before{
+  content:"✓" !important;
+  display:flex !important;
+  position:absolute !important;
+  top:8px !important;
+  right:8px !important;
+  width:22px !important;
+  height:22px !important;
+  background:#45A93C !important;
+  color:#fff !important;
+  border-radius:50% !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+  z-index:10 !important;
+  box-shadow:0 2px 6px rgba(69,169,60,.4) !important;
+}
+
+/* Card lift on hover - same for everyone incl. brana */
 .mc-product-card{
   transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease !important;
+  overflow:hidden !important;
 }
 .mc-product-card:hover,
 .mc-product-card[data-product="brana"]:hover{
-  transform:translateY(-3px)!important;
-  border-color:#45A93C!important;
-  box-shadow:0 10px 26px rgba(69,169,60,.22)!important;
+  transform:translateY(-3px) !important;
+  border-color:#45A93C !important;
+  box-shadow:0 10px 26px rgba(69,169,60,.22) !important;
 }
 
-/* Hide the "Vizualizácia pri dome / Home preview" caption inside the SVG widget */
+/* Hide visualization caption */
 .mc-live-viz .mc-viz-label,
 .mc-live-viz.svg .mc-viz-label{
-  display:none!important;
+  display:none !important;
 }
 
-/* Polished visualization container - cleaner border + softer shadow */
+/* Cleaner visualization container */
 .mc-live-viz.svg{
-  border:1px solid rgba(69,169,60,.22)!important;
-  border-radius:16px!important;
-  box-shadow:0 8px 24px rgba(69,169,60,.13)!important;
-  background:#FFFFFF!important;
+  border:1px solid rgba(69,169,60,.22) !important;
+  border-radius:16px !important;
+  box-shadow:0 8px 24px rgba(69,169,60,.13) !important;
+  background:#FFFFFF !important;
+  overflow:hidden !important;
 }
 .mc-live-viz.svg svg{
-  display:block!important;
-  width:100%!important;
-  height:auto!important;
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
 }
 
 </style>
@@ -1858,6 +1913,19 @@ function colorHex(color){
   return { zinok:'#AAB2B8', zelena:'#3F6E29', antracit:'#30363B', beton:'#AFA89D', piesok:'#C9B78F' }[color || 'antracit'] || '#30363B';
 }
 
+/* Lighten/darken hex color by percent (-100..100) for metallic gradients */
+function adjustColor(hex, percent){
+  var c = hex.replace('#','');
+  if(c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  var r = parseInt(c.substr(0,2),16);
+  var g = parseInt(c.substr(2,2),16);
+  var b = parseInt(c.substr(4,2),16);
+  var f = percent/100;
+  function adj(v){ return Math.max(0, Math.min(255, Math.round(v + (f>0 ? (255-v)*f : v*f)))); }
+  r = adj(r); g = adj(g); b = adj(b);
+  return '#' + [r,g,b].map(function(x){return ('0'+x.toString(16)).slice(-2)}).join('');
+}
+
 function productVisualType(){
   if(calcState.product === 'brana') return 'brana';
   if(calcState.product === 'pletivo') return 'pletivo';
@@ -2067,9 +2135,7 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<line x1="'+(hx-eaveOver)+'" y1="'+(bodyTop-.5)+'" x2="'+(hxRight+eaveOver)+'" y2="'+(bodyTop-.5)+'" stroke="rgba(255,255,255,.18)" stroke-width="1"/>';
   /* Roof ridge highlight */
   var ridge = '<circle cx="'+(hx+hw/2).toFixed(1)+'" cy="'+roofPeak+'" r="1.5" fill="rgba(255,255,255,.4)"/>';
-  /* Roof antenna */
-  var antenna = '<line x1="'+(hx+hw*.32).toFixed(1)+'" y1="'+(roofPeak+(bodyTop-roofPeak)*.35)+'" x2="'+(hx+hw*.32).toFixed(1)+'" y2="'+(roofPeak-9)+'" stroke="#383128" stroke-width="1"/>' +
-    '<line x1="'+(hx+hw*.32-2.5).toFixed(1)+'" y1="'+(roofPeak-7)+'" x2="'+(hx+hw*.32+2.5).toFixed(1)+'" y2="'+(roofPeak-7)+'" stroke="#383128" stroke-width="1"/>';
+  var antenna = '';
 
   /* === Two-storey body with belt course === */
   var midY = bodyTop + bodyH*.46;
@@ -2145,8 +2211,6 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<rect x="'+(dX+dW*.48).toFixed(1)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="'+(dW*.40).toFixed(1)+'" height="'+(dH*.50).toFixed(1)+'" fill="rgba(255,255,255,.04)" rx=".5"/>'+
     /* Long vertical handle bar */
     '<rect x="'+(dX+dW*.82).toFixed(1)+'" y="'+(dY+dH*.32).toFixed(1)+'" width="2.5" height="'+(dH*.36).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
-  /* Address plaque */
-  door += '<rect x="'+(dX+dW+2)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="6" height="9" fill="#FFFFFF" stroke="#9C9384" stroke-width=".5" rx=".5"/>';
   /* Door overhang canopy */
   var cW=dW+18, cX=dX-9, cY=dY-6;
   var canopy='<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="5" fill="#22201C" rx="1"/>'+
@@ -2161,19 +2225,10 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<ellipse cx="'+(hx+20)+'" cy="'+(bY-8)+'" rx="8" ry="7" fill="#367820" opacity=".82"/>'+
     '<ellipse cx="'+(hx+31)+'" cy="'+(bY-5)+'" rx="7" ry="5.5" fill="#286818" opacity=".78"/>'+
     '<ellipse cx="'+(hx+14)+'" cy="'+(bY-3)+'" rx="5" ry="3.5" fill="#3B8628" opacity=".7"/>';
-  /* Path-side small lamp */
-  var lampX = pathX + 4;
-  var lamp = '<rect x="'+lampX+'" y="'+(ground-14)+'" width="1.5" height="14" fill="#2B2B26"/>' +
-    '<rect x="'+(lampX-3)+'" y="'+(ground-19)+'" width="7.5" height="5" fill="#2B2B26" rx="1"/>' +
-    '<rect x="'+(lampX-2)+'" y="'+(ground-18)+'" width="5.5" height="3" fill="#FFE060" opacity=".75"/>';
-  /* Background trees */
-  var trX=w-50;
-  var tree='<rect x="'+(trX-2.5)+'" y="'+(ground-32)+'" width="5" height="32" fill="#6E5630" opacity=".55"/>'+
-    '<ellipse cx="'+trX+'" cy="'+(ground-36)+'" rx="17" ry="22" fill="#347820" opacity=".55"/>'+
-    '<ellipse cx="'+(trX+2)+'" cy="'+(ground-50)+'" rx="12" ry="14" fill="#246010" opacity=".5"/>'+
-    '<ellipse cx="'+(trX-6)+'" cy="'+(ground-30)+'" rx="9" ry="11" fill="#3F8E26" opacity=".4"/>';
+  var lamp = '';
+  var tree = '';
 
-  return defs+sky+sun+clouds+grass+tree+path+lawn+street+shadow+chimney+antenna+roofPoly+tLines+ridge+eave+bodyLow+bodyUp+sideShade+belt+plinth+pil+win1+win2+win3+garage+steps+door+canopy+bushes+lamp;
+  return defs+sky+sun+clouds+grass+path+lawn+street+shadow+chimney+roofPoly+tLines+ridge+eave+bodyLow+bodyUp+sideShade+belt+plinth+pil+win1+win2+win3+garage+steps+door+canopy+bushes;
 }
 
 /* Render the fence or gate based on product type. Length-aware: bigger length => more panels visible */
@@ -2203,55 +2258,74 @@ function panelsForLength(lengthMeters, panelMeters, totalW, maxPanels){
   return Math.min(maxPanels, n);
 }
 
-/* 3D fence: realistic welded-wire panels with metallic posts */
+/* 3D fence: realistic welded-wire panels with metallic gradient posts */
 function render3dFence(color, x1, x2, w, top, h, ground, lengthMeters, compact){
+  var gid = 'g3d' + Math.random().toString(36).slice(2,6);
+  var lt = adjustColor(color, 28);
+  var dk = adjustColor(color, -28);
+  var bot = top + h;
   var n = panelsForLength(lengthMeters, 2.5, w, compact ? 5 : 7);
   var panelW = w / n;
-  var bot = top + h;
-  var isZinok = (color === '#AAB2B8');
-  var hl = isZinok ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.28)';
-  var sh = 'rgba(0,0,0,.3)';
-  var out = '';
 
+  var defs = '<defs>'+
+    '<linearGradient id="'+gid+'post" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="'+lt+'"/>'+
+      '<stop offset="35%" stop-color="'+color+'"/>'+
+      '<stop offset="100%" stop-color="'+dk+'"/>'+
+    '</linearGradient>'+
+    '<linearGradient id="'+gid+'rail" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="'+lt+'"/>'+
+      '<stop offset="50%" stop-color="'+color+'"/>'+
+      '<stop offset="100%" stop-color="'+dk+'"/>'+
+    '</linearGradient>'+
+    '<linearGradient id="'+gid+'wire" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="'+dk+'"/>'+
+      '<stop offset="45%" stop-color="'+lt+'"/>'+
+      '<stop offset="100%" stop-color="'+color+'"/>'+
+    '</linearGradient>'+
+    '<filter id="'+gid+'sh" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-opacity=".25"/></filter>'+
+  '</defs>';
+
+  var out = defs;
   /* Concrete footing strip */
   out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="4" fill="#9AA898" rx="1"/>';
+  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="1.2" fill="rgba(255,255,255,.25)"/>';
 
   /* Panels */
   for(var i=0;i<n;i++){
     var px = x1 + i*panelW;
-    var pxE = px + panelW;
-    /* Top rail */
-    out += '<rect x="'+(px+.5)+'" y="'+top+'" width="'+(panelW-1)+'" height="3" fill="'+color+'"/>';
-    out += '<rect x="'+(px+.5)+'" y="'+(top+.5)+'" width="'+(panelW-1)+'" height="1.2" fill="'+hl+'"/>';
+    /* Top rail with gradient */
+    out += '<rect x="'+(px+.5)+'" y="'+top+'" width="'+(panelW-1)+'" height="3.5" fill="url(#'+gid+'rail)"/>';
     /* Bottom rail */
-    out += '<rect x="'+(px+.5)+'" y="'+(bot-3.5)+'" width="'+(panelW-1)+'" height="3.5" fill="'+color+'"/>';
-    out += '<rect x="'+(px+.5)+'" y="'+(bot-3.5)+'" width="'+(panelW-1)+'" height="1.2" fill="'+hl+'"/>';
-    /* Middle rail */
+    out += '<rect x="'+(px+.5)+'" y="'+(bot-4)+'" width="'+(panelW-1)+'" height="4" fill="url(#'+gid+'rail)"/>';
+    /* Middle horizontal */
     var mid = top + h*.5;
-    out += '<rect x="'+(px+.5)+'" y="'+(mid-1)+'" width="'+(panelW-1)+'" height="2" fill="'+color+'" opacity=".85"/>';
-    /* Vertical wires (6 per panel) */
+    out += '<rect x="'+(px+.5)+'" y="'+(mid-1.2)+'" width="'+(panelW-1)+'" height="2.4" fill="url(#'+gid+'rail)" opacity=".95"/>';
+    /* Vertical wires - thicker with gradient sheen, rounded ends */
     var vCnt = 6;
     for(var k=1;k<vCnt;k++){
       var vx = px + (panelW/vCnt)*k;
-      out += '<line x1="'+vx.toFixed(1)+'" y1="'+(top+3)+'" x2="'+vx.toFixed(1)+'" y2="'+(bot-3.5)+'" stroke="'+color+'" stroke-width="1.3"/>';
-      out += '<line x1="'+(vx+.35).toFixed(1)+'" y1="'+(top+3)+'" x2="'+(vx+.35).toFixed(1)+'" y2="'+(bot-3.5)+'" stroke="'+hl+'" stroke-width=".5"/>';
+      out += '<rect x="'+(vx-.9).toFixed(1)+'" y="'+(top+3.5)+'" width="1.8" height="'+(h-7.5)+'" fill="url(#'+gid+'wire)" rx=".8"/>';
     }
   }
 
-  /* Posts with 3D highlight */
+  /* Posts with metallic gradient and cap */
   for(var p=0;p<=n;p++){
     var ppx = x1 + p*panelW;
-    var pW = compact ? 4 : 5.5, pH = h+8;
-    out += '<rect x="'+(ppx-pW/2).toFixed(1)+'" y="'+(top-5)+'" width="'+pW+'" height="'+pH+'" fill="'+color+'"/>';
-    out += '<rect x="'+(ppx-pW/2).toFixed(1)+'" y="'+(top-5)+'" width="1.4" height="'+pH+'" fill="'+hl+'"/>';
-    out += '<rect x="'+(ppx+pW/2-1.4).toFixed(1)+'" y="'+(top-5)+'" width="1.4" height="'+pH+'" fill="'+sh+'"/>';
+    var pW = compact ? 5 : 6.5, pH = h+10;
+    /* Main post body */
+    out += '<rect x="'+(ppx-pW/2).toFixed(1)+'" y="'+(top-6)+'" width="'+pW+'" height="'+pH+'" fill="url(#'+gid+'post)" filter="url(#'+gid+'sh)"/>';
     /* Cap */
-    out += '<rect x="'+(ppx-pW/2-1.5).toFixed(1)+'" y="'+(top-8)+'" width="'+(pW+3)+'" height="4" fill="'+color+'" rx=".5"/>';
-    out += '<rect x="'+(ppx-pW/2-1.5).toFixed(1)+'" y="'+(top-8)+'" width="'+(pW+3)+'" height="1.5" fill="'+hl+'"/>';
+    var capW = pW + 4, capH = compact ? 3.5 : 4.5;
+    out += '<rect x="'+(ppx-capW/2).toFixed(1)+'" y="'+(top-6-capH)+'" width="'+capW+'" height="'+capH+'" fill="url(#'+gid+'post)" rx=".8"/>';
+    out += '<rect x="'+(ppx-capW/2).toFixed(1)+'" y="'+(top-6-capH)+'" width="'+capW+'" height="1.2" fill="rgba(255,255,255,.35)"/>';
+    /* Post bolt details (mounting plate suggestion at top of each post) */
+    out += '<circle cx="'+(ppx-pW*.25).toFixed(1)+'" cy="'+(top+h*.15)+'" r=".7" fill="rgba(0,0,0,.35)"/>';
+    out += '<circle cx="'+(ppx+pW*.25).toFixed(1)+'" cy="'+(top+h*.15)+'" r=".7" fill="rgba(0,0,0,.35)"/>';
   }
 
   /* Ground shadow */
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2" fill="rgba(0,0,0,.2)" opacity=".5"/>';
+  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.22)" opacity=".55"/>';
   return out;
 }
 
@@ -2399,12 +2473,12 @@ function renderRetainingWall(color, x1, x2, w, top, h, ground, lengthMeters, com
   return out;
 }
 
-/* Gate: realistic gate with proper posts, side fence panels and typed wings */
+/* Gate: professional, photo-realistic with metallic gradients */
 function renderGate(color, x1, x2, w, top, h, ground, gateWidthM, compact){
+  var gid = 'gt' + Math.random().toString(36).slice(2,6);
+  var lt = adjustColor(color, 30);
+  var dk = adjustColor(color, -30);
   var bot = top + h;
-  var isZinok = (color === '#AAB2B8');
-  var hl = isZinok ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.28)';
-  var sh = 'rgba(0,0,0,.3)';
 
   /* Gate opening proportional to selected width (3-5m maps to 38-62% of fence span) */
   var ratio = Math.max(0.38, Math.min(0.62, 0.38 + (gateWidthM - 3) * 0.08));
@@ -2412,148 +2486,216 @@ function renderGate(color, x1, x2, w, top, h, ground, gateWidthM, compact){
   var sideW = (w - gateW) / 2;
   var gateLeftX = x1 + sideW;
   var gateRightX = gateLeftX + gateW;
-  var mainPostW = compact ? 10 : 13;
-  var out = '';
+  var mainPostW = compact ? 11 : 14;
 
+  /* === SVG defs: gradients + drop shadow === */
+  var defs = '<defs>'+
+    /* Post gradient (left light, right dark for 3D round-pillar feel) */
+    '<linearGradient id="'+gid+'post" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="'+lt+'"/>'+
+      '<stop offset="40%" stop-color="'+color+'"/>'+
+      '<stop offset="100%" stop-color="'+dk+'"/>'+
+    '</linearGradient>'+
+    /* Horizontal rail (top light, bottom dark) */
+    '<linearGradient id="'+gid+'rail" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="'+lt+'"/>'+
+      '<stop offset="55%" stop-color="'+color+'"/>'+
+      '<stop offset="100%" stop-color="'+dk+'"/>'+
+    '</linearGradient>'+
+    /* Vertical bar (round-tube look: light center) */
+    '<linearGradient id="'+gid+'bar" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="'+dk+'"/>'+
+      '<stop offset="40%" stop-color="'+lt+'"/>'+
+      '<stop offset="100%" stop-color="'+color+'"/>'+
+    '</linearGradient>'+
+    /* Cap gradient */
+    '<linearGradient id="'+gid+'cap" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="'+adjustColor(color,45)+'"/>'+
+      '<stop offset="100%" stop-color="'+color+'"/>'+
+    '</linearGradient>'+
+    /* Hinge metal */
+    '<linearGradient id="'+gid+'hinge" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="#8A9098"/>'+
+      '<stop offset="50%" stop-color="#5A6068"/>'+
+      '<stop offset="100%" stop-color="#3A4048"/>'+
+    '</linearGradient>'+
+    /* Handle gold */
+    '<linearGradient id="'+gid+'handle" x1="0" y1="0" x2="1" y2="0">'+
+      '<stop offset="0%" stop-color="#E8C870"/>'+
+      '<stop offset="50%" stop-color="#C8A840"/>'+
+      '<stop offset="100%" stop-color="#9C7E20"/>'+
+    '</linearGradient>'+
+    /* Drop shadow */
+    '<filter id="'+gid+'sh" x="-5%" y="-5%" width="115%" height="120%">'+
+      '<feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-opacity=".3"/>'+
+    '</filter>'+
+  '</defs>';
+
+  var out = defs;
   /* Concrete footing strip */
   out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="4" fill="#9AA898" rx="1"/>';
+  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="1.2" fill="rgba(255,255,255,.25)"/>';
 
-  /* === Side fence panels (same style as 3D plot, dimmed) === */
+  /* === Side fence panels (3D-plot style, slightly dimmed) === */
   function sideFence(sfx1, sfWidth){
     if(sfWidth < 10) return '';
-    var sf = '', sfn = Math.max(1, Math.round(sfWidth/28));
+    var sf = '', sfn = Math.max(1, Math.round(sfWidth/30));
     var sfpW = sfWidth/sfn;
     for(var si=0;si<sfn;si++){
       var spx = sfx1 + si*sfpW;
-      sf += '<rect x="'+(spx+.5)+'" y="'+top+'" width="'+(sfpW-1)+'" height="2.5" fill="'+color+'" opacity=".62"/>';
-      sf += '<rect x="'+(spx+.5)+'" y="'+(bot-3)+'" width="'+(sfpW-1)+'" height="3" fill="'+color+'" opacity=".62"/>';
-      var sm = top+h*.5;
-      sf += '<rect x="'+(spx+.5)+'" y="'+(sm-1)+'" width="'+(sfpW-1)+'" height="1.8" fill="'+color+'" opacity=".5"/>';
+      /* Rails */
+      sf += '<rect x="'+(spx+.5)+'" y="'+top+'" width="'+(sfpW-1)+'" height="3" fill="url(#'+gid+'rail)" opacity=".8"/>';
+      sf += '<rect x="'+(spx+.5)+'" y="'+(bot-3.5)+'" width="'+(sfpW-1)+'" height="3.5" fill="url(#'+gid+'rail)" opacity=".8"/>';
+      sf += '<rect x="'+(spx+.5)+'" y="'+(top+h*.5-1)+'" width="'+(sfpW-1)+'" height="2" fill="url(#'+gid+'rail)" opacity=".7"/>';
+      /* Vertical bars */
       for(var sk=1;sk<5;sk++){
         var svx = spx + (sfpW/5)*sk;
-        sf += '<line x1="'+svx.toFixed(1)+'" y1="'+(top+2.5)+'" x2="'+svx.toFixed(1)+'" y2="'+(bot-3)+'" stroke="'+color+'" stroke-width="1.2" opacity=".58"/>';
+        sf += '<rect x="'+(svx-.8).toFixed(1)+'" y="'+(top+3)+'" width="1.6" height="'+(h-6.5)+'" fill="url(#'+gid+'bar)" rx=".7" opacity=".85"/>';
       }
     }
     /* Side fence posts */
     for(var sp=0;sp<=sfn;sp++){
       var sppx = sfx1 + sp*sfpW;
-      var spW = compact ? 3.5 : 4.5;
-      sf += '<rect x="'+(sppx-spW/2).toFixed(1)+'" y="'+(top-4)+'" width="'+spW+'" height="'+(h+5)+'" fill="'+color+'" opacity=".68"/>';
-      sf += '<rect x="'+(sppx-spW/2).toFixed(1)+'" y="'+(top-4)+'" width="1" height="'+(h+5)+'" fill="'+hl+'" opacity=".5"/>';
-      sf += '<rect x="'+(sppx-spW/2-1).toFixed(1)+'" y="'+(top-7)+'" width="'+(spW+2)+'" height="3.5" fill="'+color+'" rx=".5" opacity=".7"/>';
+      var spW = compact ? 4 : 5;
+      sf += '<rect x="'+(sppx-spW/2).toFixed(1)+'" y="'+(top-5)+'" width="'+spW+'" height="'+(h+6)+'" fill="url(#'+gid+'post)" opacity=".85"/>';
+      sf += '<rect x="'+(sppx-spW/2-1).toFixed(1)+'" y="'+(top-7.5)+'" width="'+(spW+2)+'" height="3" fill="url(#'+gid+'cap)" rx=".5"/>';
     }
     return sf;
   }
-  out += sideFence(x1, sideW - mainPostW/2);
-  out += sideFence(gateRightX + mainPostW/2, sideW - mainPostW/2);
+  out += sideFence(x1, sideW - mainPostW/2 - 2);
+  out += sideFence(gateRightX + mainPostW/2 + 2, sideW - mainPostW/2 - 2);
 
-  /* === Concrete footing for gate posts === */
-  var footW = mainPostW + 8;
-  out += '<rect x="'+(gateLeftX-footW/2).toFixed(1)+'" y="'+(ground-6)+'" width="'+footW+'" height="6" fill="#828A90" rx="1"/>';
-  out += '<rect x="'+(gateRightX-footW/2).toFixed(1)+'" y="'+(ground-6)+'" width="'+footW+'" height="6" fill="#828A90" rx="1"/>';
+  /* === Concrete plinth bases for gate posts === */
+  var plinthW = mainPostW + 10, plinthH = compact ? 7 : 9;
+  out += '<rect x="'+(gateLeftX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="'+plinthH+'" fill="#9098A0" rx="1"/>';
+  out += '<rect x="'+(gateLeftX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="2" fill="rgba(255,255,255,.3)"/>';
+  out += '<rect x="'+(gateRightX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="'+plinthH+'" fill="#9098A0" rx="1"/>';
+  out += '<rect x="'+(gateRightX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="2" fill="rgba(255,255,255,.3)"/>';
 
-  /* === Main gate posts with decorative cap === */
+  /* === Substantial gate posts with decorative cap + finial === */
   function gatePost(gpx){
     var pR = '';
-    var pH = h + 16;
-    pR += '<rect x="'+(gpx-mainPostW/2).toFixed(1)+'" y="'+(top-12)+'" width="'+mainPostW+'" height="'+pH+'" fill="'+color+'"/>';
-    pR += '<rect x="'+(gpx-mainPostW/2).toFixed(1)+'" y="'+(top-12)+'" width="2.5" height="'+pH+'" fill="'+hl+'"/>';
-    pR += '<rect x="'+(gpx+mainPostW/2-2.5).toFixed(1)+'" y="'+(top-12)+'" width="2.5" height="'+pH+'" fill="'+sh+'"/>';
-    /* Wide cap */
-    var capW = mainPostW + 8, capH = compact ? 5 : 7;
-    pR += '<rect x="'+(gpx-capW/2).toFixed(1)+'" y="'+(top-12-capH)+'" width="'+capW+'" height="'+capH+'" fill="'+color+'" rx="1"/>';
-    pR += '<rect x="'+(gpx-capW/2).toFixed(1)+'" y="'+(top-12-capH)+'" width="'+capW+'" height="2" fill="'+hl+'"/>';
-    /* Decorative sphere on top */
+    var pTop = top - 14;
+    var pH = h + 14;
+    /* Main pillar with gradient */
+    pR += '<rect x="'+(gpx-mainPostW/2).toFixed(1)+'" y="'+pTop+'" width="'+mainPostW+'" height="'+pH+'" fill="url(#'+gid+'post)" filter="url(#'+gid+'sh)"/>';
+    /* Edge highlight + shadow */
+    pR += '<rect x="'+(gpx-mainPostW/2).toFixed(1)+'" y="'+pTop+'" width="1.5" height="'+pH+'" fill="rgba(255,255,255,.18)"/>';
+    pR += '<rect x="'+(gpx+mainPostW/2-1.2).toFixed(1)+'" y="'+pTop+'" width="1.2" height="'+pH+'" fill="rgba(0,0,0,.18)"/>';
+    /* Wide pyramid cap (two-tier) */
+    var capW = mainPostW + 8, capH = compact ? 5 : 6;
+    pR += '<rect x="'+(gpx-capW/2).toFixed(1)+'" y="'+(pTop-capH)+'" width="'+capW+'" height="'+capH+'" fill="url(#'+gid+'cap)" rx="1"/>';
+    pR += '<rect x="'+(gpx-capW/2).toFixed(1)+'" y="'+(pTop-capH)+'" width="'+capW+'" height="1.5" fill="rgba(255,255,255,.4)"/>';
+    /* Smaller secondary cap (collar) */
+    var c2W = mainPostW + 4;
+    pR += '<rect x="'+(gpx-c2W/2).toFixed(1)+'" y="'+(pTop-capH-2.5)+'" width="'+c2W+'" height="2.5" fill="url(#'+gid+'cap)" rx=".5"/>';
+    /* Decorative sphere finial */
     var sR = compact ? 4 : 5;
-    pR += '<circle cx="'+gpx.toFixed(1)+'" cy="'+(top-12-capH-sR)+'" r="'+sR+'" fill="'+color+'"/>';
-    pR += '<circle cx="'+(gpx-sR*.35).toFixed(1)+'" cy="'+(top-12-capH-sR-sR*.35).toFixed(1)+'" r="'+(sR*.35)+'" fill="'+hl+'"/>';
+    pR += '<circle cx="'+gpx.toFixed(1)+'" cy="'+(pTop-capH-2.5-sR+1).toFixed(1)+'" r="'+sR+'" fill="url(#'+gid+'cap)"/>';
+    pR += '<circle cx="'+(gpx-sR*.35).toFixed(1)+'" cy="'+(pTop-capH-2.5-sR-sR*.35+1).toFixed(1)+'" r="'+(sR*.35)+'" fill="rgba(255,255,255,.55)"/>';
     return pR;
   }
   out += gatePost(gateLeftX);
   out += gatePost(gateRightX);
 
-  /* === Gate wings === */
+  /* === Gate wing drawing helper === */
   var gateType = calcState.gateType;
 
-  function drawWing(wingX, wingW, mirrorHighlight){
+  function drawWing(wingX, wingW, isRight){
     var wR = '';
-    /* Outer frame */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="'+(h-2)+'" fill="none" stroke="'+color+'" stroke-width="2.8"/>';
-    /* Frame highlight */
-    var hlSide = mirrorHighlight ? wingX + wingW - 2.8 : wingX;
-    wR += '<rect x="'+hlSide.toFixed(1)+'" y="'+(top+1)+'" width="2.5" height="'+(h-2)+'" fill="'+hl+'" opacity=".35"/>';
-    /* Top + bottom rails */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="3" fill="'+color+'"/>';
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="1.2" fill="'+hl+'"/>';
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(bot-4)+'" width="'+wingW.toFixed(1)+'" height="4" fill="'+color+'"/>';
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(bot-4)+'" width="'+wingW.toFixed(1)+'" height="1.2" fill="'+hl+'"/>';
-    /* Mid horizontal */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+h*.46).toFixed(1)+'" width="'+wingW.toFixed(1)+'" height="2" fill="'+color+'" opacity=".8"/>';
-    /* Vertical bars */
-    var vCnt = Math.max(4, Math.round(wingW/11));
+    /* Frame top + bottom rails (thicker, with gradient) */
+    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="3.5" fill="url(#'+gid+'rail)"/>';
+    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(bot-4.5)+'" width="'+wingW.toFixed(1)+'" height="4.5" fill="url(#'+gid+'rail)"/>';
+    /* Frame left + right verticals */
+    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="3" height="'+(h-2)+'" fill="url(#'+gid+'post)"/>';
+    wR += '<rect x="'+(wingX+wingW-3).toFixed(1)+'" y="'+(top+1)+'" width="3" height="'+(h-2)+'" fill="url(#'+gid+'post)"/>';
+    /* Middle horizontal rail */
+    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+h*.46).toFixed(1)+'" width="'+wingW.toFixed(1)+'" height="2.5" fill="url(#'+gid+'rail)" opacity=".95"/>';
+    /* Vertical infill bars - round-tube look via gradient */
+    var vCnt = Math.max(5, Math.round(wingW/9));
+    var innerW = wingW - 7;
+    var innerX = wingX + 3.5;
     for(var vb=1;vb<vCnt;vb++){
-      var vbx = wingX + (wingW/vCnt)*vb;
-      wR += '<line x1="'+vbx.toFixed(1)+'" y1="'+(top+4)+'" x2="'+vbx.toFixed(1)+'" y2="'+(bot-4)+'" stroke="'+color+'" stroke-width="1.5"/>';
-      wR += '<line x1="'+(vbx+.4).toFixed(1)+'" y1="'+(top+4)+'" x2="'+(vbx+.4).toFixed(1)+'" y2="'+(bot-4)+'" stroke="'+hl+'" stroke-width=".5"/>';
+      var vbx = innerX + (innerW/vCnt)*vb;
+      wR += '<rect x="'+(vbx-1).toFixed(1)+'" y="'+(top+4.5)+'" width="2" height="'+(h-9)+'" fill="url(#'+gid+'bar)" rx=".9"/>';
     }
-    /* Diagonal anti-sag brace */
-    if(mirrorHighlight){
-      wR += '<line x1="'+wingX.toFixed(1)+'" y1="'+(top+4)+'" x2="'+(wingX+wingW).toFixed(1)+'" y2="'+(bot-4)+'" stroke="'+color+'" stroke-width="1.2" opacity=".5"/>';
-    } else {
-      wR += '<line x1="'+wingX.toFixed(1)+'" y1="'+(bot-4)+'" x2="'+(wingX+wingW).toFixed(1)+'" y2="'+(top+4)+'" stroke="'+color+'" stroke-width="1.2" opacity=".5"/>';
-    }
+    /* Diagonal anti-sag brace (hinge corner -> opposite top corner) */
+    var bx1 = isRight ? (wingX+wingW-3) : (wingX+3);
+    var bx2 = isRight ? (wingX+3) : (wingX+wingW-3);
+    wR += '<line x1="'+bx1.toFixed(1)+'" y1="'+(bot-4.5)+'" x2="'+bx2.toFixed(1)+'" y2="'+(top+4.5)+'" stroke="'+dk+'" stroke-width="1.5" opacity=".55"/>';
+    wR += '<line x1="'+bx1.toFixed(1)+'" y1="'+(bot-4.5)+'" x2="'+bx2.toFixed(1)+'" y2="'+(top+4.5)+'" stroke="'+lt+'" stroke-width=".5" opacity=".5"/>';
     return wR;
   }
 
+  function hinge(hx, hy){
+    return '<rect x="'+(hx-1).toFixed(1)+'" y="'+hy.toFixed(1)+'" width="8" height="6" fill="url(#'+gid+'hinge)" rx=".5" filter="url(#'+gid+'sh)"/>'+
+      '<circle cx="'+(hx+1.5).toFixed(1)+'" cy="'+(hy+3).toFixed(1)+'" r=".7" fill="rgba(0,0,0,.5)"/>'+
+      '<circle cx="'+(hx+5.5).toFixed(1)+'" cy="'+(hy+3).toFixed(1)+'" r=".7" fill="rgba(0,0,0,.5)"/>';
+  }
+
   if(gateType === 'posuvna'){
-    /* Sliding gate: full-width wing + visible bottom track */
-    var railH = compact ? 3 : 4;
-    /* Rail track */
-    out += '<rect x="'+x1+'" y="'+(bot-railH)+'" width="'+w+'" height="'+railH+'" fill="'+color+'" opacity=".45"/>';
-    out += '<rect x="'+x1+'" y="'+(bot-railH)+'" width="'+w+'" height="1.2" fill="'+hl+'" opacity=".4"/>';
-    /* Single wing (positioned across gate opening) */
-    var swX = gateLeftX + 2;
-    var swW = gateW - 4;
+    /* Sliding gate */
+    var railH = compact ? 3.5 : 4.5;
+    /* Bottom rail track (steel I-beam look) */
+    out += '<rect x="'+x1+'" y="'+(bot-railH)+'" width="'+w+'" height="'+railH+'" fill="url(#'+gid+'rail)" opacity=".7"/>';
+    out += '<rect x="'+x1+'" y="'+(bot-railH)+'" width="'+w+'" height="1.2" fill="rgba(255,255,255,.4)" opacity=".5"/>';
+    /* Single wing across opening */
+    var swX = gateLeftX + 3;
+    var swW = gateW - 6;
     out += drawWing(swX, swW, false);
-    /* Rollers on track */
+    /* Rollers - more realistic (wheel with hub) */
     for(var rr=0;rr<=2;rr++){
-      var rrX = swX + swW*.15 + rr*(swW*.3);
-      out += '<circle cx="'+rrX.toFixed(1)+'" cy="'+(bot-railH/2)+'" r="'+(railH*0.7)+'" fill="#606870" stroke="'+color+'" stroke-width="1"/>';
+      var rrX = swX + swW*.18 + rr*(swW*.32);
+      var rR = railH*.85;
+      out += '<circle cx="'+rrX.toFixed(1)+'" cy="'+(bot-railH/2)+'" r="'+rR+'" fill="url(#'+gid+'hinge)" stroke="'+dk+'" stroke-width=".6"/>';
+      out += '<circle cx="'+rrX.toFixed(1)+'" cy="'+(bot-railH/2)+'" r="'+(rR*.4)+'" fill="rgba(0,0,0,.4)"/>';
     }
+    /* Counterweight tail (visible behind right post when extended) */
+    out += '<rect x="'+(swX+swW-3).toFixed(1)+'" y="'+(top+h*.45)+'" width="3" height="'+(h*.1)+'" fill="url(#'+gid+'handle)" rx="1"/>';
 
   } else if(gateType === 'jednokrid'){
-    /* Single wing: positioned left of center, with door hardware */
-    var jwW = gateW * 0.52;
-    var jwX = gateLeftX + mainPostW/2 + 1;
-    /* Hinges */
-    out += '<rect x="'+(gateLeftX+mainPostW/2).toFixed(1)+'" y="'+(top+h*.18).toFixed(1)+'" width="5" height="5" fill="#6A7078" rx=".5"/>';
-    out += '<rect x="'+(gateLeftX+mainPostW/2).toFixed(1)+'" y="'+(top+h*.70).toFixed(1)+'" width="5" height="5" fill="#6A7078" rx=".5"/>';
+    /* Single wing */
+    var jwW = gateW * 0.54;
+    var jwX = gateLeftX + mainPostW/2 + 2;
+    /* Hinges on left post */
+    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.16);
+    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.72);
     out += drawWing(jwX, jwW, false);
-    /* Door handle */
-    out += '<rect x="'+(jwX+jwW-4).toFixed(1)+'" y="'+(top+h*.43).toFixed(1)+'" width="3" height="'+(h*.14).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
+    /* Long vertical pull handle */
+    out += '<rect x="'+(jwX+jwW-7).toFixed(1)+'" y="'+(top+h*.35).toFixed(1)+'" width="2.5" height="'+(h*.30).toFixed(1)+'" fill="url(#'+gid+'handle)" rx="1.2"/>';
+    /* Handle mounts (top + bottom) */
+    out += '<rect x="'+(jwX+jwW-7.5).toFixed(1)+'" y="'+(top+h*.35-1).toFixed(1)+'" width="3.5" height="2" fill="url(#'+gid+'handle)" rx=".5"/>';
+    out += '<rect x="'+(jwX+jwW-7.5).toFixed(1)+'" y="'+(top+h*.65-1).toFixed(1)+'" width="3.5" height="2" fill="url(#'+gid+'handle)" rx=".5"/>';
+    /* Lock cylinder */
+    out += '<circle cx="'+(jwX+jwW-5).toFixed(1)+'" cy="'+(top+h*.52).toFixed(1)+'" r="1.4" fill="url(#'+gid+'hinge)"/>';
 
   } else {
-    /* Double-wing (default): two symmetric wings */
-    var dhW = (gateW - mainPostW - 4) / 2;
-    var lWingX = gateLeftX + mainPostW/2 + 1;
-    var rWingX = gateRightX - mainPostW/2 - 1 - dhW;
-    /* Hinges on left post */
-    out += '<rect x="'+(gateLeftX+mainPostW/2).toFixed(1)+'" y="'+(top+h*.18).toFixed(1)+'" width="5" height="5" fill="#6A7078" rx=".5"/>';
-    out += '<rect x="'+(gateLeftX+mainPostW/2).toFixed(1)+'" y="'+(top+h*.70).toFixed(1)+'" width="5" height="5" fill="#6A7078" rx=".5"/>';
-    /* Hinges on right post */
-    out += '<rect x="'+(gateRightX-mainPostW/2-5).toFixed(1)+'" y="'+(top+h*.18).toFixed(1)+'" width="5" height="5" fill="#6A7078" rx=".5"/>';
-    out += '<rect x="'+(gateRightX-mainPostW/2-5).toFixed(1)+'" y="'+(top+h*.70).toFixed(1)+'" width="5" height="5" fill="#6A7078" rx=".5"/>';
+    /* Double-wing (default) */
+    var dhW = (gateW - mainPostW - 6) / 2;
+    var lWingX = gateLeftX + mainPostW/2 + 2;
+    var rWingX = gateRightX - mainPostW/2 - 2 - dhW;
+    /* Hinges left post */
+    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.16);
+    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.72);
+    /* Hinges right post */
+    out += hinge(gateRightX - mainPostW/2 - 6, top + h*.16);
+    out += hinge(gateRightX - mainPostW/2 - 6, top + h*.72);
     out += drawWing(lWingX, dhW, false);
     out += drawWing(rWingX, dhW, true);
-    /* Handles at center gap */
-    out += '<rect x="'+(lWingX+dhW-3.5).toFixed(1)+'" y="'+(top+h*.43).toFixed(1)+'" width="3" height="'+(h*.14).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
-    out += '<rect x="'+(rWingX+.5).toFixed(1)+'" y="'+(top+h*.43).toFixed(1)+'" width="3" height="'+(h*.14).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
-    /* Central gap line */
-    out += '<line x1="'+(lWingX+dhW+1).toFixed(1)+'" y1="'+(top+1)+'" x2="'+(lWingX+dhW+1).toFixed(1)+'" y2="'+(bot-1)+'" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>';
+    /* Center gap shadow line */
+    var gapX = lWingX + dhW + 3;
+    out += '<line x1="'+gapX.toFixed(1)+'" y1="'+(top+1)+'" x2="'+gapX.toFixed(1)+'" y2="'+(bot-1)+'" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>';
+    /* Handles at center gap (vertical pull handles) */
+    out += '<rect x="'+(lWingX+dhW-5).toFixed(1)+'" y="'+(top+h*.40).toFixed(1)+'" width="2.5" height="'+(h*.22).toFixed(1)+'" fill="url(#'+gid+'handle)" rx="1.2"/>';
+    out += '<rect x="'+(rWingX+2).toFixed(1)+'" y="'+(top+h*.40).toFixed(1)+'" width="2.5" height="'+(h*.22).toFixed(1)+'" fill="url(#'+gid+'handle)" rx="1.2"/>';
+    /* Lock cylinder on right wing */
+    out += '<circle cx="'+(rWingX+5).toFixed(1)+'" cy="'+(top+h*.52).toFixed(1)+'" r="1.4" fill="url(#'+gid+'hinge)"/>';
+    /* Center drop-bolt to ground */
+    out += '<rect x="'+(gapX-.7).toFixed(1)+'" y="'+(bot-1)+'" width="1.4" height="3" fill="url(#'+gid+'hinge)"/>';
   }
 
   /* Ground shadow */
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.22)" opacity=".5"/>';
+  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.22)" opacity=".55"/>';
   return out;
 }
 
