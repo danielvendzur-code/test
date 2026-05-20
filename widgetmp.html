@@ -3484,9 +3484,15 @@ function calculatePrice(){
     if(calcState.moveHeavyItems) result.breakdown.push({ k:(lang==='sk'?'Ťažké kusy':'Heavy items'), v:220 });
     if(calcState.moveCompany) result.breakdown.push({ k:(lang==='sk'?'Firemné vybavenie':'Company equipment'), v:240 });
     result.total = subMove;
+    var typeLabel = {
+      byt: (lang==='sk'?'Byt':'Apartment'),
+      dom: (lang==='sk'?'Dom':'House'),
+      vypratanie: (lang==='sk'?'Vypratávanie':'Clearance'),
+      firma: (lang==='sk'?'Firma / kancelária':'Company / office')
+    }[type] || type;
     result.summary = [
       { k:(lang==='sk'?'Služba':'Service'), v:(lang==='sk'?'Sťahovanie / vypratávanie':'Moving / clearance') },
-      { k:(lang==='sk'?'Typ':'Type'), v:type },
+      { k:(lang==='sk'?'Typ':'Type'), v:typeLabel },
       { k:(lang==='sk'?'Plocha':'Area'), v:area+' m²' }
     ];
   }
