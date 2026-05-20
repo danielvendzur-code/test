@@ -1462,8 +1462,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   }
 }
 
-/* Product image - clean static display, no constant scale.
-   CSS mask hides the bottom-left baked-in color sample dot. */
+/* Product image - clean static display, no constant scale, no flicker. */
 .mc-product-img img,
 .mc-product-card .mc-product-img img,
 .mc-product-card[data-product="brana"] .mc-product-img img{
@@ -1481,27 +1480,40 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   filter:none !important;
   transform:scale(1) !important;
   transition:transform .35s cubic-bezier(.4,0,.2,1) !important;
-  /* Hide the baked-in colour sample circle in bottom-left of mojplot photos */
-  -webkit-mask-image:radial-gradient(circle 28px at 14% 86%, transparent 96%, #000 100%) !important;
-  mask-image:radial-gradient(circle 28px at 14% 86%, transparent 96%, #000 100%) !important;
-  -webkit-mask-repeat:no-repeat !important;
-  mask-repeat:no-repeat !important;
-  -webkit-mask-size:100% 100% !important;
-  mask-size:100% 100% !important;
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
 }
 
 /* Subtle hover scale only, never constant scale (prevents flicker/crop) */
 .mc-product-card:hover .mc-product-img img,
 .mc-product-card[data-product="brana"]:hover .mc-product-img img{
-  transform:scale(1.07) !important;
+  transform:scale(1.06) !important;
 }
 
-/* Force-disable any leftover ::after / ::before mask overlays that were
-   creating the "still visible dot" + cropping problems. */
+/* COLOR SAMPLE DOT HIDER - white corner cover.
+   Container background is white, so this white square is invisible
+   except where it covers the dot baked into the source photo. */
 .mc-product-card .mc-product-img::after,
-.mc-product-card[data-product="brana"] .mc-product-img::after,
+.mc-product-card[data-product="brana"] .mc-product-img::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  bottom:0 !important;
+  width:42px !important;
+  height:42px !important;
+  background:#FFFFFF !important;
+  border-radius:0 0 0 8px !important;
+  z-index:5 !important;
+  pointer-events:none !important;
+  box-shadow:none !important;
+  border:none !important;
+}
 .mc-product-card .mc-product-img::before,
-.mc-product-card[data-product="brana"] .mc-product-img::before,
+.mc-product-card[data-product="brana"] .mc-product-img::before{
+  display:none !important;
+  content:none !important;
+}
 .mc-product-visual::after,
 .mc-product-visual::before,
 .mc-gate-thumb::after,
@@ -2112,9 +2124,7 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<line x1="'+(hx-eaveOver)+'" y1="'+(bodyTop-.5)+'" x2="'+(hxRight+eaveOver)+'" y2="'+(bodyTop-.5)+'" stroke="rgba(255,255,255,.18)" stroke-width="1"/>';
   /* Roof ridge highlight */
   var ridge = '<circle cx="'+(hx+hw/2).toFixed(1)+'" cy="'+roofPeak+'" r="1.5" fill="rgba(255,255,255,.4)"/>';
-  /* Roof antenna */
-  var antenna = '<line x1="'+(hx+hw*.32).toFixed(1)+'" y1="'+(roofPeak+(bodyTop-roofPeak)*.35)+'" x2="'+(hx+hw*.32).toFixed(1)+'" y2="'+(roofPeak-9)+'" stroke="#383128" stroke-width="1"/>' +
-    '<line x1="'+(hx+hw*.32-2.5).toFixed(1)+'" y1="'+(roofPeak-7)+'" x2="'+(hx+hw*.32+2.5).toFixed(1)+'" y2="'+(roofPeak-7)+'" stroke="#383128" stroke-width="1"/>';
+  var antenna = '';
 
   /* === Two-storey body with belt course === */
   var midY = bodyTop + bodyH*.46;
@@ -2190,8 +2200,6 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<rect x="'+(dX+dW*.48).toFixed(1)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="'+(dW*.40).toFixed(1)+'" height="'+(dH*.50).toFixed(1)+'" fill="rgba(255,255,255,.04)" rx=".5"/>'+
     /* Long vertical handle bar */
     '<rect x="'+(dX+dW*.82).toFixed(1)+'" y="'+(dY+dH*.32).toFixed(1)+'" width="2.5" height="'+(dH*.36).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
-  /* Address plaque */
-  door += '<rect x="'+(dX+dW+2)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="6" height="9" fill="#FFFFFF" stroke="#9C9384" stroke-width=".5" rx=".5"/>';
   /* Door overhang canopy */
   var cW=dW+18, cX=dX-9, cY=dY-6;
   var canopy='<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="5" fill="#22201C" rx="1"/>'+
@@ -2206,19 +2214,10 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<ellipse cx="'+(hx+20)+'" cy="'+(bY-8)+'" rx="8" ry="7" fill="#367820" opacity=".82"/>'+
     '<ellipse cx="'+(hx+31)+'" cy="'+(bY-5)+'" rx="7" ry="5.5" fill="#286818" opacity=".78"/>'+
     '<ellipse cx="'+(hx+14)+'" cy="'+(bY-3)+'" rx="5" ry="3.5" fill="#3B8628" opacity=".7"/>';
-  /* Path-side small lamp */
-  var lampX = pathX + 4;
-  var lamp = '<rect x="'+lampX+'" y="'+(ground-14)+'" width="1.5" height="14" fill="#2B2B26"/>' +
-    '<rect x="'+(lampX-3)+'" y="'+(ground-19)+'" width="7.5" height="5" fill="#2B2B26" rx="1"/>' +
-    '<rect x="'+(lampX-2)+'" y="'+(ground-18)+'" width="5.5" height="3" fill="#FFE060" opacity=".75"/>';
-  /* Background trees */
-  var trX=w-50;
-  var tree='<rect x="'+(trX-2.5)+'" y="'+(ground-32)+'" width="5" height="32" fill="#6E5630" opacity=".55"/>'+
-    '<ellipse cx="'+trX+'" cy="'+(ground-36)+'" rx="17" ry="22" fill="#347820" opacity=".55"/>'+
-    '<ellipse cx="'+(trX+2)+'" cy="'+(ground-50)+'" rx="12" ry="14" fill="#246010" opacity=".5"/>'+
-    '<ellipse cx="'+(trX-6)+'" cy="'+(ground-30)+'" rx="9" ry="11" fill="#3F8E26" opacity=".4"/>';
+  var lamp = '';
+  var tree = '';
 
-  return defs+sky+sun+clouds+grass+tree+path+lawn+street+shadow+chimney+antenna+roofPoly+tLines+ridge+eave+bodyLow+bodyUp+sideShade+belt+plinth+pil+win1+win2+win3+garage+steps+door+canopy+bushes+lamp;
+  return defs+sky+sun+clouds+grass+path+lawn+street+shadow+chimney+roofPoly+tLines+ridge+eave+bodyLow+bodyUp+sideShade+belt+plinth+pil+win1+win2+win3+garage+steps+door+canopy+bushes;
 }
 
 /* Render the fence or gate based on product type. Length-aware: bigger length => more panels visible */
