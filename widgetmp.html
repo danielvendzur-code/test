@@ -1432,6 +1432,97 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   }
 }
 
+/* ============================================
+   FINAL POLISH 2026-05-20:
+   - Hide baked-in colour dots on product photos
+   - Unify product cards (incl. brana) on hover
+   - Hide old visualization caption
+   - Better visualization container
+   ============================================ */
+
+/* Unify ALL product card photo backgrounds (incl. brana) so behavior is identical */
+.mc-product-img,
+.mc-product-card[data-product="brana"] .mc-product-img,
+.mc-product-card .mc-product-img{
+  background:#FFFFFF !important;
+  position:relative !important;
+  overflow:hidden !important;
+}
+
+/* Mask the bottom-left corner colour dot baked into mojplot product photos.
+   Quarter-circle white shape that blends into the white card background. */
+.mc-product-card .mc-product-img::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  left:-10px!important;
+  bottom:-10px!important;
+  width:62px!important;
+  height:54px!important;
+  background:#FFFFFF!important;
+  border-radius:0 999px 0 0!important;
+  z-index:7!important;
+  pointer-events:none!important;
+  box-shadow:0 0 0 4px #FFFFFF, 0 0 8px 4px #FFFFFF !important;
+  border:none!important;
+  opacity:1!important;
+}
+@media (max-width:480px){
+  .mc-product-card .mc-product-img::after{
+    left:-8px!important;
+    bottom:-8px!important;
+    width:54px!important;
+    height:46px!important;
+  }
+}
+
+/* Selected check stays visible above the mask */
+.mc-product-card.selected::before{
+  z-index:10!important;
+}
+
+/* Unified subtle hover effect on ALL product cards (incl. brana) */
+.mc-product-img img,
+.mc-product-card .mc-product-img img,
+.mc-product-card[data-product="brana"] .mc-product-img img{
+  transform:scale(1.145)!important;
+  transition:transform .35s cubic-bezier(.34,1.2,.64,1)!important;
+}
+.mc-product-card:hover .mc-product-img img,
+.mc-product-card[data-product="brana"]:hover .mc-product-img img{
+  transform:scale(1.22)!important;
+}
+
+/* Lift entire card on hover - same for all */
+.mc-product-card{
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease !important;
+}
+.mc-product-card:hover,
+.mc-product-card[data-product="brana"]:hover{
+  transform:translateY(-3px)!important;
+  border-color:#45A93C!important;
+  box-shadow:0 10px 26px rgba(69,169,60,.22)!important;
+}
+
+/* Hide the "Vizualizácia pri dome / Home preview" caption inside the SVG widget */
+.mc-live-viz .mc-viz-label,
+.mc-live-viz.svg .mc-viz-label{
+  display:none!important;
+}
+
+/* Polished visualization container - cleaner border + softer shadow */
+.mc-live-viz.svg{
+  border:1px solid rgba(69,169,60,.22)!important;
+  border-radius:16px!important;
+  box-shadow:0 8px 24px rgba(69,169,60,.13)!important;
+  background:#FFFFFF!important;
+}
+.mc-live-viz.svg svg{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+}
+
 </style>
 
 </head>
@@ -1819,20 +1910,20 @@ function renderSvgVisual(compact, locked){
   var fenceEnd = w - (compact ? 14 : 18);
   var fenceWidth = fenceEnd - fenceStart;
 
-  /* Height of fence depends on product */
+  /* House dimensions are FIXED regardless of fence/gate height */
+  bodyTop = compact ? 38 : 48;
+  var bodyH = bodyBottom - bodyTop;
+  roofPeak = compact ? 8 : 12;
+
+  /* Height of fence depends on product - varies INDEPENDENTLY of house */
   var hVal = parseInt(calcState.height || calcState.meshHeight || calcState.gateHeight || 153, 10);
   if(type === 'oporne') hVal = 60 + parseInt(calcState.wallHeight || 2, 10) * 20;
   if(type === 'betonovy') hVal = 200;
   if(type === 'mobilne') hVal = 200;
-  /* Map cm to viewBox px: 100cm -> ~30px (compact: ~22px) */
-  var pxPerCm = compact ? 0.22 : 0.30;
-  var fenceH = Math.max(compact ? 30 : 40, Math.min(compact ? 60 : 80, Math.round(hVal * pxPerCm)));
+  /* Map cm to viewBox px: keep fence shorter than house body so house always dominates */
+  var pxPerCm = compact ? 0.24 : 0.32;
+  var fenceH = Math.max(compact ? 30 : 42, Math.min(compact ? 58 : 78, Math.round(hVal * pxPerCm)));
   var fenceTop = ground - fenceH;
-
-  /* House body top should align with fence top OR be slightly above (eaves above fence is OK, body matches) */
-  bodyTop = fenceTop - (compact ? 4 : 6); // body slightly taller than fence so eaves peek over
-  var bodyH = bodyBottom - bodyTop;
-  roofPeak = bodyTop - (compact ? 22 : 30);
 
   /* Length-driven visual: number of panels for non-gate */
   var lengthMeters = parseFloat(calcState.length || calcState.mobileLength || calcState.wallLength || 20) || 20;
@@ -1841,7 +1932,6 @@ function renderSvgVisual(compact, locked){
   var sceneSvg = renderScene(w, h, ground, houseLeft, houseW, bodyTop, bodyH, roofPeak);
   var fenceSvg = renderFenceOrGate(type, color, fenceStart, fenceEnd, fenceWidth, fenceTop, fenceH, ground, lengthMeters, compact);
 
-  var label = '<div class="mc-viz-label"><span>'+(lang==='sk'?'Vizualizácia pri dome':'Home preview')+'</span><span>'+visualLabel()+'</span></div>';
   var reveal = locked
     ? '<button type="button" class="mc-viz-reveal" onclick="revealLiveVisual(this)">'+(lang==='sk'?'Odhalenie vizualizácie':'Reveal preview')+'<span>'+(lang==='sk'?'Kliknite a ukážeme bránu alebo plot pri dome':'Click to show the gate or fence by the house')+'</span></button>'
     : '';
@@ -1850,7 +1940,7 @@ function renderSvgVisual(compact, locked){
     '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">' +
       sceneSvg + fenceSvg +
     '</svg>' +
-    label + reveal +
+    reveal +
   '</div>';
 }
 
@@ -1861,37 +1951,44 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
   var defs = '<defs>' +
     '<linearGradient id="'+vid+'sky" x1="0" y1="0" x2="0" y2="1">' +
       '<stop offset="0%" stop-color="#6FA8D0"/>' +
-      '<stop offset="45%" stop-color="#A4C8E8"/>' +
-      '<stop offset="100%" stop-color="#C4DEC4"/>' +
+      '<stop offset="50%" stop-color="#A8CCE8"/>' +
+      '<stop offset="100%" stop-color="#D2E4C8"/>' +
     '</linearGradient>' +
     '<linearGradient id="'+vid+'grass" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#6AAC3C"/>' +
-      '<stop offset="100%" stop-color="#448818"/>' +
+      '<stop offset="0%" stop-color="#76B440"/>' +
+      '<stop offset="100%" stop-color="#4A901C"/>' +
     '</linearGradient>' +
-    '<linearGradient id="'+vid+'facA" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#F2F0EA"/>' +
-      '<stop offset="100%" stop-color="#E0DDD4"/>' +
+    '<linearGradient id="'+vid+'facA" x1="0" y1="0" x2="1" y2="0">' +
+      '<stop offset="0%" stop-color="#FAF7F0"/>' +
+      '<stop offset="60%" stop-color="#EFEBE0"/>' +
+      '<stop offset="100%" stop-color="#DFDAC8"/>' +
     '</linearGradient>' +
-    '<linearGradient id="'+vid+'facB" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#E8E4DA"/>' +
-      '<stop offset="100%" stop-color="#D8D3C8"/>' +
+    '<linearGradient id="'+vid+'facB" x1="0" y1="0" x2="1" y2="0">' +
+      '<stop offset="0%" stop-color="#EFEAE0"/>' +
+      '<stop offset="60%" stop-color="#E2DCD0"/>' +
+      '<stop offset="100%" stop-color="#D2CCBC"/>' +
     '</linearGradient>' +
     '<linearGradient id="'+vid+'roof" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#4C453C"/>' +
-      '<stop offset="100%" stop-color="#28231C"/>' +
+      '<stop offset="0%" stop-color="#52483C"/>' +
+      '<stop offset="50%" stop-color="#36302A"/>' +
+      '<stop offset="100%" stop-color="#1E1A14"/>' +
     '</linearGradient>' +
     '<linearGradient id="'+vid+'glass" x1="0" y1="0" x2="1" y2="1">' +
-      '<stop offset="0%" stop-color="#C0DAF0"/>' +
-      '<stop offset="45%" stop-color="#80B0E0"/>' +
-      '<stop offset="100%" stop-color="#A0C8E0"/>' +
+      '<stop offset="0%" stop-color="#CFE2F2"/>' +
+      '<stop offset="40%" stop-color="#7CA8D8"/>' +
+      '<stop offset="100%" stop-color="#A0C0DC"/>' +
     '</linearGradient>' +
     '<linearGradient id="'+vid+'door" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#28252A"/>' +
-      '<stop offset="100%" stop-color="#14121A"/>' +
+      '<stop offset="0%" stop-color="#2C2A2F"/>' +
+      '<stop offset="100%" stop-color="#15141A"/>' +
+    '</linearGradient>' +
+    '<linearGradient id="'+vid+'garage" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#3A3A38"/>' +
+      '<stop offset="100%" stop-color="#22221E"/>' +
     '</linearGradient>' +
     '<linearGradient id="'+vid+'path" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#CAC5B0"/>' +
-      '<stop offset="100%" stop-color="#ACA89A"/>' +
+      '<stop offset="0%" stop-color="#D0CAB4"/>' +
+      '<stop offset="100%" stop-color="#A8A496"/>' +
     '</linearGradient>' +
     '<radialGradient id="'+vid+'sun" cx="50%" cy="50%" r="50%">' +
       '<stop offset="0%" stop-color="#FFEE98" stop-opacity=".9"/>' +
@@ -1900,104 +1997,172 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '</radialGradient>' +
   '</defs>';
 
-  /* Sky + sun + clouds */
+  /* === Sky, sun, clouds === */
   var sky = '<rect x="0" y="0" width="'+w+'" height="'+ground+'" fill="url(#'+vid+'sky)"/>';
   var sx = w-36, sy = 20;
-  var sun = '<circle cx="'+sx+'" cy="'+sy+'" r="26" fill="url(#'+vid+'sun)"/>' +
-    '<circle cx="'+sx+'" cy="'+sy+'" r="11" fill="#FFE060" opacity=".72"/>';
+  var sun = '<circle cx="'+sx+'" cy="'+sy+'" r="28" fill="url(#'+vid+'sun)"/>' +
+    '<circle cx="'+sx+'" cy="'+sy+'" r="11" fill="#FFE060" opacity=".75"/>';
   var clouds =
-    '<ellipse cx="'+(w-95)+'" cy="26" rx="30" ry="10" fill="#FFF" opacity=".88"/>' +
-    '<ellipse cx="'+(w-114)+'" cy="28" rx="18" ry="8" fill="#F8F8F8" opacity=".82"/>' +
-    '<ellipse cx="'+(w-80)+'" cy="24" rx="20" ry="8" fill="#FFF" opacity=".85"/>' +
-    '<ellipse cx="64" cy="30" rx="22" ry="8" fill="#FFF" opacity=".72"/>' +
-    '<ellipse cx="48" cy="32" rx="14" ry="6" fill="#F8F8F8" opacity=".68"/>';
+    '<ellipse cx="'+(w-95)+'" cy="24" rx="32" ry="9" fill="#FFF" opacity=".9"/>' +
+    '<ellipse cx="'+(w-118)+'" cy="27" rx="18" ry="7" fill="#F4F4F4" opacity=".84"/>' +
+    '<ellipse cx="'+(w-78)+'" cy="22" rx="22" ry="8" fill="#FFF" opacity=".88"/>' +
+    '<ellipse cx="64" cy="30" rx="22" ry="7" fill="#FFF" opacity=".7"/>' +
+    '<ellipse cx="48" cy="32" rx="14" ry="6" fill="#F8F8F8" opacity=".66"/>' +
+    '<ellipse cx="200" cy="18" rx="14" ry="5" fill="#FFF" opacity=".55"/>';
 
-  /* Grass + street curb + concrete path */
+  /* === Ground: grass + curb + concrete driveway === */
   var grass = '<rect x="0" y="'+ground+'" width="'+w+'" height="'+(h-ground)+'" fill="url(#'+vid+'grass)"/>';
   var stH = Math.max(5, h-ground-2);
-  var street = '<rect x="0" y="'+(h-stH)+'" width="'+w+'" height="'+stH+'" fill="#7A7668" opacity=".55"/>' +
+  var street = '<rect x="0" y="'+(h-stH)+'" width="'+w+'" height="'+stH+'" fill="#787264" opacity=".55"/>' +
     '<line x1="0" y1="'+(h-stH)+'" x2="'+w+'" y2="'+(h-stH)+'" stroke="rgba(255,255,255,.14)" stroke-width="1"/>';
   var pathX = hxRight + 6, pathEnd = w - 10, pathY = ground - 7;
   var pathW = pathEnd - pathX;
-  var path = '<rect x="'+pathX+'" y="'+pathY+'" width="'+pathW+'" height="'+(h-pathY)+'" fill="url(#'+vid+'path)" opacity=".8" rx="1"/>' +
+  var path = '<rect x="'+pathX+'" y="'+pathY+'" width="'+pathW+'" height="'+(h-pathY)+'" fill="url(#'+vid+'path)" opacity=".85" rx="1"/>' +
     '<line x1="'+(pathX+pathW*.33).toFixed(1)+'" y1="'+pathY+'" x2="'+(pathX+pathW*.33).toFixed(1)+'" y2="'+h+'" stroke="rgba(0,0,0,.1)" stroke-width=".7"/>' +
     '<line x1="'+(pathX+pathW*.67).toFixed(1)+'" y1="'+pathY+'" x2="'+(pathX+pathW*.67).toFixed(1)+'" y2="'+h+'" stroke="rgba(0,0,0,.1)" stroke-width=".7"/>';
 
-  /* Lawn strip + house shadow */
-  var lawn = '<rect x="'+hx+'" y="'+(ground-6)+'" width="'+(hw+6)+'" height="6" fill="#6AAC3C" opacity=".65"/>';
-  var shadow = '<ellipse cx="'+(hx+hw*.46)+'" cy="'+(ground+3)+'" rx="'+Math.round(hw*.5)+'" ry="4" fill="rgba(0,0,0,.22)"/>';
+  /* === Lawn strip + house ground shadow === */
+  var lawn = '<rect x="'+hx+'" y="'+(ground-5)+'" width="'+(hw+6)+'" height="5" fill="#6AAC3C" opacity=".7"/>';
+  var shadow = '<ellipse cx="'+(hx+hw*.46)+'" cy="'+(ground+3)+'" rx="'+Math.round(hw*.55)+'" ry="5" fill="rgba(0,0,0,.22)"/>';
 
-  /* Chimney */
-  var chimX = hx+hw*.68, chimW = Math.max(5,Math.round(hw*.06));
-  var chimney = '<rect x="'+(chimX-chimW/2).toFixed(1)+'" y="'+(roofPeak+2)+'" width="'+chimW+'" height="'+(bodyTop-roofPeak+3)+'" fill="#54483E" stroke="#342C24" stroke-width=".5"/>' +
-    '<rect x="'+(chimX-chimW/2-2).toFixed(1)+'" y="'+(roofPeak+2)+'" width="'+(chimW+4)+'" height="4" fill="#6A5C50"/>';
+  /* === Chimney with cap === */
+  var chimX = hx+hw*.72, chimW = Math.max(5, Math.round(hw*.065));
+  var chimney = '<rect x="'+(chimX-chimW/2).toFixed(1)+'" y="'+(roofPeak+4)+'" width="'+chimW+'" height="'+(bodyTop-roofPeak+1)+'" fill="#52463C" stroke="#322C24" stroke-width=".5"/>' +
+    '<rect x="'+(chimX-chimW/2-2).toFixed(1)+'" y="'+(roofPeak+3)+'" width="'+(chimW+4)+'" height="4" fill="#6C5E50"/>' +
+    '<rect x="'+(chimX-chimW/2-2).toFixed(1)+'" y="'+(roofPeak+3)+'" width="'+(chimW+4)+'" height="1.5" fill="rgba(255,255,255,.2)"/>';
 
-  /* Roof */
-  var rPts = (hx-10)+','+bodyTop+' '+(hx+hw/2)+','+roofPeak+' '+(hxRight+10)+','+bodyTop;
+  /* === Roof (pitched, with eaves and tile texture) === */
+  var eaveOver = 11;
+  var rPts = (hx-eaveOver)+','+bodyTop+' '+(hx+hw/2)+','+roofPeak+' '+(hxRight+eaveOver)+','+bodyTop;
   var roofPoly = '<polygon points="'+rPts+'" fill="url(#'+vid+'roof)"/>';
+  /* Roof tile lines */
   var tLines = '';
-  for(var ti=1;ti<=5;ti++){
-    var tf=ti/6, tY=roofPeak+tf*(bodyTop-roofPeak);
-    var tLX=(hx+hw/2)-tf*(hw/2+10), tRX=(hx+hw/2)+tf*(hw/2+10);
+  for(var ti=1;ti<=6;ti++){
+    var tf=ti/7, tY=roofPeak+tf*(bodyTop-roofPeak);
+    var tLX=(hx+hw/2)-tf*(hw/2+eaveOver), tRX=(hx+hw/2)+tf*(hw/2+eaveOver);
     tLines += '<line x1="'+tLX.toFixed(1)+'" y1="'+tY.toFixed(1)+'" x2="'+tRX.toFixed(1)+'" y2="'+tY.toFixed(1)+'" stroke="rgba(0,0,0,.16)" stroke-width=".7"/>';
   }
-  var eave = '<line x1="'+(hx-10)+'" y1="'+bodyTop+'" x2="'+(hxRight+10)+'" y2="'+bodyTop+'" stroke="#1C1810" stroke-width="2.5" opacity=".6"/>' +
-    '<line x1="'+(hx-10)+'" y1="'+(bodyTop-1)+'" x2="'+(hxRight+10)+'" y2="'+(bodyTop-1)+'" stroke="rgba(255,255,255,.15)" stroke-width="1.2"/>';
+  /* Vertical roof seams (suggest pan tiles) */
+  for(var tj=0;tj<6;tj++){
+    var tjf = tj/6;
+    var tjY = roofPeak + tjf*(bodyTop-roofPeak);
+    var tjW = tjf*(hw/2+eaveOver);
+    tLines += '<line x1="'+((hx+hw/2)-tjW*.5).toFixed(1)+'" y1="'+tjY.toFixed(1)+'" x2="'+((hx+hw/2)-tjW*.5).toFixed(1)+'" y2="'+bodyTop+'" stroke="rgba(0,0,0,.08)" stroke-width=".4"/>';
+    tLines += '<line x1="'+((hx+hw/2)+tjW*.5).toFixed(1)+'" y1="'+tjY.toFixed(1)+'" x2="'+((hx+hw/2)+tjW*.5).toFixed(1)+'" y2="'+bodyTop+'" stroke="rgba(0,0,0,.08)" stroke-width=".4"/>';
+  }
+  /* Eave shadow line + highlight */
+  var eave = '<line x1="'+(hx-eaveOver)+'" y1="'+bodyTop+'" x2="'+(hxRight+eaveOver)+'" y2="'+bodyTop+'" stroke="#1A150C" stroke-width="3" opacity=".7"/>' +
+    '<line x1="'+(hx-eaveOver)+'" y1="'+(bodyTop+1.5)+'" x2="'+(hxRight+eaveOver)+'" y2="'+(bodyTop+1.5)+'" stroke="rgba(0,0,0,.18)" stroke-width="1"/>' +
+    '<line x1="'+(hx-eaveOver)+'" y1="'+(bodyTop-.5)+'" x2="'+(hxRight+eaveOver)+'" y2="'+(bodyTop-.5)+'" stroke="rgba(255,255,255,.18)" stroke-width="1"/>';
+  /* Roof ridge highlight */
+  var ridge = '<circle cx="'+(hx+hw/2).toFixed(1)+'" cy="'+roofPeak+'" r="1.5" fill="rgba(255,255,255,.4)"/>';
+  /* Roof antenna */
+  var antenna = '<line x1="'+(hx+hw*.32).toFixed(1)+'" y1="'+(roofPeak+(bodyTop-roofPeak)*.35)+'" x2="'+(hx+hw*.32).toFixed(1)+'" y2="'+(roofPeak-9)+'" stroke="#383128" stroke-width="1"/>' +
+    '<line x1="'+(hx+hw*.32-2.5).toFixed(1)+'" y1="'+(roofPeak-7)+'" x2="'+(hx+hw*.32+2.5).toFixed(1)+'" y2="'+(roofPeak-7)+'" stroke="#383128" stroke-width="1"/>';
 
-  /* House body: two tones for two-storey look */
-  var midY = bodyTop + bodyH*.47;
-  var bodyLow = '<rect x="'+hx+'" y="'+midY+'" width="'+hw+'" height="'+(ground-midY)+'" fill="url(#'+vid+'facA)" stroke="#BEBAB0" stroke-width="1" rx="1"/>';
-  var bodyUp  = '<rect x="'+hx+'" y="'+bodyTop+'" width="'+hw+'" height="'+(midY-bodyTop+1)+'" fill="url(#'+vid+'facB)" stroke="#BEBAB0" stroke-width="1" rx="1"/>';
+  /* === Two-storey body with belt course === */
+  var midY = bodyTop + bodyH*.46;
+  var bodyLow = '<rect x="'+hx+'" y="'+midY+'" width="'+hw+'" height="'+(ground-midY)+'" fill="url(#'+vid+'facA)" stroke="#B8B4A8" stroke-width="1" rx="1.5"/>';
+  var bodyUp  = '<rect x="'+hx+'" y="'+bodyTop+'" width="'+hw+'" height="'+(midY-bodyTop+1)+'" fill="url(#'+vid+'facB)" stroke="#B8B4A8" stroke-width="1" rx="1.5"/>';
+  /* Right-side gradient shading for 3D feel */
+  var sideShade = '<rect x="'+(hxRight-12)+'" y="'+bodyTop+'" width="12" height="'+bodyH+'" fill="rgba(0,0,0,.07)"/>';
   /* Belt course */
-  var belt = '<rect x="'+(hx-1)+'" y="'+(midY-2)+'" width="'+(hw+2)+'" height="4" fill="#C0B8A4" rx=".5"/>' +
-    '<rect x="'+(hx-1)+'" y="'+(midY-2)+'" width="'+(hw+2)+'" height="1.5" fill="rgba(255,255,255,.28)"/>';
+  var belt = '<rect x="'+(hx-1)+'" y="'+(midY-2.5)+'" width="'+(hw+2)+'" height="5" fill="#C0B8A4" rx=".5"/>' +
+    '<rect x="'+(hx-1)+'" y="'+(midY-2.5)+'" width="'+(hw+2)+'" height="1.8" fill="rgba(255,255,255,.3)"/>' +
+    '<rect x="'+(hx-1)+'" y="'+(midY+1.5)+'" width="'+(hw+2)+'" height="1" fill="rgba(0,0,0,.15)"/>';
+  /* Plinth/foundation */
+  var plinth = '<rect x="'+(hx-1)+'" y="'+(ground-5)+'" width="'+(hw+2)+'" height="5" fill="#8E867A" rx="0.5"/>' +
+    '<rect x="'+(hx-1)+'" y="'+(ground-5)+'" width="'+(hw+2)+'" height="1.2" fill="rgba(255,255,255,.2)"/>';
   /* Corner pilasters */
-  var pil = '<rect x="'+hx+'" y="'+bodyTop+'" width="5" height="'+bodyH+'" fill="rgba(0,0,0,.04)"/>' +
-    '<rect x="'+(hxRight-5)+'" y="'+bodyTop+'" width="5" height="'+bodyH+'" fill="rgba(0,0,0,.04)"/>';
+  var pil = '<rect x="'+hx+'" y="'+bodyTop+'" width="5" height="'+bodyH+'" fill="rgba(0,0,0,.05)"/>' +
+    '<rect x="'+(hxRight-5)+'" y="'+bodyTop+'" width="5" height="'+bodyH+'" fill="rgba(0,0,0,.06)"/>' +
+    '<rect x="'+hx+'" y="'+bodyTop+'" width="1.5" height="'+bodyH+'" fill="rgba(255,255,255,.18)"/>';
 
-  /* Window helper */
+  /* === Windows with sills === */
   function mkWin(wx,wy,ww,wh){
-    var fc='#787060', ref=Math.round(ww*.38);
-    return '<rect x="'+(wx-2)+'" y="'+(wy-2)+'" width="'+(ww+4)+'" height="'+(wh+4)+'" fill="'+fc+'" rx="1.5"/>'+
+    var fc='#5C5448', ref=Math.round(ww*.38);
+    return '<rect x="'+(wx-2.5)+'" y="'+(wy-2)+'" width="'+(ww+5)+'" height="'+(wh+4)+'" fill="'+fc+'" rx="1.5"/>'+
+      /* Window sill */
+      '<rect x="'+(wx-4)+'" y="'+(wy+wh+1)+'" width="'+(ww+8)+'" height="2.5" fill="#9C9384" rx=".5"/>'+
+      '<rect x="'+(wx-4)+'" y="'+(wy+wh+1)+'" width="'+(ww+8)+'" height="1" fill="rgba(255,255,255,.3)"/>'+
+      /* Glass */
       '<rect x="'+wx+'" y="'+wy+'" width="'+ww+'" height="'+wh+'" fill="url(#'+vid+'glass)"/>'+
+      /* Muntins */
       '<rect x="'+(wx+ww/2-.8).toFixed(1)+'" y="'+wy+'" width="1.6" height="'+wh+'" fill="'+fc+'"/>'+
       '<rect x="'+wx+'" y="'+(wy+wh*.43).toFixed(1)+'" width="'+ww+'" height="1.4" fill="'+fc+'"/>'+
-      '<rect x="'+(wx+1)+'" y="'+(wy+1)+'" width="'+ref+'" height="'+Math.round(wh*.34)+'" fill="rgba(255,255,255,.28)" rx=".5"/>';
+      /* Glass reflection highlight */
+      '<rect x="'+(wx+1)+'" y="'+(wy+1)+'" width="'+ref+'" height="'+Math.round(wh*.34)+'" fill="rgba(255,255,255,.32)" rx=".5"/>';
   }
-  var wW=Math.max(12,Math.round(hw*.18)), wH=Math.max(11,Math.round(bodyH*.24));
+  var wW=Math.max(13,Math.round(hw*.18)), wH=Math.max(12,Math.round(bodyH*.22));
   var wuY=bodyTop+Math.round(bodyH*.1), w1X=hx+Math.round(hw*.1), w2X=hx+Math.round(hw*.42);
-  var wlY=bodyTop+Math.round(bodyH*.58), wlH=Math.round(bodyH*.28);
-  var win1=mkWin(w1X,wuY,wW,wH), win2=mkWin(w2X,wuY,wW,wH), win3=mkWin(w1X,wlY,wW,wlH);
+  var wlY=bodyTop+Math.round(bodyH*.56), wlH=Math.round(bodyH*.24);
+  var win1=mkWin(w1X,wuY,wW,wH), win2=mkWin(w2X,wuY,wW,wH);
+  /* Smaller ground-floor window left of garage */
+  var winLowW = Math.round(wW*.85), winLowH = Math.round(wlH*.85);
+  var win3=mkWin(hx+Math.round(hw*.10), wlY+2, winLowW, winLowH);
 
-  /* Modern dark door with glass */
-  var dW=Math.max(11,Math.round(hw*.19)), dH=Math.round(bodyH*.52);
+  /* === Garage (sectional door, left of entry) === */
+  var gW = Math.round(hw*.30), gH = Math.round(bodyH*.42);
+  var gX = hx+Math.round(hw*.36), gY = ground - gH;
+  var garage = '<rect x="'+(gX-2)+'" y="'+(gY-2)+'" width="'+(gW+4)+'" height="'+(gH+2)+'" fill="#5A544A" rx="1.5"/>'+
+    '<rect x="'+gX+'" y="'+gY+'" width="'+gW+'" height="'+gH+'" fill="url(#'+vid+'garage)" rx="1"/>';
+  /* Sectional door panel lines */
+  var gSeg = 4;
+  for(var gi=1;gi<gSeg;gi++){
+    garage += '<line x1="'+gX+'" y1="'+(gY+gH*gi/gSeg).toFixed(1)+'" x2="'+(gX+gW)+'" y2="'+(gY+gH*gi/gSeg).toFixed(1)+'" stroke="rgba(0,0,0,.45)" stroke-width=".8"/>';
+    garage += '<line x1="'+gX+'" y1="'+(gY+gH*gi/gSeg+1).toFixed(1)+'" x2="'+(gX+gW)+'" y2="'+(gY+gH*gi/gSeg+1).toFixed(1)+'" stroke="rgba(255,255,255,.08)" stroke-width=".8"/>';
+  }
+  /* Garage door subtle highlight */
+  garage += '<rect x="'+(gX+1)+'" y="'+(gY+1)+'" width="'+(gW*.18)+'" height="'+(gH-2)+'" fill="rgba(255,255,255,.05)"/>';
+
+  /* === Modern entry door with sidelight and steps === */
+  var dW=Math.max(11,Math.round(hw*.18)), dH=Math.round(bodyH*.46);
   var dX=hx+hw-dW-Math.round(hw*.08), dY=ground-dH;
+  /* Steps */
+  var stepW = dW+10;
+  var steps = '<rect x="'+(dX-5)+'" y="'+(ground-3)+'" width="'+stepW+'" height="3" fill="#A8A498" rx=".5"/>' +
+    '<rect x="'+(dX-3)+'" y="'+(ground-6)+'" width="'+(stepW-4)+'" height="3" fill="#B8B4A8" rx=".5"/>' +
+    '<rect x="'+(dX-3)+'" y="'+(ground-6)+'" width="'+(stepW-4)+'" height="1" fill="rgba(255,255,255,.32)"/>';
+  /* Door frame */
   var door='<rect x="'+(dX-2)+'" y="'+(dY-2)+'" width="'+(dW+4)+'" height="'+(dH+2)+'" fill="#4A4440" rx="2"/>'+
+    /* Door panel */
     '<rect x="'+dX+'" y="'+dY+'" width="'+dW+'" height="'+dH+'" fill="url(#'+vid+'door)" rx="1"/>'+
-    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.08).toFixed(1)+'" width="'+(dW*.76).toFixed(1)+'" height="'+(dH*.40).toFixed(1)+'" fill="rgba(112,168,230,.52)" rx="1"/>'+
-    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.08).toFixed(1)+'" width="'+(dW*.28).toFixed(1)+'" height="'+(dH*.18).toFixed(1)+'" fill="rgba(255,255,255,.2)" rx=".5"/>'+
-    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.56).toFixed(1)+'" width="'+(dW*.35).toFixed(1)+'" height="'+(dH*.30).toFixed(1)+'" fill="rgba(255,255,255,.04)" rx=".5"/>'+
-    '<rect x="'+(dX+dW*.52).toFixed(1)+'" y="'+(dY+dH*.56).toFixed(1)+'" width="'+(dW*.35).toFixed(1)+'" height="'+(dH*.30).toFixed(1)+'" fill="rgba(255,255,255,.04)" rx=".5"/>'+
-    '<circle cx="'+(dX+dW*.82).toFixed(1)+'" cy="'+(dY+dH*.55).toFixed(1)+'" r="2" fill="#C8A840"/>';
-  /* Door canopy */
-  var cW=dW+14, cX=dX-7, cY=dY-5;
-  var canopy='<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="5" fill="#282420" rx="1"/>'+
-    '<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="2" fill="rgba(255,255,255,.12)"/>'+
-    '<line x1="'+(cX+4)+'" y1="'+(cY+5)+'" x2="'+dX+'" y2="'+(dY+8)+'" stroke="#282420" stroke-width="1"/>'+
-    '<line x1="'+(cX+cW-4)+'" y1="'+(cY+5)+'" x2="'+(dX+dW)+'" y2="'+(dY+8)+'" stroke="#282420" stroke-width="1"/>';
+    /* Long vertical glass strip */
+    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.08).toFixed(1)+'" width="'+(dW*.28).toFixed(1)+'" height="'+(dH*.78).toFixed(1)+'" fill="rgba(120,170,225,.55)" rx=".5"/>'+
+    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.08).toFixed(1)+'" width="'+(dW*.28).toFixed(1)+'" height="'+(dH*.26).toFixed(1)+'" fill="rgba(255,255,255,.24)" rx=".5"/>'+
+    /* Inset right panel */
+    '<rect x="'+(dX+dW*.48).toFixed(1)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="'+(dW*.40).toFixed(1)+'" height="'+(dH*.50).toFixed(1)+'" fill="rgba(255,255,255,.04)" rx=".5"/>'+
+    /* Long vertical handle bar */
+    '<rect x="'+(dX+dW*.82).toFixed(1)+'" y="'+(dY+dH*.32).toFixed(1)+'" width="2.5" height="'+(dH*.36).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
+  /* Address plaque */
+  door += '<rect x="'+(dX+dW+2)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="6" height="9" fill="#FFFFFF" stroke="#9C9384" stroke-width=".5" rx=".5"/>';
+  /* Door overhang canopy */
+  var cW=dW+18, cX=dX-9, cY=dY-6;
+  var canopy='<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="5" fill="#22201C" rx="1"/>'+
+    '<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="2" fill="rgba(255,255,255,.14)"/>'+
+    '<rect x="'+cX+'" y="'+(cY+5)+'" width="'+cW+'" height="1" fill="rgba(0,0,0,.18)"/>'+
+    '<line x1="'+(cX+4)+'" y1="'+(cY+5)+'" x2="'+(cX+10)+'" y2="'+(cY+15)+'" stroke="#22201C" stroke-width="1.1"/>'+
+    '<line x1="'+(cX+cW-4)+'" y1="'+(cY+5)+'" x2="'+(cX+cW-10)+'" y2="'+(cY+15)+'" stroke="#22201C" stroke-width="1.1"/>';
 
-  /* Decorative bushes */
+  /* === Garden: bushes + tall background tree === */
   var bY=ground;
-  var bushes='<ellipse cx="'+(hx+8)+'" cy="'+(bY-5)+'" rx="8" ry="7" fill="#286818" opacity=".85"/>'+
-    '<ellipse cx="'+(hx+18)+'" cy="'+(bY-7)+'" rx="7" ry="6" fill="#367820" opacity=".8"/>'+
-    '<ellipse cx="'+(hx+26)+'" cy="'+(bY-5)+'" rx="6" ry="5" fill="#286818" opacity=".75"/>';
-  /* Background tree */
-  var trX=w-48;
-  var tree='<rect x="'+(trX-2)+'" y="'+(ground-28)+'" width="4" height="28" fill="#7A6030" opacity=".55"/>'+
-    '<ellipse cx="'+trX+'" cy="'+(ground-36)+'" rx="15" ry="19" fill="#347820" opacity=".52"/>'+
-    '<ellipse cx="'+(trX+2)+'" cy="'+(ground-47)+'" rx="10" ry="13" fill="#246010" opacity=".45"/>';
+  var bushes='<ellipse cx="'+(hx+9)+'" cy="'+(bY-5)+'" rx="9" ry="7" fill="#286818" opacity=".88"/>'+
+    '<ellipse cx="'+(hx+20)+'" cy="'+(bY-8)+'" rx="8" ry="7" fill="#367820" opacity=".82"/>'+
+    '<ellipse cx="'+(hx+31)+'" cy="'+(bY-5)+'" rx="7" ry="5.5" fill="#286818" opacity=".78"/>'+
+    '<ellipse cx="'+(hx+14)+'" cy="'+(bY-3)+'" rx="5" ry="3.5" fill="#3B8628" opacity=".7"/>';
+  /* Path-side small lamp */
+  var lampX = pathX + 4;
+  var lamp = '<rect x="'+lampX+'" y="'+(ground-14)+'" width="1.5" height="14" fill="#2B2B26"/>' +
+    '<rect x="'+(lampX-3)+'" y="'+(ground-19)+'" width="7.5" height="5" fill="#2B2B26" rx="1"/>' +
+    '<rect x="'+(lampX-2)+'" y="'+(ground-18)+'" width="5.5" height="3" fill="#FFE060" opacity=".75"/>';
+  /* Background trees */
+  var trX=w-50;
+  var tree='<rect x="'+(trX-2.5)+'" y="'+(ground-32)+'" width="5" height="32" fill="#6E5630" opacity=".55"/>'+
+    '<ellipse cx="'+trX+'" cy="'+(ground-36)+'" rx="17" ry="22" fill="#347820" opacity=".55"/>'+
+    '<ellipse cx="'+(trX+2)+'" cy="'+(ground-50)+'" rx="12" ry="14" fill="#246010" opacity=".5"/>'+
+    '<ellipse cx="'+(trX-6)+'" cy="'+(ground-30)+'" rx="9" ry="11" fill="#3F8E26" opacity=".4"/>';
 
-  return defs+sky+sun+clouds+grass+tree+path+lawn+street+shadow+chimney+roofPoly+tLines+eave+bodyLow+bodyUp+belt+pil+win1+win2+win3+door+canopy+bushes;
+  return defs+sky+sun+clouds+grass+tree+path+lawn+street+shadow+chimney+antenna+roofPoly+tLines+ridge+eave+bodyLow+bodyUp+sideShade+belt+plinth+pil+win1+win2+win3+garage+steps+door+canopy+bushes+lamp;
 }
 
 /* Render the fence or gate based on product type. Length-aware: bigger length => more panels visible */
