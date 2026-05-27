@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Môj plot - AI asistent & Cenová kalkulačka</title>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -259,6 +259,7 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 .mc-check:hover{border-color:var(--m-green);background:var(--m-green-bg)}
 .mc-check input[type="checkbox"],.mc-check input[type="radio"]{position:absolute;opacity:0;pointer-events:none}
 .mc-check .mc-cbx{width:20px;height:20px;border:2px solid var(--mc-text-sub);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--mc-bg)}
+.mc-check .mc-cbx{align-self:center}
 .mc-check input[type="radio"] ~ .mc-cbx{border-radius:50%}
 .mc-check .mc-cbx svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .15s}
 .mc-check input:checked ~ .mc-cbx{background:var(--m-green);border-color:var(--m-green)}
@@ -384,8 +385,8 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
   --mc-contact-bg:#FFFFFF;
 }
 html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;position:static!important;width:100%!important;touch-action:auto!important}
-#mojplot-chat{background:#fff;border:1px solid rgba(69,169,60,.2);box-shadow:0 20px 58px rgba(35,39,42,.2);transition:opacity .2s ease,transform .24s ease;transform:translateY(12px);border-radius:18px}
-#mojplot-chat.visible{transform:translateY(0)}
+#mojplot-chat{background:#fff;border:1px solid rgba(69,169,60,.2);box-shadow:0 20px 58px rgba(35,39,42,.2);transition:opacity .32s ease,transform .44s cubic-bezier(.34,1.4,.5,1);transform:scale(.88) translateY(22px);opacity:0;transform-origin:bottom right;border-radius:18px}
+#mojplot-chat.visible{transform:scale(1) translateY(0);opacity:1}
 .mc-header{background:#fff;border-bottom:1px solid var(--mc-border);padding:14px 16px;overflow:visible}
 .mc-header::before{display:none}
 .mc-hdr-title{color:#23272A;font-size:15.5px;font-weight:800}
@@ -457,7 +458,8 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-btn-secondary{border-radius:11px;background:#F7FAF4}
 .mc-trust,.mc-trust-row{display:none!important}
 @media (max-width:480px){
-  #mojplot-chat{top:0!important;bottom:auto!important;right:0!important;left:0!important;width:100%!important;height:var(--mc-mobile-height,100vh)!important;max-height:var(--mc-mobile-height,100vh)!important;border-radius:0!important;transform:none!important}
+  #mojplot-chat{top:0!important;bottom:auto!important;right:0!important;left:0!important;width:100%!important;height:var(--mc-mobile-height,100vh)!important;max-height:var(--mc-mobile-height,100vh)!important;border-radius:0!important;transform:translateY(100%)!important;opacity:1;transition:transform .4s cubic-bezier(.33,1,.68,1)!important;transform-origin:bottom center}
+  #mojplot-chat.visible{transform:translateY(0)!important}
   .mc-header{padding-top:calc(12px + env(safe-area-inset-top))}
   .mc-product-grid{grid-template-columns:1fr 1fr;gap:8px}
   .mc-product-img{height:92px}
@@ -530,6 +532,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-product-img{height:46px}
   .mc-live-viz{height:88px}
   .mc-choice-preview{grid-template-columns:82px 1fr}
+  .mc-header{align-items:flex-start;gap:8px}
+  .mc-hdr-title{font-size:13px;line-height:1.2}
+  .mc-hdr-sub{font-size:10px;line-height:1.2}
+  .mc-hdr-actions{flex-wrap:wrap;justify-content:flex-end;max-width:45%}
+  .mc-lang button{font-size:10px;padding:4px 6px}
 }
 
 /* Annotation polish: bigger previews, cleaner progress and richer visualisation */
@@ -1626,7 +1633,297 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 /* HIDE OLD LIVE VIZ */
 .mc-live-viz { display:none!important; }
 .mc-live-viz.svg { display:none!important; }
+/* ============================================
+   FIX 2026-05-20: real-photo live visualization + photo colour cards
+   ============================================ */
+/* Real-photo product preview (replaces the old stylised SVG scene) */
+.mc-live-viz.photo{
+  position:relative !important;
+  margin:10px 0 0 !important;
+  border:1px solid rgba(69,169,60,.22) !important;
+  border-radius:16px !important;
+  overflow:hidden !important;
+  background:#FFFFFF !important;
+  box-shadow:0 8px 24px rgba(69,169,60,.13) !important;
+  display:block !important;
+}
+.mc-live-viz.photo.compact{
+  margin:8px 0 0 !important;
+  border-radius:14px !important;
+  box-shadow:0 4px 12px rgba(69,169,60,.1) !important;
+}
+.mc-viz-imgwrap{
+  position:relative !important;
+  width:100% !important;
+  aspect-ratio:46 / 25 !important;
+  height:auto !important;
+  background:linear-gradient(180deg,#A6D4EF 0%,#EAF5FB 100%) !important;
+  overflow:hidden !important;
+}
+.mc-live-viz.photo.compact .mc-viz-imgwrap{
+  aspect-ratio:46 / 25 !important;
+  height:auto !important;
+}
+/* SVG fallback fills the frame and is VISIBLE BY DEFAULT (instant, no network) */
+.mc-viz-svg-fallback{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  display:flex !important;            /* the house scene is the primary visualization */
+  align-items:center !important;
+  justify-content:center !important;
+  animation:mcVizIn .5s cubic-bezier(.34,1.2,.64,1) both !important;
+}
+.mc-viz-svg-el{
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+}
+/* Real product photo is the PRIMARY visualization (looks exactly like the website).
+   Visible by default; the SVG only appears if the photo genuinely fails to load. */
+.mc-viz-photo-img{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  padding:14px !important;
+  box-sizing:border-box !important;
+  background:linear-gradient(180deg,#FFFFFF 0%,#F4F9F1 100%) !important;
+  filter:saturate(1.04) contrast(1.02) !important;
+  animation:mcVizIn .5s cubic-bezier(.34,1.2,.64,1) both !important;
+  z-index:2 !important;
+  display:block !important;
+}
+/* If the photo fails to load: hide photo, reveal the SVG safety net */
+.mc-viz-imgwrap.photo-failed .mc-viz-photo-img{ display:none !important; }
+.mc-viz-imgwrap.photo-failed .mc-viz-svg-fallback{ display:flex !important; }
+@keyframes mcVizIn{
+  0%{opacity:0;transform:translateY(8px) scale(.97)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+.mc-live-viz.photo.compact .mc-viz-photo-img{
+  padding:8px !important;
+}
+/* Caption with the current configuration (new class -> not hidden by .mc-viz-label rule) */
+.mc-viz-cap{
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:9px 13px !important;
+  border-top:1px solid rgba(69,169,60,.14) !important;
+  background:#FFFFFF !important;
+  font-family:var(--m-font) !important;
+}
+.mc-live-viz.photo.compact .mc-viz-cap{
+  padding:7px 11px !important;
+}
+.mc-viz-cap span:first-child{
+  color:#2F8732 !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  letter-spacing:.6px !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+  flex-shrink:0 !important;
+}
+.mc-viz-cap span:last-child{
+  color:#23272A !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  text-align:right !important;
+  line-height:1.3 !important;
+}
+.mc-live-viz.photo.compact .mc-viz-cap span:last-child{
+  font-size:11px !important;
+}
+/* Reveal-on-final-step overlay for the photo preview */
+.mc-live-viz.photo.reveal-locked{cursor:pointer !important}
+.mc-live-viz.photo.reveal-locked .mc-viz-photo-img{
+  filter:blur(8px) brightness(.97) !important;
+}
+.mc-live-viz.photo.reveal-locked .mc-viz-svg-fallback{
+  filter:blur(8px) brightness(.97) !important;
+}
+.mc-live-viz.photo .mc-viz-reveal{
+  position:absolute !important;
+  inset:12px !important;
+  z-index:5 !important;
+  border:1px solid rgba(255,255,255,.85) !important;
+  border-radius:12px !important;
+  background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(232,247,228,.85)) !important;
+  backdrop-filter:blur(8px) !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:4px !important;
+  color:#23452A !important;
+  font-family:var(--m-font) !important;
+  font-weight:800 !important;
+  font-size:13px !important;
+  cursor:pointer !important;
+  box-shadow:0 10px 24px rgba(31,41,55,.12) !important;
+  padding:8px !important;
+  text-align:center !important;
+}
+.mc-live-viz.photo .mc-viz-reveal span{
+  font-size:11px !important;
+  font-weight:600 !important;
+  color:#4B6450 !important;
+}
 
+/* Re-enable colour-card photos now that each colour uses its OWN correct photo */
+.mc-color-card.has-photo .mc-color-photo{
+  display:flex !important;
+  width:100% !important;
+  height:74px !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:linear-gradient(180deg,#FBFDFA,#EFF6EC) !important;
+  overflow:hidden !important;
+}
+.mc-color-card.has-photo .mc-color-photo img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  padding:6px !important;
+  box-sizing:border-box !important;
+  display:block !important;
+  filter:saturate(1.04) contrast(1.03) !important;
+  transition:transform .35s ease !important;
+}
+.mc-color-card.has-photo:hover .mc-color-photo img{
+  transform:scale(1.06) !important;
+}
+.mc-color-card.has-photo{
+  padding:0 !important;
+  min-height:0 !important;
+  justify-content:flex-start !important;
+}
+.mc-color-card.has-photo .mc-color-body{
+  padding:7px 6px 9px !important;
+  gap:5px !important;
+}
+.mc-color-swatch.sm{
+  width:22px !important;
+  height:22px !important;
+  border-radius:7px !important;
+  border:2px solid rgba(35,39,42,.16) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 2px 5px rgba(35,39,42,.16) !important;
+}
+@media (max-width:480px){
+  .mc-viz-imgwrap{height:auto !important;aspect-ratio:46 / 25 !important}
+  .mc-color-card.has-photo .mc-color-photo{height:66px !important}
+}
+
+/* =========================================================
+   FIX 2026-05-22: remove the legacy white "dot-cover" square that was
+   covering an old watermark. The current photos are clean, so this square
+   only showed up as a cut-out in the bottom-left of every product/gate image.
+   Killed definitively here (last in the cascade). The selected ✓ check mark
+   uses .mc-product-card::before (not .mc-product-img) and is unaffected.
+   ========================================================= */
+.mc-product-card .mc-product-img::after,
+.mc-product-card .mc-product-img::before,
+.mc-product-card[data-product="brana"] .mc-product-img::after,
+.mc-product-card[data-product="brana"] .mc-product-img::before,
+.mc-product-img::after,
+.mc-product-img::before,
+.mc-color-card .mc-color-photo::after,
+.mc-color-card .mc-color-photo::before{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  box-shadow:none !important;
+  border:none !important;
+  width:0 !important;
+  height:0 !important;
+}
+
+/* =========================================================
+   Floating teaser bubble (DESKTOP ONLY) – shown when chat is closed
+   ========================================================= */
+#mojplot-teaser{
+  position:fixed;
+  right:100px;
+  bottom:30px;
+  z-index:99999;
+  width:264px;
+  max-width:72vw;
+  background:#FFFFFF;
+  border:1px solid rgba(69,169,60,.22);
+  border-radius:16px 16px 4px 16px;
+  padding:14px 16px 15px;
+  box-shadow:0 14px 38px rgba(35,39,42,.18), 0 0 0 5px rgba(69,169,60,.07);
+  font-family:var(--m-font, 'Inter', system-ui, sans-serif);
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(10px) scale(.96);
+  transform-origin:bottom right;
+  transition:opacity .45s cubic-bezier(.34,1.2,.64,1), transform .45s cubic-bezier(.34,1.2,.64,1);
+  animation:mpTeaserIn .6s cubic-bezier(.34,1.4,.64,1) 1.4s forwards;
+}
+@keyframes mpTeaserIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
+#mojplot-teaser::after{ /* little tail pointing at the bubble */
+  content:"";
+  position:absolute;
+  right:-7px;
+  bottom:14px;
+  width:16px;
+  height:16px;
+  background:#FFFFFF;
+  border-right:1px solid rgba(69,169,60,.22);
+  border-bottom:1px solid rgba(69,169,60,.22);
+  transform:rotate(-45deg);
+  border-radius:0 0 3px 0;
+}
+#mojplot-teaser:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 18px 44px rgba(35,39,42,.22), 0 0 0 6px rgba(69,169,60,.1); }
+.mp-teaser-title{ font-size:14.5px; font-weight:800; color:#23452A; margin-bottom:4px; line-height:1.25; }
+.mp-teaser-text{ font-size:12.5px; font-weight:500; color:#4B6450; line-height:1.45; }
+.mp-teaser-text b{ color:#2F8732; font-weight:800; }
+.mp-teaser-close{
+  position:absolute; top:6px; right:8px;
+  width:22px; height:22px; line-height:1;
+  border:none; background:rgba(35,39,42,.06); color:#6B7A6E;
+  border-radius:50%; cursor:pointer; font-size:16px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  transition:background .2s, color .2s;
+}
+.mp-teaser-close:hover{ background:rgba(35,39,42,.14); color:#23272A; }
+/* Hide when chat is open, when dismissed, or on small screens (mobile) */
+#mojplot-bubble.open ~ #mojplot-teaser,
+#mojplot-teaser.mp-dismissed{
+  opacity:0 !important;
+  pointer-events:none !important;
+  transform:translateY(10px) scale(.9) !important;
+  animation:none !important;
+  visibility:hidden;
+}
+@media (max-width:768px){
+  #mojplot-teaser{ display:none !important; }
+}
+/* =========================================================
+   FIX: remove leftover CSS overlays (green grass ::before + light clip-path
+   "driveway" ::after) that were drawn ON TOP of the new SVG scene and showed
+   up as a white/semi-transparent wedge. The SVG scene draws everything itself.
+   ========================================================= */
+.mc-live-viz::before,
+.mc-live-viz::after,
+.mc-live-viz.photo::before,
+.mc-live-viz.photo::after,
+.mc-viz-imgwrap::before,
+.mc-viz-imgwrap::after{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  clip-path:none !important;
+  opacity:0 !important;
+}
 </style>
 
 </head>
@@ -1645,9 +1942,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   </div>
 </div>
 
-<div id="mc-tooltip">
-  <span>Dostanete cenu za pár sekúnd 🧮</span>
-  <button class="tt-x" onclick="document.getElementById('mc-tooltip').style.display='none'">✕</button>
+<!-- Floating teaser (desktop only, shown when chat is closed) -->
+<div id="mojplot-teaser" onclick="toggleChat()" role="button" tabindex="0">
+  <button class="mp-teaser-close" onclick="event.stopPropagation();dismissTeaser()" aria-label="Zavrieť">&times;</button>
+  <div class="mp-teaser-title">Potrebujete poradiť? 👋</div>
+  <div class="mp-teaser-text">Spýtajte sa nášho asistenta alebo si v <b>cenovej kalkulačke</b> hneď spočítajte plot či bránu.</div>
 </div>
 
 <!-- Chat window -->
@@ -2144,16 +2443,10 @@ function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
     '<ellipse cx="48" cy="32" rx="14" ry="6" fill="#F8F8F8" opacity=".66"/>' +
     '<ellipse cx="200" cy="18" rx="14" ry="5" fill="#FFF" opacity=".55"/>';
 
-  /* === Ground: grass + curb + concrete driveway === */
+  /* === Ground: grass only (driveway removed) === */
   var grass = '<rect x="0" y="'+ground+'" width="'+w+'" height="'+(h-ground)+'" fill="url(#'+vid+'grass)"/>';
-  var stH = Math.max(5, h-ground-2);
-  var street = '<rect x="0" y="'+(h-stH)+'" width="'+w+'" height="'+stH+'" fill="#787264" opacity=".55"/>' +
-    '<line x1="0" y1="'+(h-stH)+'" x2="'+w+'" y2="'+(h-stH)+'" stroke="rgba(255,255,255,.14)" stroke-width="1"/>';
-  var pathX = hxRight + 6, pathEnd = w - 10, pathY = ground - 7;
-  var pathW = pathEnd - pathX;
-  var path = '<rect x="'+pathX+'" y="'+pathY+'" width="'+pathW+'" height="'+(h-pathY)+'" fill="url(#'+vid+'path)" opacity=".85" rx="1"/>' +
-    '<line x1="'+(pathX+pathW*.33).toFixed(1)+'" y1="'+pathY+'" x2="'+(pathX+pathW*.33).toFixed(1)+'" y2="'+h+'" stroke="rgba(0,0,0,.1)" stroke-width=".7"/>' +
-    '<line x1="'+(pathX+pathW*.67).toFixed(1)+'" y1="'+pathY+'" x2="'+(pathX+pathW*.67).toFixed(1)+'" y2="'+h+'" stroke="rgba(0,0,0,.1)" stroke-width=".7"/>';
+  var street = '';
+  var path = '';
 
   /* === Lawn strip + house ground shadow === */
   var lawn = '<rect x="'+hx+'" y="'+(ground-5)+'" width="'+(hw+6)+'" height="5" fill="#6AAC3C" opacity=".7"/>';
@@ -2658,6 +2951,9 @@ function renderGate(color, x1, x2, w, top, h, ground, gateWidthM, compact){
 
   function drawWing(wingX, wingW, isRight){
     var wR = '';
+    /* Solid-ish panel infill so the wing reads clearly (like a real 3D mesh panel),
+       even with the bright driveway behind it. Uses the gate colour at high opacity. */
+    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="'+(h-2)+'" fill="'+color+'" opacity=".5" rx="1"/>';
     /* Frame top + bottom rails (thicker, with gradient) */
     wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="3.5" fill="url(#'+gid+'rail)"/>';
     wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(bot-4.5)+'" width="'+wingW.toFixed(1)+'" height="4.5" fill="url(#'+gid+'rail)"/>';
@@ -2790,7 +3086,7 @@ function productImageFor(product, color){
     return 'https://mojplot.sk/wp-content/uploads/2025/12/'+gate+'-farba-'+color+'.webp';
   }
   if(product === 'pletivo'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp';
+    return 'https://mojplot.sk/wp-content/uploads/2025/10/stvorhranne-pletivo-Zinok.webp';
   }
   if(product === '3d-plot') return 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-'+color+'.webp';
   return '';
@@ -3111,7 +3407,7 @@ var PRODUCTS = [
   { id:'brana', name:'Brány a bránky', nameEn:'Gates', desc:'Jednokrídlové, dvojkrídlové, posuvné', descEn:'Single, double, sliding',
     img:'data:image/webp;base64,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' },
   { id:'pletivo', name:'Pletivový plot', nameEn:'Mesh fence', desc:'Cenovo dostupné riešenie', descEn:'Affordable solution',
-    img:'https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp' },
+    img:'https://mojplot.sk/wp-content/uploads/2025/10/stvorhranne-pletivo-Zinok.webp' },
   { id:'mobilne', name:'Mobilné oplotenie', nameEn:'Mobile fencing', desc:'Pre stavby, akcie, dočasné použitie', descEn:'For sites, events, temporary use',
     img:'https://mojplot.sk/wp-content/uploads/2025/07/mobilne-oplotenie-main-scaled.jpg' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
@@ -3483,7 +3779,7 @@ function render3dColor(el){
     '<div class="mc-color-grid">' +
       colorCard('zinok','Zinok','Pozink', 'zinok', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zinok.webp') +
       colorCard('zelena','Zelená','RAL 6005', 'zelena', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zelena.webp') +
-      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zelena.webp') +
+      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp') +
     '</div>' +
     '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'<b>Antracit</b> je dnes najobľúbenejší pre rodinné domy. <b>Zelená</b> sa hodí k záhrade a prírode.':'<b>Anthracite</b> is the most popular for family homes today. <b>Green</b> blends with garden and nature.')+'</div></div>' +
     '<div class="mc-actions">' +
@@ -3783,9 +4079,9 @@ function renderMeshColor(el){
     '<div class="mc-step-title">'+(lang==='sk'?'Farba pletiva':'Mesh color')+'</div>' +
     renderChoicePreview('pletivo') +
     '<div class="mc-color-grid">' +
-      colorCard('zinok','Zinok','Pozink','zinok','https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp') +
-      colorCard('zelena','Zelená','RAL 6005','zelena','https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp') +
-      colorCard('antracit','Antracit','RAL 7016','antracit','https://mojplot.sk/wp-content/uploads/2025/10/Fotka-pre-kategoriu.webp') +
+      colorCard('zinok','Zinok','Pozink','zinok','') +
+      colorCard('zelena','Zelená','RAL 6005','zelena','') +
+      colorCard('antracit','Antracit','RAL 7016','antracit','') +
     '</div>' +
     '<div class="mc-actions" style="margin-top:14px">' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
@@ -4146,12 +4442,21 @@ function resetCalc(){
 }
 
 (function initEmailJS(){
-  try { if(typeof emailjs !== 'undefined' && MC.emailKey && MC.emailKey.indexOf('YOUR_') !== 0){ emailjs.init({ publicKey: MC.emailKey }); } } catch(e){ console.warn('EmailJS init skipped:', e); }
+  function doInit(){
+    try { if(typeof emailjs !== 'undefined' && MC.emailKey && MC.emailKey.indexOf('YOUR_') !== 0){ emailjs.init({ publicKey: MC.emailKey }); } } catch(e){ console.warn('EmailJS init skipped:', e); }
+  }
+  /* EmailJS now loads with defer (so it doesn't block the page). Init as soon
+     as it is available: immediately if already loaded, otherwise on window load. */
+  if(typeof emailjs !== 'undefined'){ doInit(); }
+  else { window.addEventListener('load', doInit); }
 })();
 
 
 /* ============================================
-   FIX 2026-05-15: colour cards + gate visual override
+   FIX 2026-05-20: realistic photo-based visualization + photo colour cards
+   The live preview now shows the REAL product photo from mojplot.sk and
+   swaps it on every selection (product -> gate type -> colour), so it looks
+   true-to-life instead of a stylised drawing.
    ============================================ */
 function gateTypeTitle(){
   var lang = MC.lang;
@@ -4161,14 +4466,21 @@ function gateTypeTitle(){
   return (lang === 'sk' ? sk : en)[t] || (lang === 'sk' ? 'Brána' : 'Gate');
 }
 
+function colorName(){
+  var lang = MC.lang;
+  var c = calcState.color || 'antracit';
+  var sk = { zinok:'zinok', zelena:'zelená', antracit:'antracit' };
+  var en = { zinok:'galvanized', zelena:'green', antracit:'anthracite' };
+  return (lang === 'sk' ? sk : en)[c] || c;
+}
+
 function visualLabel(){
   var lang = MC.lang;
-  var color = { zinok:'zinok', zelena:'zelená', antracit:'antracit' }[calcState.color || 'antracit'];
   if(calcState.product === 'brana'){
-    return gateTypeTitle() + ' · ' + (calcState.gateWidth || (calcState.gateType === 'jednokrid' ? '1' : '4')) + ' m · ' + (calcState.gateHeight || '150') + ' cm · ' + color;
+    return gateTypeTitle() + ' · ' + (calcState.gateWidth || (calcState.gateType === 'jednokrid' ? '1' : '4')) + ' m · ' + (calcState.gateHeight || '150') + ' cm · ' + colorName();
   }
   if(calcState.product === 'pletivo'){
-    return (calcState.length || 30) + ' m · ' + (calcState.meshHeight || '150') + ' cm · ' + color;
+    return (calcState.length || 30) + ' m · ' + (calcState.meshHeight || '150') + ' cm · ' + colorName();
   }
   if(calcState.product === 'mobilne'){
     return (calcState.mobileLength || 50) + ' m · ' + (lang === 'sk' ? 'mobilné panely' : 'mobile panels');
@@ -4179,118 +4491,410 @@ function visualLabel(){
   if(calcState.product === 'betonovy'){
     return lang === 'sk' ? 'betónový plot na mieru' : 'custom concrete fence';
   }
-  return (calcState.length || 20) + ' m · ' + (calcState.height || '153') + ' cm · ' + color;
+  if(calcState.product === 'ine'){
+    return lang === 'sk' ? 'výroba na mieru' : 'custom production';
+  }
+  return (calcState.length || 20) + ' m · ' + (calcState.height || '153') + ' cm · ' + colorName();
 }
 
-/* Colour cards no longer show the wrong top product photos. The swatch itself is the main visual. */
+/* Colour cards show the REAL product photo in that colour (when provided), plus a colour swatch. */
 function colorCard(id, name, ral, swatch, photo){
   var sel = calcState.color === id;
-  return '<div class="mc-color-card'+(sel?' selected':'')+'" onclick="selColor(\''+id+'\')">' +
+  var photoHtml = photo
+    ? '<div class="mc-color-photo"><img src="'+photo+'" alt="'+name+'" loading="lazy" decoding="async" onerror="this.parentElement.style.display=\'none\'"></div>'
+    : '';
+  return '<div class="mc-color-card'+(sel?' selected':'')+(photo?' has-photo':'')+'" onclick="selColor(\''+id+'\')">' +
+    photoHtml +
     '<div class="mc-color-body">' +
-      '<div class="mc-color-swatch xl '+swatch+'"></div>' +
+      '<div class="mc-color-swatch '+(photo?'sm':'xl')+' '+swatch+'"></div>' +
       '<div class="mc-color-name">'+name+'</div>' +
       '<div class="mc-color-ral">'+ral+'</div>' +
     '</div>' +
   '</div>';
 }
 
-function renderGateSideFence(color, x, y, w, h, opacity){
-  if(w <= 6) return '';
-  var bot = y + h;
-  var out = '<g opacity="'+opacity+'">';
-  out += '<line x1="'+x+'" y1="'+y+'" x2="'+(x+w)+'" y2="'+y+'" stroke="'+color+'" stroke-width="1.5"/>';
-  out += '<line x1="'+x+'" y1="'+(bot-1)+'" x2="'+(x+w)+'" y2="'+(bot-1)+'" stroke="'+color+'" stroke-width="2"/>';
-  var count = Math.max(3, Math.round(w/17));
-  for(var i=0;i<=count;i++){
-    var px = x + (w/count)*i;
-    out += '<line x1="'+px+'" y1="'+(y+2)+'" x2="'+px+'" y2="'+(bot-2)+'" stroke="'+color+'" stroke-width=".9"/>';
+/* ============================================
+   REAL-PHOTO LIVE VISUALIZATION
+   Returns the best matching mojplot.sk product photo for the current
+   selection. Falls back gracefully and never shows a cropped/low-quality
+   placeholder. Overrides the earlier SVG-based renderLiveVisual().
+   ============================================ */
+function liveVisualImage(){
+  var color = calcState.color || 'antracit';
+  if(['zinok','zelena','antracit'].indexOf(color) < 0) color = 'antracit';
+  var p = calcState.product;
+
+  if(p === 'brana'){
+    var gt = calcState.gateType || 'dvojkrid';
+    if(gt === 'jednokrid'){
+      return 'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-'+color+'.webp';
+    }
+    if(gt === 'posuvna'){
+      /* sliding gate is produced in zelená / antracit – galvanized falls back to antracit */
+      return color === 'zelena'
+        ? 'https://mojplot.sk/wp-content/uploads/2025/09/Zelena-Posuvna-brana-3D-vypln-600x500.png'
+        : 'https://mojplot.sk/wp-content/uploads/2025/09/Antracit-Posuvna-brana-3D-vypln-600x500.png';
+    }
+    return 'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-'+color+'.webp';
   }
-  out += '</g>';
+  if(p === '3d-plot'){
+    return 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-'+color+'.webp';
+  }
+  if(p === 'pletivo'){
+    return 'https://mojplot.sk/wp-content/uploads/2025/10/stvorhranne-pletivo-Zinok.webp';
+  }
+  if(p === 'mobilne'){
+    return 'https://mojplot.sk/wp-content/uploads/2025/07/mobilne-oplotenie-main-scaled.jpg';
+  }
+  if(p === 'betonovy'){
+    return 'https://mojplot.sk/wp-content/uploads/2025/08/Okrasny-betonovy-plot.png';
+  }
+  if(p === 'oporne'){
+    return 'https://mojplot.sk/wp-content/uploads/2025/08/Betonova-lego-kocka-120cm-scaled.png';
+  }
+  if(p === 'ine'){
+    return 'https://mojplot.sk/wp-content/uploads/2025/10/Kategoria-Zakazkova-vyroba.webp';
+  }
+  return 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp';
+}
+
+/* Bold, filled-shape fence/gate drawn specifically for the house scene so it
+   reads clearly at small sizes (thin strokes disappear when scaled down). */
+function renderSceneFence(type, color, x1, x2, top, ground){
+  var dark = adjustColor(color, -22), hi = adjustColor(color, 20);
+  var W = x2 - x1, h = ground - top, out = '';
+
+  /* SOLID panel fences (concrete / retaining wall) */
+  if(type === 'betonovy' || type === 'oporne'){
+    out += '<rect x="'+x1+'" y="'+top+'" width="'+W+'" height="'+h+'" fill="'+color+'"/>';
+    out += '<rect x="'+x1+'" y="'+top+'" width="'+(W*0.5)+'" height="'+h+'" fill="'+hi+'" opacity=".25"/>';
+    for(var yy = top + 8; yy < ground - 3; yy += 9){
+      out += '<rect x="'+x1+'" y="'+yy.toFixed(1)+'" width="'+W+'" height="2" fill="rgba(0,0,0,.12)"/>';
+    }
+    var pst = Math.max(64, W/5);
+    for(var pp = x1; pp <= x2 - 4; pp += pst){
+      out += '<rect x="'+(pp-5).toFixed(1)+'" y="'+(top-4)+'" width="13" height="'+(h+4)+'" fill="'+dark+'"/>';
+    }
+    out += '<rect x="'+(x2-8)+'" y="'+(top-4)+'" width="13" height="'+(h+4)+'" fill="'+dark+'"/>';
+    return out;
+  }
+
+  function postEl(px){
+    return '<rect x="'+(px-4).toFixed(1)+'" y="'+(top-8)+'" width="9" height="'+(h+8)+'" rx="1.5" fill="'+dark+'"/>' +
+      '<rect x="'+(px-4).toFixed(1)+'" y="'+(top-8)+'" width="4" height="'+(h+8)+'" fill="'+hi+'" opacity=".45"/>' +
+      '<circle cx="'+(px+0.5).toFixed(1)+'" cy="'+(top-10)+'" r="5" fill="'+color+'"/>' +
+      '<circle cx="'+(px-1).toFixed(1)+'" cy="'+(top-11.5)+'" r="2" fill="'+hi+'" opacity=".7"/>';
+  }
+  function panel(ax1, ax2, framed){
+    var p = '', rH = 3.4, pw = ax2 - ax1;
+    if(pw < 4) return '';
+    if(framed) p += '<rect x="'+ax1.toFixed(1)+'" y="'+(top+1)+'" width="'+pw.toFixed(1)+'" height="'+(h-2)+'" fill="'+color+'" opacity=".18"/>';
+    p += '<rect x="'+ax1.toFixed(1)+'" y="'+(top+2)+'" width="'+pw.toFixed(1)+'" height="'+rH+'" fill="'+color+'"/>';
+    p += '<rect x="'+ax1.toFixed(1)+'" y="'+(ground-2-rH)+'" width="'+pw.toFixed(1)+'" height="'+rH+'" fill="'+color+'"/>';
+    if(framed){
+      p += '<rect x="'+ax1.toFixed(1)+'" y="'+(top+1)+'" width="3.2" height="'+(h-2)+'" fill="'+color+'"/>';
+      p += '<rect x="'+(ax2-3.2).toFixed(1)+'" y="'+(top+1)+'" width="3.2" height="'+(h-2)+'" fill="'+color+'"/>';
+    }
+    var n = Math.max(3, Math.round(pw/9));
+    for(var i=1;i<n;i++){
+      var bx = ax1 + pw*i/n;
+      p += '<rect x="'+(bx-1.4).toFixed(1)+'" y="'+(top+3)+'" width="2.8" height="'+(h-6)+'" fill="'+color+'"/>';
+    }
+    return p;
+  }
+  function brace(ax1, ax2){
+    return '<polygon points="'+ax1.toFixed(1)+','+(ground-4)+' '+(ax1+3).toFixed(1)+','+(ground-4)+' '+ax2.toFixed(1)+','+(top+4)+' '+(ax2-3).toFixed(1)+','+(top+4)+'" fill="'+color+'" opacity=".85"/>';
+  }
+  function handle(hx){ return '<rect x="'+hx.toFixed(1)+'" y="'+(top+h*0.5).toFixed(1)+'" width="3" height="10" rx="1.5" fill="#E3B23C"/>'; }
+
+  if(type === 'brana'){
+    var gt = calcState.gateType || 'dvojkrid';
+    var gw = (gt === 'jednokrid') ? Math.min(W*0.26, 78) : (gt === 'posuvna' ? Math.min(W*0.52, 188) : Math.min(W*0.44, 156));
+    var gx1 = (x1+x2)/2 - gw/2, gx2 = gx1 + gw, mid = (gx1+gx2)/2;
+    out += panel(x1+7, gx1-7, false);
+    out += panel(gx2+7, x2-7, false);
+    out += postEl(x1+4); out += postEl(x2-4);
+    out += postEl(gx1-3); out += postEl(gx2+3);
+    if(gt === 'dvojkrid'){
+      out += panel(gx1+3, mid-1, true);
+      out += panel(mid+1, gx2-3, true);
+      out += brace(gx1+4, mid-3); out += brace(gx2-4, mid+3);
+      out += '<rect x="'+(mid-1.5)+'" y="'+(top-2)+'" width="3" height="'+(h+1)+'" fill="'+dark+'"/>';
+      out += handle(mid-5); out += handle(mid+2);
+    } else if(gt === 'posuvna'){
+      out += panel(gx1+3, gx2-3, true);
+      out += brace(gx1+4, gx2-4);
+      out += '<rect x="'+(gx1-10)+'" y="'+(ground-1)+'" width="'+(gw+20)+'" height="2.6" fill="'+dark+'"/>';
+      out += '<circle cx="'+(gx1+gw*0.25).toFixed(1)+'" cy="'+(ground+1)+'" r="3" fill="'+dark+'"/><circle cx="'+(gx1+gw*0.75).toFixed(1)+'" cy="'+(ground+1)+'" r="3" fill="'+dark+'"/>';
+      out += handle(gx2-7);
+    } else {
+      out += panel(gx1+3, gx2-3, true);
+      out += brace(gx1+4, gx2-4);
+      out += handle(gx2-7);
+    }
+    return out;
+  }
+
+  /* plain bar fence (3D / mesh / mobile) */
+  out += panel(x1+7, x2-7, false);
+  if(type === 'pletivo'){
+    for(var mx = x1+12; mx < x2-10; mx += 12){
+      out += '<polygon points="'+mx+','+(top+5)+' '+(mx+6)+','+((top+ground)/2).toFixed(1)+' '+mx+','+(ground-6)+' '+(mx-6)+','+((top+ground)/2).toFixed(1)+'" fill="none" stroke="'+color+'" stroke-width="1.2" opacity=".55"/>';
+    }
+  }
+  var step = Math.max(50, W/7);
+  for(var qx = x1+4; qx <= x2-4; qx += step) out += postEl(qx);
+  out += postEl(x2-4);
   return out;
 }
 
-/* Rebuilt gate preview so single, double and sliding gates are visually different and match the selected card. */
-function renderGate(color, x1, x2, w, top, h, ground, gateWidthM, compact){
-  var type = calcState.gateType || 'dvojkrid';
-  var bot = top + h;
-  var shadow = '<rect x="'+x1+'" y="'+(ground+1)+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.2)" opacity=".45"/>';
-  var out = '';
+/* Solid-colour fence/gate for the scene. Uses ONLY solid fills + opacity
+   (no gradients, filters or url() refs) so it renders identically in every
+   browser. Reads calcState for gate type / width. */
+function renderSceneBarrier(type, color, x1, x2, top, ground, compact){
+  var h = ground - top, fw = x2 - x1, bot = ground, out = '';
+  var dk = adjustColor(color, -32), hl = adjustColor(color, 36);
+  function post(px, pw, pTop, finial){
+    var s = '<rect x="'+(px-pw/2).toFixed(1)+'" y="'+pTop.toFixed(1)+'" width="'+pw+'" height="'+(ground-pTop).toFixed(1)+'" fill="'+color+'"/>';
+    s += '<rect x="'+(px-pw/2).toFixed(1)+'" y="'+pTop.toFixed(1)+'" width="1.3" height="'+(ground-pTop).toFixed(1)+'" fill="'+hl+'" opacity=".6"/>';
+    s += '<rect x="'+(px+pw/2-1.3).toFixed(1)+'" y="'+pTop.toFixed(1)+'" width="1.3" height="'+(ground-pTop).toFixed(1)+'" fill="'+dk+'"/>';
+    s += '<rect x="'+(px-pw/2-1.4).toFixed(1)+'" y="'+(pTop-3.5).toFixed(1)+'" width="'+(pw+2.8)+'" height="4" rx="1" fill="'+color+'"/>';
+    if(finial){ s += '<circle cx="'+px.toFixed(1)+'" cy="'+(pTop-6).toFixed(1)+'" r="'+(pw*0.5+1).toFixed(1)+'" fill="'+color+'"/>'; s += '<circle cx="'+(px-1).toFixed(1)+'" cy="'+(pTop-7).toFixed(1)+'" r="1.3" fill="'+hl+'" opacity=".6"/>'; }
+    return s;
+  }
+  function barPanel(bx1, bx2, bTop){
+    var s='', bw=bx2-bx1; if(bw<6) return '';
+    s += '<rect x="'+bx1.toFixed(1)+'" y="'+(bTop+1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="2.6" fill="'+color+'"/>';
+    s += '<rect x="'+bx1.toFixed(1)+'" y="'+(bot-4).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="3" fill="'+dk+'"/>';
+    var bn=Math.max(3,Math.round(bw/7));
+    for(var i=0;i<=bn;i++){ var xx=bx1+(bw/bn)*i; s+='<rect x="'+(xx-0.85).toFixed(1)+'" y="'+(bTop+1).toFixed(1)+'" width="1.7" height="'+(bot-bTop-3).toFixed(1)+'" fill="'+color+'"/>'; }
+    return s;
+  }
+  function wing(wx, ww){
+    var s='<rect x="'+wx.toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="'+(h-2).toFixed(1)+'" fill="'+color+'" opacity=".9" rx="1"/>';
+    s+='<rect x="'+wx.toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="3.2" fill="'+dk+'"/>';
+    s+='<rect x="'+wx.toFixed(1)+'" y="'+(bot-3.8).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="3.8" fill="'+dk+'"/>';
+    s+='<rect x="'+wx.toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="2.6" height="'+(h-2).toFixed(1)+'" fill="'+dk+'"/>';
+    s+='<rect x="'+(wx+ww-2.6).toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="2.6" height="'+(h-2).toFixed(1)+'" fill="'+dk+'"/>';
+    s+='<rect x="'+wx.toFixed(1)+'" y="'+(top+h*0.47).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="2" fill="'+dk+'"/>';
+    var bn=Math.max(5,Math.round(ww/8));
+    for(var i=1;i<bn;i++){ var xx=wx+(ww/bn)*i; s+='<rect x="'+(xx-0.8).toFixed(1)+'" y="'+(top+4).toFixed(1)+'" width="1.6" height="'+(h-8).toFixed(1)+'" fill="'+hl+'" opacity=".45"/>'; }
+    return s;
+  }
 
-  if(type === 'jednokrid'){
-    var gateW = Math.min(w * 0.34, compact ? 62 : 78);
-    var gateX = x1 + (w - gateW) * 0.48;
-    var sideL = gateX - x1 - 4;
-    var sideR = x2 - (gateX + gateW) - 4;
-    out += renderGateSideFence(color, x1, top + h*.18, sideL, h*.82, '.48');
-    out += renderGateSideFence(color, gateX + gateW + 4, top + h*.18, sideR, h*.82, '.48');
-    out += '<rect x="'+(gateX-3)+'" y="'+(top-5)+'" width="5" height="'+(h+6)+'" fill="'+color+'"/>';
-    out += '<rect x="'+(gateX+gateW-2)+'" y="'+(top-5)+'" width="5" height="'+(h+6)+'" fill="'+color+'"/>';
-    out += '<rect x="'+gateX+'" y="'+(top+1)+'" width="'+gateW+'" height="'+(h-2)+'" fill="none" stroke="'+color+'" stroke-width="2.2" rx="1"/>';
-    var bars = Math.max(5, Math.round(gateW/8));
-    for(var i=1;i<bars;i++){
-      var vx = gateX + (gateW/bars)*i;
-      out += '<line x1="'+vx+'" y1="'+(top+3)+'" x2="'+vx+'" y2="'+(bot-3)+'" stroke="'+color+'" stroke-width=".9"/>';
+  if(type === 'brana'){
+    var gt = calcState.gateType || 'dvojkrid';
+    var gateW = Math.max(fw*0.30, Math.min(fw*0.6, fw*(gt==='jednokrid'?0.24:0.46)));
+    var gateX = x1 + (fw-gateW)/2;
+    var sTop = top + h*0.16;
+    out += barPanel(x1+4, gateX-5, sTop);
+    out += barPanel(gateX+gateW+5, x2-4, sTop);
+    out += post(x1+3, compact?5:6, sTop-2, true);
+    out += post(x2-3, compact?5:6, sTop-2, true);
+    out += post(gateX-3, compact?7:9, top-4, true);
+    out += post(gateX+gateW+3, compact?7:9, top-4, true);
+    if(gt === 'dvojkrid'){
+      out += wing(gateX+1, gateW/2-2);
+      out += wing(gateX+gateW/2+1, gateW/2-2);
+      out += '<rect x="'+(gateX+gateW/2-1).toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="2" height="'+(h-2).toFixed(1)+'" fill="'+dk+'"/>';
+    } else if(gt === 'posuvna'){
+      out += wing(gateX, gateW);
+      out += '<rect x="'+x1+'" y="'+(bot+0.5).toFixed(1)+'" width="'+fw+'" height="2.5" fill="'+dk+'" opacity=".6"/>';
+      out += '<circle cx="'+(gateX+gateW*0.2).toFixed(1)+'" cy="'+(bot+2).toFixed(1)+'" r="2.4" fill="'+dk+'"/>';
+      out += '<circle cx="'+(gateX+gateW*0.8).toFixed(1)+'" cy="'+(bot+2).toFixed(1)+'" r="2.4" fill="'+dk+'"/>';
+    } else {
+      out += wing(gateX, gateW);
     }
-    out += '<line x1="'+gateX+'" y1="'+(bot-3)+'" x2="'+(gateX+gateW)+'" y2="'+(top+3)+'" stroke="'+color+'" stroke-width="1.3" opacity=".8"/>';
-    out += '<circle cx="'+(gateX+gateW-6)+'" cy="'+(top+h/2)+'" r="2" fill="'+color+'"/>';
-    return out + shadow;
+    return out;
   }
-
-  if(type === 'posuvna'){
-    var ratio = Math.max(0.52, Math.min(0.72, 0.52 + ((parseFloat(gateWidthM)||4)-3)*0.07));
-    var gateW2 = w * ratio;
-    var gateX2 = x1 + w * 0.14;
-    var tailW = Math.min(w * 0.18, compact ? 42 : 58);
-    var railY = bot + 3;
-    out += renderGateSideFence(color, x1, top + h*.25, Math.max(0, gateX2-x1-6), h*.75, '.36');
-    out += '<line x1="'+x1+'" y1="'+railY+'" x2="'+x2+'" y2="'+railY+'" stroke="'+color+'" stroke-width="3" opacity=".45"/>';
-    out += '<rect x="'+(gateX2-4)+'" y="'+(top-6)+'" width="6" height="'+(h+8)+'" fill="'+color+'"/>';
-    out += '<rect x="'+(gateX2+gateW2-2)+'" y="'+(top-6)+'" width="6" height="'+(h+8)+'" fill="'+color+'"/>';
-    out += '<rect x="'+gateX2+'" y="'+(top+1)+'" width="'+gateW2+'" height="'+(h-2)+'" fill="none" stroke="'+color+'" stroke-width="2.3" rx="1"/>';
-    var vCount = Math.max(8, Math.round(gateW2/13));
-    for(var v=1;v<vCount;v++){
-      var gx = gateX2 + (gateW2/vCount)*v;
-      out += '<line x1="'+gx+'" y1="'+(top+3)+'" x2="'+gx+'" y2="'+(bot-3)+'" stroke="'+color+'" stroke-width=".9"/>';
+  if(type === 'betonovy'){
+    var nCol = Math.max(2, Math.round(fw/95)), colW = compact?9:11;
+    var slabH = (h)/Math.max(3, Math.round(h/12));
+    for(var c=0;c<nCol;c++){
+      var seg = fw/nCol, sx = x1 + c*seg + colW/2, ex = x1 + (c+1)*seg - colW/2;
+      for(var sy=top+2; sy<bot-1; sy+=slabH){
+        out += '<rect x="'+sx.toFixed(1)+'" y="'+sy.toFixed(1)+'" width="'+(ex-sx).toFixed(1)+'" height="'+(slabH-1.5).toFixed(1)+'" fill="#C9C7C0"/>';
+        out += '<rect x="'+sx.toFixed(1)+'" y="'+(sy+slabH-2.2).toFixed(1)+'" width="'+(ex-sx).toFixed(1)+'" height="1.5" fill="#A7A59E"/>';
+      }
     }
-    out += '<line x1="'+gateX2+'" y1="'+(bot-3)+'" x2="'+(gateX2+gateW2)+'" y2="'+(top+3)+'" stroke="'+color+'" stroke-width="1.3" opacity=".82"/>';
-    out += '<line x1="'+gateX2+'" y1="'+(top+h*.52)+'" x2="'+(gateX2+gateW2)+'" y2="'+(top+h*.52)+'" stroke="'+color+'" stroke-width="1.1" opacity=".82"/>';
-    /* cantilever / sliding tail on the right */
-    var tx = gateX2 + gateW2;
-    out += '<polyline points="'+tx+','+(top+2)+' '+(tx+tailW)+','+(top+h*.50)+' '+tx+','+(bot-2)+'" fill="none" stroke="'+color+'" stroke-width="2" opacity=".95"/>';
-    out += '<line x1="'+tx+'" y1="'+(top+h*.50)+'" x2="'+(tx+tailW)+'" y2="'+(top+h*.50)+'" stroke="'+color+'" stroke-width="1.2" opacity=".8"/>';
-    out += '<circle cx="'+(gateX2+gateW2*.18)+'" cy="'+(railY+1)+'" r="3" fill="'+color+'" opacity=".75"/>';
-    out += '<circle cx="'+(gateX2+gateW2*.82)+'" cy="'+(railY+1)+'" r="3" fill="'+color+'" opacity=".75"/>';
-    return out + shadow;
+    for(var k=0;k<=nCol;k++){
+      var cpx = x1 + (fw/nCol)*k;
+      out += '<rect x="'+(cpx-colW/2).toFixed(1)+'" y="'+(top-3).toFixed(1)+'" width="'+colW+'" height="'+(h+4).toFixed(1)+'" fill="#B6B4AC"/>';
+      out += '<rect x="'+(cpx-colW/2).toFixed(1)+'" y="'+(top-3).toFixed(1)+'" width="2" height="'+(h+4).toFixed(1)+'" fill="#D2D0C8"/>';
+      out += '<rect x="'+(cpx+colW/2-2).toFixed(1)+'" y="'+(top-3).toFixed(1)+'" width="2" height="'+(h+4).toFixed(1)+'" fill="#97958E"/>';
+      out += '<rect x="'+(cpx-colW/2-1.5).toFixed(1)+'" y="'+(top-6).toFixed(1)+'" width="'+(colW+3)+'" height="4" rx="1" fill="#C9C7C0"/>';
+    }
+    return out;
   }
+  if(type === 'oporne'){
+    var bw2 = compact?26:32, bh2 = compact?12:15, rows = Math.max(2, Math.round(h/bh2));
+    for(var r2=0;r2<rows;r2++){
+      var ry = bot - (r2+1)*bh2, off = (r2%2)? bw2/2 : 0;
+      for(var bx=x1-off; bx<x2; bx+=bw2){
+        var w2 = Math.min(bw2-2, x2-bx);
+        if(w2<=1 || bx+ (bw2-2) < x1) continue;
+        var dxx = Math.max(x1, bx);
+        out += '<rect x="'+dxx.toFixed(1)+'" y="'+ry.toFixed(1)+'" width="'+(Math.min(bw2-2,x2-dxx)).toFixed(1)+'" height="'+(bh2-1.5).toFixed(1)+'" fill="#BCB9B0" stroke="#9C998F" stroke-width=".7"/>';
+        out += '<rect x="'+dxx.toFixed(1)+'" y="'+ry.toFixed(1)+'" width="'+(Math.min(bw2-2,x2-dxx)).toFixed(1)+'" height="2" fill="#CFCCC3"/>';
+      }
+    }
+    return out;
+  }
+  if(type === 'pletivo'){
+    var pn = Math.max(3, Math.round(fw/70));
+    // mesh diamonds via crosshatch, clipped visually by drawing within band
+    var step = compact?9:11;
+    out += '<rect x="'+x1+'" y="'+(top+2)+'" width="'+fw+'" height="'+(h-4)+'" fill="'+color+'" opacity=".05"/>';
+    for(var gx=x1-h; gx<x2; gx+=step){
+      out += '<line x1="'+gx.toFixed(1)+'" y1="'+(top+2)+'" x2="'+(gx+h-4).toFixed(1)+'" y2="'+(bot-2)+'" stroke="'+color+'" stroke-width=".8" opacity=".6"/>';
+      out += '<line x1="'+(gx+h-4).toFixed(1)+'" y1="'+(top+2)+'" x2="'+gx.toFixed(1)+'" y2="'+(bot-2)+'" stroke="'+color+'" stroke-width=".8" opacity=".6"/>';
+    }
+    out += '<rect x="'+x1+'" y="'+(top+1)+'" width="'+fw+'" height="2.4" fill="'+color+'"/>';
+    out += '<rect x="'+x1+'" y="'+(bot-3)+'" width="'+fw+'" height="2.4" fill="'+dk+'"/>';
+    for(var pp=0;pp<=pn;pp++){ out += post(x1+(fw/pn)*pp, compact?5:6, top, false); }
+    return out;
+  }
+  if(type === 'mobilne'){
+    var mn = Math.max(2, Math.round(fw/85)), pw2 = fw/mn;
+    for(var mi=0;mi<mn;mi++){
+      var mx = x1+mi*pw2, me = mx+pw2-4;
+      out += '<rect x="'+mx.toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+(pw2-4).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="none" stroke="#9AA4AC" stroke-width="2.4"/>';
+      out += '<line x1="'+(mx+2)+'" y1="'+(top+2)+'" x2="'+me.toFixed(1)+'" y2="'+(bot-2).toFixed(1)+'" stroke="#9AA4AC" stroke-width="1.1" opacity=".8"/>';
+      out += '<line x1="'+me.toFixed(1)+'" y1="'+(top+2)+'" x2="'+(mx+2)+'" y2="'+(bot-2).toFixed(1)+'" stroke="#9AA4AC" stroke-width="1.1" opacity=".8"/>';
+      for(var mb=1;mb<=3;mb++){ var mbx=mx+(pw2-4)*mb/4; out+='<line x1="'+mbx.toFixed(1)+'" y1="'+(top+2)+'" x2="'+mbx.toFixed(1)+'" y2="'+(bot-2).toFixed(1)+'" stroke="#9AA4AC" stroke-width=".9" opacity=".55"/>'; }
+      var fcx = mx+(pw2-4)/2;
+      out += '<rect x="'+(fcx-pw2*0.26).toFixed(1)+'" y="'+(bot-3).toFixed(1)+'" width="'+(pw2*0.52).toFixed(1)+'" height="3.5" rx="1" fill="#5A6068"/>';
+    }
+    return out;
+  }
+  /* default: 3D welded panel fence (vertical bars + 2 horizontal rails + posts) */
+  var n3 = Math.max(2, Math.round(fw/72));
+  for(var s3=0;s3<n3;s3++){ out += barPanel(x1+(fw/n3)*s3+4, x1+(fw/n3)*(s3+1)-4, top); }
+  for(var p3=0;p3<=n3;p3++){ out += post(x1+(fw/n3)*p3, compact?6:7, top-2, false); }
+  return out;
+}
 
-  /* Double-wing gate */
-  var gw = Math.max(w*.42, Math.min(w*.64, w * (0.42 + ((parseFloat(gateWidthM)||4)-3)*0.08)));
-  var gateX = x1 + (w - gw) / 2;
-  var leftSide = gateX - x1 - 4;
-  var rightSideX = gateX + gw + 4;
-  var rightSide = x2 - rightSideX;
-  out += renderGateSideFence(color, x1, top + h*.20, leftSide, h*.80, '.44');
-  out += renderGateSideFence(color, rightSideX, top + h*.20, rightSide, h*.80, '.44');
-  out += '<rect x="'+(gateX-3)+'" y="'+(top-5)+'" width="5" height="'+(h+6)+'" fill="'+color+'"/>';
-  out += '<rect x="'+(gateX+gw-2)+'" y="'+(top-5)+'" width="5" height="'+(h+6)+'" fill="'+color+'"/>';
-  out += '<rect x="'+(gateX+gw/2-1.5)+'" y="'+(top-4)+'" width="3" height="'+(h+5)+'" fill="'+color+'" opacity=".9"/>';
-  var half = gw/2 - 2;
-  var lx = gateX + 1;
-  var rx = gateX + gw/2 + 1;
-  out += '<rect x="'+lx+'" y="'+(top+1)+'" width="'+half+'" height="'+(h-2)+'" fill="none" stroke="'+color+'" stroke-width="2.1" rx="1"/>';
-  out += '<rect x="'+rx+'" y="'+(top+1)+'" width="'+half+'" height="'+(h-2)+'" fill="none" stroke="'+color+'" stroke-width="2.1" rx="1"/>';
-  var cnt = Math.max(4, Math.round(half/9));
-  for(var d=1;d<cnt;d++){
-    var dx1 = lx + (half/cnt)*d;
-    var dx2 = rx + (half/cnt)*d;
-    out += '<line x1="'+dx1+'" y1="'+(top+3)+'" x2="'+dx1+'" y2="'+(bot-3)+'" stroke="'+color+'" stroke-width=".9"/>';
-    out += '<line x1="'+dx2+'" y1="'+(top+3)+'" x2="'+dx2+'" y2="'+(bot-3)+'" stroke="'+color+'" stroke-width=".9"/>';
+/* Realistic front-yard SCENE: the selected fence/gate shown in front of a
+   modern house with a driveway and landscaping. Looks like a real property,
+   updates with every selection (product, gate type, colour, height, width).
+   Pure inline SVG -> renders instantly, no external images. */
+function renderHouseEl(uid, baseY){
+  var bodyTop = 70, hx1 = 158, hx2 = 312;
+  var h = '';
+  /* back wing (left) for depth */
+  h += '<rect x="132" y="98" width="42" height="'+(baseY-98)+'" fill="url(#'+uid+'wall2)"/>';
+  h += '<polygon points="126,99 180,99 172,84 134,84" fill="url(#'+uid+'roof)"/>';
+  h += '<rect x="146" y="112" width="16" height="20" fill="url(#'+uid+'glass)" stroke="#6B7079" stroke-width="1.2"/>';
+  /* main body */
+  h += '<rect x="'+hx1+'" y="'+bodyTop+'" width="'+(hx2-hx1)+'" height="'+(baseY-bodyTop)+'" fill="url(#'+uid+'wall)"/>';
+  /* right-side shading for depth */
+  h += '<rect x="'+(hx2-30)+'" y="'+bodyTop+'" width="30" height="'+(baseY-bodyTop)+'" fill="url(#'+uid+'wall2)" opacity=".7"/>';
+  /* hip roof (trapezoid) + eave shadow */
+  h += '<polygon points="'+(hx1-10)+','+bodyTop+' '+(hx2+10)+','+bodyTop+' '+(hx2-20)+','+(bodyTop-24)+' '+(hx1+20)+','+(bodyTop-24)+'" fill="url(#'+uid+'roof)"/>';
+  h += '<rect x="'+(hx1-10)+'" y="'+(bodyTop-1)+'" width="'+(hx2-hx1+20)+'" height="3.5" fill="rgba(0,0,0,.18)"/>';
+  /* upper-floor windows (always visible above the fence) */
+  function win(x,y,w,hh){
+    return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+hh+'" fill="#6B7079" rx="1.5"/>'+
+      '<rect x="'+(x+1.6)+'" y="'+(y+1.6)+'" width="'+(w-3.2)+'" height="'+(hh-3.2)+'" fill="url(#'+uid+'glass)"/>'+
+      '<polygon points="'+(x+w*0.35)+','+(y+1.6)+' '+(x+w*0.12)+','+(y+hh-1.6)+' '+(x+w*0.02)+','+(y+hh-1.6)+' '+(x+w*0.25)+','+(y+1.6)+'" fill="rgba(255,255,255,.32)"/>'+
+      '<line x1="'+(x+w/2)+'" y1="'+(y+1.6)+'" x2="'+(x+w/2)+'" y2="'+(y+hh-1.6)+'" stroke="#6B7079" stroke-width="1"/>';
   }
-  out += '<line x1="'+lx+'" y1="'+(bot-3)+'" x2="'+(lx+half)+'" y2="'+(top+3)+'" stroke="'+color+'" stroke-width="1.25" opacity=".82"/>';
-  out += '<line x1="'+(rx+half)+'" y1="'+(bot-3)+'" x2="'+rx+'" y2="'+(top+3)+'" stroke="'+color+'" stroke-width="1.25" opacity=".82"/>';
-  out += '<circle cx="'+(lx+half-5)+'" cy="'+(top+h/2)+'" r="1.8" fill="'+color+'"/>';
-  out += '<circle cx="'+(rx+5)+'" cy="'+(top+h/2)+'" r="1.8" fill="'+color+'"/>';
-  return out + shadow;
+  h += win(176, 84, 30, 24);
+  h += win(220, 84, 30, 24);
+  h += win(264, 84, 30, 24);
+  /* lower floor: entrance + big window (may sit behind the fence, that's fine) */
+  h += '<rect x="200" y="120" width="22" height="'+(baseY-120)+'" fill="#5A6066"/>';
+  h += '<rect x="202" y="122" width="18" height="'+(baseY-124)+'" fill="url(#'+uid+'glass)" opacity=".9"/>';
+  h += win(238, 120, 40, 26);
+  /* base trim */
+  h += '<rect x="'+(hx1)+'" y="'+(baseY-3)+'" width="'+(hx2-hx1)+'" height="3" fill="rgba(0,0,0,.14)"/>';
+  return h;
+}
+function renderTreeEl(uid, x, baseY){
+  var t = '';
+  t += '<rect x="'+(x-3)+'" y="'+(baseY-26)+'" width="6" height="28" fill="#7A5A3A"/>';
+  t += '<circle cx="'+(x-15)+'" cy="'+(baseY-34)+'" r="16" fill="#5C8740"/>';
+  t += '<circle cx="'+(x+14)+'" cy="'+(baseY-36)+'" r="15" fill="#517A38"/>';
+  t += '<circle cx="'+x+'" cy="'+(baseY-46)+'" r="20" fill="#669A4C"/>';
+  t += '<circle cx="'+(x-6)+'" cy="'+(baseY-52)+'" r="11" fill="#76A85B"/>';
+  return t;
+}
+function renderVizFenceSvg(compact){
+  var type = productVisualType();
+  var color = (calcState.product === 'betonovy' || calcState.product === 'oporne')
+    ? colorHex('beton')
+    : colorHex(calcState.color || 'antracit');
+  var W = 460, H = 250, uid = 'sc' + Math.random().toString(36).slice(2,7);
+  var ground = 228;                 /* front ground line where the fence stands (near bottom) */
+  var horizon = 132;                /* where the house/yard sits (higher = house farther back) */
+  var hVal = parseInt(calcState.height || calcState.meshHeight || calcState.gateHeight || 153, 10);
+  if(type === 'oporne') hVal = 70 + parseInt(calcState.wallHeight || 2, 10) * 22;
+  if(type === 'betonovy') hVal = 185;
+  if(type === 'mobilne') hVal = 200;
+  var fenceH = Math.max(92, Math.min(128, Math.round(hVal * 0.64)));  /* prominent foreground */
+  var top = ground - fenceH;
+  var x1 = 12, x2 = W - 12, fw = x2 - x1, cx = W / 2;
+  var lengthMeters = parseFloat(calcState.length || calcState.mobileLength || calcState.wallLength || 20) || 20;
+  if(type === 'brana') lengthMeters = parseFloat(calcState.gateWidth || 4) || 4;
+
+  var defs = '<defs>' +
+    '<linearGradient id="'+uid+'sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A6D4EF"/><stop offset="65%" stop-color="#D2EAF7"/><stop offset="100%" stop-color="#EAF5FB"/></linearGradient>' +
+    '<linearGradient id="'+uid+'grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9DC279"/><stop offset="100%" stop-color="#7FAA58"/></linearGradient>' +
+    '<linearGradient id="'+uid+'fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#83AB61"/><stop offset="100%" stop-color="#6B9749"/></linearGradient>' +
+    '<linearGradient id="'+uid+'wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F1EDE4"/><stop offset="100%" stop-color="#DCD5C8"/></linearGradient>' +
+    '<linearGradient id="'+uid+'wall2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D8D1C3"/><stop offset="100%" stop-color="#C4BCAC"/></linearGradient>' +
+    '<linearGradient id="'+uid+'roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5C6268"/><stop offset="100%" stop-color="#3D4247"/></linearGradient>' +
+    '<linearGradient id="'+uid+'glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CBE0EB"/><stop offset="55%" stop-color="#9FBFD1"/><stop offset="100%" stop-color="#7C9DB1"/></linearGradient>' +
+    '<linearGradient id="'+uid+'drive" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BBBBB1"/><stop offset="100%" stop-color="#9C9C91"/></linearGradient>' +
+  '</defs>';
+
+  var s = '<svg class="mc-viz-svg-el" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">';
+  s += defs;
+  /* sky */
+  s += '<rect x="0" y="0" width="'+W+'" height="'+(horizon+8)+'" fill="url(#'+uid+'sky)"/>';
+  s += '<g fill="#FFFFFF" opacity=".45"><ellipse cx="86" cy="34" rx="32" ry="10"/><ellipse cx="116" cy="40" rx="22" ry="8"/><ellipse cx="372" cy="26" rx="28" ry="8"/></g>';
+  /* distant soft treeline */
+  s += '<ellipse cx="110" cy="150" rx="125" ry="32" fill="#A6C58E" opacity=".55"/>';
+  s += '<ellipse cx="380" cy="150" rx="135" ry="34" fill="#A6C58E" opacity=".5"/>';
+  /* grass yard */
+  s += '<rect x="0" y="'+horizon+'" width="'+W+'" height="'+(H-horizon)+'" fill="url(#'+uid+'grass)"/>';
+  /* house behind the fence */
+  s += renderHouseEl(uid, horizon);
+  /* tree for life */
+  s += renderTreeEl(uid, 416, horizon);
+  /* foreground ground strip */
+  s += '<rect x="0" y="'+(ground-2)+'" width="'+W+'" height="'+(H-ground+2)+'" fill="url(#'+uid+'fg)"/>';
+  /* soft shadow under the fence */
+  s += '<ellipse cx="'+cx+'" cy="'+(ground+5)+'" rx="'+(fw*0.46)+'" ry="7" fill="rgba(31,41,55,.16)"/>';
+  /* the selected fence / gate, in front of everything (solid colours = reliable) */
+  s += renderSceneBarrier(type, color, x1, x2, top, ground, compact);
+  s += '</svg>';
+  return s;
+}
+
+function renderLiveVisual(compact, locked){
+  var lang = MC.lang;
+  if(!calcState.product) return '';
+  var label = visualLabel();
+  var classes = 'mc-live-viz photo' + (compact?' compact':'') + (locked?' reveal-locked':'');
+  var reveal = locked
+    ? '<button type="button" class="mc-viz-reveal" onclick="revealLiveVisual(this)">'+(lang==='sk'?'Zobraziť vizualizáciu':'Show preview')+'<span>'+(lang==='sk'?'Kliknite a ukážeme vašu vybranú zostavu':'Click to reveal your selected configuration')+'</span></button>'
+    : '';
+  /* Visualization = a realistic illustrated scene of the selected fence/gate in
+     front of a house. Pure inline SVG: renders instantly and updates with every
+     selection (product, gate type, colour, height, width). */
+  return '<div class="'+classes+'" '+(locked?'onclick="revealLiveVisual(this)"':'')+'>' +
+    '<div class="mc-viz-imgwrap">' +
+      '<div class="mc-viz-svg-fallback">'+renderVizFenceSvg(compact)+'</div>' +
+    '</div>' +
+    (label ? '<div class="mc-viz-cap"><span>'+(lang==='sk'?'Vaša voľba':'Your choice')+'</span><span>'+label+'</span></div>' : '') +
+    reveal +
+  '</div>';
+}
+
+function dismissTeaser(){
+  var t = document.getElementById('mojplot-teaser');
+  if(t) t.classList.add('mp-dismissed');
 }
 
 /* ===================================================
