@@ -501,36 +501,12 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-choice-preview{display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:stretch;margin-bottom:8px}
 .mc-choice-photo{border:1px solid var(--mc-border);border-radius:12px;background:#F8FBF6;display:flex;align-items:center;justify-content:center;min-height:78px;overflow:hidden}
 .mc-choice-photo img{max-width:100%;max-height:86px;object-fit:contain;padding:4px;filter:saturate(1.08) contrast(1.04)}
-.mc-live-viz{position:relative;height:94px;margin:8px 0 0;border:1px solid rgba(69,169,60,.24);border-radius:13px;overflow:hidden;background:linear-gradient(#EAF6FF 0 46%,#DDF1D3 46% 100%);box-shadow:0 5px 16px rgba(69,169,60,.08)}
-.mc-live-viz.compact{height:70px;margin:0}
-.mc-live-viz::before{content:"";position:absolute;left:0;right:0;bottom:0;height:32%;background:linear-gradient(180deg,#BBDD9D,#87BE5E)}
-.mc-viz-house{position:absolute;left:16px;bottom:33px;width:92px;height:48px;background:#fff;border:2px solid #C9D5C6;border-radius:5px;box-shadow:0 6px 16px rgba(35,39,42,.12)}
-.mc-live-viz.compact .mc-viz-house{left:10px;bottom:24px;width:62px;height:34px}
-.mc-viz-house::before{content:"";position:absolute;left:-8px;right:-8px;top:-22px;height:30px;background:#47505A;clip-path:polygon(50% 0,100% 100%,0 100%);border-radius:3px 3px 0 0}
-.mc-viz-house::after{content:"";position:absolute;left:12px;top:16px;width:18px;height:24px;background:#8BB9D8;border-radius:2px;box-shadow:34px 0 0 #8BB9D8}
-.mc-live-viz.compact .mc-viz-house::after{left:8px;top:11px;width:12px;height:17px;box-shadow:25px 0 0 #8BB9D8}
-.mc-viz-line{position:absolute;right:12px;bottom:24px;width:var(--viz-span,72%);height:var(--viz-h,54px);max-width:290px}
-.mc-live-viz.compact .mc-viz-line{right:8px;bottom:16px;width:74%;height:var(--viz-hc,36px)}
-.mc-viz-panel{position:absolute;left:0;right:0;bottom:0;height:100%;border-bottom:4px solid var(--viz-color,#444);border-top:3px solid var(--viz-color,#444)}
-.mc-viz-panel::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,var(--viz-color,#444) 0 2px,transparent 2px 23px)}
-.mc-viz-panel::after{content:"";position:absolute;left:0;right:0;top:48%;height:3px;background:var(--viz-color,#444);box-shadow:0 -16px 0 rgba(35,39,42,.16),0 16px 0 rgba(35,39,42,.16)}
-.mc-live-viz[data-type="pletivo"] .mc-viz-panel{border-top:2px solid var(--viz-color,#555);border-bottom:3px solid var(--viz-color,#555);background:repeating-linear-gradient(54deg,transparent 0 10px,rgba(35,39,42,.36) 10px 11px),repeating-linear-gradient(126deg,transparent 0 10px,rgba(35,39,42,.28) 10px 11px)}
-.mc-live-viz[data-type="pletivo"] .mc-viz-panel::before{background:repeating-linear-gradient(90deg,var(--viz-color,#555) 0 2px,transparent 2px 42px)}
-.mc-live-viz[data-type="betonovy"] .mc-viz-panel,.mc-live-viz[data-type="oporne"] .mc-viz-panel{border:0;background:repeating-linear-gradient(0deg,var(--viz-color,#777) 0 18px,rgba(255,255,255,.18) 18px 20px),repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 2px,transparent 2px 54px);box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
-.mc-live-viz[data-type="betonovy"] .mc-viz-panel::before,.mc-live-viz[data-type="betonovy"] .mc-viz-panel::after,.mc-live-viz[data-type="oporne"] .mc-viz-panel::before,.mc-live-viz[data-type="oporne"] .mc-viz-panel::after{display:none}
-.mc-live-viz[data-type="brana"] .mc-viz-panel{left:auto;width:var(--gate-w,42%);right:8%;border-left:4px solid var(--viz-color,#444);border-right:4px solid var(--viz-color,#444)}
-.mc-live-viz[data-type="brana"] .mc-viz-panel::before{background:repeating-linear-gradient(90deg,var(--viz-color,#444) 0 2px,transparent 2px 20px)}
-.mc-live-viz[data-type="mobilne"] .mc-viz-panel{border-color:#9AA5AF}
-.mc-live-viz[data-type="mobilne"] .mc-viz-panel::before{background:repeating-linear-gradient(90deg,#9AA5AF 0 2px,transparent 2px 28px)}
-.mc-viz-label{position:absolute;left:10px;right:10px;bottom:7px;display:flex;justify-content:space-between;gap:8px;font-size:10.5px;font-weight:800;color:#2F4B31;z-index:3}
-.mc-live-viz.compact .mc-viz-label{display:none}
 .mc-calc-container[data-open="true"] ~ .mc-ibar{padding-top:9px}
 #mojplot-chat:has(.mc-calc-container[data-open="true"]) .mc-cbar{display:none}
 @media (max-width:480px){
   #mojplot-chat{height:var(--mc-mobile-height,100vh)!important;max-height:var(--mc-mobile-height,100vh)!important}
   .mc-calc-container{padding:10px}
   .mc-product-img{height:46px}
-  .mc-live-viz{height:88px}
   .mc-choice-preview{grid-template-columns:82px 1fr}
   .mc-header{align-items:flex-start;gap:8px}
   .mc-hdr-title{font-size:13px;line-height:1.2}
@@ -566,36 +542,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-gate-thumb::after{content:"";display:block;position:absolute;left:15%;right:12%;bottom:38px;height:3px;background:#2F3A43;z-index:0}
 .mc-gate-thumb img{position:relative;z-index:1}
 .mc-choice-preview{display:block;margin-bottom:12px}
-.mc-choice-preview .mc-live-viz.compact{height:118px;margin:0}
-.mc-live-viz{height:124px;border-radius:16px;border-color:#B8DDAF;background:linear-gradient(180deg,#DDF2FF 0 49%,#D9F0CE 49% 72%,#A9D17D 72% 100%);box-shadow:0 12px 26px rgba(69,169,60,.13)}
-.mc-live-viz.compact{height:104px}
-.mc-live-viz::before{height:24%;background:linear-gradient(180deg,#A6D47B,#75B74F)}
-.mc-live-viz::after{content:"";position:absolute;left:20%;bottom:0;width:28%;height:24%;background:linear-gradient(110deg,rgba(202,213,191,.85),rgba(235,239,228,.55));clip-path:polygon(12% 0,100% 0,78% 100%,0 100%);opacity:.85}
-.mc-viz-house{left:20px;bottom:45px;width:112px;height:58px;border-radius:7px;border-color:#C7D7C0;box-shadow:0 9px 18px rgba(35,39,42,.13);z-index:2}
-.mc-viz-house::before{top:-27px;height:36px;background:#3D4650}
-.mc-viz-house::after{left:15px;top:20px;width:20px;height:28px;background:#7DB0D2;box-shadow:42px 0 0 #7DB0D2}
-.mc-live-viz.compact .mc-viz-house{left:16px;bottom:38px;width:86px;height:46px}
-.mc-live-viz.compact .mc-viz-house::after{left:11px;top:15px;width:16px;height:22px;box-shadow:32px 0 0 #7DB0D2}
-.mc-viz-line{right:18px;bottom:28px;width:var(--viz-span,72%);height:var(--viz-h,54px);z-index:2}
-.mc-live-viz.compact .mc-viz-line{right:14px;bottom:24px;height:var(--viz-hc,40px)}
-.mc-viz-panel{filter:drop-shadow(0 5px 8px rgba(35,39,42,.16))}
-.mc-live-viz[data-type="brana"] .mc-viz-line{right:12px;width:74%;height:var(--viz-h,58px);max-width:330px}
-.mc-live-viz[data-type="brana"] .mc-viz-panel{display:none}
-.mc-viz-fence,.mc-viz-gate{position:absolute;bottom:0;border-top:3px solid var(--viz-color,#444);border-bottom:4px solid var(--viz-color,#444);background:repeating-linear-gradient(90deg,transparent 0 24px,var(--viz-color,#444) 24px 27px),linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.05));box-sizing:border-box}
-.mc-viz-fence{height:66%;opacity:.52}
-.mc-viz-fence.left{left:0;width:28%}
-.mc-viz-fence.right{right:0;width:24%}
-.mc-viz-gate{right:22%;width:var(--gate-w,42%);height:100%;border-left:5px solid var(--viz-color,#444);border-right:5px solid var(--viz-color,#444);box-shadow:0 0 0 3px rgba(69,169,60,.18),0 12px 20px rgba(35,39,42,.2);opacity:1}
-.mc-viz-gate::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:var(--viz-color,#444);box-shadow:0 -18px 0 rgba(35,39,42,.16),0 18px 0 rgba(35,39,42,.16)}
-.mc-viz-gate::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:4px;background:var(--viz-color,#444);transform:translateX(-50%)}
-.mc-viz-label{font-size:11.5px;bottom:9px}
-.mc-live-viz.compact .mc-viz-label{display:flex;font-size:10px}
-.mc-live-viz.reveal-locked{cursor:pointer}
-.mc-live-viz.reveal-locked .mc-viz-house,.mc-live-viz.reveal-locked .mc-viz-line,.mc-live-viz.reveal-locked .mc-viz-label{filter:blur(6px);transform:scale(1.02);transition:filter .45s ease,transform .45s ease}
-.mc-viz-reveal{position:absolute;inset:14px;z-index:5;border:1px solid rgba(255,255,255,.72);border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(232,247,228,.82));backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#23452A;font-family:var(--m-font);font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 12px 28px rgba(31,41,55,.12)}
-.mc-viz-reveal span{font-size:11px;font-weight:700;color:#4B6450}
-.mc-live-viz.revealed .mc-viz-gate{animation:gateReveal .72s cubic-bezier(.16,1,.3,1)}
-@keyframes gateReveal{from{transform:scale(.86);opacity:.2}to{transform:scale(1);opacity:1}}
 .mc-photo-upload{position:relative;border:1.5px dashed #B8DDAF;border-radius:12px;background:#F6FBF4;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;color:#2E7D32;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center}
 .mc-photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .mc-photo-name{font-size:11px;color:var(--mc-text-sub);text-align:center;margin-top:-3px;min-height:14px}
@@ -634,40 +580,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-prod-oporne::after{left:23%;right:21%;top:38px;height:15px;border-top:3px solid rgba(80,85,88,.3);border-bottom:3px solid rgba(80,85,88,.25);transform:skewY(-15deg)}
 .mc-prod-ine::before{left:16%;right:14%;top:24px;height:43px;border:4px solid #2F3A43;background:linear-gradient(90deg,rgba(69,169,60,.08),rgba(69,169,60,.2));transform:skewX(-7deg)}
 .mc-prod-ine::after{left:24%;right:22%;top:46px;height:3px;background:#2F3A43;box-shadow:0 -16px 0 rgba(47,58,67,.35),0 16px 0 rgba(47,58,67,.35)}
-.mc-live-viz{height:138px;background:linear-gradient(180deg,#DDF1FF 0 47%,#D7EDC7 47% 70%,#9BCF67 70% 100%)}
-.mc-live-viz::after{left:19%;width:34%;height:28%;background:linear-gradient(112deg,rgba(225,229,214,.92),rgba(248,249,243,.68));clip-path:polygon(10% 0,100% 0,76% 100%,0 100%)}
-.mc-viz-house{left:22px;bottom:58px;width:122px;height:64px;background:linear-gradient(180deg,#FFFFFF,#F1F5EE);border:2px solid #BFD0B8;border-radius:8px;box-shadow:0 10px 20px rgba(35,39,42,.14)}
-.mc-viz-house::before{left:-10px;right:-10px;top:-31px;height:39px;background:#334454;clip-path:polygon(50% 0,100% 100%,0 100%)}
-.mc-viz-house::after{left:19px;top:20px;width:20px;height:28px;background:#7CB2D6;border-radius:3px;box-shadow:46px 0 0 #7CB2D6,23px 19px 0 -5px rgba(69,169,60,.45)}
-.mc-viz-door{position:absolute;right:17px;bottom:0;width:22px;height:36px;background:#D8A05D;border-radius:4px 4px 0 0;box-shadow:inset 0 0 0 2px rgba(124,72,28,.16)}
-.mc-viz-line{right:16px;bottom:38px;width:72%;max-width:365px}
-.mc-live-viz[data-type="brana"] .mc-viz-line{right:14px;width:70%;height:var(--viz-h,58px);max-width:360px}
-.mc-viz-fence,.mc-viz-gate{border-top:3px solid var(--viz-color,#444);border-bottom:4px solid var(--viz-color,#444);background:repeating-linear-gradient(90deg,transparent 0 22px,var(--viz-color,#444) 22px 25px),linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.06))}
-.mc-viz-fence{height:66%;bottom:0;opacity:.55}
-.mc-viz-fence.left{left:0;width:32%}
-.mc-viz-gate{left:32%;right:auto;width:var(--gate-w,42%);height:100%;bottom:0;border-left:5px solid var(--viz-color,#444);border-right:5px solid var(--viz-color,#444);box-shadow:0 0 0 4px rgba(69,169,60,.16),0 13px 22px rgba(35,39,42,.22)}
-.mc-viz-fence.right{left:calc(32% + var(--gate-w,42%));right:0;width:auto}
-.mc-viz-label{background:linear-gradient(90deg,rgba(255,255,255,.68),rgba(255,255,255,.2));border-radius:999px;padding:4px 8px;bottom:8px}
 
-/* House placement fix: house is background, fence/gate is the front property line */
-.mc-live-viz{height:150px;background:linear-gradient(180deg,#DDF1FF 0 43%,#E3F1D6 43% 66%,#9FCD68 66% 100%)}
-.mc-live-viz::before{height:30%;background:linear-gradient(180deg,#A8D37D,#74B64D);z-index:0}
-.mc-live-viz::after{left:103px;bottom:0;width:44%;height:39%;background:linear-gradient(112deg,rgba(224,226,214,.94),rgba(248,249,242,.72));clip-path:polygon(4% 0,82% 0,100% 100%,22% 100%);opacity:.92;z-index:1}
-.mc-viz-house{left:22px;bottom:66px;width:96px;height:50px;z-index:2;transform:none}
-.mc-viz-house::before{left:-8px;right:-8px;top:-25px;height:32px}
-.mc-viz-house::after{left:13px;top:16px;width:17px;height:23px;box-shadow:37px 0 0 #7DB0D2}
-.mc-viz-door{right:13px;width:18px;height:30px}
-.mc-viz-line{left:130px;right:16px;width:auto;max-width:none;bottom:30px;z-index:4}
-.mc-live-viz[data-type="brana"] .mc-viz-line{left:132px;right:16px;width:auto;max-width:none;bottom:30px}
-.mc-viz-fence,.mc-viz-gate,.mc-viz-panel{filter:drop-shadow(0 7px 9px rgba(35,39,42,.18))}
-.mc-live-viz.compact{height:112px}
-.mc-live-viz.compact::after{left:76px;width:43%;height:36%}
-.mc-live-viz.compact .mc-viz-house{left:13px;bottom:50px;width:72px;height:38px}
-.mc-live-viz.compact .mc-viz-house::before{left:-6px;right:-6px;top:-20px;height:26px}
-.mc-live-viz.compact .mc-viz-house::after{left:10px;top:12px;width:13px;height:18px;box-shadow:27px 0 0 #7DB0D2}
-.mc-live-viz.compact .mc-viz-door{right:10px;width:14px;height:23px}
-.mc-live-viz.compact .mc-viz-line{left:94px;right:10px;width:auto;bottom:23px;height:var(--viz-hc,40px)}
-.mc-live-viz.compact[data-type="brana"] .mc-viz-line{left:94px;right:10px;width:auto;bottom:23px}
 .mc-product-img{height:104px;background:linear-gradient(180deg,#F8FBF6 0%,#EEF6EA 100%)}
 .mc-product-visual img{width:100%;height:100%;object-fit:contain;padding:10px;filter:saturate(1.04) contrast(1.04);opacity:0;transition:opacity .22s ease;position:relative;z-index:2}
 .mc-product-visual.loaded::before,.mc-product-visual.loaded::after,.mc-gate-thumb.loaded::before,.mc-gate-thumb.loaded::after{display:none!important}
@@ -676,10 +589,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-product-visual.fallback img{display:none!important}
 .mc-color-photo{height:74px;background:linear-gradient(180deg,#F8FBF6,#EEF6EA)}
 .mc-color-photo img{object-fit:contain;padding:7px;filter:saturate(1.04) contrast(1.04)}
-.mc-viz-house::after{left:12px;top:16px;width:16px;height:22px;box-shadow:32px 0 0 #7DB0D2}
-.mc-viz-door{right:8px;width:15px;height:29px}
-.mc-live-viz.compact .mc-viz-house::after{left:9px;top:12px;width:12px;height:17px;box-shadow:25px 0 0 #7DB0D2}
-.mc-live-viz.compact .mc-viz-door{right:7px;width:12px;height:21px}
 .mc-product-badge{z-index:8;top:9px;left:9px;border:2px solid #fff;border-radius:999px;padding:4px 9px;background:#45A93C;box-shadow:0 4px 10px rgba(45,125,50,.22)}
 .mc-product-visual.loaded::before,.mc-product-visual.loaded::after,.mc-gate-thumb.loaded::before,.mc-gate-thumb.loaded::after{display:none!important}
 .mc-product-visual.loaded img{display:block!important;opacity:1!important}
@@ -689,10 +598,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-prod-brana::after,.mc-gate-thumb::after{left:17%;right:14%;bottom:47px;height:3px;background:#30363B!important;box-shadow:none!important}
 .mc-prod-pletivo::before{border-color:#30363B;background:repeating-linear-gradient(55deg,transparent 0 10px,rgba(48,54,59,.46) 10px 11px),repeating-linear-gradient(125deg,transparent 0 10px,rgba(48,54,59,.34) 10px 11px)}
 .mc-prod-pletivo::after{background:repeating-linear-gradient(90deg,#30363B 0 3px,transparent 3px 34px)}
-.mc-viz-house::after{left:12px;top:16px;width:15px;height:22px;box-shadow:57px 0 0 #7DB0D2}
-.mc-viz-door{left:50%;right:auto;transform:translateX(-50%);width:16px;height:30px}
-.mc-live-viz.compact .mc-viz-house::after{left:8px;top:12px;width:12px;height:17px;box-shadow:45px 0 0 #7DB0D2}
-.mc-live-viz.compact .mc-viz-door{left:50%;right:auto;transform:translateX(-50%);width:12px;height:21px}
 #mojplot-bubble .notif-dot{width:24px;height:24px;right:3px;bottom:3px;top:auto;background:#45A93C;border:3px solid #fff;color:transparent;text-indent:-999px;animation:none;box-shadow:0 5px 12px rgba(35,39,42,.18);z-index:4}
 #mojplot-bubble .notif-dot::before{content:"";position:absolute;left:6px;top:5px;width:9px;height:11px;border:2px solid #fff;border-radius:2px;box-shadow:inset 0 -4px 0 rgba(255,255,255,.28)}
 #mojplot-bubble .notif-dot::after{content:"";position:absolute;left:9px;top:8px;width:2px;height:2px;background:#fff;box-shadow:4px 0 0 #fff,0 4px 0 #fff,4px 4px 0 #fff}
@@ -716,7 +621,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   .mc-product-img{height:102px}
   .mc-calc-container{padding:12px}
-  .mc-live-viz{height:116px}
 }
 
 /* Mobile fullscreen handled by Moj plot refresh */
@@ -1035,103 +939,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   padding:3px!important;
 }
 
-/* ============================================
-   NEW SVG VISUALIZATION - overrides old pixel-art system
-   ============================================ */
-.mc-live-viz.svg{
-  position:relative!important;
-  height:auto!important;
-  margin:8px 0 0!important;
-  border:1px solid rgba(69,169,60,.24)!important;
-  border-radius:14px!important;
-  overflow:hidden!important;
-  background:#FFFFFF!important;
-  box-shadow:0 6px 18px rgba(69,169,60,.1)!important;
-  padding:0!important;
-  display:block!important;
-}
-.mc-live-viz.svg.compact{
-  height:auto!important;
-  border-radius:12px!important;
-  box-shadow:0 4px 12px rgba(69,169,60,.08)!important;
-}
-.mc-live-viz.svg svg{
-  display:block!important;
-  width:100%!important;
-  height:auto!important;
-  background:transparent!important;
-}
-
-/* Disable ALL old pixel-art viz components */
-.mc-live-viz.svg::before,
-.mc-live-viz.svg::after,
-.mc-live-viz.svg .mc-viz-house,
-.mc-live-viz.svg .mc-viz-line,
-.mc-live-viz.svg .mc-viz-panel,
-.mc-live-viz.svg .mc-viz-fence,
-.mc-live-viz.svg .mc-viz-gate,
-.mc-live-viz.svg .mc-viz-door{
-  display:none!important;
-  content:none!important;
-}
-
-/* Label in new viz */
-.mc-live-viz.svg .mc-viz-label{
-  position:absolute!important;
-  left:8px!important;
-  right:8px!important;
-  bottom:6px!important;
-  display:flex!important;
-  justify-content:space-between!important;
-  gap:8px!important;
-  font-size:11px!important;
-  font-weight:800!important;
-  color:#23272A!important;
-  z-index:3!important;
-  background:rgba(255,255,255,.85)!important;
-  border-radius:8px!important;
-  padding:3px 8px!important;
-  backdrop-filter:blur(2px)!important;
-  box-shadow:0 2px 6px rgba(0,0,0,.08)!important;
-}
-.mc-live-viz.svg.compact .mc-viz-label{
-  font-size:10px!important;
-  padding:2px 6px!important;
-}
-.mc-live-viz.svg .mc-viz-label span:first-child{
-  color:#2F8732!important;
-}
-
-/* Reveal overlay */
-.mc-live-viz.svg.reveal-locked{cursor:pointer!important}
-.mc-live-viz.svg.reveal-locked svg{filter:blur(5px) brightness(.95)!important;transition:filter .4s ease!important}
-.mc-live-viz.svg .mc-viz-reveal{
-  position:absolute!important;
-  inset:12px!important;
-  z-index:5!important;
-  border:1px solid rgba(255,255,255,.85)!important;
-  border-radius:12px!important;
-  background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(232,247,228,.85))!important;
-  backdrop-filter:blur(8px)!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:4px!important;
-  color:#23452A!important;
-  font-family:var(--m-font)!important;
-  font-weight:800!important;
-  font-size:13px!important;
-  cursor:pointer!important;
-  box-shadow:0 10px 24px rgba(31,41,55,.12)!important;
-  padding:8px!important;
-  text-align:center!important;
-}
-.mc-live-viz.svg .mc-viz-reveal span{
-  font-size:11px!important;
-  font-weight:600!important;
-  color:#4B6450!important;
-}
 
 
 /* ============================================
@@ -1216,12 +1023,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   font-weight:700!important;
 }
 /* Slightly larger visual preview so the selected gate type is obvious. */
-.mc-choice-preview .mc-live-viz.svg.compact{
-  min-height:126px!important;
-}
-.mc-live-viz.svg .mc-viz-label{
-  padding:4px 9px!important;
-}
 @media (max-width:480px){
   .mc-product-card .mc-product-img::after{left:10px!important;bottom:8px!important;width:48px!important;height:40px!important;box-shadow:0 0 0 9px #fff!important}
   .mc-color-card{min-height:126px!important;padding:12px 6px 10px!important}
@@ -1561,25 +1362,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   box-shadow:0 10px 26px rgba(69,169,60,.22) !important;
 }
 
-/* Hide visualization caption */
-.mc-live-viz .mc-viz-label,
-.mc-live-viz.svg .mc-viz-label{
-  display:none !important;
-}
-
-/* Cleaner visualization container */
-.mc-live-viz.svg{
-  border:1px solid rgba(69,169,60,.22) !important;
-  border-radius:16px !important;
-  box-shadow:0 8px 24px rgba(69,169,60,.13) !important;
-  background:#FFFFFF !important;
-  overflow:hidden !important;
-}
-.mc-live-viz.svg svg{
-  display:block !important;
-  width:100% !important;
-  height:auto !important;
-}
 
 /* ===================================================
    CP OPTION CARDS (fillout style)
@@ -1630,196 +1412,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-chip:hover { border-color:#45A93C;background:#F7FAF4;color:#2E7D32;box-shadow:0 3px 10px rgba(69,169,60,.1); }
 .mc-chips { display:flex;flex-wrap:wrap;gap:7px;padding:10px 14px 14px;background:transparent; }
 
-/* HIDE OLD LIVE VIZ */
-.mc-live-viz { display:none!important; }
-.mc-live-viz.svg { display:none!important; }
-/* ============================================
-   FIX 2026-05-20: real-photo live visualization + photo colour cards
-   ============================================ */
-/* Real-photo product preview (replaces the old stylised SVG scene) */
-.mc-live-viz.photo{
-  position:relative !important;
-  margin:10px 0 0 !important;
-  border:1px solid rgba(69,169,60,.22) !important;
-  border-radius:16px !important;
-  overflow:hidden !important;
-  background:#FFFFFF !important;
-  box-shadow:0 8px 24px rgba(69,169,60,.13) !important;
-  display:block !important;
-}
-.mc-live-viz.photo.compact{
-  margin:8px 0 0 !important;
-  border-radius:14px !important;
-  box-shadow:0 4px 12px rgba(69,169,60,.1) !important;
-}
-.mc-viz-imgwrap{
-  position:relative !important;
-  width:100% !important;
-  aspect-ratio:46 / 25 !important;
-  height:auto !important;
-  background:linear-gradient(180deg,#A6D4EF 0%,#EAF5FB 100%) !important;
-  overflow:hidden !important;
-}
-.mc-live-viz.photo.compact .mc-viz-imgwrap{
-  aspect-ratio:46 / 25 !important;
-  height:auto !important;
-}
-/* SVG fallback fills the frame and is VISIBLE BY DEFAULT (instant, no network) */
-.mc-viz-svg-fallback{
-  position:absolute !important;
-  inset:0 !important;
-  width:100% !important;
-  height:100% !important;
-  display:flex !important;            /* the house scene is the primary visualization */
-  align-items:center !important;
-  justify-content:center !important;
-  animation:mcVizIn .5s cubic-bezier(.34,1.2,.64,1) both !important;
-}
-.mc-viz-svg-el{
-  width:100% !important;
-  height:100% !important;
-  display:block !important;
-}
-/* Real product photo is the PRIMARY visualization (looks exactly like the website).
-   Visible by default; the SVG only appears if the photo genuinely fails to load. */
-.mc-viz-photo-img{
-  position:absolute !important;
-  inset:0 !important;
-  width:100% !important;
-  height:100% !important;
-  object-fit:contain !important;
-  object-position:center center !important;
-  padding:14px !important;
-  box-sizing:border-box !important;
-  background:linear-gradient(180deg,#FFFFFF 0%,#F4F9F1 100%) !important;
-  filter:saturate(1.04) contrast(1.02) !important;
-  animation:mcVizIn .5s cubic-bezier(.34,1.2,.64,1) both !important;
-  z-index:2 !important;
-  display:block !important;
-}
-/* If the photo fails to load: hide photo, reveal the SVG safety net */
-.mc-viz-imgwrap.photo-failed .mc-viz-photo-img{ display:none !important; }
-.mc-viz-imgwrap.photo-failed .mc-viz-svg-fallback{ display:flex !important; }
-@keyframes mcVizIn{
-  0%{opacity:0;transform:translateY(8px) scale(.97)}
-  100%{opacity:1;transform:translateY(0) scale(1)}
-}
-.mc-live-viz.photo.compact .mc-viz-photo-img{
-  padding:8px !important;
-}
-/* Caption with the current configuration (new class -> not hidden by .mc-viz-label rule) */
-.mc-viz-cap{
-  display:flex !important;
-  justify-content:space-between !important;
-  align-items:center !important;
-  gap:10px !important;
-  padding:9px 13px !important;
-  border-top:1px solid rgba(69,169,60,.14) !important;
-  background:#FFFFFF !important;
-  font-family:var(--m-font) !important;
-}
-.mc-live-viz.photo.compact .mc-viz-cap{
-  padding:7px 11px !important;
-}
-.mc-viz-cap span:first-child{
-  color:#2F8732 !important;
-  font-size:10px !important;
-  font-weight:800 !important;
-  letter-spacing:.6px !important;
-  text-transform:uppercase !important;
-  white-space:nowrap !important;
-  flex-shrink:0 !important;
-}
-.mc-viz-cap span:last-child{
-  color:#23272A !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  text-align:right !important;
-  line-height:1.3 !important;
-}
-.mc-live-viz.photo.compact .mc-viz-cap span:last-child{
-  font-size:11px !important;
-}
-/* Reveal-on-final-step overlay for the photo preview */
-.mc-live-viz.photo.reveal-locked{cursor:pointer !important}
-.mc-live-viz.photo.reveal-locked .mc-viz-photo-img{
-  filter:blur(8px) brightness(.97) !important;
-}
-.mc-live-viz.photo.reveal-locked .mc-viz-svg-fallback{
-  filter:blur(8px) brightness(.97) !important;
-}
-.mc-live-viz.photo .mc-viz-reveal{
-  position:absolute !important;
-  inset:12px !important;
-  z-index:5 !important;
-  border:1px solid rgba(255,255,255,.85) !important;
-  border-radius:12px !important;
-  background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(232,247,228,.85)) !important;
-  backdrop-filter:blur(8px) !important;
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:4px !important;
-  color:#23452A !important;
-  font-family:var(--m-font) !important;
-  font-weight:800 !important;
-  font-size:13px !important;
-  cursor:pointer !important;
-  box-shadow:0 10px 24px rgba(31,41,55,.12) !important;
-  padding:8px !important;
-  text-align:center !important;
-}
-.mc-live-viz.photo .mc-viz-reveal span{
-  font-size:11px !important;
-  font-weight:600 !important;
-  color:#4B6450 !important;
-}
-
-/* Re-enable colour-card photos now that each colour uses its OWN correct photo */
-.mc-color-card.has-photo .mc-color-photo{
-  display:flex !important;
-  width:100% !important;
-  height:74px !important;
-  align-items:center !important;
-  justify-content:center !important;
-  background:linear-gradient(180deg,#FBFDFA,#EFF6EC) !important;
-  overflow:hidden !important;
-}
-.mc-color-card.has-photo .mc-color-photo img{
-  width:100% !important;
-  height:100% !important;
-  object-fit:contain !important;
-  object-position:center center !important;
-  padding:6px !important;
-  box-sizing:border-box !important;
-  display:block !important;
-  filter:saturate(1.04) contrast(1.03) !important;
-  transition:transform .35s ease !important;
-}
-.mc-color-card.has-photo:hover .mc-color-photo img{
-  transform:scale(1.06) !important;
-}
-.mc-color-card.has-photo{
-  padding:0 !important;
-  min-height:0 !important;
-  justify-content:flex-start !important;
-}
-.mc-color-card.has-photo .mc-color-body{
-  padding:7px 6px 9px !important;
-  gap:5px !important;
-}
-.mc-color-swatch.sm{
-  width:22px !important;
-  height:22px !important;
-  border-radius:7px !important;
-  border:2px solid rgba(35,39,42,.16) !important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 2px 5px rgba(35,39,42,.16) !important;
-}
-@media (max-width:480px){
-  .mc-viz-imgwrap{height:auto !important;aspect-ratio:46 / 25 !important}
-  .mc-color-card.has-photo .mc-color-photo{height:66px !important}
-}
 
 /* =========================================================
    FIX 2026-05-22: remove the legacy white "dot-cover" square that was
@@ -1906,23 +1498,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 }
 @media (max-width:768px){
   #mojplot-teaser{ display:none !important; }
-}
-/* =========================================================
-   FIX: remove leftover CSS overlays (green grass ::before + light clip-path
-   "driveway" ::after) that were drawn ON TOP of the new SVG scene and showed
-   up as a white/semi-transparent wedge. The SVG scene draws everything itself.
-   ========================================================= */
-.mc-live-viz::before,
-.mc-live-viz::after,
-.mc-live-viz.photo::before,
-.mc-live-viz.photo::after,
-.mc-viz-imgwrap::before,
-.mc-viz-imgwrap::after{
-  content:none !important;
-  display:none !important;
-  background:none !important;
-  clip-path:none !important;
-  opacity:0 !important;
 }
 </style>
 
@@ -2289,814 +1864,7 @@ function productVisualType(){
   return '3d-plot';
 }
 
-function visualLabel(){
-  var lang = MC.lang;
-  var color = { zinok:'zinok', zelena:'zelená', antracit:'antracit' }[calcState.color || 'antracit'];
-  if(calcState.product === 'brana'){
-    return (calcState.gateWidth || '4') + ' m · ' + (calcState.gateHeight || '150') + ' cm · ' + color;
-  }
-  if(calcState.product === 'pletivo'){
-    return (calcState.length || 30) + ' m · ' + (calcState.meshHeight || '150') + ' cm · ' + color;
-  }
-  if(calcState.product === 'mobilne'){
-    return (calcState.mobileLength || 50) + ' m · mobilné panely';
-  }
-  if(calcState.product === 'oporne'){
-    return (calcState.wallLength || 10) + ' m · ' + (calcState.wallHeight || 2) + ' vrstvy';
-  }
-  if(calcState.product === 'betonovy'){
-    return lang === 'sk' ? 'betónový plot na mieru' : 'custom concrete fence';
-  }
-  return (calcState.length || 20) + ' m · ' + (calcState.height || '153') + ' cm · ' + color;
-}
 
-function renderLiveVisual(compact, locked){
-  return renderSvgVisual(compact, locked);
-}
-
-/* ===== NEW SVG-BASED VISUALIZATION =====
-   ViewBox: 400x180 (compact: 400x140). Coordinates:
-   - Ground level: y=140 (compact: y=110)
-   - Fence/gate top aligned with house body top so the eaves are slightly above
-   - House body top at y=70 (compact: y=55) and bottom at y=140 (compact: y=110)
-   - Roof apex above body
-*/
-function renderSvgVisual(compact, locked){
-  var lang = MC.lang;
-  var type = productVisualType();
-  var color = (calcState.product === 'betonovy' || calcState.product === 'oporne')
-    ? colorHex('beton')
-    : colorHex(calcState.color || 'antracit');
-  var classes = 'mc-live-viz svg ' + (compact?'compact':'') + (locked?' reveal-locked':'');
-  var w = 400;
-  var h = compact ? 140 : 180;
-  var ground = compact ? 110 : 140;     // y of ground line
-  var bodyTop = compact ? 60 : 78;      // y of house body top (level with fence top by default)
-  var roofPeak = compact ? 28 : 40;     // y of roof apex
-  var houseLeft = compact ? 18 : 24;
-  var houseW = compact ? 80 : 108;
-  var bodyBottom = ground;
-  var houseRight = houseLeft + houseW;
-
-  /* Fence/gate placement - starts a bit right of house, extends to right edge */
-  var fenceStart = houseRight + (compact ? 16 : 22);
-  var fenceEnd = w - (compact ? 14 : 18);
-  var fenceWidth = fenceEnd - fenceStart;
-
-  /* House dimensions are FIXED regardless of fence/gate height */
-  bodyTop = compact ? 38 : 48;
-  var bodyH = bodyBottom - bodyTop;
-  roofPeak = compact ? 8 : 12;
-
-  /* Height of fence depends on product - varies INDEPENDENTLY of house */
-  var hVal = parseInt(calcState.height || calcState.meshHeight || calcState.gateHeight || 153, 10);
-  if(type === 'oporne') hVal = 60 + parseInt(calcState.wallHeight || 2, 10) * 20;
-  if(type === 'betonovy') hVal = 200;
-  if(type === 'mobilne') hVal = 200;
-  /* Map cm to viewBox px: keep fence shorter than house body so house always dominates */
-  var pxPerCm = compact ? 0.24 : 0.32;
-  var fenceH = Math.max(compact ? 30 : 42, Math.min(compact ? 58 : 78, Math.round(hVal * pxPerCm)));
-  var fenceTop = ground - fenceH;
-
-  /* Length-driven visual: number of panels for non-gate */
-  var lengthMeters = parseFloat(calcState.length || calcState.mobileLength || calcState.wallLength || 20) || 20;
-  if(type === 'brana') lengthMeters = parseFloat(calcState.gateWidth || 4) || 4;
-
-  var sceneSvg = renderScene(w, h, ground, houseLeft, houseW, bodyTop, bodyH, roofPeak);
-  var fenceSvg = renderFenceOrGate(type, color, fenceStart, fenceEnd, fenceWidth, fenceTop, fenceH, ground, lengthMeters, compact);
-
-  var reveal = locked
-    ? '<button type="button" class="mc-viz-reveal" onclick="revealLiveVisual(this)">'+(lang==='sk'?'Odhalenie vizualizácie':'Reveal preview')+'<span>'+(lang==='sk'?'Kliknite a ukážeme bránu alebo plot pri dome':'Click to show the gate or fence by the house')+'</span></button>'
-    : '';
-
-  return '<div class="'+classes+'" data-type="'+type+'" '+(locked?'onclick="revealLiveVisual(this)"':'')+'>' +
-    '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">' +
-      sceneSvg + fenceSvg +
-    '</svg>' +
-    reveal +
-  '</div>';
-}
-
-function renderScene(w, h, ground, hx, hw, bodyTop, bodyH, roofPeak){
-  var hxRight = hx + hw;
-  var vid = 'sc' + Math.random().toString(36).slice(2,7);
-
-  var defs = '<defs>' +
-    '<linearGradient id="'+vid+'sky" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#6FA8D0"/>' +
-      '<stop offset="50%" stop-color="#A8CCE8"/>' +
-      '<stop offset="100%" stop-color="#D2E4C8"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'grass" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#76B440"/>' +
-      '<stop offset="100%" stop-color="#4A901C"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'facA" x1="0" y1="0" x2="1" y2="0">' +
-      '<stop offset="0%" stop-color="#FAF7F0"/>' +
-      '<stop offset="60%" stop-color="#EFEBE0"/>' +
-      '<stop offset="100%" stop-color="#DFDAC8"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'facB" x1="0" y1="0" x2="1" y2="0">' +
-      '<stop offset="0%" stop-color="#EFEAE0"/>' +
-      '<stop offset="60%" stop-color="#E2DCD0"/>' +
-      '<stop offset="100%" stop-color="#D2CCBC"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'roof" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#52483C"/>' +
-      '<stop offset="50%" stop-color="#36302A"/>' +
-      '<stop offset="100%" stop-color="#1E1A14"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'glass" x1="0" y1="0" x2="1" y2="1">' +
-      '<stop offset="0%" stop-color="#CFE2F2"/>' +
-      '<stop offset="40%" stop-color="#7CA8D8"/>' +
-      '<stop offset="100%" stop-color="#A0C0DC"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'door" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#2C2A2F"/>' +
-      '<stop offset="100%" stop-color="#15141A"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'garage" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#3A3A38"/>' +
-      '<stop offset="100%" stop-color="#22221E"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="'+vid+'path" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#D0CAB4"/>' +
-      '<stop offset="100%" stop-color="#A8A496"/>' +
-    '</linearGradient>' +
-    '<radialGradient id="'+vid+'sun" cx="50%" cy="50%" r="50%">' +
-      '<stop offset="0%" stop-color="#FFEE98" stop-opacity=".9"/>' +
-      '<stop offset="60%" stop-color="#FFD840" stop-opacity=".4"/>' +
-      '<stop offset="100%" stop-color="#FFCC00" stop-opacity="0"/>' +
-    '</radialGradient>' +
-  '</defs>';
-
-  /* === Sky, sun, clouds === */
-  var sky = '<rect x="0" y="0" width="'+w+'" height="'+ground+'" fill="url(#'+vid+'sky)"/>';
-  var sx = w-36, sy = 20;
-  var sun = '<circle cx="'+sx+'" cy="'+sy+'" r="28" fill="url(#'+vid+'sun)"/>' +
-    '<circle cx="'+sx+'" cy="'+sy+'" r="11" fill="#FFE060" opacity=".75"/>';
-  var clouds =
-    '<ellipse cx="'+(w-95)+'" cy="24" rx="32" ry="9" fill="#FFF" opacity=".9"/>' +
-    '<ellipse cx="'+(w-118)+'" cy="27" rx="18" ry="7" fill="#F4F4F4" opacity=".84"/>' +
-    '<ellipse cx="'+(w-78)+'" cy="22" rx="22" ry="8" fill="#FFF" opacity=".88"/>' +
-    '<ellipse cx="64" cy="30" rx="22" ry="7" fill="#FFF" opacity=".7"/>' +
-    '<ellipse cx="48" cy="32" rx="14" ry="6" fill="#F8F8F8" opacity=".66"/>' +
-    '<ellipse cx="200" cy="18" rx="14" ry="5" fill="#FFF" opacity=".55"/>';
-
-  /* === Ground: grass only (driveway removed) === */
-  var grass = '<rect x="0" y="'+ground+'" width="'+w+'" height="'+(h-ground)+'" fill="url(#'+vid+'grass)"/>';
-  var street = '';
-  var path = '';
-
-  /* === Lawn strip + house ground shadow === */
-  var lawn = '<rect x="'+hx+'" y="'+(ground-5)+'" width="'+(hw+6)+'" height="5" fill="#6AAC3C" opacity=".7"/>';
-  var shadow = '<ellipse cx="'+(hx+hw*.46)+'" cy="'+(ground+3)+'" rx="'+Math.round(hw*.55)+'" ry="5" fill="rgba(0,0,0,.22)"/>';
-
-  /* === Chimney with cap === */
-  var chimX = hx+hw*.72, chimW = Math.max(5, Math.round(hw*.065));
-  var chimney = '<rect x="'+(chimX-chimW/2).toFixed(1)+'" y="'+(roofPeak+4)+'" width="'+chimW+'" height="'+(bodyTop-roofPeak+1)+'" fill="#52463C" stroke="#322C24" stroke-width=".5"/>' +
-    '<rect x="'+(chimX-chimW/2-2).toFixed(1)+'" y="'+(roofPeak+3)+'" width="'+(chimW+4)+'" height="4" fill="#6C5E50"/>' +
-    '<rect x="'+(chimX-chimW/2-2).toFixed(1)+'" y="'+(roofPeak+3)+'" width="'+(chimW+4)+'" height="1.5" fill="rgba(255,255,255,.2)"/>';
-
-  /* === Roof (pitched, with eaves and tile texture) === */
-  var eaveOver = 11;
-  var rPts = (hx-eaveOver)+','+bodyTop+' '+(hx+hw/2)+','+roofPeak+' '+(hxRight+eaveOver)+','+bodyTop;
-  var roofPoly = '<polygon points="'+rPts+'" fill="url(#'+vid+'roof)"/>';
-  /* Roof tile lines */
-  var tLines = '';
-  for(var ti=1;ti<=6;ti++){
-    var tf=ti/7, tY=roofPeak+tf*(bodyTop-roofPeak);
-    var tLX=(hx+hw/2)-tf*(hw/2+eaveOver), tRX=(hx+hw/2)+tf*(hw/2+eaveOver);
-    tLines += '<line x1="'+tLX.toFixed(1)+'" y1="'+tY.toFixed(1)+'" x2="'+tRX.toFixed(1)+'" y2="'+tY.toFixed(1)+'" stroke="rgba(0,0,0,.16)" stroke-width=".7"/>';
-  }
-  /* Vertical roof seams (suggest pan tiles) */
-  for(var tj=0;tj<6;tj++){
-    var tjf = tj/6;
-    var tjY = roofPeak + tjf*(bodyTop-roofPeak);
-    var tjW = tjf*(hw/2+eaveOver);
-    tLines += '<line x1="'+((hx+hw/2)-tjW*.5).toFixed(1)+'" y1="'+tjY.toFixed(1)+'" x2="'+((hx+hw/2)-tjW*.5).toFixed(1)+'" y2="'+bodyTop+'" stroke="rgba(0,0,0,.08)" stroke-width=".4"/>';
-    tLines += '<line x1="'+((hx+hw/2)+tjW*.5).toFixed(1)+'" y1="'+tjY.toFixed(1)+'" x2="'+((hx+hw/2)+tjW*.5).toFixed(1)+'" y2="'+bodyTop+'" stroke="rgba(0,0,0,.08)" stroke-width=".4"/>';
-  }
-  /* Eave shadow line + highlight */
-  var eave = '<line x1="'+(hx-eaveOver)+'" y1="'+bodyTop+'" x2="'+(hxRight+eaveOver)+'" y2="'+bodyTop+'" stroke="#1A150C" stroke-width="3" opacity=".7"/>' +
-    '<line x1="'+(hx-eaveOver)+'" y1="'+(bodyTop+1.5)+'" x2="'+(hxRight+eaveOver)+'" y2="'+(bodyTop+1.5)+'" stroke="rgba(0,0,0,.18)" stroke-width="1"/>' +
-    '<line x1="'+(hx-eaveOver)+'" y1="'+(bodyTop-.5)+'" x2="'+(hxRight+eaveOver)+'" y2="'+(bodyTop-.5)+'" stroke="rgba(255,255,255,.18)" stroke-width="1"/>';
-  /* Roof ridge highlight */
-  var ridge = '<circle cx="'+(hx+hw/2).toFixed(1)+'" cy="'+roofPeak+'" r="1.5" fill="rgba(255,255,255,.4)"/>';
-  var antenna = '';
-
-  /* === Two-storey body with belt course === */
-  var midY = bodyTop + bodyH*.46;
-  var bodyLow = '<rect x="'+hx+'" y="'+midY+'" width="'+hw+'" height="'+(ground-midY)+'" fill="url(#'+vid+'facA)" stroke="#B8B4A8" stroke-width="1" rx="1.5"/>';
-  var bodyUp  = '<rect x="'+hx+'" y="'+bodyTop+'" width="'+hw+'" height="'+(midY-bodyTop+1)+'" fill="url(#'+vid+'facB)" stroke="#B8B4A8" stroke-width="1" rx="1.5"/>';
-  /* Right-side gradient shading for 3D feel */
-  var sideShade = '<rect x="'+(hxRight-12)+'" y="'+bodyTop+'" width="12" height="'+bodyH+'" fill="rgba(0,0,0,.07)"/>';
-  /* Belt course */
-  var belt = '<rect x="'+(hx-1)+'" y="'+(midY-2.5)+'" width="'+(hw+2)+'" height="5" fill="#C0B8A4" rx=".5"/>' +
-    '<rect x="'+(hx-1)+'" y="'+(midY-2.5)+'" width="'+(hw+2)+'" height="1.8" fill="rgba(255,255,255,.3)"/>' +
-    '<rect x="'+(hx-1)+'" y="'+(midY+1.5)+'" width="'+(hw+2)+'" height="1" fill="rgba(0,0,0,.15)"/>';
-  /* Plinth/foundation */
-  var plinth = '<rect x="'+(hx-1)+'" y="'+(ground-5)+'" width="'+(hw+2)+'" height="5" fill="#8E867A" rx="0.5"/>' +
-    '<rect x="'+(hx-1)+'" y="'+(ground-5)+'" width="'+(hw+2)+'" height="1.2" fill="rgba(255,255,255,.2)"/>';
-  /* Corner pilasters */
-  var pil = '<rect x="'+hx+'" y="'+bodyTop+'" width="5" height="'+bodyH+'" fill="rgba(0,0,0,.05)"/>' +
-    '<rect x="'+(hxRight-5)+'" y="'+bodyTop+'" width="5" height="'+bodyH+'" fill="rgba(0,0,0,.06)"/>' +
-    '<rect x="'+hx+'" y="'+bodyTop+'" width="1.5" height="'+bodyH+'" fill="rgba(255,255,255,.18)"/>';
-
-  /* === Windows with sills === */
-  function mkWin(wx,wy,ww,wh){
-    var fc='#5C5448', ref=Math.round(ww*.38);
-    return '<rect x="'+(wx-2.5)+'" y="'+(wy-2)+'" width="'+(ww+5)+'" height="'+(wh+4)+'" fill="'+fc+'" rx="1.5"/>'+
-      /* Window sill */
-      '<rect x="'+(wx-4)+'" y="'+(wy+wh+1)+'" width="'+(ww+8)+'" height="2.5" fill="#9C9384" rx=".5"/>'+
-      '<rect x="'+(wx-4)+'" y="'+(wy+wh+1)+'" width="'+(ww+8)+'" height="1" fill="rgba(255,255,255,.3)"/>'+
-      /* Glass */
-      '<rect x="'+wx+'" y="'+wy+'" width="'+ww+'" height="'+wh+'" fill="url(#'+vid+'glass)"/>'+
-      /* Muntins */
-      '<rect x="'+(wx+ww/2-.8).toFixed(1)+'" y="'+wy+'" width="1.6" height="'+wh+'" fill="'+fc+'"/>'+
-      '<rect x="'+wx+'" y="'+(wy+wh*.43).toFixed(1)+'" width="'+ww+'" height="1.4" fill="'+fc+'"/>'+
-      /* Glass reflection highlight */
-      '<rect x="'+(wx+1)+'" y="'+(wy+1)+'" width="'+ref+'" height="'+Math.round(wh*.34)+'" fill="rgba(255,255,255,.32)" rx=".5"/>';
-  }
-  var wW=Math.max(13,Math.round(hw*.18)), wH=Math.max(12,Math.round(bodyH*.22));
-  var wuY=bodyTop+Math.round(bodyH*.1), w1X=hx+Math.round(hw*.1), w2X=hx+Math.round(hw*.42);
-  var wlY=bodyTop+Math.round(bodyH*.56), wlH=Math.round(bodyH*.24);
-  var win1=mkWin(w1X,wuY,wW,wH), win2=mkWin(w2X,wuY,wW,wH);
-  /* Smaller ground-floor window left of garage */
-  var winLowW = Math.round(wW*.85), winLowH = Math.round(wlH*.85);
-  var win3=mkWin(hx+Math.round(hw*.10), wlY+2, winLowW, winLowH);
-
-  /* === Garage (sectional door, left of entry) === */
-  var gW = Math.round(hw*.30), gH = Math.round(bodyH*.42);
-  var gX = hx+Math.round(hw*.36), gY = ground - gH;
-  var garage = '<rect x="'+(gX-2)+'" y="'+(gY-2)+'" width="'+(gW+4)+'" height="'+(gH+2)+'" fill="#5A544A" rx="1.5"/>'+
-    '<rect x="'+gX+'" y="'+gY+'" width="'+gW+'" height="'+gH+'" fill="url(#'+vid+'garage)" rx="1"/>';
-  /* Sectional door panel lines */
-  var gSeg = 4;
-  for(var gi=1;gi<gSeg;gi++){
-    garage += '<line x1="'+gX+'" y1="'+(gY+gH*gi/gSeg).toFixed(1)+'" x2="'+(gX+gW)+'" y2="'+(gY+gH*gi/gSeg).toFixed(1)+'" stroke="rgba(0,0,0,.45)" stroke-width=".8"/>';
-    garage += '<line x1="'+gX+'" y1="'+(gY+gH*gi/gSeg+1).toFixed(1)+'" x2="'+(gX+gW)+'" y2="'+(gY+gH*gi/gSeg+1).toFixed(1)+'" stroke="rgba(255,255,255,.08)" stroke-width=".8"/>';
-  }
-  /* Garage door subtle highlight */
-  garage += '<rect x="'+(gX+1)+'" y="'+(gY+1)+'" width="'+(gW*.18)+'" height="'+(gH-2)+'" fill="rgba(255,255,255,.05)"/>';
-
-  /* === Modern entry door with sidelight and steps === */
-  var dW=Math.max(11,Math.round(hw*.18)), dH=Math.round(bodyH*.46);
-  var dX=hx+hw-dW-Math.round(hw*.08), dY=ground-dH;
-  /* Steps */
-  var stepW = dW+10;
-  var steps = '<rect x="'+(dX-5)+'" y="'+(ground-3)+'" width="'+stepW+'" height="3" fill="#A8A498" rx=".5"/>' +
-    '<rect x="'+(dX-3)+'" y="'+(ground-6)+'" width="'+(stepW-4)+'" height="3" fill="#B8B4A8" rx=".5"/>' +
-    '<rect x="'+(dX-3)+'" y="'+(ground-6)+'" width="'+(stepW-4)+'" height="1" fill="rgba(255,255,255,.32)"/>';
-  /* Door frame */
-  var door='<rect x="'+(dX-2)+'" y="'+(dY-2)+'" width="'+(dW+4)+'" height="'+(dH+2)+'" fill="#4A4440" rx="2"/>'+
-    /* Door panel */
-    '<rect x="'+dX+'" y="'+dY+'" width="'+dW+'" height="'+dH+'" fill="url(#'+vid+'door)" rx="1"/>'+
-    /* Long vertical glass strip */
-    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.08).toFixed(1)+'" width="'+(dW*.28).toFixed(1)+'" height="'+(dH*.78).toFixed(1)+'" fill="rgba(120,170,225,.55)" rx=".5"/>'+
-    '<rect x="'+(dX+dW*.12).toFixed(1)+'" y="'+(dY+dH*.08).toFixed(1)+'" width="'+(dW*.28).toFixed(1)+'" height="'+(dH*.26).toFixed(1)+'" fill="rgba(255,255,255,.24)" rx=".5"/>'+
-    /* Inset right panel */
-    '<rect x="'+(dX+dW*.48).toFixed(1)+'" y="'+(dY+dH*.18).toFixed(1)+'" width="'+(dW*.40).toFixed(1)+'" height="'+(dH*.50).toFixed(1)+'" fill="rgba(255,255,255,.04)" rx=".5"/>'+
-    /* Long vertical handle bar */
-    '<rect x="'+(dX+dW*.82).toFixed(1)+'" y="'+(dY+dH*.32).toFixed(1)+'" width="2.5" height="'+(dH*.36).toFixed(1)+'" fill="#C8A840" rx="1.2"/>';
-  /* Door overhang canopy */
-  var cW=dW+18, cX=dX-9, cY=dY-6;
-  var canopy='<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="5" fill="#22201C" rx="1"/>'+
-    '<rect x="'+cX+'" y="'+cY+'" width="'+cW+'" height="2" fill="rgba(255,255,255,.14)"/>'+
-    '<rect x="'+cX+'" y="'+(cY+5)+'" width="'+cW+'" height="1" fill="rgba(0,0,0,.18)"/>'+
-    '<line x1="'+(cX+4)+'" y1="'+(cY+5)+'" x2="'+(cX+10)+'" y2="'+(cY+15)+'" stroke="#22201C" stroke-width="1.1"/>'+
-    '<line x1="'+(cX+cW-4)+'" y1="'+(cY+5)+'" x2="'+(cX+cW-10)+'" y2="'+(cY+15)+'" stroke="#22201C" stroke-width="1.1"/>';
-
-  /* === Garden: bushes + tall background tree === */
-  var bY=ground;
-  var bushes='<ellipse cx="'+(hx+9)+'" cy="'+(bY-5)+'" rx="9" ry="7" fill="#286818" opacity=".88"/>'+
-    '<ellipse cx="'+(hx+20)+'" cy="'+(bY-8)+'" rx="8" ry="7" fill="#367820" opacity=".82"/>'+
-    '<ellipse cx="'+(hx+31)+'" cy="'+(bY-5)+'" rx="7" ry="5.5" fill="#286818" opacity=".78"/>'+
-    '<ellipse cx="'+(hx+14)+'" cy="'+(bY-3)+'" rx="5" ry="3.5" fill="#3B8628" opacity=".7"/>';
-  var lamp = '';
-  var tree = '';
-
-  return defs+sky+sun+clouds+grass+path+lawn+street+shadow+chimney+roofPoly+tLines+ridge+eave+bodyLow+bodyUp+sideShade+belt+plinth+pil+win1+win2+win3+garage+steps+door+canopy+bushes;
-}
-
-/* Render the fence or gate based on product type. Length-aware: bigger length => more panels visible */
-function renderFenceOrGate(type, color, x1, x2, totalW, top, h, ground, lengthMeters, compact){
-  if(type === 'brana'){
-    return renderGate(color, x1, x2, totalW, top, h, ground, lengthMeters, compact);
-  }
-  if(type === 'pletivo'){
-    return renderMeshFence(color, x1, x2, totalW, top, h, ground, lengthMeters, compact);
-  }
-  if(type === 'mobilne'){
-    return renderMobileFence(color, x1, x2, totalW, top, h, ground, lengthMeters, compact);
-  }
-  if(type === 'betonovy'){
-    return renderConcreteFence(color, x1, x2, totalW, top, h, ground, lengthMeters, compact);
-  }
-  if(type === 'oporne'){
-    return renderRetainingWall(color, x1, x2, totalW, top, h, ground, lengthMeters, compact);
-  }
-  return render3dFence(color, x1, x2, totalW, top, h, ground, lengthMeters, compact);
-}
-
-/* Helper: estimate visible panel count based on length and viewport width */
-function panelsForLength(lengthMeters, panelMeters, totalW, maxPanels){
-  var ratio = Math.min(1, lengthMeters / (panelMeters * maxPanels));
-  var n = Math.max(2, Math.round(maxPanels * (0.4 + 0.6 * ratio)));
-  return Math.min(maxPanels, n);
-}
-
-/* 3D fence: realistic welded-wire panels with metallic gradient posts */
-function render3dFence(color, x1, x2, w, top, h, ground, lengthMeters, compact){
-  var gid = 'g3d' + Math.random().toString(36).slice(2,6);
-  var lt = adjustColor(color, 28);
-  var dk = adjustColor(color, -28);
-  var bot = top + h;
-  var n = panelsForLength(lengthMeters, 2.5, w, compact ? 5 : 7);
-  var panelW = w / n;
-
-  var defs = '<defs>'+
-    '<linearGradient id="'+gid+'post" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="'+lt+'"/>'+
-      '<stop offset="35%" stop-color="'+color+'"/>'+
-      '<stop offset="100%" stop-color="'+dk+'"/>'+
-    '</linearGradient>'+
-    '<linearGradient id="'+gid+'rail" x1="0" y1="0" x2="0" y2="1">'+
-      '<stop offset="0%" stop-color="'+lt+'"/>'+
-      '<stop offset="50%" stop-color="'+color+'"/>'+
-      '<stop offset="100%" stop-color="'+dk+'"/>'+
-    '</linearGradient>'+
-    '<linearGradient id="'+gid+'wire" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="'+dk+'"/>'+
-      '<stop offset="45%" stop-color="'+lt+'"/>'+
-      '<stop offset="100%" stop-color="'+color+'"/>'+
-    '</linearGradient>'+
-    '<filter id="'+gid+'sh" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-opacity=".25"/></filter>'+
-  '</defs>';
-
-  var out = defs;
-  /* Concrete footing strip */
-  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="4" fill="#9AA898" rx="1"/>';
-  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="1.2" fill="rgba(255,255,255,.25)"/>';
-
-  /* Panels */
-  for(var i=0;i<n;i++){
-    var px = x1 + i*panelW;
-    /* Top rail with gradient */
-    out += '<rect x="'+(px+.5)+'" y="'+top+'" width="'+(panelW-1)+'" height="3.5" fill="url(#'+gid+'rail)"/>';
-    /* Bottom rail */
-    out += '<rect x="'+(px+.5)+'" y="'+(bot-4)+'" width="'+(panelW-1)+'" height="4" fill="url(#'+gid+'rail)"/>';
-    /* Middle horizontal */
-    var mid = top + h*.5;
-    out += '<rect x="'+(px+.5)+'" y="'+(mid-1.2)+'" width="'+(panelW-1)+'" height="2.4" fill="url(#'+gid+'rail)" opacity=".95"/>';
-    /* Vertical wires - thicker with gradient sheen, rounded ends */
-    var vCnt = 6;
-    for(var k=1;k<vCnt;k++){
-      var vx = px + (panelW/vCnt)*k;
-      out += '<rect x="'+(vx-.9).toFixed(1)+'" y="'+(top+3.5)+'" width="1.8" height="'+(h-7.5)+'" fill="url(#'+gid+'wire)" rx=".8"/>';
-    }
-  }
-
-  /* Posts with metallic gradient and cap */
-  for(var p=0;p<=n;p++){
-    var ppx = x1 + p*panelW;
-    var pW = compact ? 5 : 6.5, pH = h+10;
-    /* Main post body */
-    out += '<rect x="'+(ppx-pW/2).toFixed(1)+'" y="'+(top-6)+'" width="'+pW+'" height="'+pH+'" fill="url(#'+gid+'post)" filter="url(#'+gid+'sh)"/>';
-    /* Cap */
-    var capW = pW + 4, capH = compact ? 3.5 : 4.5;
-    out += '<rect x="'+(ppx-capW/2).toFixed(1)+'" y="'+(top-6-capH)+'" width="'+capW+'" height="'+capH+'" fill="url(#'+gid+'post)" rx=".8"/>';
-    out += '<rect x="'+(ppx-capW/2).toFixed(1)+'" y="'+(top-6-capH)+'" width="'+capW+'" height="1.2" fill="rgba(255,255,255,.35)"/>';
-    /* Post bolt details (mounting plate suggestion at top of each post) */
-    out += '<circle cx="'+(ppx-pW*.25).toFixed(1)+'" cy="'+(top+h*.15)+'" r=".7" fill="rgba(0,0,0,.35)"/>';
-    out += '<circle cx="'+(ppx+pW*.25).toFixed(1)+'" cy="'+(top+h*.15)+'" r=".7" fill="rgba(0,0,0,.35)"/>';
-  }
-
-  /* Ground shadow */
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.22)" opacity=".55"/>';
-  return out;
-}
-
-/* Pletivo: realistic chain-link/welded mesh with proper posts */
-function renderMeshFence(color, x1, x2, w, top, h, ground, lengthMeters, compact){
-  var bot = top + h;
-  var mid = 'msh'+Math.random().toString(36).slice(2,7);
-  var step = compact ? 7 : 9;
-  var hl = 'rgba(255,255,255,.35)';
-  var defs = '<defs><pattern id="'+mid+'" patternUnits="userSpaceOnUse" width="'+step+'" height="'+step+'">' +
-    '<path d="M0,'+step+' L'+step+',0 M0,0 L'+step+','+step+'" stroke="'+color+'" stroke-width="1" opacity=".75"/>' +
-    '</pattern></defs>';
-  var out = defs;
-  /* Concrete base */
-  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="4" fill="#9AA898" rx="1"/>';
-  /* Mesh fill */
-  out += '<rect x="'+x1+'" y="'+top+'" width="'+w+'" height="'+h+'" fill="url(#'+mid+')"/>';
-  /* Top tension rail */
-  out += '<rect x="'+x1+'" y="'+top+'" width="'+w+'" height="2.5" fill="'+color+'"/>';
-  out += '<rect x="'+x1+'" y="'+top+'" width="'+w+'" height="1" fill="'+hl+'"/>';
-  /* Bottom base rail */
-  out += '<rect x="'+x1+'" y="'+(bot-3)+'" width="'+w+'" height="3" fill="'+color+'"/>';
-  /* Mid horizontal wire */
-  out += '<rect x="'+x1+'" y="'+(top+h*.5-1)+'" width="'+w+'" height="1.5" fill="'+color+'" opacity=".6"/>';
-  /* Posts */
-  var n = panelsForLength(lengthMeters, 2.5, w, compact ? 6 : 8);
-  for(var i=0;i<=n;i++){
-    var px = x1 + (w/n)*i;
-    var pW = compact ? 3.5 : 4.5;
-    out += '<rect x="'+(px-pW/2).toFixed(1)+'" y="'+(top-4)+'" width="'+pW+'" height="'+(h+5)+'" fill="'+color+'"/>';
-    out += '<rect x="'+(px-pW/2).toFixed(1)+'" y="'+(top-4)+'" width="1.2" height="'+(h+5)+'" fill="'+hl+'"/>';
-    /* Post cap */
-    out += '<rect x="'+(px-pW/2-1).toFixed(1)+'" y="'+(top-7)+'" width="'+(pW+2)+'" height="4" fill="'+color+'" rx=".5"/>';
-    /* Anchor wire rings */
-    out += '<circle cx="'+px.toFixed(1)+'" cy="'+(top+h*.25).toFixed(1)+'" r="1.5" fill="none" stroke="'+color+'" stroke-width="1"/>';
-    out += '<circle cx="'+px.toFixed(1)+'" cy="'+(top+h*.75).toFixed(1)+'" r="1.5" fill="none" stroke="'+color+'" stroke-width="1"/>';
-  }
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2" fill="rgba(0,0,0,.2)" opacity=".5"/>';
-  return out;
-}
-
-/* Mobile fence: panels with proper frame, X-bracing and realistic footed bases */
-function renderMobileFence(color, x1, x2, w, top, h, ground, lengthMeters, compact){
-  var bot = top + h;
-  var c = '#96A0A8';
-  var chl = 'rgba(255,255,255,.4)';
-  var n = panelsForLength(lengthMeters, 3.5, w, compact ? 4 : 5);
-  var panelW = w / n;
-  var out = '';
-  for(var i=0;i<n;i++){
-    var px = x1 + i*panelW;
-    var pxE = px + panelW - 3;
-    /* Panel outer frame */
-    out += '<rect x="'+px+'" y="'+top+'" width="'+(panelW-3)+'" height="'+h+'" fill="none" stroke="'+c+'" stroke-width="2.2" rx="1.5"/>';
-    out += '<rect x="'+px+'" y="'+top+'" width="2" height="'+h+'" fill="'+chl+'" opacity=".5"/>';
-    /* Horizontal mid rail */
-    var midY = top + h*.5;
-    out += '<line x1="'+px+'" y1="'+midY+'" x2="'+(pxE)+'" y2="'+midY+'" stroke="'+c+'" stroke-width="1.5"/>';
-    /* X diagonal bracing */
-    out += '<line x1="'+(px+2)+'" y1="'+(top+2)+'" x2="'+(pxE)+'" y2="'+(bot-2)+'" stroke="'+c+'" stroke-width="1" opacity=".7"/>';
-    out += '<line x1="'+(pxE)+'" y1="'+(top+2)+'" x2="'+(px+2)+'" y2="'+(bot-2)+'" stroke="'+c+'" stroke-width="1" opacity=".7"/>';
-    /* Vertical intermediate bars (3) */
-    for(var vb=1;vb<=3;vb++){
-      var vbx = px + (panelW-3)*vb/4;
-      out += '<line x1="'+vbx.toFixed(1)+'" y1="'+(top+2)+'" x2="'+vbx.toFixed(1)+'" y2="'+(bot-2)+'" stroke="'+c+'" stroke-width="1" opacity=".55"/>';
-    }
-    /* Concrete footing (T-shape) */
-    var footCX = px + (panelW-3)/2;
-    out += '<rect x="'+(footCX-panelW*.28)+'" y="'+(ground-4)+'" width="'+(panelW*.56)+'" height="4" fill="#5A6068" rx="1"/>';
-    out += '<rect x="'+(footCX-panelW*.12)+'" y="'+(ground-10)+'" width="'+(panelW*.24)+'" height="7" fill="#5A6068" rx="1"/>';
-    /* Clip connectors between panels */
-    if(i < n-1){
-      var clipX = pxE;
-      out += '<rect x="'+(clipX-2)+'" y="'+(top+h*.35)+'" width="6" height="4" fill="#888" rx="1"/>';
-      out += '<rect x="'+(clipX-2)+'" y="'+(top+h*.6)+'" width="6" height="4" fill="#888" rx="1"/>';
-    }
-  }
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2" fill="rgba(0,0,0,.2)" opacity=".45"/>';
-  return out;
-}
-
-/* Concrete fence: realistic horizontal-panel concrete fence with columns */
-function renderConcreteFence(color, x1, x2, w, top, h, ground, lengthMeters, compact){
-  var bot = top + h;
-  var slabH = compact ? 8 : 11;
-  var nSlab = Math.floor(h / slabH);
-  var out = '';
-  /* Columns first (behind slabs) */
-  var np = panelsForLength(lengthMeters, 2.5, w, compact ? 4 : 5);
-  var colW = compact ? 8 : 10;
-  for(var k=0;k<=np;k++){
-    var cpx = x1 + (w/np)*k;
-    /* Column body */
-    out += '<rect x="'+(cpx-colW/2).toFixed(1)+'" y="'+(top-4)+'" width="'+colW+'" height="'+(h+6)+'" fill="#9EA6AA" stroke="rgba(0,0,0,.18)" stroke-width=".6" rx=".5"/>';
-    out += '<rect x="'+(cpx-colW/2).toFixed(1)+'" y="'+(top-4)+'" width="2" height="'+(h+6)+'" fill="rgba(255,255,255,.22)"/>';
-    out += '<rect x="'+(cpx+colW/2-2).toFixed(1)+'" y="'+(top-4)+'" width="2" height="'+(h+6)+'" fill="rgba(0,0,0,.18)"/>';
-    /* Column cap */
-    out += '<rect x="'+(cpx-colW/2-2).toFixed(1)+'" y="'+(top-8)+'" width="'+(colW+4)+'" height="6" fill="#B0B8BC" rx="1"/>';
-    out += '<rect x="'+(cpx-colW/2-2).toFixed(1)+'" y="'+(top-8)+'" width="'+(colW+4)+'" height="2" fill="rgba(255,255,255,.25)"/>';
-  }
-  /* Concrete slabs with alternating tones and texture lines */
-  for(var i=0;i<nSlab;i++){
-    var sy = top + i*slabH;
-    var fc = i%2 === 0 ? '#B2BAC0' : '#C8D0D6';
-    out += '<rect x="'+(x1+colW/2)+'" y="'+sy+'" width="'+(w-colW)+'" height="'+(slabH-1)+'" fill="'+fc+'" stroke="rgba(0,0,0,.12)" stroke-width=".5"/>';
-    /* Subtle horizontal texture lines on slab */
-    out += '<line x1="'+(x1+colW/2)+'" y1="'+(sy+slabH*.4)+'" x2="'+(x2-colW/2)+'" y2="'+(sy+slabH*.4)+'" stroke="rgba(0,0,0,.08)" stroke-width=".5"/>';
-    /* Slab top highlight */
-    out += '<line x1="'+(x1+colW/2)+'" y1="'+(sy+.5)+'" x2="'+(x2-colW/2)+'" y2="'+(sy+.5)+'" stroke="rgba(255,255,255,.3)" stroke-width=".8"/>';
-  }
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2" fill="rgba(0,0,0,.22)" opacity=".5"/>';
-  return out;
-}
-
-/* Retaining wall: realistic LEGO-block style with mortar lines and surface texture */
-function renderRetainingWall(color, x1, x2, w, top, h, ground, lengthMeters, compact){
-  var blockH = compact ? 13 : 17;
-  var blockW = compact ? 38 : 50;
-  var rows = Math.max(1, Math.floor(h / blockH));
-  var out = '';
-  /* Draw blocks from bottom to top */
-  for(var r=0;r<rows;r++){
-    var y = ground - (r+1)*blockH;
-    var offset = (r%2) * (blockW/2);
-    var shade = r%2 === 0 ? '#B0ABA0' : '#C0BAB0';
-    for(var bx=x1-offset; bx<x2; bx+=blockW){
-      var bxR = Math.min(bx+blockW, x2);
-      var bxL = Math.max(bx, x1);
-      var bbw = bxR - bxL;
-      if(bbw < 6) continue;
-      /* Block face */
-      out += '<rect x="'+bxL.toFixed(1)+'" y="'+y+'" width="'+(bbw-1.5)+'" height="'+(blockH-1.5)+'" fill="'+shade+'" stroke="rgba(0,0,0,.18)" stroke-width=".6" rx="1.2"/>';
-      /* Top highlight */
-      out += '<rect x="'+(bxL+1).toFixed(1)+'" y="'+(y+1)+'" width="'+(bbw-4)+'" height="2" fill="rgba(255,255,255,.25)" rx=".5"/>';
-      /* Surface texture lines */
-      out += '<line x1="'+(bxL+1)+'" y1="'+(y+blockH*.55)+'" x2="'+(bxR-2)+'" y2="'+(y+blockH*.55)+'" stroke="rgba(0,0,0,.1)" stroke-width=".5"/>';
-      /* Side shadow */
-      out += '<rect x="'+(bxR-2.5).toFixed(1)+'" y="'+y+'" width="1.5" height="'+(blockH-1.5)+'" fill="rgba(0,0,0,.14)"/>';
-      /* Mortar line (top edge darker) */
-      out += '<rect x="'+bxL.toFixed(1)+'" y="'+(y+blockH-2)+'" width="'+(bbw-1.5)+'" height="1.5" fill="rgba(80,75,68,.35)"/>';
-    }
-  }
-  /* Ground shadow */
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.22)" opacity=".5"/>';
-  return out;
-}
-
-/* Gate: professional, photo-realistic with metallic gradients */
-function renderGate(color, x1, x2, w, top, h, ground, gateWidthM, compact){
-  var gid = 'gt' + Math.random().toString(36).slice(2,6);
-  var lt = adjustColor(color, 30);
-  var dk = adjustColor(color, -30);
-  var bot = top + h;
-
-  /* Gate opening proportional to selected width (3-5m maps to 38-62% of fence span) */
-  var ratio = Math.max(0.38, Math.min(0.62, 0.38 + (gateWidthM - 3) * 0.08));
-  var gateW = w * ratio;
-  var sideW = (w - gateW) / 2;
-  var gateLeftX = x1 + sideW;
-  var gateRightX = gateLeftX + gateW;
-  var mainPostW = compact ? 11 : 14;
-
-  /* === SVG defs: gradients + drop shadow === */
-  var defs = '<defs>'+
-    /* Post gradient (left light, right dark for 3D round-pillar feel) */
-    '<linearGradient id="'+gid+'post" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="'+lt+'"/>'+
-      '<stop offset="40%" stop-color="'+color+'"/>'+
-      '<stop offset="100%" stop-color="'+dk+'"/>'+
-    '</linearGradient>'+
-    /* Horizontal rail (top light, bottom dark) */
-    '<linearGradient id="'+gid+'rail" x1="0" y1="0" x2="0" y2="1">'+
-      '<stop offset="0%" stop-color="'+lt+'"/>'+
-      '<stop offset="55%" stop-color="'+color+'"/>'+
-      '<stop offset="100%" stop-color="'+dk+'"/>'+
-    '</linearGradient>'+
-    /* Vertical bar (round-tube look: light center) */
-    '<linearGradient id="'+gid+'bar" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="'+dk+'"/>'+
-      '<stop offset="40%" stop-color="'+lt+'"/>'+
-      '<stop offset="100%" stop-color="'+color+'"/>'+
-    '</linearGradient>'+
-    /* Cap gradient */
-    '<linearGradient id="'+gid+'cap" x1="0" y1="0" x2="0" y2="1">'+
-      '<stop offset="0%" stop-color="'+adjustColor(color,45)+'"/>'+
-      '<stop offset="100%" stop-color="'+color+'"/>'+
-    '</linearGradient>'+
-    /* Hinge metal */
-    '<linearGradient id="'+gid+'hinge" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="#8A9098"/>'+
-      '<stop offset="50%" stop-color="#5A6068"/>'+
-      '<stop offset="100%" stop-color="#3A4048"/>'+
-    '</linearGradient>'+
-    /* Handle gold */
-    '<linearGradient id="'+gid+'handle" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="#E8C870"/>'+
-      '<stop offset="50%" stop-color="#C8A840"/>'+
-      '<stop offset="100%" stop-color="#9C7E20"/>'+
-    '</linearGradient>'+
-    /* Drop shadow */
-    '<filter id="'+gid+'sh" x="-5%" y="-5%" width="115%" height="120%">'+
-      '<feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-opacity=".3"/>'+
-    '</filter>'+
-  '</defs>';
-
-  var out = defs;
-  /* Concrete footing strip */
-  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="4" fill="#9AA898" rx="1"/>';
-  out += '<rect x="'+x1+'" y="'+(bot-4)+'" width="'+w+'" height="1.2" fill="rgba(255,255,255,.25)"/>';
-
-  /* === Side fence panels (3D-plot style, slightly dimmed) === */
-  function sideFence(sfx1, sfWidth){
-    if(sfWidth < 10) return '';
-    var sf = '', sfn = Math.max(1, Math.round(sfWidth/30));
-    var sfpW = sfWidth/sfn;
-    for(var si=0;si<sfn;si++){
-      var spx = sfx1 + si*sfpW;
-      /* Rails */
-      sf += '<rect x="'+(spx+.5)+'" y="'+top+'" width="'+(sfpW-1)+'" height="3" fill="url(#'+gid+'rail)" opacity=".8"/>';
-      sf += '<rect x="'+(spx+.5)+'" y="'+(bot-3.5)+'" width="'+(sfpW-1)+'" height="3.5" fill="url(#'+gid+'rail)" opacity=".8"/>';
-      sf += '<rect x="'+(spx+.5)+'" y="'+(top+h*.5-1)+'" width="'+(sfpW-1)+'" height="2" fill="url(#'+gid+'rail)" opacity=".7"/>';
-      /* Vertical bars */
-      for(var sk=1;sk<5;sk++){
-        var svx = spx + (sfpW/5)*sk;
-        sf += '<rect x="'+(svx-.8).toFixed(1)+'" y="'+(top+3)+'" width="1.6" height="'+(h-6.5)+'" fill="url(#'+gid+'bar)" rx=".7" opacity=".85"/>';
-      }
-    }
-    /* Side fence posts */
-    for(var sp=0;sp<=sfn;sp++){
-      var sppx = sfx1 + sp*sfpW;
-      var spW = compact ? 4 : 5;
-      sf += '<rect x="'+(sppx-spW/2).toFixed(1)+'" y="'+(top-5)+'" width="'+spW+'" height="'+(h+6)+'" fill="url(#'+gid+'post)" opacity=".85"/>';
-      sf += '<rect x="'+(sppx-spW/2-1).toFixed(1)+'" y="'+(top-7.5)+'" width="'+(spW+2)+'" height="3" fill="url(#'+gid+'cap)" rx=".5"/>';
-    }
-    return sf;
-  }
-  out += sideFence(x1, sideW - mainPostW/2 - 2);
-  out += sideFence(gateRightX + mainPostW/2 + 2, sideW - mainPostW/2 - 2);
-
-  /* === Concrete plinth bases for gate posts === */
-  var plinthW = mainPostW + 10, plinthH = compact ? 7 : 9;
-  out += '<rect x="'+(gateLeftX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="'+plinthH+'" fill="#9098A0" rx="1"/>';
-  out += '<rect x="'+(gateLeftX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="2" fill="rgba(255,255,255,.3)"/>';
-  out += '<rect x="'+(gateRightX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="'+plinthH+'" fill="#9098A0" rx="1"/>';
-  out += '<rect x="'+(gateRightX-plinthW/2).toFixed(1)+'" y="'+(ground-plinthH)+'" width="'+plinthW+'" height="2" fill="rgba(255,255,255,.3)"/>';
-
-  /* === Substantial gate posts with decorative cap + finial === */
-  function gatePost(gpx){
-    var pR = '';
-    var pTop = top - 14;
-    var pH = h + 14;
-    /* Main pillar with gradient */
-    pR += '<rect x="'+(gpx-mainPostW/2).toFixed(1)+'" y="'+pTop+'" width="'+mainPostW+'" height="'+pH+'" fill="url(#'+gid+'post)" filter="url(#'+gid+'sh)"/>';
-    /* Edge highlight + shadow */
-    pR += '<rect x="'+(gpx-mainPostW/2).toFixed(1)+'" y="'+pTop+'" width="1.5" height="'+pH+'" fill="rgba(255,255,255,.18)"/>';
-    pR += '<rect x="'+(gpx+mainPostW/2-1.2).toFixed(1)+'" y="'+pTop+'" width="1.2" height="'+pH+'" fill="rgba(0,0,0,.18)"/>';
-    /* Wide pyramid cap (two-tier) */
-    var capW = mainPostW + 8, capH = compact ? 5 : 6;
-    pR += '<rect x="'+(gpx-capW/2).toFixed(1)+'" y="'+(pTop-capH)+'" width="'+capW+'" height="'+capH+'" fill="url(#'+gid+'cap)" rx="1"/>';
-    pR += '<rect x="'+(gpx-capW/2).toFixed(1)+'" y="'+(pTop-capH)+'" width="'+capW+'" height="1.5" fill="rgba(255,255,255,.4)"/>';
-    /* Smaller secondary cap (collar) */
-    var c2W = mainPostW + 4;
-    pR += '<rect x="'+(gpx-c2W/2).toFixed(1)+'" y="'+(pTop-capH-2.5)+'" width="'+c2W+'" height="2.5" fill="url(#'+gid+'cap)" rx=".5"/>';
-    /* Decorative sphere finial */
-    var sR = compact ? 4 : 5;
-    pR += '<circle cx="'+gpx.toFixed(1)+'" cy="'+(pTop-capH-2.5-sR+1).toFixed(1)+'" r="'+sR+'" fill="url(#'+gid+'cap)"/>';
-    pR += '<circle cx="'+(gpx-sR*.35).toFixed(1)+'" cy="'+(pTop-capH-2.5-sR-sR*.35+1).toFixed(1)+'" r="'+(sR*.35)+'" fill="rgba(255,255,255,.55)"/>';
-    return pR;
-  }
-  out += gatePost(gateLeftX);
-  out += gatePost(gateRightX);
-
-  /* === Gate wing drawing helper === */
-  var gateType = calcState.gateType;
-
-  function drawWing(wingX, wingW, isRight){
-    var wR = '';
-    /* Solid-ish panel infill so the wing reads clearly (like a real 3D mesh panel),
-       even with the bright driveway behind it. Uses the gate colour at high opacity. */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="'+(h-2)+'" fill="'+color+'" opacity=".5" rx="1"/>';
-    /* Frame top + bottom rails (thicker, with gradient) */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="'+wingW.toFixed(1)+'" height="3.5" fill="url(#'+gid+'rail)"/>';
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(bot-4.5)+'" width="'+wingW.toFixed(1)+'" height="4.5" fill="url(#'+gid+'rail)"/>';
-    /* Frame left + right verticals */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+1)+'" width="3" height="'+(h-2)+'" fill="url(#'+gid+'post)"/>';
-    wR += '<rect x="'+(wingX+wingW-3).toFixed(1)+'" y="'+(top+1)+'" width="3" height="'+(h-2)+'" fill="url(#'+gid+'post)"/>';
-    /* Middle horizontal rail */
-    wR += '<rect x="'+wingX.toFixed(1)+'" y="'+(top+h*.46).toFixed(1)+'" width="'+wingW.toFixed(1)+'" height="2.5" fill="url(#'+gid+'rail)" opacity=".95"/>';
-    /* Vertical infill bars - round-tube look via gradient */
-    var vCnt = Math.max(5, Math.round(wingW/9));
-    var innerW = wingW - 7;
-    var innerX = wingX + 3.5;
-    for(var vb=1;vb<vCnt;vb++){
-      var vbx = innerX + (innerW/vCnt)*vb;
-      wR += '<rect x="'+(vbx-1).toFixed(1)+'" y="'+(top+4.5)+'" width="2" height="'+(h-9)+'" fill="url(#'+gid+'bar)" rx=".9"/>';
-    }
-    /* Diagonal anti-sag brace (hinge corner -> opposite top corner) */
-    var bx1 = isRight ? (wingX+wingW-3) : (wingX+3);
-    var bx2 = isRight ? (wingX+3) : (wingX+wingW-3);
-    wR += '<line x1="'+bx1.toFixed(1)+'" y1="'+(bot-4.5)+'" x2="'+bx2.toFixed(1)+'" y2="'+(top+4.5)+'" stroke="'+dk+'" stroke-width="1.5" opacity=".55"/>';
-    wR += '<line x1="'+bx1.toFixed(1)+'" y1="'+(bot-4.5)+'" x2="'+bx2.toFixed(1)+'" y2="'+(top+4.5)+'" stroke="'+lt+'" stroke-width=".5" opacity=".5"/>';
-    return wR;
-  }
-
-  function hinge(hx, hy){
-    return '<rect x="'+(hx-1).toFixed(1)+'" y="'+hy.toFixed(1)+'" width="8" height="6" fill="url(#'+gid+'hinge)" rx=".5" filter="url(#'+gid+'sh)"/>'+
-      '<circle cx="'+(hx+1.5).toFixed(1)+'" cy="'+(hy+3).toFixed(1)+'" r=".7" fill="rgba(0,0,0,.5)"/>'+
-      '<circle cx="'+(hx+5.5).toFixed(1)+'" cy="'+(hy+3).toFixed(1)+'" r=".7" fill="rgba(0,0,0,.5)"/>';
-  }
-
-  if(gateType === 'posuvna'){
-    /* Sliding gate */
-    var railH = compact ? 3.5 : 4.5;
-    /* Bottom rail track (steel I-beam look) */
-    out += '<rect x="'+x1+'" y="'+(bot-railH)+'" width="'+w+'" height="'+railH+'" fill="url(#'+gid+'rail)" opacity=".7"/>';
-    out += '<rect x="'+x1+'" y="'+(bot-railH)+'" width="'+w+'" height="1.2" fill="rgba(255,255,255,.4)" opacity=".5"/>';
-    /* Single wing across opening */
-    var swX = gateLeftX + 3;
-    var swW = gateW - 6;
-    out += drawWing(swX, swW, false);
-    /* Rollers - more realistic (wheel with hub) */
-    for(var rr=0;rr<=2;rr++){
-      var rrX = swX + swW*.18 + rr*(swW*.32);
-      var rR = railH*.85;
-      out += '<circle cx="'+rrX.toFixed(1)+'" cy="'+(bot-railH/2)+'" r="'+rR+'" fill="url(#'+gid+'hinge)" stroke="'+dk+'" stroke-width=".6"/>';
-      out += '<circle cx="'+rrX.toFixed(1)+'" cy="'+(bot-railH/2)+'" r="'+(rR*.4)+'" fill="rgba(0,0,0,.4)"/>';
-    }
-    /* Counterweight tail (visible behind right post when extended) */
-    out += '<rect x="'+(swX+swW-3).toFixed(1)+'" y="'+(top+h*.45)+'" width="3" height="'+(h*.1)+'" fill="url(#'+gid+'handle)" rx="1"/>';
-
-  } else if(gateType === 'jednokrid'){
-    /* Single wing */
-    var jwW = gateW * 0.54;
-    var jwX = gateLeftX + mainPostW/2 + 2;
-    /* Hinges on left post */
-    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.16);
-    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.72);
-    out += drawWing(jwX, jwW, false);
-    /* Long vertical pull handle */
-    out += '<rect x="'+(jwX+jwW-7).toFixed(1)+'" y="'+(top+h*.35).toFixed(1)+'" width="2.5" height="'+(h*.30).toFixed(1)+'" fill="url(#'+gid+'handle)" rx="1.2"/>';
-    /* Handle mounts (top + bottom) */
-    out += '<rect x="'+(jwX+jwW-7.5).toFixed(1)+'" y="'+(top+h*.35-1).toFixed(1)+'" width="3.5" height="2" fill="url(#'+gid+'handle)" rx=".5"/>';
-    out += '<rect x="'+(jwX+jwW-7.5).toFixed(1)+'" y="'+(top+h*.65-1).toFixed(1)+'" width="3.5" height="2" fill="url(#'+gid+'handle)" rx=".5"/>';
-    /* Lock cylinder */
-    out += '<circle cx="'+(jwX+jwW-5).toFixed(1)+'" cy="'+(top+h*.52).toFixed(1)+'" r="1.4" fill="url(#'+gid+'hinge)"/>';
-
-  } else {
-    /* Double-wing (default) */
-    var dhW = (gateW - mainPostW - 6) / 2;
-    var lWingX = gateLeftX + mainPostW/2 + 2;
-    var rWingX = gateRightX - mainPostW/2 - 2 - dhW;
-    /* Hinges left post */
-    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.16);
-    out += hinge(gateLeftX + mainPostW/2 - 2, top + h*.72);
-    /* Hinges right post */
-    out += hinge(gateRightX - mainPostW/2 - 6, top + h*.16);
-    out += hinge(gateRightX - mainPostW/2 - 6, top + h*.72);
-    out += drawWing(lWingX, dhW, false);
-    out += drawWing(rWingX, dhW, true);
-    /* Center gap shadow line */
-    var gapX = lWingX + dhW + 3;
-    out += '<line x1="'+gapX.toFixed(1)+'" y1="'+(top+1)+'" x2="'+gapX.toFixed(1)+'" y2="'+(bot-1)+'" stroke="rgba(0,0,0,.3)" stroke-width="1.5"/>';
-    /* Handles at center gap (vertical pull handles) */
-    out += '<rect x="'+(lWingX+dhW-5).toFixed(1)+'" y="'+(top+h*.40).toFixed(1)+'" width="2.5" height="'+(h*.22).toFixed(1)+'" fill="url(#'+gid+'handle)" rx="1.2"/>';
-    out += '<rect x="'+(rWingX+2).toFixed(1)+'" y="'+(top+h*.40).toFixed(1)+'" width="2.5" height="'+(h*.22).toFixed(1)+'" fill="url(#'+gid+'handle)" rx="1.2"/>';
-    /* Lock cylinder on right wing */
-    out += '<circle cx="'+(rWingX+5).toFixed(1)+'" cy="'+(top+h*.52).toFixed(1)+'" r="1.4" fill="url(#'+gid+'hinge)"/>';
-    /* Center drop-bolt to ground */
-    out += '<rect x="'+(gapX-.7).toFixed(1)+'" y="'+(bot-1)+'" width="1.4" height="3" fill="url(#'+gid+'hinge)"/>';
-  }
-
-  /* Ground shadow */
-  out += '<rect x="'+x1+'" y="'+ground+'" width="'+w+'" height="2.5" fill="rgba(0,0,0,.22)" opacity=".55"/>';
-  return out;
-}
-
-function appendLiveVisual(el){
-  if(!el || !calcState.product) return;
-  if(el.querySelector('.mc-choice-preview')) return;
-  var holder = document.createElement('div');
-  var isFinalStep = calcState.step === calcState.totalSteps - 1;
-  holder.innerHTML = renderLiveVisual(false, isFinalStep);
-  el.appendChild(holder.firstChild);
-}
-
-function revealLiveVisual(target){
-  var viz = target && target.classList && target.classList.contains('mc-live-viz') ? target : (target ? target.closest('.mc-live-viz') : null);
-  if(!viz || !viz.classList.contains('reveal-locked')) return;
-  viz.classList.remove('reveal-locked');
-  viz.classList.add('revealed');
-  var btn = viz.querySelector('.mc-viz-reveal');
-  if(btn) btn.remove();
-}
-
-function refreshLiveVisual(){
-  var el = document.getElementById('calcContent');
-  if(!el) return;
-  var old = el.querySelector('.mc-live-viz:not(.compact)');
-  if(old) old.remove();
-  appendLiveVisual(el);
-}
-
-function productImageFor(product, color){
-  color = color || calcState.color || 'antracit';
-  if(product === 'brana'){
-    var gate = calcState.gateType === 'jednokrid' ? 'jednokridlova-branka' : 'dvojkridlova-brana';
-    if(calcState.gateType === 'posuvna') return color === 'zelena'
-      ? 'https://mojplot.sk/wp-content/uploads/2025/09/Zelena-Posuvna-brana-3D-vypln-600x500.png'
-      : 'https://mojplot.sk/wp-content/uploads/2025/09/Antracit-Posuvna-brana-3D-vypln-600x500.png';
-    return 'https://mojplot.sk/wp-content/uploads/2025/12/'+gate+'-farba-'+color+'.webp';
-  }
-  if(product === 'pletivo'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/10/stvorhranne-pletivo-Zinok.webp';
-  }
-  if(product === '3d-plot') return 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-'+color+'.webp';
-  return '';
-}
-
-function renderChoicePreview(product){
-  return '<div class="mc-choice-preview">' +
-    renderLiveVisual(true, false) +
-  '</div>';
-}
 
 /* =========================================================
    ZAKLADNA UI
@@ -3618,8 +2386,6 @@ function renderCalcStep(){
     if(calcState.step === 1) renderCustomDesc(el);
     else if(calcState.step === 2) renderFinal(el);
   }
-
-  appendLiveVisual(el);
 }
 
 function next(){ calcState.step++; renderCalcStep(); }
@@ -3718,7 +2484,6 @@ function onLenSlide(v){
   document.getElementById('lenInput').value = v;
   var pc = document.getElementById('panelCount');
   if(pc) pc.innerHTML = (MC.lang==='sk'? Math.ceil(v/2.5)+' panelov' : Math.ceil(v/2.5)+' panels');
-  refreshLiveVisual();
 }
 function onLenInput(v){
   var n = parseInt(v) || 1;
@@ -3729,7 +2494,6 @@ function onLenInput(v){
   document.getElementById('lenVal').innerHTML = n + '<span class="mc-dim-value-unit">m</span>';
   var pc = document.getElementById('panelCount');
   if(pc) pc.innerHTML = (MC.lang==='sk'? Math.ceil(n/2.5)+' panelov' : Math.ceil(n/2.5)+' panels');
-  refreshLiveVisual();
 }
 function adjLen(d){
   var v = (calcState.length || 20) + d;
@@ -3775,7 +2539,6 @@ function render3dColor(el){
   var lang = MC.lang;
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(lang==='sk'?'Akú farbu preferujete?':'Which color do you prefer?')+'</div>' +
-    renderChoicePreview('3d-plot') +
     '<div class="mc-color-grid">' +
       colorCard('zinok','Zinok','Pozink', 'zinok', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zinok.webp') +
       colorCard('zelena','Zelená','RAL 6005', 'zelena', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zelena.webp') +
@@ -3862,7 +2625,6 @@ function toggleExtra(input, key){
   calcState[key] = !!input.checked;
   var label = input.closest('.mc-check');
   if(label) label.classList.toggle('selected', input.checked);
-  refreshLiveVisual();
 }
 
 /* =========================================================
@@ -3957,11 +2719,11 @@ function renderGateDimensions(el){
 }
 function selGateWidth(v){
   calcState.gateWidth = v;
-  if(calcState.gateHeight){ autoNext(); } else { renderGateDimensions(document.getElementById('calcContent')); appendLiveVisual(document.getElementById('calcContent')); }
+  if(calcState.gateHeight){ autoNext(); } else { renderGateDimensions(document.getElementById('calcContent')); }
 }
 function selGateHeight(v){
   calcState.gateHeight = v;
-  if(calcState.gateWidth){ autoNext(); } else { renderGateDimensions(document.getElementById('calcContent')); appendLiveVisual(document.getElementById('calcContent')); }
+  if(calcState.gateWidth){ autoNext(); } else { renderGateDimensions(document.getElementById('calcContent')); }
 }
 function confirmGateDim(){
   var gateWidthInput = document.getElementById('gateWidthInput');
@@ -3993,7 +2755,6 @@ function renderGateColor(el){
   }
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(lang==='sk'?'Farba brány':'Gate color')+'</div>' +
-    renderChoicePreview('brana') +
     '<div class="mc-color-grid">' +
       colorCard('zinok','Zinok','Pozink', 'zinok', photos.zinok) +
       colorCard('zelena','Zelená','RAL 6005', 'zelena', photos.zelena) +
@@ -4077,7 +2838,6 @@ function renderMeshColor(el){
   var lang = MC.lang;
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(lang==='sk'?'Farba pletiva':'Mesh color')+'</div>' +
-    renderChoicePreview('pletivo') +
     '<div class="mc-color-grid">' +
       colorCard('zinok','Zinok','Pozink','zinok','') +
       colorCard('zelena','Zelená','RAL 6005','zelena','') +
@@ -4117,7 +2877,6 @@ function onMobileSlide(v){
   if(dv) dv.innerHTML = v + '<span class="mc-dim-value-unit">m</span>';
   var mp = document.getElementById('mobilePanels');
   if(mp) mp.innerHTML = (MC.lang==='sk'? Math.ceil(v/3.5)+' panelov' : Math.ceil(v/3.5)+' panels');
-  refreshLiveVisual();
 }
 
 function renderMobileExtras(el){
@@ -4161,7 +2920,6 @@ function onWallLen(v, key){
   calcState[key] = parseInt(v);
   var dv = document.querySelector('.mc-dim-value');
   if(dv) dv.innerHTML = v + '<span class="mc-dim-value-unit">m</span>';
-  refreshLiveVisual();
 }
 
 function renderWallHeight(el){
@@ -4186,7 +2944,6 @@ function onWallLayers(v){
   calcState.wallHeight = parseInt(v);
   var dv = document.querySelector('.mc-dim-value');
   if(dv) dv.innerHTML = v + '<span class="mc-dim-value-unit">'+(v*0.6).toFixed(1)+' m</span>';
-  refreshLiveVisual();
 }
 
 function renderWallBlock(el){
@@ -4474,28 +3231,6 @@ function colorName(){
   return (lang === 'sk' ? sk : en)[c] || c;
 }
 
-function visualLabel(){
-  var lang = MC.lang;
-  if(calcState.product === 'brana'){
-    return gateTypeTitle() + ' · ' + (calcState.gateWidth || (calcState.gateType === 'jednokrid' ? '1' : '4')) + ' m · ' + (calcState.gateHeight || '150') + ' cm · ' + colorName();
-  }
-  if(calcState.product === 'pletivo'){
-    return (calcState.length || 30) + ' m · ' + (calcState.meshHeight || '150') + ' cm · ' + colorName();
-  }
-  if(calcState.product === 'mobilne'){
-    return (calcState.mobileLength || 50) + ' m · ' + (lang === 'sk' ? 'mobilné panely' : 'mobile panels');
-  }
-  if(calcState.product === 'oporne'){
-    return (calcState.wallLength || 10) + ' m · ' + (calcState.wallHeight || 2) + (lang === 'sk' ? ' vrstvy' : ' layers');
-  }
-  if(calcState.product === 'betonovy'){
-    return lang === 'sk' ? 'betónový plot na mieru' : 'custom concrete fence';
-  }
-  if(calcState.product === 'ine'){
-    return lang === 'sk' ? 'výroba na mieru' : 'custom production';
-  }
-  return (calcState.length || 20) + ' m · ' + (calcState.height || '153') + ' cm · ' + colorName();
-}
 
 /* Colour cards show the REAL product photo in that colour (when provided), plus a colour swatch. */
 function colorCard(id, name, ral, swatch, photo){
@@ -4513,384 +3248,6 @@ function colorCard(id, name, ral, swatch, photo){
   '</div>';
 }
 
-/* ============================================
-   REAL-PHOTO LIVE VISUALIZATION
-   Returns the best matching mojplot.sk product photo for the current
-   selection. Falls back gracefully and never shows a cropped/low-quality
-   placeholder. Overrides the earlier SVG-based renderLiveVisual().
-   ============================================ */
-function liveVisualImage(){
-  var color = calcState.color || 'antracit';
-  if(['zinok','zelena','antracit'].indexOf(color) < 0) color = 'antracit';
-  var p = calcState.product;
-
-  if(p === 'brana'){
-    var gt = calcState.gateType || 'dvojkrid';
-    if(gt === 'jednokrid'){
-      return 'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-'+color+'.webp';
-    }
-    if(gt === 'posuvna'){
-      /* sliding gate is produced in zelená / antracit – galvanized falls back to antracit */
-      return color === 'zelena'
-        ? 'https://mojplot.sk/wp-content/uploads/2025/09/Zelena-Posuvna-brana-3D-vypln-600x500.png'
-        : 'https://mojplot.sk/wp-content/uploads/2025/09/Antracit-Posuvna-brana-3D-vypln-600x500.png';
-    }
-    return 'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-'+color+'.webp';
-  }
-  if(p === '3d-plot'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-'+color+'.webp';
-  }
-  if(p === 'pletivo'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/10/stvorhranne-pletivo-Zinok.webp';
-  }
-  if(p === 'mobilne'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/07/mobilne-oplotenie-main-scaled.jpg';
-  }
-  if(p === 'betonovy'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/08/Okrasny-betonovy-plot.png';
-  }
-  if(p === 'oporne'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/08/Betonova-lego-kocka-120cm-scaled.png';
-  }
-  if(p === 'ine'){
-    return 'https://mojplot.sk/wp-content/uploads/2025/10/Kategoria-Zakazkova-vyroba.webp';
-  }
-  return 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp';
-}
-
-/* Bold, filled-shape fence/gate drawn specifically for the house scene so it
-   reads clearly at small sizes (thin strokes disappear when scaled down). */
-function renderSceneFence(type, color, x1, x2, top, ground){
-  var dark = adjustColor(color, -22), hi = adjustColor(color, 20);
-  var W = x2 - x1, h = ground - top, out = '';
-
-  /* SOLID panel fences (concrete / retaining wall) */
-  if(type === 'betonovy' || type === 'oporne'){
-    out += '<rect x="'+x1+'" y="'+top+'" width="'+W+'" height="'+h+'" fill="'+color+'"/>';
-    out += '<rect x="'+x1+'" y="'+top+'" width="'+(W*0.5)+'" height="'+h+'" fill="'+hi+'" opacity=".25"/>';
-    for(var yy = top + 8; yy < ground - 3; yy += 9){
-      out += '<rect x="'+x1+'" y="'+yy.toFixed(1)+'" width="'+W+'" height="2" fill="rgba(0,0,0,.12)"/>';
-    }
-    var pst = Math.max(64, W/5);
-    for(var pp = x1; pp <= x2 - 4; pp += pst){
-      out += '<rect x="'+(pp-5).toFixed(1)+'" y="'+(top-4)+'" width="13" height="'+(h+4)+'" fill="'+dark+'"/>';
-    }
-    out += '<rect x="'+(x2-8)+'" y="'+(top-4)+'" width="13" height="'+(h+4)+'" fill="'+dark+'"/>';
-    return out;
-  }
-
-  function postEl(px){
-    return '<rect x="'+(px-4).toFixed(1)+'" y="'+(top-8)+'" width="9" height="'+(h+8)+'" rx="1.5" fill="'+dark+'"/>' +
-      '<rect x="'+(px-4).toFixed(1)+'" y="'+(top-8)+'" width="4" height="'+(h+8)+'" fill="'+hi+'" opacity=".45"/>' +
-      '<circle cx="'+(px+0.5).toFixed(1)+'" cy="'+(top-10)+'" r="5" fill="'+color+'"/>' +
-      '<circle cx="'+(px-1).toFixed(1)+'" cy="'+(top-11.5)+'" r="2" fill="'+hi+'" opacity=".7"/>';
-  }
-  function panel(ax1, ax2, framed){
-    var p = '', rH = 3.4, pw = ax2 - ax1;
-    if(pw < 4) return '';
-    if(framed) p += '<rect x="'+ax1.toFixed(1)+'" y="'+(top+1)+'" width="'+pw.toFixed(1)+'" height="'+(h-2)+'" fill="'+color+'" opacity=".18"/>';
-    p += '<rect x="'+ax1.toFixed(1)+'" y="'+(top+2)+'" width="'+pw.toFixed(1)+'" height="'+rH+'" fill="'+color+'"/>';
-    p += '<rect x="'+ax1.toFixed(1)+'" y="'+(ground-2-rH)+'" width="'+pw.toFixed(1)+'" height="'+rH+'" fill="'+color+'"/>';
-    if(framed){
-      p += '<rect x="'+ax1.toFixed(1)+'" y="'+(top+1)+'" width="3.2" height="'+(h-2)+'" fill="'+color+'"/>';
-      p += '<rect x="'+(ax2-3.2).toFixed(1)+'" y="'+(top+1)+'" width="3.2" height="'+(h-2)+'" fill="'+color+'"/>';
-    }
-    var n = Math.max(3, Math.round(pw/9));
-    for(var i=1;i<n;i++){
-      var bx = ax1 + pw*i/n;
-      p += '<rect x="'+(bx-1.4).toFixed(1)+'" y="'+(top+3)+'" width="2.8" height="'+(h-6)+'" fill="'+color+'"/>';
-    }
-    return p;
-  }
-  function brace(ax1, ax2){
-    return '<polygon points="'+ax1.toFixed(1)+','+(ground-4)+' '+(ax1+3).toFixed(1)+','+(ground-4)+' '+ax2.toFixed(1)+','+(top+4)+' '+(ax2-3).toFixed(1)+','+(top+4)+'" fill="'+color+'" opacity=".85"/>';
-  }
-  function handle(hx){ return '<rect x="'+hx.toFixed(1)+'" y="'+(top+h*0.5).toFixed(1)+'" width="3" height="10" rx="1.5" fill="#E3B23C"/>'; }
-
-  if(type === 'brana'){
-    var gt = calcState.gateType || 'dvojkrid';
-    var gw = (gt === 'jednokrid') ? Math.min(W*0.26, 78) : (gt === 'posuvna' ? Math.min(W*0.52, 188) : Math.min(W*0.44, 156));
-    var gx1 = (x1+x2)/2 - gw/2, gx2 = gx1 + gw, mid = (gx1+gx2)/2;
-    out += panel(x1+7, gx1-7, false);
-    out += panel(gx2+7, x2-7, false);
-    out += postEl(x1+4); out += postEl(x2-4);
-    out += postEl(gx1-3); out += postEl(gx2+3);
-    if(gt === 'dvojkrid'){
-      out += panel(gx1+3, mid-1, true);
-      out += panel(mid+1, gx2-3, true);
-      out += brace(gx1+4, mid-3); out += brace(gx2-4, mid+3);
-      out += '<rect x="'+(mid-1.5)+'" y="'+(top-2)+'" width="3" height="'+(h+1)+'" fill="'+dark+'"/>';
-      out += handle(mid-5); out += handle(mid+2);
-    } else if(gt === 'posuvna'){
-      out += panel(gx1+3, gx2-3, true);
-      out += brace(gx1+4, gx2-4);
-      out += '<rect x="'+(gx1-10)+'" y="'+(ground-1)+'" width="'+(gw+20)+'" height="2.6" fill="'+dark+'"/>';
-      out += '<circle cx="'+(gx1+gw*0.25).toFixed(1)+'" cy="'+(ground+1)+'" r="3" fill="'+dark+'"/><circle cx="'+(gx1+gw*0.75).toFixed(1)+'" cy="'+(ground+1)+'" r="3" fill="'+dark+'"/>';
-      out += handle(gx2-7);
-    } else {
-      out += panel(gx1+3, gx2-3, true);
-      out += brace(gx1+4, gx2-4);
-      out += handle(gx2-7);
-    }
-    return out;
-  }
-
-  /* plain bar fence (3D / mesh / mobile) */
-  out += panel(x1+7, x2-7, false);
-  if(type === 'pletivo'){
-    for(var mx = x1+12; mx < x2-10; mx += 12){
-      out += '<polygon points="'+mx+','+(top+5)+' '+(mx+6)+','+((top+ground)/2).toFixed(1)+' '+mx+','+(ground-6)+' '+(mx-6)+','+((top+ground)/2).toFixed(1)+'" fill="none" stroke="'+color+'" stroke-width="1.2" opacity=".55"/>';
-    }
-  }
-  var step = Math.max(50, W/7);
-  for(var qx = x1+4; qx <= x2-4; qx += step) out += postEl(qx);
-  out += postEl(x2-4);
-  return out;
-}
-
-/* Solid-colour fence/gate for the scene. Uses ONLY solid fills + opacity
-   (no gradients, filters or url() refs) so it renders identically in every
-   browser. Reads calcState for gate type / width. */
-function renderSceneBarrier(type, color, x1, x2, top, ground, compact){
-  var h = ground - top, fw = x2 - x1, bot = ground, out = '';
-  var dk = adjustColor(color, -32), hl = adjustColor(color, 36);
-  function post(px, pw, pTop, finial){
-    var s = '<rect x="'+(px-pw/2).toFixed(1)+'" y="'+pTop.toFixed(1)+'" width="'+pw+'" height="'+(ground-pTop).toFixed(1)+'" fill="'+color+'"/>';
-    s += '<rect x="'+(px-pw/2).toFixed(1)+'" y="'+pTop.toFixed(1)+'" width="1.3" height="'+(ground-pTop).toFixed(1)+'" fill="'+hl+'" opacity=".6"/>';
-    s += '<rect x="'+(px+pw/2-1.3).toFixed(1)+'" y="'+pTop.toFixed(1)+'" width="1.3" height="'+(ground-pTop).toFixed(1)+'" fill="'+dk+'"/>';
-    s += '<rect x="'+(px-pw/2-1.4).toFixed(1)+'" y="'+(pTop-3.5).toFixed(1)+'" width="'+(pw+2.8)+'" height="4" rx="1" fill="'+color+'"/>';
-    if(finial){ s += '<circle cx="'+px.toFixed(1)+'" cy="'+(pTop-6).toFixed(1)+'" r="'+(pw*0.5+1).toFixed(1)+'" fill="'+color+'"/>'; s += '<circle cx="'+(px-1).toFixed(1)+'" cy="'+(pTop-7).toFixed(1)+'" r="1.3" fill="'+hl+'" opacity=".6"/>'; }
-    return s;
-  }
-  function barPanel(bx1, bx2, bTop){
-    var s='', bw=bx2-bx1; if(bw<6) return '';
-    s += '<rect x="'+bx1.toFixed(1)+'" y="'+(bTop+1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="2.6" fill="'+color+'"/>';
-    s += '<rect x="'+bx1.toFixed(1)+'" y="'+(bot-4).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="3" fill="'+dk+'"/>';
-    var bn=Math.max(3,Math.round(bw/7));
-    for(var i=0;i<=bn;i++){ var xx=bx1+(bw/bn)*i; s+='<rect x="'+(xx-0.85).toFixed(1)+'" y="'+(bTop+1).toFixed(1)+'" width="1.7" height="'+(bot-bTop-3).toFixed(1)+'" fill="'+color+'"/>'; }
-    return s;
-  }
-  function wing(wx, ww){
-    var s='<rect x="'+wx.toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="'+(h-2).toFixed(1)+'" fill="'+color+'" opacity=".9" rx="1"/>';
-    s+='<rect x="'+wx.toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="3.2" fill="'+dk+'"/>';
-    s+='<rect x="'+wx.toFixed(1)+'" y="'+(bot-3.8).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="3.8" fill="'+dk+'"/>';
-    s+='<rect x="'+wx.toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="2.6" height="'+(h-2).toFixed(1)+'" fill="'+dk+'"/>';
-    s+='<rect x="'+(wx+ww-2.6).toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="2.6" height="'+(h-2).toFixed(1)+'" fill="'+dk+'"/>';
-    s+='<rect x="'+wx.toFixed(1)+'" y="'+(top+h*0.47).toFixed(1)+'" width="'+ww.toFixed(1)+'" height="2" fill="'+dk+'"/>';
-    var bn=Math.max(5,Math.round(ww/8));
-    for(var i=1;i<bn;i++){ var xx=wx+(ww/bn)*i; s+='<rect x="'+(xx-0.8).toFixed(1)+'" y="'+(top+4).toFixed(1)+'" width="1.6" height="'+(h-8).toFixed(1)+'" fill="'+hl+'" opacity=".45"/>'; }
-    return s;
-  }
-
-  if(type === 'brana'){
-    var gt = calcState.gateType || 'dvojkrid';
-    var gateW = Math.max(fw*0.30, Math.min(fw*0.6, fw*(gt==='jednokrid'?0.24:0.46)));
-    var gateX = x1 + (fw-gateW)/2;
-    var sTop = top + h*0.16;
-    out += barPanel(x1+4, gateX-5, sTop);
-    out += barPanel(gateX+gateW+5, x2-4, sTop);
-    out += post(x1+3, compact?5:6, sTop-2, true);
-    out += post(x2-3, compact?5:6, sTop-2, true);
-    out += post(gateX-3, compact?7:9, top-4, true);
-    out += post(gateX+gateW+3, compact?7:9, top-4, true);
-    if(gt === 'dvojkrid'){
-      out += wing(gateX+1, gateW/2-2);
-      out += wing(gateX+gateW/2+1, gateW/2-2);
-      out += '<rect x="'+(gateX+gateW/2-1).toFixed(1)+'" y="'+(top+1).toFixed(1)+'" width="2" height="'+(h-2).toFixed(1)+'" fill="'+dk+'"/>';
-    } else if(gt === 'posuvna'){
-      out += wing(gateX, gateW);
-      out += '<rect x="'+x1+'" y="'+(bot+0.5).toFixed(1)+'" width="'+fw+'" height="2.5" fill="'+dk+'" opacity=".6"/>';
-      out += '<circle cx="'+(gateX+gateW*0.2).toFixed(1)+'" cy="'+(bot+2).toFixed(1)+'" r="2.4" fill="'+dk+'"/>';
-      out += '<circle cx="'+(gateX+gateW*0.8).toFixed(1)+'" cy="'+(bot+2).toFixed(1)+'" r="2.4" fill="'+dk+'"/>';
-    } else {
-      out += wing(gateX, gateW);
-    }
-    return out;
-  }
-  if(type === 'betonovy'){
-    var nCol = Math.max(2, Math.round(fw/95)), colW = compact?9:11;
-    var slabH = (h)/Math.max(3, Math.round(h/12));
-    for(var c=0;c<nCol;c++){
-      var seg = fw/nCol, sx = x1 + c*seg + colW/2, ex = x1 + (c+1)*seg - colW/2;
-      for(var sy=top+2; sy<bot-1; sy+=slabH){
-        out += '<rect x="'+sx.toFixed(1)+'" y="'+sy.toFixed(1)+'" width="'+(ex-sx).toFixed(1)+'" height="'+(slabH-1.5).toFixed(1)+'" fill="#C9C7C0"/>';
-        out += '<rect x="'+sx.toFixed(1)+'" y="'+(sy+slabH-2.2).toFixed(1)+'" width="'+(ex-sx).toFixed(1)+'" height="1.5" fill="#A7A59E"/>';
-      }
-    }
-    for(var k=0;k<=nCol;k++){
-      var cpx = x1 + (fw/nCol)*k;
-      out += '<rect x="'+(cpx-colW/2).toFixed(1)+'" y="'+(top-3).toFixed(1)+'" width="'+colW+'" height="'+(h+4).toFixed(1)+'" fill="#B6B4AC"/>';
-      out += '<rect x="'+(cpx-colW/2).toFixed(1)+'" y="'+(top-3).toFixed(1)+'" width="2" height="'+(h+4).toFixed(1)+'" fill="#D2D0C8"/>';
-      out += '<rect x="'+(cpx+colW/2-2).toFixed(1)+'" y="'+(top-3).toFixed(1)+'" width="2" height="'+(h+4).toFixed(1)+'" fill="#97958E"/>';
-      out += '<rect x="'+(cpx-colW/2-1.5).toFixed(1)+'" y="'+(top-6).toFixed(1)+'" width="'+(colW+3)+'" height="4" rx="1" fill="#C9C7C0"/>';
-    }
-    return out;
-  }
-  if(type === 'oporne'){
-    var bw2 = compact?26:32, bh2 = compact?12:15, rows = Math.max(2, Math.round(h/bh2));
-    for(var r2=0;r2<rows;r2++){
-      var ry = bot - (r2+1)*bh2, off = (r2%2)? bw2/2 : 0;
-      for(var bx=x1-off; bx<x2; bx+=bw2){
-        var w2 = Math.min(bw2-2, x2-bx);
-        if(w2<=1 || bx+ (bw2-2) < x1) continue;
-        var dxx = Math.max(x1, bx);
-        out += '<rect x="'+dxx.toFixed(1)+'" y="'+ry.toFixed(1)+'" width="'+(Math.min(bw2-2,x2-dxx)).toFixed(1)+'" height="'+(bh2-1.5).toFixed(1)+'" fill="#BCB9B0" stroke="#9C998F" stroke-width=".7"/>';
-        out += '<rect x="'+dxx.toFixed(1)+'" y="'+ry.toFixed(1)+'" width="'+(Math.min(bw2-2,x2-dxx)).toFixed(1)+'" height="2" fill="#CFCCC3"/>';
-      }
-    }
-    return out;
-  }
-  if(type === 'pletivo'){
-    var pn = Math.max(3, Math.round(fw/70));
-    // mesh diamonds via crosshatch, clipped visually by drawing within band
-    var step = compact?9:11;
-    out += '<rect x="'+x1+'" y="'+(top+2)+'" width="'+fw+'" height="'+(h-4)+'" fill="'+color+'" opacity=".05"/>';
-    for(var gx=x1-h; gx<x2; gx+=step){
-      out += '<line x1="'+gx.toFixed(1)+'" y1="'+(top+2)+'" x2="'+(gx+h-4).toFixed(1)+'" y2="'+(bot-2)+'" stroke="'+color+'" stroke-width=".8" opacity=".6"/>';
-      out += '<line x1="'+(gx+h-4).toFixed(1)+'" y1="'+(top+2)+'" x2="'+gx.toFixed(1)+'" y2="'+(bot-2)+'" stroke="'+color+'" stroke-width=".8" opacity=".6"/>';
-    }
-    out += '<rect x="'+x1+'" y="'+(top+1)+'" width="'+fw+'" height="2.4" fill="'+color+'"/>';
-    out += '<rect x="'+x1+'" y="'+(bot-3)+'" width="'+fw+'" height="2.4" fill="'+dk+'"/>';
-    for(var pp=0;pp<=pn;pp++){ out += post(x1+(fw/pn)*pp, compact?5:6, top, false); }
-    return out;
-  }
-  if(type === 'mobilne'){
-    var mn = Math.max(2, Math.round(fw/85)), pw2 = fw/mn;
-    for(var mi=0;mi<mn;mi++){
-      var mx = x1+mi*pw2, me = mx+pw2-4;
-      out += '<rect x="'+mx.toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+(pw2-4).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="none" stroke="#9AA4AC" stroke-width="2.4"/>';
-      out += '<line x1="'+(mx+2)+'" y1="'+(top+2)+'" x2="'+me.toFixed(1)+'" y2="'+(bot-2).toFixed(1)+'" stroke="#9AA4AC" stroke-width="1.1" opacity=".8"/>';
-      out += '<line x1="'+me.toFixed(1)+'" y1="'+(top+2)+'" x2="'+(mx+2)+'" y2="'+(bot-2).toFixed(1)+'" stroke="#9AA4AC" stroke-width="1.1" opacity=".8"/>';
-      for(var mb=1;mb<=3;mb++){ var mbx=mx+(pw2-4)*mb/4; out+='<line x1="'+mbx.toFixed(1)+'" y1="'+(top+2)+'" x2="'+mbx.toFixed(1)+'" y2="'+(bot-2).toFixed(1)+'" stroke="#9AA4AC" stroke-width=".9" opacity=".55"/>'; }
-      var fcx = mx+(pw2-4)/2;
-      out += '<rect x="'+(fcx-pw2*0.26).toFixed(1)+'" y="'+(bot-3).toFixed(1)+'" width="'+(pw2*0.52).toFixed(1)+'" height="3.5" rx="1" fill="#5A6068"/>';
-    }
-    return out;
-  }
-  /* default: 3D welded panel fence (vertical bars + 2 horizontal rails + posts) */
-  var n3 = Math.max(2, Math.round(fw/72));
-  for(var s3=0;s3<n3;s3++){ out += barPanel(x1+(fw/n3)*s3+4, x1+(fw/n3)*(s3+1)-4, top); }
-  for(var p3=0;p3<=n3;p3++){ out += post(x1+(fw/n3)*p3, compact?6:7, top-2, false); }
-  return out;
-}
-
-/* Realistic front-yard SCENE: the selected fence/gate shown in front of a
-   modern house with a driveway and landscaping. Looks like a real property,
-   updates with every selection (product, gate type, colour, height, width).
-   Pure inline SVG -> renders instantly, no external images. */
-function renderHouseEl(uid, baseY){
-  var bodyTop = 70, hx1 = 158, hx2 = 312;
-  var h = '';
-  /* back wing (left) for depth */
-  h += '<rect x="132" y="98" width="42" height="'+(baseY-98)+'" fill="url(#'+uid+'wall2)"/>';
-  h += '<polygon points="126,99 180,99 172,84 134,84" fill="url(#'+uid+'roof)"/>';
-  h += '<rect x="146" y="112" width="16" height="20" fill="url(#'+uid+'glass)" stroke="#6B7079" stroke-width="1.2"/>';
-  /* main body */
-  h += '<rect x="'+hx1+'" y="'+bodyTop+'" width="'+(hx2-hx1)+'" height="'+(baseY-bodyTop)+'" fill="url(#'+uid+'wall)"/>';
-  /* right-side shading for depth */
-  h += '<rect x="'+(hx2-30)+'" y="'+bodyTop+'" width="30" height="'+(baseY-bodyTop)+'" fill="url(#'+uid+'wall2)" opacity=".7"/>';
-  /* hip roof (trapezoid) + eave shadow */
-  h += '<polygon points="'+(hx1-10)+','+bodyTop+' '+(hx2+10)+','+bodyTop+' '+(hx2-20)+','+(bodyTop-24)+' '+(hx1+20)+','+(bodyTop-24)+'" fill="url(#'+uid+'roof)"/>';
-  h += '<rect x="'+(hx1-10)+'" y="'+(bodyTop-1)+'" width="'+(hx2-hx1+20)+'" height="3.5" fill="rgba(0,0,0,.18)"/>';
-  /* upper-floor windows (always visible above the fence) */
-  function win(x,y,w,hh){
-    return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+hh+'" fill="#6B7079" rx="1.5"/>'+
-      '<rect x="'+(x+1.6)+'" y="'+(y+1.6)+'" width="'+(w-3.2)+'" height="'+(hh-3.2)+'" fill="url(#'+uid+'glass)"/>'+
-      '<polygon points="'+(x+w*0.35)+','+(y+1.6)+' '+(x+w*0.12)+','+(y+hh-1.6)+' '+(x+w*0.02)+','+(y+hh-1.6)+' '+(x+w*0.25)+','+(y+1.6)+'" fill="rgba(255,255,255,.32)"/>'+
-      '<line x1="'+(x+w/2)+'" y1="'+(y+1.6)+'" x2="'+(x+w/2)+'" y2="'+(y+hh-1.6)+'" stroke="#6B7079" stroke-width="1"/>';
-  }
-  h += win(176, 84, 30, 24);
-  h += win(220, 84, 30, 24);
-  h += win(264, 84, 30, 24);
-  /* lower floor: entrance + big window (may sit behind the fence, that's fine) */
-  h += '<rect x="200" y="120" width="22" height="'+(baseY-120)+'" fill="#5A6066"/>';
-  h += '<rect x="202" y="122" width="18" height="'+(baseY-124)+'" fill="url(#'+uid+'glass)" opacity=".9"/>';
-  h += win(238, 120, 40, 26);
-  /* base trim */
-  h += '<rect x="'+(hx1)+'" y="'+(baseY-3)+'" width="'+(hx2-hx1)+'" height="3" fill="rgba(0,0,0,.14)"/>';
-  return h;
-}
-function renderTreeEl(uid, x, baseY){
-  var t = '';
-  t += '<rect x="'+(x-3)+'" y="'+(baseY-26)+'" width="6" height="28" fill="#7A5A3A"/>';
-  t += '<circle cx="'+(x-15)+'" cy="'+(baseY-34)+'" r="16" fill="#5C8740"/>';
-  t += '<circle cx="'+(x+14)+'" cy="'+(baseY-36)+'" r="15" fill="#517A38"/>';
-  t += '<circle cx="'+x+'" cy="'+(baseY-46)+'" r="20" fill="#669A4C"/>';
-  t += '<circle cx="'+(x-6)+'" cy="'+(baseY-52)+'" r="11" fill="#76A85B"/>';
-  return t;
-}
-function renderVizFenceSvg(compact){
-  var type = productVisualType();
-  var color = (calcState.product === 'betonovy' || calcState.product === 'oporne')
-    ? colorHex('beton')
-    : colorHex(calcState.color || 'antracit');
-  var W = 460, H = 250, uid = 'sc' + Math.random().toString(36).slice(2,7);
-  var ground = 228;                 /* front ground line where the fence stands (near bottom) */
-  var horizon = 132;                /* where the house/yard sits (higher = house farther back) */
-  var hVal = parseInt(calcState.height || calcState.meshHeight || calcState.gateHeight || 153, 10);
-  if(type === 'oporne') hVal = 70 + parseInt(calcState.wallHeight || 2, 10) * 22;
-  if(type === 'betonovy') hVal = 185;
-  if(type === 'mobilne') hVal = 200;
-  var fenceH = Math.max(92, Math.min(128, Math.round(hVal * 0.64)));  /* prominent foreground */
-  var top = ground - fenceH;
-  var x1 = 12, x2 = W - 12, fw = x2 - x1, cx = W / 2;
-  var lengthMeters = parseFloat(calcState.length || calcState.mobileLength || calcState.wallLength || 20) || 20;
-  if(type === 'brana') lengthMeters = parseFloat(calcState.gateWidth || 4) || 4;
-
-  var defs = '<defs>' +
-    '<linearGradient id="'+uid+'sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A6D4EF"/><stop offset="65%" stop-color="#D2EAF7"/><stop offset="100%" stop-color="#EAF5FB"/></linearGradient>' +
-    '<linearGradient id="'+uid+'grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9DC279"/><stop offset="100%" stop-color="#7FAA58"/></linearGradient>' +
-    '<linearGradient id="'+uid+'fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#83AB61"/><stop offset="100%" stop-color="#6B9749"/></linearGradient>' +
-    '<linearGradient id="'+uid+'wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F1EDE4"/><stop offset="100%" stop-color="#DCD5C8"/></linearGradient>' +
-    '<linearGradient id="'+uid+'wall2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D8D1C3"/><stop offset="100%" stop-color="#C4BCAC"/></linearGradient>' +
-    '<linearGradient id="'+uid+'roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5C6268"/><stop offset="100%" stop-color="#3D4247"/></linearGradient>' +
-    '<linearGradient id="'+uid+'glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CBE0EB"/><stop offset="55%" stop-color="#9FBFD1"/><stop offset="100%" stop-color="#7C9DB1"/></linearGradient>' +
-    '<linearGradient id="'+uid+'drive" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BBBBB1"/><stop offset="100%" stop-color="#9C9C91"/></linearGradient>' +
-  '</defs>';
-
-  var s = '<svg class="mc-viz-svg-el" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">';
-  s += defs;
-  /* sky */
-  s += '<rect x="0" y="0" width="'+W+'" height="'+(horizon+8)+'" fill="url(#'+uid+'sky)"/>';
-  s += '<g fill="#FFFFFF" opacity=".45"><ellipse cx="86" cy="34" rx="32" ry="10"/><ellipse cx="116" cy="40" rx="22" ry="8"/><ellipse cx="372" cy="26" rx="28" ry="8"/></g>';
-  /* distant soft treeline */
-  s += '<ellipse cx="110" cy="150" rx="125" ry="32" fill="#A6C58E" opacity=".55"/>';
-  s += '<ellipse cx="380" cy="150" rx="135" ry="34" fill="#A6C58E" opacity=".5"/>';
-  /* grass yard */
-  s += '<rect x="0" y="'+horizon+'" width="'+W+'" height="'+(H-horizon)+'" fill="url(#'+uid+'grass)"/>';
-  /* house behind the fence */
-  s += renderHouseEl(uid, horizon);
-  /* tree for life */
-  s += renderTreeEl(uid, 416, horizon);
-  /* foreground ground strip */
-  s += '<rect x="0" y="'+(ground-2)+'" width="'+W+'" height="'+(H-ground+2)+'" fill="url(#'+uid+'fg)"/>';
-  /* soft shadow under the fence */
-  s += '<ellipse cx="'+cx+'" cy="'+(ground+5)+'" rx="'+(fw*0.46)+'" ry="7" fill="rgba(31,41,55,.16)"/>';
-  /* the selected fence / gate, in front of everything (solid colours = reliable) */
-  s += renderSceneBarrier(type, color, x1, x2, top, ground, compact);
-  s += '</svg>';
-  return s;
-}
-
-function renderLiveVisual(compact, locked){
-  var lang = MC.lang;
-  if(!calcState.product) return '';
-  var label = visualLabel();
-  var classes = 'mc-live-viz photo' + (compact?' compact':'') + (locked?' reveal-locked':'');
-  var reveal = locked
-    ? '<button type="button" class="mc-viz-reveal" onclick="revealLiveVisual(this)">'+(lang==='sk'?'Zobraziť vizualizáciu':'Show preview')+'<span>'+(lang==='sk'?'Kliknite a ukážeme vašu vybranú zostavu':'Click to reveal your selected configuration')+'</span></button>'
-    : '';
-  /* Visualization = a realistic illustrated scene of the selected fence/gate in
-     front of a house. Pure inline SVG: renders instantly and updates with every
-     selection (product, gate type, colour, height, width). */
-  return '<div class="'+classes+'" '+(locked?'onclick="revealLiveVisual(this)"':'')+'>' +
-    '<div class="mc-viz-imgwrap">' +
-      '<div class="mc-viz-svg-fallback">'+renderVizFenceSvg(compact)+'</div>' +
-    '</div>' +
-    (label ? '<div class="mc-viz-cap"><span>'+(lang==='sk'?'Vaša voľba':'Your choice')+'</span><span>'+label+'</span></div>' : '') +
-    reveal +
-  '</div>';
-}
 
 function dismissTeaser(){
   var t = document.getElementById('mojplot-teaser');
