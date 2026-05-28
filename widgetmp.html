@@ -55,7 +55,10 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 
 /* Bubble */
 #mojplot-bubble{position:fixed;bottom:18px;right:18px;width:68px;height:68px;background:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(46,125,50,.35),0 0 0 0 rgba(46,125,50,.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;z-index:100000;overflow:hidden;animation:bubblePulse 3s ease-in-out infinite;border:2px solid #fff}
-@keyframes bubblePulse{0%,100%{box-shadow:0 6px 24px rgba(46,125,50,.35),0 0 0 0 rgba(46,125,50,.4)}50%{box-shadow:0 6px 24px rgba(46,125,50,.35),0 0 0 14px rgba(46,125,50,0)}}
+@keyframes bubblePulse{
+  0%,100%{box-shadow:0 6px 24px rgba(69,169,60,.35),0 0 0 0 rgba(69,169,60,.5),0 0 0 0 rgba(69,169,60,.25)}
+  50%{box-shadow:0 6px 24px rgba(69,169,60,.35),0 0 0 12px rgba(69,169,60,.15),0 0 0 24px rgba(69,169,60,0)}
+}
 #mojplot-bubble:hover{transform:scale(1.08);animation:none}
 #mojplot-bubble.open{animation:none;opacity:0;pointer-events:none}
 #mojplot-bubble .bubble-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;transform-origin:center}
@@ -116,7 +119,8 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 .mc-ts{font-size:10px;color:var(--mc-text-sub);margin-top:2px;padding:0 2px;font-weight:500}
 .mc-row.user .mc-ts{text-align:right}
 .mc-rt{display:flex;gap:4px;margin-top:5px}
-.mc-rb{width:26px;height:26px;border:1px solid var(--mc-border);background:transparent;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:.45;transition:all .2s}
+.mc-rb{width:28px;height:28px;border:1px solid var(--mc-border);background:transparent;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:.45;transition:all .2s}
+@keyframes rbPop{0%{transform:scale(1)}40%{transform:scale(1.35)}70%{transform:scale(.9)}100%{transform:scale(1)}}
 .mc-rb:hover,.mc-rb.on{opacity:1;border-color:var(--m-green);background:var(--m-green-glow)}
 
 .mc-typing{display:none;gap:8px;align-items:flex-end;padding:0 14px 6px}
@@ -407,7 +411,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mp-ai-logo-bubble{width:54px;height:54px;border-radius:17px}
 .mp-ai-logo-header{width:44px;height:44px;border-radius:14px;box-shadow:inset 0 0 0 4px rgba(69,169,60,.08),0 4px 12px rgba(69,169,60,.18)}
 .mc-hdr-av{background:transparent;box-shadow:none;padding:0;border-radius:14px;overflow:visible}
-#mojplot-bubble{background:#fff;border:2px solid #45A93C;box-shadow:0 9px 24px rgba(69,169,60,.28);animation:none}
+#mojplot-bubble{background:#fff;border:2px solid #45A93C;box-shadow:0 9px 24px rgba(69,169,60,.28);animation:bubblePulse 2.5s ease-in-out infinite}
 #mojplot-bubble:hover{transform:translateY(-2px) scale(1.04)}
 .wobble{animation:none!important}
 .mc-top-calc-wrap{padding:12px 14px 10px;background:#fff;border-bottom:1px solid var(--mc-border);flex-shrink:0}
@@ -598,12 +602,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-prod-brana::after,.mc-gate-thumb::after{left:17%;right:14%;bottom:47px;height:3px;background:#30363B!important;box-shadow:none!important}
 .mc-prod-pletivo::before{border-color:#30363B;background:repeating-linear-gradient(55deg,transparent 0 10px,rgba(48,54,59,.46) 10px 11px),repeating-linear-gradient(125deg,transparent 0 10px,rgba(48,54,59,.34) 10px 11px)}
 .mc-prod-pletivo::after{background:repeating-linear-gradient(90deg,#30363B 0 3px,transparent 3px 34px)}
-#mojplot-bubble .notif-dot{width:24px;height:24px;right:3px;bottom:3px;top:auto;background:#45A93C;border:3px solid #fff;color:transparent;text-indent:-999px;animation:none;box-shadow:0 5px 12px rgba(35,39,42,.18);z-index:4}
-#mojplot-bubble .notif-dot::before{content:"";position:absolute;left:6px;top:5px;width:9px;height:11px;border:2px solid #fff;border-radius:2px;box-shadow:inset 0 -4px 0 rgba(255,255,255,.28)}
-#mojplot-bubble .notif-dot::after{content:"";position:absolute;left:9px;top:8px;width:2px;height:2px;background:#fff;box-shadow:4px 0 0 #fff,0 4px 0 #fff,4px 4px 0 #fff}
+#mojplot-bubble .notif-dot{width:20px;height:20px;right:2px;top:2px;bottom:auto;background:#FF3B30;border:2.5px solid #fff;color:#fff;text-indent:0;animation:notifPulse 2s ease-in-out infinite;box-shadow:0 3px 8px rgba(255,59,48,.4);z-index:4;font-size:10px;font-weight:800}
+#mojplot-bubble .notif-dot::before{content:none!important;display:none!important}
+#mojplot-bubble .notif-dot::after{content:none!important;display:none!important}
 
 /* Real product photos from MojPlot, no generated product artwork */
-#mojplot-bubble .notif-dot{display:none!important}
 .mc-product-img{height:118px;background:#F8FBF6;overflow:hidden}
 .mc-product-visual::before,.mc-product-visual::after,.mc-gate-thumb::before,.mc-gate-thumb::after{display:none!important;content:none!important}
 .mc-product-visual img{display:block!important;width:100%;height:100%;object-fit:contain;padding:6px;opacity:1!important;filter:saturate(1.06) contrast(1.04);transform:none!important}
@@ -1389,13 +1392,12 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 /* BOTTOM CONTACT BAR - new style */
 .mc-cbar { display:flex;gap:0;padding:0;border-top:1px solid var(--mc-border);flex-shrink:0;background:#fff;border-radius:0 0 var(--m-radius) var(--m-radius);overflow:hidden; }
-.mc-ct { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:9px 4px;border:none;background:transparent;cursor:pointer;text-decoration:none;font-family:var(--m-font);font-size:11px;font-weight:600;color:#4A5568;transition:all .18s;border-right:1px solid var(--mc-border); }
-.mc-ct:last-child { border-right:0; }
-.mc-ct:hover { background:#F7FAF4;color:#45A93C; }
-.mc-ct .mc-ci { width:32px;height:32px;border-radius:9px;background:#F0F4F8;display:flex;align-items:center;justify-content:center;transition:background .18s; }
-.mc-ct:hover .mc-ci { background:#E8F5E0; }
-.mc-ct .mc-ci svg { width:17px;height:17px;fill:#4A5568;display:block;transition:fill .18s; }
-.mc-ct:hover .mc-ci svg { fill:#45A93C; }
+.mc-ct{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 4px;font-family:var(--m-font);font-size:10.5px;font-weight:700;color:var(--mc-text);cursor:pointer;border:none;background:transparent;border-right:1px solid var(--mc-border);text-decoration:none;transition:all .2s;}
+.mc-ct:last-child{border-right:none;}
+.mc-ct:hover{background:var(--mc-input-bg);}
+.mc-ci{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s;}
+.mc-ci svg{width:18px;height:18px;}
+.mc-ct:hover .mc-ci{transform:scale(1.1);}
 .mc-ct.wa .mc-ci { background:#E8F5E0; }
 .mc-ct.wa .mc-ci svg { fill:#25D366; }
 .mc-ct.ph .mc-ci { background:#EAF0FF; }
@@ -1508,7 +1510,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 <div id="mojplot-bubble" onclick="toggleChat()">
 
-
+  <div class="notif-dot">1</div>
   <div class="bubble-icon wobble">
     <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">
   </div>
@@ -1520,8 +1522,8 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 <!-- Floating teaser (desktop only, shown when chat is closed) -->
 <div id="mojplot-teaser" onclick="toggleChat()" role="button" tabindex="0">
   <button class="mp-teaser-close" onclick="event.stopPropagation();dismissTeaser()" aria-label="Zavrieť">&times;</button>
-  <div class="mp-teaser-title">Potrebujete poradiť? 👋</div>
-  <div class="mp-teaser-text">Spýtajte sa nášho asistenta alebo si v <b>cenovej kalkulačke</b> hneď spočítajte plot či bránu.</div>
+  <div class="mp-teaser-title">Spočítajte si cenu za 3 minúty 🧮</div>
+  <div class="mp-teaser-text">Nastavte si cenu <b>3D plota alebo betónového plota</b> priamo online, bez čakania.</div>
 </div>
 
 <!-- Chat window -->
@@ -1538,7 +1540,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
     </div>
     <div class="mc-hdr-info">
       <div class="mc-hdr-title" id="hdr-title">Asistent Môj plot</div>
-      <div class="mc-hdr-sub"><span class="dot"></span><span id="hdr-sub">Online · Odpovedá hneď</span></div>
+      <div class="mc-hdr-sub"><span class="dot"></span><span id="hdr-sub">Online</span></div>
     </div>
     <div class="mc-hdr-actions">
       <div class="mc-lang">
@@ -1670,7 +1672,7 @@ var MC = {
   s: {
     sk: {
       hdrTitle: 'Asistent Môj plot',
-      hdrSub: 'Online · Odpovedá hneď',
+      hdrSub: 'Online',
       placeholder: 'Napíšte vašu otázku...',
       welcome: 'Dobrý deň! Som <b>AI asistent Môj plot</b>. Pomôžem vám vybrať vhodný plot, bránu alebo oplotenie a ak chcete rýchly odhad, hore nájdete veľkú <b>cenovú kalkulačku</b>.',
       welcomeChips: ['3D plot','Brány a bránky','Pletivový plot','Doprava a montáž'],
@@ -1698,7 +1700,7 @@ var MC = {
     },
     en: {
       hdrTitle: 'Môj plot Assistant',
-      hdrSub: 'Online · Replies instantly',
+      hdrSub: 'Online',
       placeholder: 'Type your question...',
       welcome: 'Hello! I am the <b>Môj plot AI assistant</b>. I can help you choose a fence, gate or fencing system. For a quick estimate, use the large <b>price calculator</b> at the top.',
       welcomeChips: ['3D fence','Gates','Mesh fence','Shipping & installation'],
@@ -1986,6 +1988,9 @@ function rate(btn, val){
   var siblings = btn.parentElement.querySelectorAll('.mc-rb');
   siblings.forEach(function(b){ b.classList.remove('on'); });
   btn.classList.add('on');
+  btn.style.animation='none';
+  btn.offsetWidth; // reflow
+  btn.style.animation='rbPop .35s cubic-bezier(.34,1.6,.64,1)';
 }
 
 function typeMsg(text, cb){
