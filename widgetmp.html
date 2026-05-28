@@ -3131,7 +3131,7 @@ function renderBetStep5(el){
     '<div class="mc-step-sub">'+(l?'Pošleme vám individuálnu cenovú ponuku do 24 hodín.':'We will send you a personalized quote within 24 hours.')+'</div>' +
     '<div class="mc-form" style="display:flex;flex-direction:column;gap:9px">' +
       '<input class="mc-form-input" id="betCity" type="text" placeholder="'+(l?'Obec / mesto':'Town / city')+'" value="'+(calcState.betLocation||'')+'">' +
-      '<input class="mc-form-input" id="betZip" type="text" pattern="[0-9 ]{5,6}" placeholder="'+(l?'PSČ (napr. 949 01)':'ZIP code')+'" value="'+(calcState.betZip||'')+'" oninput="updateBetZipHint(this.value)">' +
+      '<input class="mc-form-input" id="betZip" type="text" pattern="[0-9 ]{5,6}" placeholder="'+(l?'PSČ (napr. 027 52)':'ZIP code')+'" value="'+(calcState.betZip||'')+'" oninput="updateBetZipHint(this.value)">' +
       '<div id="betZipHint" class="mc-hint" style="display:none"><div class="hi">i</div><div id="betZipHintText"></div></div>' +
       '<input class="mc-form-input" id="betName" type="text" placeholder="'+(l?'Meno a priezvisko':'Name')+'">' +
       '<input class="mc-form-input" id="betEmail" type="email" placeholder="E-mail">' +
@@ -3815,23 +3815,29 @@ function submitCPFromStep9(){
 }
 
 /* ===================================================
-   DOPRAVA PODĽA PSČ (Mojplot je v Nitre)
+   DOPRAVA PODĽA PSČ (Mojplot je v Párnici, okres Dolný Kubín)
    =================================================== */
 function calcDeliveryFee(zip){
   if(!zip) return { fee:0, label:'', area:'' };
   var z = String(zip).replace(/\s+/g,'').substring(0,3);
   var n = parseInt(z,10);
   if(isNaN(n)) return { fee:0, label:'', area:'' };
-  // Nitra a najblizsie okolie - 949xx
-  if(z.indexOf('949')===0) return { fee:0,  label:'Nitra a najbližšie okolie – doprava ZDARMA', area:'Nitra' };
-  // Nitriansky kraj - 940-948, 951-959 a 935-937 (Levice okolie)
-  if((n>=940 && n<=948) || (n>=950 && n<=959) || (n>=935 && n<=937)) return { fee:25, label:'Nitriansky kraj – doprava 25 €', area:'Nitriansky kraj' };
-  // Trnavsky / Trenciansky / Bratislavsky kraj (blizke zapadne kraje)
-  if((n>=900 && n<=934) || (n>=910 && n<=919) || (n>=820 && n<=851)) return { fee:40, label:'Západné Slovensko – doprava 40 €', area:'Západné Slovensko' };
-  // Stredne Slovensko (974-984 Banska Bystrica, 010-039 Zilina)
-  if((n>=960 && n<=999) || (n>=10 && n<=39)) return { fee:60, label:'Stredné Slovensko – doprava 60 €', area:'Stredné Slovensko' };
-  // Vychodne Slovensko (040-098)
-  if(n>=40 && n<=99) return { fee:85, label:'Východné Slovensko – doprava 85 €', area:'Východné Slovensko' };
+  // Párnica a najblizsie okolie (Orava) - 026xx, 027xx: Dolný Kubín, Tvrdošín, Námestovo
+  if(z.indexOf('026')===0 || z.indexOf('027')===0) return { fee:0, label:'Párnica a okolie (Orava) – doprava ZDARMA', area:'Párnica' };
+  // Žilinský kraj - 010-029, 030-039 (Žilina, Martin, Liptov, Kysuce, Považská)
+  if((n>=10 && n<=29) || (n>=30 && n<=39)) return { fee:20, label:'Žilinský kraj – doprava 20 €', area:'Žilinský kraj' };
+  // Stredné Slovensko - Banskobystrický kraj 960-989
+  if(n>=960 && n<=989) return { fee:35, label:'Banskobystrický kraj – doprava 35 €', area:'Banskobystrický kraj' };
+  // Trenčiansky kraj 911-959 čiastočne (cca 911-919 TN, 020 PB už pokryté Žilinou)
+  if(n>=911 && n<=919) return { fee:35, label:'Trenčiansky kraj – doprava 35 €', area:'Trenčiansky kraj' };
+  // Nitriansky kraj 940-959
+  if(n>=940 && n<=959) return { fee:55, label:'Nitriansky kraj – doprava 55 €', area:'Nitriansky kraj' };
+  // Trnavsky kraj 900-934
+  if(n>=900 && n<=934) return { fee:60, label:'Trnavský kraj – doprava 60 €', area:'Trnavský kraj' };
+  // Bratislavský kraj 800-859
+  if(n>=800 && n<=859) return { fee:70, label:'Bratislavský kraj – doprava 70 €', area:'Bratislavský kraj' };
+  // Východné Slovensko (Košický, Prešovský) 040-099
+  if(n>=40 && n<=99) return { fee:75, label:'Východné Slovensko – doprava 75 €', area:'Východné Slovensko' };
   return { fee:50, label:'Slovensko – doprava 50 €', area:'Slovensko' };
 }
 
@@ -3947,7 +3953,7 @@ function calculateCPPrice(){
     items.push({ k:(l?'Doprava ('+dlv.area+')':'Delivery ('+dlv.area+')'), v:dlv.fee });
     total += dlv.fee;
   } else if(calcState.cpZip){
-    items.push({ k:(l?'Doprava (Nitra a okolie)':'Delivery (Nitra area)'), v:0 });
+    items.push({ k:(l?'Doprava (Párnica a okolie)':'Delivery (Párnica area)'), v:0 });
   }
 
   return {
