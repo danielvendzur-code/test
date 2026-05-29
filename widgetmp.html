@@ -1419,6 +1419,38 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .cpo-info-box{margin-top:6px;font-size:11px;color:#4B6450;line-height:1.5;background:#F0F9EE;border-radius:8px;padding:8px 10px;}
 
 /* =========================================================
+   CHIP & CONTACT FILL ANIMATIONS (2026-05-29)
+   - Quick chips: brand-green gradient sweeps in from the left
+   - Contact icons (WhatsApp / phone / email): brand colour fills
+     the circle from the centre and the glyph flips to white
+   ========================================================= */
+.mc-chip{position:relative;overflow:hidden;z-index:0;isolation:isolate;}
+.mc-chip::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(135deg,#4FB845,#2E7D32);
+  transform:scaleX(0);transform-origin:left center;
+  transition:transform .38s cubic-bezier(.34,1.15,.5,1);
+}
+.mc-chip:hover{color:#fff;border-color:#2E7D32;box-shadow:0 5px 16px rgba(46,125,50,.28);}
+.mc-chip:hover::before{transform:scaleX(1);}
+.mc-chip:active{transform:translateY(1px) scale(.98);}
+
+.mc-ci{position:relative;overflow:hidden;z-index:0;transition:transform .25s cubic-bezier(.34,1.4,.64,1);}
+.mc-ci svg{position:relative;z-index:1;transition:fill .28s ease,transform .28s ease;}
+.mc-ci::before{
+  content:"";position:absolute;inset:0;border-radius:50%;z-index:0;
+  transform:scale(0);transform-origin:center;
+  transition:transform .4s cubic-bezier(.34,1.4,.64,1);
+}
+.mc-ct.wa .mc-ci::before{background:#25D366;}
+.mc-ct.ph .mc-ci::before{background:#3B82F6;}
+.mc-ct.em .mc-ci::before{background:#F59E0B;}
+.mc-ct:hover .mc-ci{transform:scale(1.12) translateY(-1px);}
+.mc-ct:hover .mc-ci::before{transform:scale(1);}
+.mc-ct:hover .mc-ci svg{fill:#fff !important;transform:scale(1.06);}
+.mc-ct:active .mc-ci{transform:scale(.95);}
+
+/* =========================================================
    FIX 2026-05-22: remove the legacy white "dot-cover" square that was
    covering an old watermark. The current photos are clean, so this square
    only showed up as a cut-out in the bottom-left of every product/gate image.
