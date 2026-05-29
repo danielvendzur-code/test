@@ -2694,8 +2694,8 @@ function subEmail(){
 /* V15: fotky sú väčšie a kroky používajú vždy jednu hlavnú fotku.
    Lokálne fotky z repository: priečinok /fotky alebo fotky vedľa HTML.
    Betónové ploty používajú reálne produktové fotky z mojplot.sk, nie generované obrázky.
-   Ak ich budeš mať na webe priamo v roote domény, zmeň na '/fotky/'. */
-var MP_PHOTO_BASE = 'fotky/';
+   Ak ich budeš mať na webe priamo v roote domény, zmeň na '/'. */
+var MP_PHOTO_BASE = '';
 function mpPhoto(file){
   if(!file) return '';
   if(/^https?:\/\//.test(file) || file.charAt(0)==='/') return file;
