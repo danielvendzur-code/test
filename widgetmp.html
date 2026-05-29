@@ -2011,7 +2011,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
   <div class="notif-dot">1</div>
   <div class="bubble-icon wobble">
-    <img src="fotky/mojplot-logo.png" alt="Môj plot">
+    <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">
   </div>
   <div class="bubble-x">
     <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -2035,7 +2035,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 
     <div class="mc-hdr-av">
-      <img src="fotky/mojplot-logo.png" alt="Môj plot">
+      <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">
     </div>
     <div class="mc-hdr-info">
       <div class="mc-hdr-title" id="hdr-title">Asistent Môj plot</div>
@@ -2072,7 +2072,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   <!-- Typing indicator -->
 
   <div class="mc-typing" id="typing">
-    <div class="mc-av"><img src="fotky/mojplot-logo.png" alt="Môj plot"></div>
+    <div class="mc-av"><img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot"></div>
     <div class="mc-tbub"><span></span><span></span><span></span></div>
   </div>
 
@@ -2322,7 +2322,7 @@ function setMobileHeight(){
 }
 
 function botAvatarHtml(){
-  return '<img src="fotky/mojplot-logo.png" alt="Môj plot">';
+  return '<img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">';
 }
 
 function markProductImageLoaded(img){
@@ -2699,7 +2699,7 @@ function subEmail(){
    Lokálne fotky z repository: priečinok /fotky alebo fotky vedľa HTML.
    Betónové ploty používajú reálne produktové fotky z mojplot.sk, nie generované obrázky.
    Ak ich budeš mať na webe priamo v roote domény, zmeň na '/'. */
-var MP_PHOTO_BASE = 'fotky/';
+var MP_PHOTO_BASE = '';
 function mpPhoto(file){
   if(!file) return '';
   if(/^https?:\/\//.test(file) || file.charAt(0)==='/') return file;
@@ -2713,7 +2713,7 @@ var PRODUCTS = [
   { id:'3d-plot', name:'3D panelový plot', nameEn:'3D panel fence', desc:'Cenová kalkulačka', descEn:'Price calculator',
     img:mpPhoto('mojplot-farby-3d-panel.webp'), badge:'KALKULAČKA' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
-    img:'fotky/mojplot-kategoria-betonove-ploty.png', badge:'NA DOPYT' }
+    img:'mojplot-beton-plny.webp', badge:'NA DOPYT' }
 ];
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
@@ -3081,9 +3081,9 @@ function render3dColor(el){
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(lang==='sk'?'Akú farbu preferujete?':'Which color do you prefer?')+'</div>' +
     '<div class="mc-color-grid">' +
-      colorCard('zinok','Zinok','Pozink', 'zinok', 'fotky/3D-plotovy-panel-farba-zinok.webp') +
-      colorCard('zelena','Zelená','RAL 6005', 'zelena', 'fotky/3D-plotovy-panel-farba-zelena.webp') +
-      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'fotky/3D-plotovy-panel-farba-antracit.webp') +
+      colorCard('zinok','Zinok','Pozink', 'zinok', 'mojplot-farba-zinok.webp') +
+      colorCard('zelena','Zelená','RAL 6005', 'zelena', 'mojplot-farba-zelena.webp') +
+      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'mojplot-farba-antracit.webp') +
     '</div>' +
     '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'<b>Antracit</b> je dnes najobľúbenejší pre rodinné domy. <b>Zelená</b> sa hodí k záhrade a prírode.':'<b>Anthracite</b> is the most popular for family homes today. <b>Green</b> blends with garden and nature.')+'</div></div>' +
     '<div class="mc-actions">' +
@@ -3174,9 +3174,9 @@ function toggleExtra(input, key){
 function renderGateType(el){
   var lang = MC.lang;
   var opts = [
-    { id:'jednokrid', name:lang==='sk'?'Jednokrídlová bránka':'Single-wing gate', desc:lang==='sk'?'Pre vstup osôb (1 m)':'Pedestrian (1 m)', img:'fotky/mojplot-brana-jednokridlova.jpg' },
-    { id:'dvojkrid', name:lang==='sk'?'Dvojkrídlová brána':'Double-wing gate', desc:lang==='sk'?'Vjazd 3–5 m':'Driveway 3–5 m', img:'fotky/mojplot-brana-dvojkridlova.jpg' },
-    { id:'posuvna', name:lang==='sk'?'Posuvná brána':'Sliding gate', desc:lang==='sk'?'Úspora miesta':'Space saving', img:'fotky/mojplot-posuvna-brana-kategoria.png' }
+    { id:'jednokrid', name:lang==='sk'?'Jednokrídlová bránka':'Single-wing gate', desc:lang==='sk'?'Pre vstup osôb (1 m)':'Pedestrian (1 m)', img:'mojplot-branka-3d.webp' },
+    { id:'dvojkrid', name:lang==='sk'?'Dvojkrídlová brána':'Double-wing gate', desc:lang==='sk'?'Vjazd 3–5 m':'Driveway 3–5 m', img:'mojplot-brana-3d.webp' },
+    { id:'posuvna', name:lang==='sk'?'Posuvná brána':'Sliding gate', desc:lang==='sk'?'Úspora miesta':'Space saving', img:'mojplot-brana-3d.webp' }
   ];
   var cards = opts.map(function(o){
     var sel = calcState.gateType === o.id;
@@ -3283,15 +3283,15 @@ function renderGateColor(el){
   var photos;
   if(gateType === 'jednokrid' || gateType === 'jednokridlova'){
     photos = {
-      zinok:    'fotky/jednokridlova-branka-farba-zinok.webp',
-      zelena:   'fotky/jednokridlova-branka-farba-zelena.webp',
-      antracit: 'fotky/jednokridlova-branka-farba-antracit.webp'
+      zinok:    'mojplot-branka-3d.webp',
+      zelena:   'mojplot-branka-3d.webp',
+      antracit: 'mojplot-branka-3d.webp'
     };
   } else {
     photos = {
-      zinok:    calcState.gateType === 'posuvna' ? 'fotky/posuvna-brana-farba-antracit.png' : 'fotky/dvojkridlova-brana-farba-zinok.webp',
-      zelena:   calcState.gateType === 'posuvna' ? 'fotky/posuvna-brana-farba-zelena.png' : 'fotky/dvojkridlova-brana-farba-zelena.webp',
-      antracit: calcState.gateType === 'posuvna' ? 'fotky/posuvna-brana-farba-antracit.png' : 'fotky/dvojkridlova-brana-farba-antracit.webp'
+      zinok:    calcState.gateType === 'posuvna' ? 'mojplot-brana-3d.webp' : 'mojplot-brana-3d.webp',
+      zelena:   calcState.gateType === 'posuvna' ? 'mojplot-brana-3d.webp' : 'mojplot-brana-3d.webp',
+      antracit: calcState.gateType === 'posuvna' ? 'mojplot-brana-3d.webp' : 'mojplot-brana-3d.webp'
     };
   }
   el.innerHTML = '<div class="mc-step">' +
@@ -3697,7 +3697,7 @@ function renderBetStep4(el){
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep4()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetMounting(v){ calcState.betMounting = v; rerenderCurrentCalcStep(); }); if(window.event && event.currentTarget) event.currentTarget.classList.add('sel'); }
+function selBetMounting(v){ calcState.betMounting = v; rerenderCurrentCalcStep(); }
 function adjBetBranka(d){ calcState.betBranka = Math.max(0, (calcState.betBranka||0)+d); var i=document.getElementById('betBrankaIn'); if(i) i.value = calcState.betBranka; }
 function adjBetGate(d){ calcState.betGate = Math.max(0, (calcState.betGate||0)+d); var i=document.getElementById('betGateIn'); if(i) i.value = calcState.betGate; }
 
@@ -4081,7 +4081,7 @@ function cpStepPhoto(slot){
     return decorativeDefault;
   }
   var cfg = {
-    'vyska-hrubka': [calcState.thickness === '5mm' ? 'mojplot-drot-5mm.webp' : (calcState.thickness === '4mm' ? 'mojplot-drot-4mm.webp' : current3dColorPhoto()), '3D panelový plot', 'contain'],
+    'vyska-hrubka': [calcState.thickness === '5mm' ? 'mojplot-drot-5mm.svg' : (calcState.thickness === '4mm' ? 'mojplot-drot-4mm.svg' : current3dColorPhoto()), '3D panelový plot', 'contain'],
     'dlzka': [current3dColorPhoto(), '3D panelový plot', 'contain'],
     'farba': [current3dColorPhoto(), 'Farba 3D panelového plotu', 'contain'],
     'stlpik': [calcState.cpPostType === 'okruhly'
@@ -4091,9 +4091,9 @@ function cpStepPhoto(slot){
           ['mojplot-stlpik-hranaty.webp','Hranatý stĺpik','contain']
         ]), 'Typ stĺpika', 'contain'],
     'montaz-typ': [calcState.cpMounting === 'betono'
-      ? 'mojplot-betonovanie-do-zeme.webp'
+      ? 'mojplot-betonovanie-do-zeme.svg'
       : (calcState.cpMounting === 'kotvo' ? 'mojplot-kotvenie-beton.webp' : [
-          ['mojplot-betonovanie-do-zeme.webp','Betónovanie do zeme','contain'],
+          ['mojplot-betonovanie-do-zeme.svg','Betónovanie do zeme','contain'],
           ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']
         ]), 'Typ montáže', 'contain'],
     'podhrab': ['mojplot-podhrabova-doska.webp','Podhrabová doska','contain'],
@@ -4101,7 +4101,7 @@ function cpStepPhoto(slot){
       (calcState.cpBrankaCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-branka-3d.webp','Bránka','contain'] : null,
       (calcState.cpGateCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-brana-3d.webp','Brána','contain'] : null
     ].filter(Boolean),
-    'montaz': [calcState.cpInstallation === 'sam' ? current3dColorPhoto() : 'mojplot-betonovanie-do-zeme.webp', 'Montáž', 'contain'],
+    'montaz': [calcState.cpInstallation === 'sam' ? current3dColorPhoto() : 'mojplot-betonovanie-do-zeme.svg', 'Montáž', 'contain'],
     'beton-typ': [
       calcState.betType === 'plny' ? ['mojplot-beton-plny.webp','Plný betónový plot','cover'] : null,
       calcState.betType === 'pohladovy' ? [currentBetPatternPhoto(),'Pohľadový betónový plot','cover'] : null,
@@ -4111,9 +4111,9 @@ function cpStepPhoto(slot){
     'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
     'beton-farba': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Vybraný vzor betónu', 'cover'],
     'beton-montaz': [
-      calcState.betMounting === 'betono' ? ['mojplot-betonovanie-do-zeme.webp','Betónovanie do zeme','contain'] : null,
+      calcState.betMounting === 'betono' ? ['mojplot-betonovanie-do-zeme.svg','Betónovanie do zeme','contain'] : null,
       calcState.betMounting === 'kotvo' ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
-      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-betonovanie-do-zeme.webp','Betónovanie do zeme','contain'] : null,
+      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-betonovanie-do-zeme.svg','Betónovanie do zeme','contain'] : null,
       (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
       ['mojplot-branka-3d.webp','Bránka','contain'],
       ['mojplot-brana-3d.webp','Brána','contain']
@@ -4269,7 +4269,7 @@ function renderCPStep4(el){
     '</div>' +
   '</div>';
 }
-function selCPPostType(v){ calcState.cpPostType = v; rerenderCurrentCalcStep(); }); if(window.event && event.currentTarget) event.currentTarget.classList.add('sel'); }
+function selCPPostType(v){ calcState.cpPostType = v; rerenderCurrentCalcStep(); }
 function selCPPostHeight(v){ calcState.cpPostHeight = v; var cards=document.querySelectorAll('.mc-size-card'); cards.forEach(function(c){if(c.querySelector('.mc-size-val')){c.classList.remove('selected');}}); event.currentTarget.classList.add('selected'); }
 function confirmCPStep4(){
   if(!calcState.cpPostType){ alert(MC.lang==='sk'?'Vyberte typ stĺpika.':'Please select post type.'); return; }
@@ -4734,5 +4734,45 @@ function submitCPCalc(){
 }
 
 </script>
+<!-- EMERGENCY_OPEN_FIX -->
+
+<script>
+(function(){
+  function byId(id){ return document.getElementById(id); }
+  function openWidget(){
+    var b = byId('mojplot-bubble');
+    var c = byId('mojplot-chat');
+    var t = byId('mojplot-teaser');
+    if (b) b.classList.add('open');
+    if (c) {
+      c.classList.add('visible');
+      c.style.pointerEvents = 'all';
+      c.style.opacity = '1';
+    }
+    if (t) t.classList.add('mp-dismissed');
+    if (window.MC) window.MC.open = true;
+  }
+  function closeWidget(){
+    var b = byId('mojplot-bubble');
+    var c = byId('mojplot-chat');
+    if (b) b.classList.remove('open');
+    if (c) c.classList.remove('visible');
+    if (window.MC) window.MC.open = false;
+  }
+  window.toggleChat = function(){
+    var c = byId('mojplot-chat');
+    if (c && c.classList.contains('visible')) closeWidget();
+    else openWidget();
+  };
+  document.addEventListener('click', function(e){
+    var bubble = e.target.closest && e.target.closest('#mojplot-bubble');
+    var teaser = e.target.closest && e.target.closest('#mojplot-teaser');
+    var close = e.target.closest && e.target.closest('#hdr-close-btn');
+    if (bubble || teaser) { e.preventDefault(); e.stopPropagation(); openWidget(); }
+    if (close) { e.preventDefault(); e.stopPropagation(); closeWidget(); }
+  }, true);
+})();
+</script>
+
 </body>
 </html>
