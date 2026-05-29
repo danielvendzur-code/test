@@ -1264,7 +1264,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   align-items:center !important;
   justify-content:center !important;
   height:120px !important;
-  padding:6px !important;
+  padding:0 !important;
   box-sizing:border-box !important;
 }
 @media (max-width:480px){
@@ -1275,33 +1275,30 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   }
 }
 
-/* Product image - clean static display + bottom-left corner clipped
-   via clip-path so the colour sample dot baked into the source photo
-   becomes transparent (the card background shows through instead of
-   a visible white overlay). */
+/* Product image - clean static display. Images from mojplot.sk fill the
+   card with object-fit:cover so both the white-bg 3D panel and the
+   black-bg concrete category photo look uniform and full-bleed. */
 .mc-product-img img,
 .mc-product-card .mc-product-img img,
 .mc-product-card[data-product="brana"] .mc-product-img img{
   position:static !important;
   display:block !important;
-  width:auto !important;
-  height:auto !important;
+  width:100% !important;
+  height:100% !important;
   max-width:100% !important;
   max-height:100% !important;
-  object-fit:contain !important;
+  object-fit:cover !important;
   object-position:center center !important;
   padding:0 !important;
-  margin:auto !important;
+  margin:0 !important;
   inset:auto !important;
   filter:none !important;
   transform:scale(1) !important;
   transition:transform .35s cubic-bezier(.4,0,.2,1) !important;
   -webkit-mask-image:none !important;
   mask-image:none !important;
-  /* Pentagonal clip - removes the bottom-left wedge where mojplot
-     bakes in the colour-sample dot. The rest of the image is intact. */
-  -webkit-clip-path:polygon(0 0, 100% 0, 100% 100%, 18% 100%, 0 82%) !important;
-  clip-path:polygon(0 0, 100% 0, 100% 100%, 18% 100%, 0 82%) !important;
+  -webkit-clip-path:none !important;
+  clip-path:none !important;
 }
 
 /* Subtle hover scale only, never constant scale (prevents flicker/crop) */
@@ -3479,10 +3476,34 @@ function toggleCpInfo(btn){
   box.style.display = box.style.display==='none' ? 'block' : 'none';
 }
 
+/* Reálne fotky z mojplot.sk pre jednotlivé kroky konfigurátora */
+var CP_STEP_PHOTOS = {
+  /* 3D plot konfigurátor */
+  'vyska-hrubka':'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zelena.webp',
+  'dlzka':'https://mojplot.sk/wp-content/uploads/2025/07/dom-s-oplotenim.png',
+  'farba':'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp',
+  'stlpik':'https://mojplot.sk/wp-content/uploads/2025/11/Plotovy-stlpik-60x40mm-antracit.png',
+  'montaz-typ':'https://mojplot.sk/wp-content/uploads/2025/12/plotovy-sptlik-s-privarenou-platnickou-antracit.webp',
+  'podhrab':'https://mojplot.sk/wp-content/uploads/2025/08/podhrabove-dosky.jpeg',
+  'brana':'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-antracit.webp',
+  'montaz':'https://mojplot.sk/wp-content/uploads/2025/07/realizacia-oplotenia.png',
+  /* Betónový plot konfigurátor */
+  'beton-typ':'https://mojplot.sk/wp-content/uploads/2025/08/kategoria-betonove-ploty-scaled.png',
+  'beton-rozmer':'https://mojplot.sk/wp-content/uploads/2025/08/kategoria-betonove-ploty-scaled.png',
+  'beton-farba':'https://mojplot.sk/wp-content/uploads/2025/08/kategoria-betonove-ploty-scaled.png',
+  'beton-montaz':'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-antracit.webp',
+  'beton-kontakt':'https://mojplot.sk/wp-content/uploads/2025/07/dom-s-oplotenim.png'
+};
 function cpStepPhoto(slot){
-  return '<div class="mc-step-img" id="step-img-'+slot+'">' +
-    '<div class="si-empty"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Foto produktu</span></div>' +
-  '</div>';
+  var ph = '<div class="si-empty"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Foto produktu</span></div>';
+  var url = CP_STEP_PHOTOS[slot];
+  if(url){
+    return '<div class="mc-step-img" id="step-img-'+slot+'">' +
+      '<img src="'+url+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'flex\'">' +
+      '<div class="si-empty" style="display:none"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Foto produktu</span></div>' +
+    '</div>';
+  }
+  return '<div class="mc-step-img" id="step-img-'+slot+'">' + ph + '</div>';
 }
 
 /* KROK 1 – Výška + Hrúbka drôtu (kombinovaný krok) */
