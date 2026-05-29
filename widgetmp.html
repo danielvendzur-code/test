@@ -1424,17 +1424,19 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
    - Contact icons (WhatsApp / phone / email): brand colour fills
      the circle from the centre and the glyph flips to white
    ========================================================= */
-.mc-chip{position:relative;overflow:hidden;z-index:0;isolation:isolate;}
+/* Quick chips: soft brand-green fill rises from the bottom, text turns white */
+.mc-chip{position:relative;overflow:hidden;z-index:0;isolation:isolate;transition:color .25s ease,border-color .25s ease,transform .2s cubic-bezier(.34,1.4,.64,1)!important;}
 .mc-chip::before{
-  content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(135deg,#4FB845,#2E7D32);
-  transform:scaleX(0);transform-origin:left center;
-  transition:transform .38s cubic-bezier(.34,1.15,.5,1);
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
+  background:linear-gradient(180deg,#54BF49,#2E7D32);
+  transform:scaleY(0);transform-origin:bottom center;
+  transition:transform .34s cubic-bezier(.4,0,.2,1);
 }
-.mc-chip:hover{color:#fff;border-color:#2E7D32;box-shadow:0 5px 16px rgba(46,125,50,.28);}
-.mc-chip:hover::before{transform:scaleX(1);}
-.mc-chip:active{transform:translateY(1px) scale(.98);}
+.mc-chip:hover{color:#fff;border-color:#2E7D32;transform:translateY(-1px);}
+.mc-chip:hover::before{transform:scaleY(1);}
+.mc-chip:active{transform:translateY(0) scale(.97);}
 
+/* Contact icons: brand colour fills the circle from the centre, glyph flips white */
 .mc-ci{position:relative;overflow:hidden;z-index:0;transition:transform .25s cubic-bezier(.34,1.4,.64,1);}
 .mc-ci svg{position:relative;z-index:1;transition:fill .28s ease,transform .28s ease;}
 .mc-ci::before{
@@ -1445,10 +1447,20 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-ct.wa .mc-ci::before{background:#25D366;}
 .mc-ct.ph .mc-ci::before{background:#3B82F6;}
 .mc-ct.em .mc-ci::before{background:#F59E0B;}
-.mc-ct:hover .mc-ci{transform:scale(1.12) translateY(-1px);}
 .mc-ct:hover .mc-ci::before{transform:scale(1);}
 .mc-ct:hover .mc-ci svg{fill:#fff !important;transform:scale(1.06);}
+.mc-ct:hover .mc-ci{transform:scale(1.1) translateY(-1px);}
 .mc-ct:active .mc-ci{transform:scale(.95);}
+
+/* WhatsApp gets a gentle idle pulse ring to draw attention, and a springier hover */
+.mc-ct.wa .mc-ci{box-shadow:0 0 0 0 rgba(37,211,102,.45);animation:waRing 2.6s ease-out infinite;}
+.mc-ct.wa:hover .mc-ci{animation:none;transform:scale(1.16) translateY(-1px) rotate(-4deg);}
+@keyframes waRing{
+  0%{box-shadow:0 0 0 0 rgba(37,211,102,.45);}
+  70%{box-shadow:0 0 0 9px rgba(37,211,102,0);}
+  100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}
+}
+@media(prefers-reduced-motion:reduce){.mc-ct.wa .mc-ci{animation:none;}}
 
 /* =========================================================
    FIX 2026-05-22: remove the legacy white "dot-cover" square that was
@@ -1902,8 +1914,8 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   filter:none!important;
 }
 .mc-step-img.asset-photo{
-  height:205px!important;
-  min-height:205px!important;
+  height:185px!important;
+  min-height:185px!important;
   border:1px solid #DDEBDA!important;
   border-radius:16px!important;
   background:#fff!important;
@@ -1921,16 +1933,18 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   max-height:none!important;
   filter:none!important;
 }
+/* multi-option steps show both photos side by side for easy comparison */
 .mc-step-photo-grid{
-  display:block!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
   margin-bottom:14px!important;
 }
 .mc-step-photo-grid .mc-step-img.asset-photo{
-  height:205px!important;
-  margin-bottom:0!important;
-}
-.mc-step-photo-grid .mc-step-img.asset-photo:not(:first-child){
-  display:none!important;
+  height:158px!important;
+  min-height:158px!important;
+  margin:0!important;
+  padding:8px!important;
 }
 .mc-color-photo{
   height:0!important;
