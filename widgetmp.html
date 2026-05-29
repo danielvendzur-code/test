@@ -2749,8 +2749,8 @@ function mpPhoto(file){
 var PRODUCTS = [
   { id:'3d-plot', name:'3D panelový plot', nameEn:'3D panel fence', desc:'Cenová kalkulačka', descEn:'Price calculator',
     img:mpPhoto('mojplot-farby-3d-panel.webp'), badge:'KALKULAČKA' },
-  { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
-    img:mpPhoto('mojplot-beton-vzor-skala.webp'), badge:'NA DOPYT' }
+  { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Okrasný betón – maximálne súkromie', descEn:'Decorative concrete – maximum privacy',
+    img:mpPhoto('mojplot-beton-pohladovy.webp'), badge:'NA DOPYT' }
 ];
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
@@ -3020,6 +3020,8 @@ function selectProduct(id){
   calcState.wallLength = null;
   calcState.wallHeight = null;
   calcState.blockWidth = null;
+  /* Betónový plot: mojplot.sk ponúka len okrasný (pohľadový) betón, plný v sortimente nie je */
+  if(id === 'betonovy'){ calcState.betType = 'pohladovy'; }
   calcState.step = 1;
   renderCalcStep();
 }
@@ -3580,21 +3582,17 @@ function renderCustomDesc(el){
    =================================================== */
 function renderBetStep1(el){
   var l = MC.lang==='sk';
-  var ico1 = '<svg viewBox="0 0 24 24"><path d="M3 4h18v3H3V4zm0 6h18v3H3v-3zm0 6h18v3H3v-3z"/></svg>';
-  var ico2 = '<svg viewBox="0 0 24 24"><path d="M3 4h18v16H3V4zm2 2v3h6V6H5zm8 0v3h6V6h-6zM5 11v3h6v-3H5zm8 0v3h6v-3h-6zM5 16v3h6v-3H5zm8 0v3h6v-3h-6z"/></svg>';
+  calcState.betType = 'pohladovy';
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-typ') +
-    '<div class="mc-step-title">'+(l?'Typ betónového plotu':'Concrete fence type')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Po kliknutí sa hore zmení ukážka. Ďalej prejdete až po potvrdení.':'After clicking, the preview above updates. You continue only after confirmation.')+'</div>' +
-    '<div class="mc-cp-opts">' +
-      cpOpt('bt','plny', l?'Plný betónový plot':'Solid concrete fence', l?'Klasická plná stena, maximálne súkromie':'Classic solid wall, maximum privacy', ico1, calcState.betType, 'selBetType') +
-      cpOpt('bt','pohladovy', l?'Pohľadový betónový plot':'Decorative concrete fence', l?'Dekoratívna štruktúra: tehla, skala, vlnka, bridlica':'Decorative pattern - brick, stone, wave, slate', ico2, calcState.betType, 'selBetType') +
-    '</div>' +
+    '<div class="mc-step-title">'+(l?'Okrasný betónový plot':'Decorative concrete fence')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Dekoratívny betónový plot s reliéfnym vzorom – na výber máte vzory tehla, skala, vlnka a bridlica, jedno- alebo obojstranné prevedenie a 8 odtieňov.':'Decorative concrete fence with a relief pattern – choose from brick, stone, wave and slate patterns, single- or double-sided finish and 8 shades.')+'</div>' +
+    '<div class="mc-hint" style="margin-top:12px"><div class="hi">i</div><div>'+(l?'Maximálne súkromie a odolnosť. V ďalších krokoch si vyberiete vzor, prevedenie, výšku, odtieň a montáž.':'Maximum privacy and durability. In the next steps you will choose the pattern, finish, height, shade and mounting.')+'</div></div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetType()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
 function selBetType(v){ calcState.betType = v; rerenderCurrentCalcStep(); }
-function confirmBetType(){ if(!calcState.betType){ alert(MC.lang==='sk'?'Vyberte typ betónového plotu.':'Please select concrete fence type.'); return; } autoNext(); }
+function confirmBetType(){ calcState.betType = 'pohladovy'; autoNext(); }
 
 function renderBetPatternStep(el){
   var l = MC.lang==='sk';
@@ -4126,30 +4124,30 @@ function cpStepPhoto(slot){
           ['mojplot-stlpik-okruhly.webp','Okrúhly stĺpik','contain'],
           ['mojplot-stlpik-hranaty.webp','Hranatý stĺpik','contain']
         ]), 'Typ stĺpika', 'contain'],
-    'montaz-typ': [calcState.cpMounting === 'betono'
-      ? 'mojplot-betonovanie-do-zeme.svg'
-      : (calcState.cpMounting === 'kotvo' ? 'mojplot-kotvenie-beton.webp' : [
-          ['mojplot-betonovanie-do-zeme.svg','Betónovanie do zeme','contain'],
-          ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']
-        ]), 'Typ montáže', 'contain'],
+    'montaz-typ': calcState.cpMounting === 'betono'
+      ? ['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover']
+      : (calcState.cpMounting === 'kotvo'
+          ? ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']
+          : [['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover'],
+             ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']]),
     'podhrab': ['mojplot-podhrabova-doska.webp','Podhrabová doska','contain'],
     'brana': [
       ['mojplot-branka-3d.webp','Bránka','contain'],
       ['mojplot-brana-3d.webp','Brána','contain']
     ],
-    'montaz': [current3dColorPhoto(), 'Montáž', 'contain'],
-    'beton-typ': [
-      calcState.betType === 'plny' ? ['mojplot-beton-vzor-skala.webp','Plný betónový plot','cover'] : null,
-      calcState.betType === 'pohladovy' ? ['mojplot-beton-pohladovy.webp','Pohľadový betónový plot','cover'] : null,
-      !calcState.betType ? ['mojplot-beton-vzor-skala.webp','Plný betónový plot','cover'] : null,
-      !calcState.betType ? ['mojplot-beton-pohladovy.webp','Pohľadový betónový plot','cover'] : null
-    ].filter(Boolean),
+    'montaz': calcState.cpInstallation === 'kluc'
+      ? ['mojplot-montaz-kluc.webp','Montáž na kľúč','cover']
+      : (calcState.cpInstallation === 'sam'
+          ? ['mojplot-plot-hotovy.webp','Hotový plot – montáž svojpomocne','cover']
+          : [['mojplot-montaz-kluc.webp','Montáž na kľúč','cover'],
+             ['mojplot-plot-hotovy.webp','Hotový plot','cover']]),
+    'beton-typ': ['mojplot-beton-pohladovy.webp','Okrasný betónový plot','cover'],
     'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
     'beton-farba': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Vybraný vzor betónu', 'cover'],
     'beton-montaz': [
-      calcState.betMounting === 'betono' ? ['mojplot-betonovanie-do-zeme.svg','Betónovanie do zeme','contain'] : null,
+      calcState.betMounting === 'betono' ? ['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover'] : null,
       calcState.betMounting === 'kotvo' ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
-      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-betonovanie-do-zeme.svg','Betónovanie do zeme','contain'] : null,
+      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover'] : null,
       (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
       ['mojplot-branka-3d.webp','Bránka','contain'],
       ['mojplot-brana-3d.webp','Brána','contain']
