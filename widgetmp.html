@@ -1419,21 +1419,21 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .cpo-info-box{margin-top:6px;font-size:11px;color:#4B6450;line-height:1.5;background:#F0F9EE;border-radius:8px;padding:8px 10px;}
 
 /* =========================================================
-   CHIP & CONTACT FILL ANIMATIONS (2026-05-29)
-   - Quick chips: brand-green gradient sweeps in from the left
+   CHIP & CONTACT FILL ANIMATIONS
+   - Quick chips: brand-green fills from the centre (same spring as contact icons)
    - Contact icons (WhatsApp / phone / email): brand colour fills
      the circle from the centre and the glyph flips to white
    ========================================================= */
-/* Quick chips: soft brand-green fill rises from the bottom, text turns white */
+/* Quick chips: brand-green fill expands from centre, text turns white */
 .mc-chip{position:relative;overflow:hidden;z-index:0;isolation:isolate;transition:color .25s ease,border-color .25s ease,transform .2s cubic-bezier(.34,1.4,.64,1)!important;}
 .mc-chip::before{
   content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
-  background:linear-gradient(180deg,#54BF49,#2E7D32);
-  transform:scaleY(0);transform-origin:bottom center;
-  transition:transform .34s cubic-bezier(.4,0,.2,1);
+  background:linear-gradient(135deg,#54BF49,#2E7D32);
+  transform:scale(0);transform-origin:center;
+  transition:transform .34s cubic-bezier(.34,1.4,.64,1);
 }
 .mc-chip:hover{color:#fff;border-color:#2E7D32;transform:translateY(-1px);}
-.mc-chip:hover::before{transform:scaleY(1);}
+.mc-chip:hover::before{transform:scale(1);}
 .mc-chip:active{transform:translateY(0) scale(.97);}
 
 /* Contact icons: brand colour fills the circle from the centre, glyph flips white */
@@ -1451,16 +1451,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-ct:hover .mc-ci svg{fill:#fff !important;transform:scale(1.06);}
 .mc-ct:hover .mc-ci{transform:scale(1.1) translateY(-1px);}
 .mc-ct:active .mc-ci{transform:scale(.95);}
-
-/* WhatsApp gets a gentle idle pulse ring to draw attention, and a springier hover */
-.mc-ct.wa .mc-ci{box-shadow:0 0 0 0 rgba(37,211,102,.45);animation:waRing 2.6s ease-out infinite;}
-.mc-ct.wa:hover .mc-ci{animation:none;transform:scale(1.16) translateY(-1px) rotate(-4deg);}
-@keyframes waRing{
-  0%{box-shadow:0 0 0 0 rgba(37,211,102,.45);}
-  70%{box-shadow:0 0 0 9px rgba(37,211,102,0);}
-  100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}
-}
-@media(prefers-reduced-motion:reduce){.mc-ct.wa .mc-ci{animation:none;}}
 
 /* =========================================================
    FIX 2026-05-22: remove the legacy white "dot-cover" square that was
@@ -2756,7 +2746,7 @@ var PRODUCTS = [
   { id:'3d-plot', name:'3D panelový plot', nameEn:'3D panel fence', desc:'Cenová kalkulačka', descEn:'Price calculator',
     img:mpPhoto('mojplot-farby-3d-panel.webp'), badge:'KALKULAČKA' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
-    img:'mojplot-beton-plny.webp', badge:'NA DOPYT' }
+    img:mpPhoto('mojplot-beton-vzor-skala.webp'), badge:'NA DOPYT' }
 ];
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
@@ -3694,7 +3684,6 @@ function renderBetStep3(el){
   }).join('');
   var sub = l ? 'Vyberte odtieň. Hore zostáva náhľad plota alebo zvoleného vzoru, dole vyberáte len farebnú vzorku.' : 'Choose a shade. The preview above stays on the fence/pattern and below you select only a color swatch.';
   el.innerHTML = '<div class="mc-step">' +
-    cpStepPhoto('beton-farba') +
     '<div class="mc-step-title">'+(l?'Farba / odtieň':'Color / shade')+'</div>' +
     '<div class="mc-step-sub">'+sub+'</div>' +
     '<div class="mc-color-grid">'+cards+'</div>' +
@@ -4108,8 +4097,8 @@ function toggleCpInfo(btn){
 }
 
 function cpStepPhoto(slot){
-  var solidPhoto = 'mojplot-beton-plny.webp';
-  var decorativeDefault = 'mojplot-beton-vzor-skala.webp';
+  var solidPhoto = 'mojplot-beton-vzor-skala.webp';
+  var decorativeDefault = 'mojplot-beton-plny.webp';
   function current3dColorPhoto(){
     if(calcState.color === 'antracit') return 'mojplot-farba-antracit.webp';
     if(calcState.color === 'zelena') return 'mojplot-farba-zelena.webp';
@@ -4144,12 +4133,12 @@ function cpStepPhoto(slot){
       (calcState.cpBrankaCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-branka-3d.webp','Bránka','contain'] : null,
       (calcState.cpGateCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-brana-3d.webp','Brána','contain'] : null
     ].filter(Boolean),
-    'montaz': [calcState.cpInstallation === 'sam' ? current3dColorPhoto() : 'mojplot-betonovanie-do-zeme.svg', 'Montáž', 'contain'],
+    'montaz': [current3dColorPhoto(), 'Montáž', 'contain'],
     'beton-typ': [
-      calcState.betType === 'plny' ? ['mojplot-beton-plny.webp','Plný betónový plot','cover'] : null,
-      calcState.betType === 'pohladovy' ? [currentBetPatternPhoto(),'Pohľadový betónový plot','cover'] : null,
-      !calcState.betType ? ['mojplot-beton-plny.webp','Plný betónový plot','cover'] : null,
-      !calcState.betType ? ['mojplot-beton-vzor-skala.webp','Pohľadový betónový plot','cover'] : null
+      calcState.betType === 'plny' ? ['mojplot-beton-vzor-skala.webp','Plný betónový plot','cover'] : null,
+      calcState.betType === 'pohladovy' ? ['mojplot-beton-plny.webp','Pohľadový betónový plot','cover'] : null,
+      !calcState.betType ? ['mojplot-beton-vzor-skala.webp','Plný betónový plot','cover'] : null,
+      !calcState.betType ? ['mojplot-beton-plny.webp','Pohľadový betónový plot','cover'] : null
     ].filter(Boolean),
     'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
     'beton-farba': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Vybraný vzor betónu', 'cover'],
@@ -4169,7 +4158,8 @@ function cpStepPhoto(slot){
     return '<div class="mc-step-img asset-photo'+(mode==='cover'?' cover':'')+'"><img src="'+mpPhoto(file)+'" alt="'+(alt||'Môj plot')+'" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer-when-downgrade" onerror="this.parentElement.style.display=\'none\'"></div>';
   }
   if(Array.isArray(item[0])){
-    return '<div class="mc-step-photo-grid">'+item.map(function(x){ return one(x[0], x[1], x[2]); }).join('')+'</div>';
+    var photos = Array.isArray(item[0][0]) ? item[0] : item;
+    return '<div class="mc-step-photo-grid">'+photos.map(function(x){ return one(x[0], x[1], x[2]); }).join('')+'</div>';
   }
   return one(item[0], item[1], item[2]);
 }
@@ -4252,7 +4242,6 @@ function confirmCPLen(){ var v = parseInt(document.getElementById('lenInput').va
 function renderCPStep3(el){
   var l = MC.lang==='sk';
   el.innerHTML = '<div class="mc-step">' +
-    cpStepPhoto('farba') +
     '<div class="mc-step-title">'+(l?'Farba povrchu':'Surface color')+'</div>' +
     '<div class="mc-step-sub">'+(l?'Vyberte farbu. Po kliknutí sa hore ukáže ukážka a na ďalší krok prejdete až po potvrdení.':'Choose a color. After clicking, the preview above updates and you continue only after confirmation.')+'</div>' +
     '<div class="mc-color-grid">' +
