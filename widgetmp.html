@@ -1424,19 +1424,23 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
    - Contact icons (WhatsApp / phone / email): brand colour fills
      the circle from the centre and the glyph flips to white
    ========================================================= */
-/* Quick chips: brand-green fill expands from centre, text turns white */
-.mc-chip{position:relative;overflow:hidden;z-index:0;isolation:isolate;transition:color .25s ease,border-color .25s ease,transform .2s cubic-bezier(.34,1.4,.64,1)!important;}
-.mc-chip::before{
-  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;
-  background:linear-gradient(135deg,#54BF49,#2E7D32);
-  transform:scale(0);transform-origin:center;
-  transition:transform .34s cubic-bezier(.34,1.4,.64,1);
+/* Quick chips: brand-green fill grows from the centre, text turns white.
+   We animate the chip's OWN radial-gradient background (not a pseudo behind it)
+   so the text always paints above the fill and stays visible. */
+.mc-chip{
+  position:relative;overflow:hidden;z-index:0;
+  background-image:radial-gradient(circle at center,#54BF49 0%,#2E7D32 100%);
+  background-repeat:no-repeat;background-position:center;background-size:0% 0%;
+  transition:background-size .38s cubic-bezier(.34,1.3,.64,1),color .25s ease,border-color .25s ease,transform .2s cubic-bezier(.34,1.4,.64,1)!important;
 }
-.mc-chip:hover{color:#fff;border-color:#2E7D32;transform:translateY(-1px);}
-.mc-chip:hover::before{transform:scale(1);}
+.mc-chip:hover{color:#fff!important;border-color:#2E7D32;transform:translateY(-1px);background-image:radial-gradient(circle at center,#54BF49 0%,#2E7D32 100%);background-size:260% 260%;background-position:center;background-repeat:no-repeat;}
 .mc-chip:active{transform:translateY(0) scale(.97);}
+/* keep the calculator CTA chip on its own solid gradient (no fill animation) */
+.mc-chip.mc-chip-calc{background-image:linear-gradient(135deg,#2E7D32,#1B5E20);background-size:auto;}
+.mc-chip.mc-chip-calc:hover{background-size:auto;color:#fff!important;}
 
-/* Contact icons: brand colour fills the circle from the centre, glyph flips white */
+/* Contact icons: brand colour fills the circle from the centre, glyph flips white.
+   WhatsApp / phone / email all share the identical animation. */
 .mc-ci{position:relative;overflow:hidden;z-index:0;transition:transform .25s cubic-bezier(.34,1.4,.64,1);}
 .mc-ci svg{position:relative;z-index:1;transition:fill .28s ease,transform .28s ease;}
 .mc-ci::before{
@@ -3682,7 +3686,7 @@ function renderBetStep3(el){
       '</div>' +
     '</div>';
   }).join('');
-  var sub = l ? 'Vyberte odtieň. Hore zostáva náhľad plota alebo zvoleného vzoru, dole vyberáte len farebnú vzorku.' : 'Choose a shade. The preview above stays on the fence/pattern and below you select only a color swatch.';
+  var sub = l ? 'Vyberte odtieň. Zobrazená je len farebná vzorka odtieňa.' : 'Choose a shade. Only the color swatch is shown.';
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(l?'Farba / odtieň':'Color / shade')+'</div>' +
     '<div class="mc-step-sub">'+sub+'</div>' +
@@ -4098,7 +4102,7 @@ function toggleCpInfo(btn){
 
 function cpStepPhoto(slot){
   var solidPhoto = 'mojplot-beton-vzor-skala.webp';
-  var decorativeDefault = 'mojplot-beton-plny.webp';
+  var decorativeDefault = 'mojplot-beton-pohladovy.webp';
   function current3dColorPhoto(){
     if(calcState.color === 'antracit') return 'mojplot-farba-antracit.webp';
     if(calcState.color === 'zelena') return 'mojplot-farba-zelena.webp';
@@ -4130,15 +4134,15 @@ function cpStepPhoto(slot){
         ]), 'Typ montáže', 'contain'],
     'podhrab': ['mojplot-podhrabova-doska.webp','Podhrabová doska','contain'],
     'brana': [
-      (calcState.cpBrankaCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-branka-3d.webp','Bránka','contain'] : null,
-      (calcState.cpGateCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-brana-3d.webp','Brána','contain'] : null
-    ].filter(Boolean),
+      ['mojplot-branka-3d.webp','Bránka','contain'],
+      ['mojplot-brana-3d.webp','Brána','contain']
+    ],
     'montaz': [current3dColorPhoto(), 'Montáž', 'contain'],
     'beton-typ': [
       calcState.betType === 'plny' ? ['mojplot-beton-vzor-skala.webp','Plný betónový plot','cover'] : null,
-      calcState.betType === 'pohladovy' ? ['mojplot-beton-plny.webp','Pohľadový betónový plot','cover'] : null,
+      calcState.betType === 'pohladovy' ? ['mojplot-beton-pohladovy.webp','Pohľadový betónový plot','cover'] : null,
       !calcState.betType ? ['mojplot-beton-vzor-skala.webp','Plný betónový plot','cover'] : null,
-      !calcState.betType ? ['mojplot-beton-plny.webp','Pohľadový betónový plot','cover'] : null
+      !calcState.betType ? ['mojplot-beton-pohladovy.webp','Pohľadový betónový plot','cover'] : null
     ].filter(Boolean),
     'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
     'beton-farba': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Vybraný vzor betónu', 'cover'],
@@ -4243,11 +4247,11 @@ function renderCPStep3(el){
   var l = MC.lang==='sk';
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(l?'Farba povrchu':'Surface color')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyberte farbu. Po kliknutí sa hore ukáže ukážka a na ďalší krok prejdete až po potvrdení.':'Choose a color. After clicking, the preview above updates and you continue only after confirmation.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Vyberte farbu povrchovej úpravy. Na ďalší krok prejdete až po potvrdení.':'Choose the surface finish color. You continue only after confirmation.')+'</div>' +
     '<div class="mc-color-grid">' +
-      colorCard('antracit','Antracit','RAL 7016','swatch-antracit', mpPhoto('mojplot-farba-antracit.webp')) +
-      colorCard('zelena','Zelená','RAL 6005','swatch-zelena', mpPhoto('mojplot-farba-zelena.webp')) +
-      colorCard('zinok','Zinok (pozink)','Hot-dip','swatch-zinok', mpPhoto('mojplot-farba-zinok.webp')) +
+      colorCard('antracit','Antracit','RAL 7016','swatch-antracit', '') +
+      colorCard('zelena','Zelená','RAL 6005','swatch-zelena', '') +
+      colorCard('zinok','Zinok (pozink)','Hot-dip','swatch-zinok', '') +
     '</div>' +
     '<div class="mc-actions">' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
