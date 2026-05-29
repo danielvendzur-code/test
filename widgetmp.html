@@ -2011,7 +2011,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
   <div class="notif-dot">1</div>
   <div class="bubble-icon wobble">
-    <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">
+    <img src="fotky/mojplot-logo.png" alt="Môj plot">
   </div>
   <div class="bubble-x">
     <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -2035,7 +2035,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 
     <div class="mc-hdr-av">
-      <img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">
+      <img src="fotky/mojplot-logo.png" alt="Môj plot">
     </div>
     <div class="mc-hdr-info">
       <div class="mc-hdr-title" id="hdr-title">Asistent Môj plot</div>
@@ -2072,7 +2072,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   <!-- Typing indicator -->
 
   <div class="mc-typing" id="typing">
-    <div class="mc-av"><img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot"></div>
+    <div class="mc-av"><img src="fotky/mojplot-logo.png" alt="Môj plot"></div>
     <div class="mc-tbub"><span></span><span></span><span></span></div>
   </div>
 
@@ -2322,7 +2322,7 @@ function setMobileHeight(){
 }
 
 function botAvatarHtml(){
-  return '<img src="https://mojplot.sk/wp-content/uploads/2025/07/cropped-zelene-logo-moj-plot-300x300.png" alt="Môj plot">';
+  return '<img src="fotky/mojplot-logo.png" alt="Môj plot">';
 }
 
 function markProductImageLoaded(img){
@@ -2352,6 +2352,10 @@ function syncCalcChrome(isOpen){
 
 function autoNext(){
   window.setTimeout(function(){ next(); }, 80);
+}
+function rerenderCurrentCalcStep(){
+  var el = document.getElementById('calcContent');
+  if(el) renderCalcStep();
 }
 
 function colorHex(color){
@@ -2695,7 +2699,7 @@ function subEmail(){
    Lokálne fotky z repository: priečinok /fotky alebo fotky vedľa HTML.
    Betónové ploty používajú reálne produktové fotky z mojplot.sk, nie generované obrázky.
    Ak ich budeš mať na webe priamo v roote domény, zmeň na '/'. */
-var MP_PHOTO_BASE = '';
+var MP_PHOTO_BASE = 'fotky/';
 function mpPhoto(file){
   if(!file) return '';
   if(/^https?:\/\//.test(file) || file.charAt(0)==='/') return file;
@@ -2709,7 +2713,7 @@ var PRODUCTS = [
   { id:'3d-plot', name:'3D panelový plot', nameEn:'3D panel fence', desc:'Cenová kalkulačka', descEn:'Price calculator',
     img:mpPhoto('mojplot-farby-3d-panel.webp'), badge:'KALKULAČKA' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Maximálne súkromie a odolnosť', descEn:'Maximum privacy and durability',
-    img:'https://mojplot.sk/wp-content/uploads/2025/08/kategoria-betonove-ploty-scaled.png', badge:'NA DOPYT' }
+    img:'fotky/mojplot-kategoria-betonove-ploty.png', badge:'NA DOPYT' }
 ];
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
@@ -3077,9 +3081,9 @@ function render3dColor(el){
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(lang==='sk'?'Akú farbu preferujete?':'Which color do you prefer?')+'</div>' +
     '<div class="mc-color-grid">' +
-      colorCard('zinok','Zinok','Pozink', 'zinok', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zinok.webp') +
-      colorCard('zelena','Zelená','RAL 6005', 'zelena', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-zelena.webp') +
-      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'https://mojplot.sk/wp-content/uploads/2025/11/3D-plotovy-panel-farba-antracit.webp') +
+      colorCard('zinok','Zinok','Pozink', 'zinok', 'fotky/3D-plotovy-panel-farba-zinok.webp') +
+      colorCard('zelena','Zelená','RAL 6005', 'zelena', 'fotky/3D-plotovy-panel-farba-zelena.webp') +
+      colorCard('antracit','Antracit','RAL 7016', 'antracit', 'fotky/3D-plotovy-panel-farba-antracit.webp') +
     '</div>' +
     '<div class="mc-hint"><div class="hi">i</div><div>'+(lang==='sk'?'<b>Antracit</b> je dnes najobľúbenejší pre rodinné domy. <b>Zelená</b> sa hodí k záhrade a prírode.':'<b>Anthracite</b> is the most popular for family homes today. <b>Green</b> blends with garden and nature.')+'</div></div>' +
     '<div class="mc-actions">' +
@@ -3170,9 +3174,9 @@ function toggleExtra(input, key){
 function renderGateType(el){
   var lang = MC.lang;
   var opts = [
-    { id:'jednokrid', name:lang==='sk'?'Jednokrídlová bránka':'Single-wing gate', desc:lang==='sk'?'Pre vstup osôb (1 m)':'Pedestrian (1 m)', img:'https://mojplot.sk/wp-content/uploads/2025/07/brana-jednokridlova.jpg' },
-    { id:'dvojkrid', name:lang==='sk'?'Dvojkrídlová brána':'Double-wing gate', desc:lang==='sk'?'Vjazd 3–5 m':'Driveway 3–5 m', img:'https://mojplot.sk/wp-content/uploads/2025/07/brana-dvojkirdlova.jpg' },
-    { id:'posuvna', name:lang==='sk'?'Posuvná brána':'Sliding gate', desc:lang==='sk'?'Úspora miesta':'Space saving', img:'https://mojplot.sk/wp-content/uploads/2025/09/posuvna-brana-kategoria-scaled.png' }
+    { id:'jednokrid', name:lang==='sk'?'Jednokrídlová bránka':'Single-wing gate', desc:lang==='sk'?'Pre vstup osôb (1 m)':'Pedestrian (1 m)', img:'fotky/mojplot-brana-jednokridlova.jpg' },
+    { id:'dvojkrid', name:lang==='sk'?'Dvojkrídlová brána':'Double-wing gate', desc:lang==='sk'?'Vjazd 3–5 m':'Driveway 3–5 m', img:'fotky/mojplot-brana-dvojkridlova.jpg' },
+    { id:'posuvna', name:lang==='sk'?'Posuvná brána':'Sliding gate', desc:lang==='sk'?'Úspora miesta':'Space saving', img:'fotky/mojplot-posuvna-brana-kategoria.png' }
   ];
   var cards = opts.map(function(o){
     var sel = calcState.gateType === o.id;
@@ -3279,15 +3283,15 @@ function renderGateColor(el){
   var photos;
   if(gateType === 'jednokrid' || gateType === 'jednokridlova'){
     photos = {
-      zinok:    'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-zinok.webp',
-      zelena:   'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-zelena.webp',
-      antracit: 'https://mojplot.sk/wp-content/uploads/2025/12/jednokridlova-branka-farba-antracit.webp'
+      zinok:    'fotky/jednokridlova-branka-farba-zinok.webp',
+      zelena:   'fotky/jednokridlova-branka-farba-zelena.webp',
+      antracit: 'fotky/jednokridlova-branka-farba-antracit.webp'
     };
   } else {
     photos = {
-      zinok:    calcState.gateType === 'posuvna' ? 'https://mojplot.sk/wp-content/uploads/2025/09/Antracit-Posuvna-brana-3D-vypln-600x500.png' : 'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-zinok.webp',
-      zelena:   calcState.gateType === 'posuvna' ? 'https://mojplot.sk/wp-content/uploads/2025/09/Zelena-Posuvna-brana-3D-vypln-600x500.png' : 'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-zelena.webp',
-      antracit: calcState.gateType === 'posuvna' ? 'https://mojplot.sk/wp-content/uploads/2025/09/Antracit-Posuvna-brana-3D-vypln-600x500.png' : 'https://mojplot.sk/wp-content/uploads/2025/12/dvojkridlova-brana-farba-antracit.webp'
+      zinok:    calcState.gateType === 'posuvna' ? 'fotky/posuvna-brana-farba-antracit.png' : 'fotky/dvojkridlova-brana-farba-zinok.webp',
+      zelena:   calcState.gateType === 'posuvna' ? 'fotky/posuvna-brana-farba-zelena.png' : 'fotky/dvojkridlova-brana-farba-zelena.webp',
+      antracit: calcState.gateType === 'posuvna' ? 'fotky/posuvna-brana-farba-antracit.png' : 'fotky/dvojkridlova-brana-farba-antracit.webp'
     };
   }
   el.innerHTML = '<div class="mc-step">' +
@@ -3544,15 +3548,16 @@ function renderBetStep1(el){
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-typ') +
     '<div class="mc-step-title">'+(l?'Typ betónového plotu':'Concrete fence type')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyberte vzhľad. Cenu pripravíme individuálne podľa vašich potrieb.':'Pick the look. We will quote it individually.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Po kliknutí sa hore zmení ukážka. Ďalej prejdete až po potvrdení.':'After clicking, the preview above updates. You continue only after confirmation.')+'</div>' +
     '<div class="mc-cp-opts">' +
-      cpOpt('bt','plny', l?'Plný betónový plot':'Solid concrete fence', l?'Klasická plná stena, maximálne súkromie':'Classic solid wall, maximum privacy', ico1, calcState.betType, 'selBetType', l?'Plný betónový plot je tvorený poschodovými doskami medzi stĺpikmi. Ideálne na hluk a maximálne súkromie.':'Solid concrete fence is built from horizontal slabs between posts. Best for noise blocking and maximum privacy.') +
-      cpOpt('bt','pohladovy', l?'Pohľadový betónový plot':'Decorative concrete fence', l?'Dekoratívna štruktúra: tehla, skala, vlnka, bridlica':'Decorative pattern - brick, stone, wave, slate', ico2, calcState.betType, 'selBetType', l?'Pohľadový betón má reliéf vo vzoroch tehla, skala, vlnka alebo bridlica - estetickejšie ako plný plot.':'Decorative concrete has a textured surface in brick, stone, wave or slate patterns - more aesthetic than plain solid.') +
+      cpOpt('bt','plny', l?'Plný betónový plot':'Solid concrete fence', l?'Klasická plná stena, maximálne súkromie':'Classic solid wall, maximum privacy', ico1, calcState.betType, 'selBetType') +
+      cpOpt('bt','pohladovy', l?'Pohľadový betónový plot':'Decorative concrete fence', l?'Dekoratívna štruktúra: tehla, skala, vlnka, bridlica':'Decorative pattern - brick, stone, wave, slate', ico2, calcState.betType, 'selBetType') +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetType()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetType(v){ calcState.betType = v; autoNext(); }
+function selBetType(v){ calcState.betType = v; rerenderCurrentCalcStep(); }
+function confirmBetType(){ if(!calcState.betType){ alert(MC.lang==='sk'?'Vyberte typ betónového plotu.':'Please select concrete fence type.'); return; } autoNext(); }
 
 function renderBetPatternStep(el){
   var l = MC.lang==='sk';
@@ -3570,29 +3575,33 @@ function renderBetPatternStep(el){
     '</button>';
   }).join('');
   el.innerHTML = '<div class="mc-step">' +
+    cpStepPhoto('beton-kontakt') +
     '<div class="mc-step-title">'+(l?'Vzor pohľadového betónu':'Decorative concrete pattern')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyberte jeden zo vzorov: tehla, skala, vlnka alebo bridlica. Náhľad ukazuje samotný vzor, nie farebnú verziu plota.':'Choose one of the patterns: brick, stone, wave or slate. The preview shows the pattern only, not a colored fence version.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Kliknutím vyberiete vzor a hore hneď uvidíte náhľad vybraného vzoru.':'Click to select a pattern and the preview above updates immediately.')+'</div>' +
     '<div class="mc-bet-pattern-grid">'+cards+'</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetPattern()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetPattern(v){ calcState.betPattern = v; autoNext(); }
+function selBetPattern(v){ calcState.betPattern = v; rerenderCurrentCalcStep(); }
+function confirmBetPattern(){ if(!calcState.betPattern){ alert(MC.lang==='sk'?'Vyberte vzor betónu.':'Please select a concrete pattern.'); return; } autoNext(); }
 
 function renderBetSidesStep(el){
   var l = MC.lang==='sk';
   var ico1 = '<svg viewBox="0 0 24 24"><path d="M4 5h16v14H4V5zm2 2v10h12V7H6z"/></svg>';
   var ico2 = '<svg viewBox="0 0 24 24"><path d="M3 6h7v12H3V6zm11 0h7v12h-7V6z"/></svg>';
   el.innerHTML = '<div class="mc-step">' +
+    cpStepPhoto('beton-kontakt') +
     '<div class="mc-step-title">'+(l?'Prevedenie reliéfu':'Relief finish type')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyberte, či má byť dekor len z jednej strany alebo z oboch strán plotu.':'Choose whether the decorative texture should be on one side or on both sides of the fence.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Vyberte jednostranný alebo obojstranný reliéf. Ďalej prejdete až po potvrdení.':'Select single-sided or double-sided relief. You continue only after confirmation.')+'</div>' +
     '<div class="mc-cp-opts">' +
       cpOpt('bs','jednostranny', l?'Jednostranný':'Single-sided', l?'Dekor z jednej strany, druhá strana hladšia':'Decor on one side, simpler back side', ico1, calcState.betSides, 'selBetSides') +
       cpOpt('bs','obojstranny', l?'Obojstranný':'Double-sided', l?'Dekor viditeľný z oboch strán':'Decor visible on both sides', ico2, calcState.betSides, 'selBetSides') +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetSides()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetSides(v){ calcState.betSides = v; autoNext(); }
+function selBetSides(v){ calcState.betSides = v; rerenderCurrentCalcStep(); }
+function confirmBetSides(){ if(!calcState.betSides){ alert(MC.lang==='sk'?'Vyberte prevedenie reliéfu.':'Please select relief finish.'); return; } autoNext(); }
 
 function renderBetStep2(el){
   var l = MC.lang==='sk';
@@ -3640,17 +3649,17 @@ function renderBetStep3(el){
       '</div>' +
     '</div>';
   }).join('');
-  var sub = l
-    ? 'Vyberte preferovaný odtieň. Zobrazuje sa len farebná vzorka, nie farebná verzia plota.'
-    : 'Choose the preferred shade. Only a color swatch is shown, not a colored fence photo.';
+  var sub = l ? 'Vyberte odtieň. Hore zostáva náhľad plota alebo zvoleného vzoru, dole vyberáte len farebnú vzorku.' : 'Choose a shade. The preview above stays on the fence/pattern and below you select only a color swatch.';
   el.innerHTML = '<div class="mc-step">' +
+    cpStepPhoto('beton-farba') +
     '<div class="mc-step-title">'+(l?'Farba / odtieň':'Color / shade')+'</div>' +
     '<div class="mc-step-sub">'+sub+'</div>' +
     '<div class="mc-color-grid">'+cards+'</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetColor()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetColor(c){ calcState.betColor = c; autoNext(); }
+function selBetColor(c){ calcState.betColor = c; rerenderCurrentCalcStep(); }
+function confirmBetColor(){ if(!calcState.betColor){ alert(MC.lang==='sk'?'Vyberte farbu / odtieň.':'Please select a color / shade.'); return; } autoNext(); }
 
 function renderBetStep4(el){
   var l = MC.lang==='sk';
@@ -3688,7 +3697,7 @@ function renderBetStep4(el){
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep4()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetMounting(v){ calcState.betMounting = v; document.querySelectorAll('.mc-cp-opt').forEach(function(o){o.classList.remove('sel');}); if(window.event && event.currentTarget) event.currentTarget.classList.add('sel'); }
+function selBetMounting(v){ calcState.betMounting = v; rerenderCurrentCalcStep(); }); if(window.event && event.currentTarget) event.currentTarget.classList.add('sel'); }
 function adjBetBranka(d){ calcState.betBranka = Math.max(0, (calcState.betBranka||0)+d); var i=document.getElementById('betBrankaIn'); if(i) i.value = calcState.betBranka; }
 function adjBetGate(d){ calcState.betGate = Math.max(0, (calcState.betGate||0)+d); var i=document.getElementById('betGateIn'); if(i) i.value = calcState.betGate; }
 
@@ -3763,10 +3772,11 @@ function submitBetCalc(){
 
 function renderBetFinal(el){
   var l = MC.lang==='sk';
-  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:30px 18px">' +
+  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:24px 18px">' +
+    cpStepPhoto('beton-kontakt') +
     '<div style="font-size:52px;margin-bottom:12px">✓</div>' +
     '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme za dopyt!':'Thank you for your request!')+'</div>' +
-    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Betónový plot ceníme individuálne. Naceníme do 24 hodín a ozveme sa vám e-mailom či telefonicky.':'Concrete fences are quoted individually. We will price your request within 24 hours and reach out to you.')+'</div>' +
+    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Betónový plot ceníme individuálne. Naceníme do 24 hodín a ozveme sa vám e-mailom či telefonicky. Vyššie vidíte náhľad zvoleného typu / vzoru plotu.':'Concrete fences are quoted individually. We will price your request within 24 hours and contact you. Above you can see the selected fence type / pattern preview.')+'</div>' +
     '<div class="mc-actions" style="margin-top:18px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
       '<button class="mc-btn" onclick="resetCalc()">'+(l?'Nový výpočet':'New request')+'</button>' +
@@ -4056,24 +4066,62 @@ function toggleCpInfo(btn){
 
 function cpStepPhoto(slot){
   var solidPhoto = 'mojplot-beton-plny.webp';
-  var decorativePhoto = 'https://mojplot.sk/wp-content/uploads/2025/08/Okrasny-betonovy-plot.png';
-  var decorativePost = 'https://mojplot.sk/wp-content/uploads/2025/08/plotoy-stlpik-okrasny-600x500.png';
+  var decorativeDefault = 'mojplot-beton-vzor-skala.webp';
+  function current3dColorPhoto(){
+    if(calcState.color === 'antracit') return 'mojplot-farba-antracit.webp';
+    if(calcState.color === 'zelena') return 'mojplot-farba-zelena.webp';
+    if(calcState.color === 'zinok') return 'mojplot-farba-zinok.webp';
+    return 'mojplot-farby-3d-panel.webp';
+  }
+  function currentBetPatternPhoto(){
+    if(calcState.betPattern === 'tehla') return 'mojplot-beton-vzor-tehla.webp';
+    if(calcState.betPattern === 'skala') return 'mojplot-beton-vzor-skala.webp';
+    if(calcState.betPattern === 'vlnka') return 'mojplot-beton-vzor-vlnka.webp';
+    if(calcState.betPattern === 'bridlica') return 'mojplot-beton-vzor-bridlica.webp';
+    return decorativeDefault;
+  }
   var cfg = {
-    'vyska-hrubka': ['mojplot-farby-3d-panel.webp','3D panelový plot','contain'],
-    'dlzka': ['mojplot-farby-3d-panel.webp','3D panelový plot','contain'],
-    'farba': ['mojplot-farby-3d-panel.webp','Farby 3D panelového plotu','contain'],
-    'stlpik': ['mojplot-stlpik-hranaty.webp','Typ stĺpika','contain'],
-    'montaz-typ': ['mojplot-kotvenie-beton.webp','Kotvenie stĺpika','contain'],
+    'vyska-hrubka': [calcState.thickness === '5mm' ? 'mojplot-drot-5mm.webp' : (calcState.thickness === '4mm' ? 'mojplot-drot-4mm.webp' : current3dColorPhoto()), '3D panelový plot', 'contain'],
+    'dlzka': [current3dColorPhoto(), '3D panelový plot', 'contain'],
+    'farba': [current3dColorPhoto(), 'Farba 3D panelového plotu', 'contain'],
+    'stlpik': [calcState.cpPostType === 'okruhly'
+      ? 'mojplot-stlpik-okruhly.webp'
+      : (calcState.cpPostType === 'hranaty' ? 'mojplot-stlpik-hranaty.webp' : [
+          ['mojplot-stlpik-okruhly.webp','Okrúhly stĺpik','contain'],
+          ['mojplot-stlpik-hranaty.webp','Hranatý stĺpik','contain']
+        ]), 'Typ stĺpika', 'contain'],
+    'montaz-typ': [calcState.cpMounting === 'betono'
+      ? 'mojplot-betonovanie-do-zeme.webp'
+      : (calcState.cpMounting === 'kotvo' ? 'mojplot-kotvenie-beton.webp' : [
+          ['mojplot-betonovanie-do-zeme.webp','Betónovanie do zeme','contain'],
+          ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']
+        ]), 'Typ montáže', 'contain'],
     'podhrab': ['mojplot-podhrabova-doska.webp','Podhrabová doska','contain'],
-    'brana': ['mojplot-brana-3d.webp','Brána a bránka','contain'],
-    'montaz': ['mojplot-kotvenie-beton.webp','Montáž','contain'],
-    'beton-typ': [calcState.betType === 'plny' ? solidPhoto : decorativePhoto, calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
-    'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : decorativePhoto, calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
-    'beton-montaz': [calcState.betType === 'plny' ? solidPhoto : decorativePost, calcState.betType === 'plny' ? 'Betónový plot' : 'Betónový stĺpik', 'cover'],
-    'beton-kontakt': [calcState.betType === 'plny' ? solidPhoto : decorativePhoto, 'Betónové ploty', 'cover']
+    'brana': [
+      (calcState.cpBrankaCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-branka-3d.webp','Bránka','contain'] : null,
+      (calcState.cpGateCount > 0 || (!calcState.cpGateCount && !calcState.cpBrankaCount)) ? ['mojplot-brana-3d.webp','Brána','contain'] : null
+    ].filter(Boolean),
+    'montaz': [calcState.cpInstallation === 'sam' ? current3dColorPhoto() : 'mojplot-betonovanie-do-zeme.webp', 'Montáž', 'contain'],
+    'beton-typ': [
+      calcState.betType === 'plny' ? ['mojplot-beton-plny.webp','Plný betónový plot','cover'] : null,
+      calcState.betType === 'pohladovy' ? [currentBetPatternPhoto(),'Pohľadový betónový plot','cover'] : null,
+      !calcState.betType ? ['mojplot-beton-plny.webp','Plný betónový plot','cover'] : null,
+      !calcState.betType ? ['mojplot-beton-vzor-skala.webp','Pohľadový betónový plot','cover'] : null
+    ].filter(Boolean),
+    'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
+    'beton-farba': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Vybraný vzor betónu', 'cover'],
+    'beton-montaz': [
+      calcState.betMounting === 'betono' ? ['mojplot-betonovanie-do-zeme.webp','Betónovanie do zeme','contain'] : null,
+      calcState.betMounting === 'kotvo' ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
+      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-betonovanie-do-zeme.webp','Betónovanie do zeme','contain'] : null,
+      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
+      ['mojplot-branka-3d.webp','Bránka','contain'],
+      ['mojplot-brana-3d.webp','Brána','contain']
+    ].filter(Boolean),
+    'beton-kontakt': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Betónový plot' : 'Vybraný vzor pohľadového betónu', 'cover']
   };
   var item = cfg[slot];
-  if(!item || slot === 'beton-farba') return '';
+  if(!item) return '';
   function one(file, alt, mode){
     return '<div class="mc-step-img asset-photo'+(mode==='cover'?' cover':'')+'"><img src="'+mpPhoto(file)+'" alt="'+(alt||'Môj plot')+'" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer-when-downgrade" onerror="this.parentElement.style.display=\'none\'"></div>';
   }
@@ -4163,16 +4211,21 @@ function renderCPStep3(el){
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('farba') +
     '<div class="mc-step-title">'+(l?'Farba povrchu':'Surface color')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Pozinkovaný a vo farbe RAL – rovnaká cena, rozdielny vzhľad.':'Hot-dip galvanized or RAL color powder-coated.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Vyberte farbu. Po kliknutí sa hore ukáže ukážka a na ďalší krok prejdete až po potvrdení.':'Choose a color. After clicking, the preview above updates and you continue only after confirmation.')+'</div>' +
     '<div class="mc-color-grid">' +
-      colorCard('antracit','Antracit','RAL 7016','swatch-antracit','') +
-      colorCard('zelena','Zelená','RAL 6005','swatch-zelena','') +
-      colorCard('zinok','Zinok (pozink)','Hot-dip','swatch-zinok','') +
+      colorCard('antracit','Antracit','RAL 7016','swatch-antracit', mpPhoto('mojplot-farba-antracit.webp')) +
+      colorCard('zelena','Zelená','RAL 6005','swatch-zelena', mpPhoto('mojplot-farba-zelena.webp')) +
+      colorCard('zinok','Zinok (pozink)','Hot-dip','swatch-zinok', mpPhoto('mojplot-farba-zinok.webp')) +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmCPStep3()">'+(l?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
   '</div>';
 }
-function selCPThick(v){ calcState.thickness = v; }
+function selCPThick(v){ calcState.thickness = v; rerenderCurrentCalcStep(); }
+function selColor(v){ calcState.color = v; rerenderCurrentCalcStep(); }
+function confirmCPStep3(){ if(!calcState.color){ alert(MC.lang==='sk'?'Vyberte farbu.':'Please select a color.'); return; } autoNext(); }
 
 /* KROK 4 – Typ stĺpika + Výška stĺpika (kombinovaný krok) */
 function renderCPStep4(el){
@@ -4216,7 +4269,7 @@ function renderCPStep4(el){
     '</div>' +
   '</div>';
 }
-function selCPPostType(v){ calcState.cpPostType = v; document.querySelectorAll('.mc-cp-opt').forEach(function(o){o.classList.remove('sel');}); if(window.event && event.currentTarget) event.currentTarget.classList.add('sel'); }
+function selCPPostType(v){ calcState.cpPostType = v; rerenderCurrentCalcStep(); }); if(window.event && event.currentTarget) event.currentTarget.classList.add('sel'); }
 function selCPPostHeight(v){ calcState.cpPostHeight = v; var cards=document.querySelectorAll('.mc-size-card'); cards.forEach(function(c){if(c.querySelector('.mc-size-val')){c.classList.remove('selected');}}); event.currentTarget.classList.add('selected'); }
 function confirmCPStep4(){
   if(!calcState.cpPostType){ alert(MC.lang==='sk'?'Vyberte typ stĺpika.':'Please select post type.'); return; }
@@ -4232,26 +4285,20 @@ function renderCPStep5(el){
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('montaz-typ') +
     '<div class="mc-step-title">'+(l?'Typ montáže stĺpikov':'Post mounting type')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Spôsob kotvenia stĺpikov určuje finálnu cenu.':'Mounting method determines the final price.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Kliknutím vyberiete možnosť, hore sa hneď zmení ukážka. Na ďalší krok prejdete až po stlačení tlačidla Pokračovať.':'Click to select an option, the preview above updates immediately. You continue only after pressing Continue.')+'</div>' +
     '<div class="mc-cp-opts">' +
-      cpOpt('m','betono', l?'Betónovanie do zeme':'Concreting into ground',
-        l?'Stĺpiky zaliate betónom – najstabilnejšie':'Posts concreted in – most stable',
-        icoB, calcState.cpMounting, 'selCPMounting',
-        l?'Najstabilnejší spôsob kotvenia. Stĺpik sa osadzuje do betónovej pätky v hĺbke min. 60 cm. Vhodné pre všetky výšky plotu.':'Most stable mounting. Post is set in a concrete footing at min. 60 cm depth. Suitable for all fence heights.') +
-      cpOpt('m','kotvo',  l?'Kotvenie na múrik / betón':'Anchoring to wall / concrete',
-        l?'Platnička stĺpika +6,86 € / ks s DPH':'Anchor plate +6.86 € / pc incl. VAT',
-        icoK, calcState.cpMounting, 'selCPMounting',
-        l?'Stĺpik sa priskrutkuje na hotovú betónovú podmurovku alebo múrik. Rýchla montáž, ale potrebujete existujúci pevný podklad.':'Post is bolted to an existing concrete base or low wall. Faster, but you need a solid existing foundation.') +
-      cpOpt('m','poradte', l?'Neviem, poraďte mi':'Not sure, advise me',
-        l?'Náš technik posúdi terén a navrhne najvhodnejšie kotvenie':'Our technician will assess the site and recommend the best mounting',
-        '<svg viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>',
-        calcState.cpMounting, 'selCPMounting',
-        l?'Pri obhliadke navrhneme optimálne kotvenie podľa typu pôdy, sklonu a existujúcich konštrukcií.':'During site visit we will design optimal mounting based on soil type, slope and existing structures.') +
+      cpOpt('m','betono', l?'Betónovanie do zeme':'Concreting into ground', l?'Stĺpiky zaliate betónom – najstabilnejšie':'Posts concreted in – most stable', icoB, calcState.cpMounting, 'selCPMounting') +
+      cpOpt('m','kotvo',  l?'Kotvenie na múrik / betón':'Anchoring to wall / concrete', l?'Platnička stĺpika +6,86 € / ks s DPH':'Anchor plate +6.86 € / pc incl. VAT', icoK, calcState.cpMounting, 'selCPMounting') +
+      cpOpt('m','poradte', l?'Neviem, poraďte mi':'Not sure, advise me', l?'Náš technik posúdi terén a navrhne najvhodnejšie kotvenie':'Our technician will assess the site and recommend the best mounting', '<svg viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>', calcState.cpMounting, 'selCPMounting') +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmCPStep5()">'+(l?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
   '</div>';
 }
-function selCPMounting(v){ calcState.cpMounting = v; autoNext(); }
+function selCPMounting(v){ calcState.cpMounting = v; rerenderCurrentCalcStep(); }
+function confirmCPStep5(){ if(!calcState.cpMounting){ alert(MC.lang==='sk'?'Vyberte typ montáže.':'Please select mounting type.'); return; } autoNext(); }
 
 /* KROK 6 – Podhrabová doska */
 function renderCPStep6(el){
@@ -4261,21 +4308,19 @@ function renderCPStep6(el){
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('podhrab') +
     '<div class="mc-step-title">'+(l?'Podhrabová doska':'Underboard')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Zakrýva medzeru medzi plotom a zemou. Každá doska vyžaduje 2 ks držiakov (7,08 € / panel).':'Covers gap between fence and ground. Each board requires 2 holders (7.08 € / panel).')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Po výbere zostane náhľad viditeľný. Ďalej pôjdete až po potvrdení.':'After selection, the preview remains visible. You continue only after confirmation.')+'</div>' +
     '<div class="mc-cp-opts">' +
-      cpOpt('ud','yes', l?'Áno, chcem podhrabové dosky':'Yes, I want underboards',
-        l?'2 ks držiakov na panel (+7,08 €/panel)':'2 holders per panel (+7.08 €/panel)',
-        icoY, calcState.cpUnderboard?'yes':null, 'selCPUnderboard',
-        l?'Podhrabová doska 250×20×5 cm zabraňuje podhrabaniu zvierat pod plot, spevňuje základ a vyrovnáva nerovnosti terénu.':'Underboard 250×20×5 cm prevents animals from burrowing under the fence, strengthens the foundation and levels the ground.') +
-      cpOpt('ud','no',  l?'Nie, nepotrebujem':'No, not needed',
-        l?'Bez podhrabovej dosky':'Without underboard',
-        icoN, calcState.cpUnderboard?null:'no', 'selCPUnderboard',
-        l?'Plot bude bez spodnej dosky. Vhodné ak máte rovný terén bez psov či malých zvierat.':'Fence will have no bottom board. Suitable if terrain is flat and no animals burrow.') +
+      cpOpt('ud','yes', l?'Áno, chcem podhrabové dosky':'Yes, I want underboards', l?'2 ks držiakov na panel (+7,08 €/panel)':'2 holders per panel (+7.08 €/panel)', icoY, calcState.cpUnderboard===true?'yes':null, 'selCPUnderboard') +
+      cpOpt('ud','no',  l?'Nie, nepotrebujem':'No, not needed', l?'Bez podhrabovej dosky':'Without underboard', icoN, calcState.cpUnderboard===false?'no':null, 'selCPUnderboard') +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmCPStep6()">'+(l?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
   '</div>';
 }
-function selCPUnderboard(v){ calcState.cpUnderboard = v==='yes'; autoNext(); }
+function selCPUnderboard(v){ calcState.cpUnderboard = (v==='yes'); rerenderCurrentCalcStep(); }
+function confirmCPStep6(){ if(typeof calcState.cpUnderboard === 'undefined'){ alert(MC.lang==='sk'?'Vyberte, či chcete podhrabovú dosku.':'Please select whether you want an underboard.'); return; } autoNext(); }
 
 /* KROK 7 – Brána/bránka + Rohy/ukončenia (kombinovaný krok) */
 function renderCPStep7(el){
@@ -4365,10 +4410,14 @@ function renderCPStep8(el){
       cpOpt('inst','kluc', l?'Chcem montáž na kľúč':'I want key-ready installation', l?'35 € bez DPH/bm · orientačne ~'+instCost+' € za '+bm+' bm':'35 € ex. VAT/lm · approx ~'+instCost+' € for '+bm+' lm', icoK, calcState.cpInstallation, 'selCPInst') +
       cpOpt('inst','sam',  l?'Montáž si zabezpečím sám':'I will do the installation myself', l?'Dodáme kompletný materiál, montáž nie je zahrnutá':'Material delivered, installation not included', icoS, calcState.cpInstallation, 'selCPInst') +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button></div>' +
+    '<div class="mc-actions">' +
+      '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
+      '<button class="mc-btn" onclick="confirmCPStep8()">'+(l?'Pokračovať':'Continue')+' →</button>' +
+    '</div>' +
   '</div>';
 }
-function selCPInst(v){ calcState.cpInstallation = v; autoNext(); }
+function selCPInst(v){ calcState.cpInstallation = v; rerenderCurrentCalcStep(); }
+function confirmCPStep8(){ if(!calcState.cpInstallation){ alert(MC.lang==='sk'?'Vyberte montáž.':'Please select installation.'); return; } autoNext(); }
 
 /* KROK 9 – Lokalita + Kontakt + GDPR (kombinovaný krok) */
 function renderCPStep9(el){
