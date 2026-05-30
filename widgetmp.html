@@ -1410,7 +1410,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 /* QUICK CHIPS - website style */
 .mc-chip { border:1.5px solid #DDE7D8;background:#fff;border-radius:22px;padding:8px 14px;font-size:12.5px;font-weight:600;color:#3A4A38;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(35,39,42,.05); }
-.mc-chip:hover { border-color:#45A93C;background:#F7FAF4;color:#2E7D32;box-shadow:0 3px 10px rgba(69,169,60,.1); }
+.mc-chip:hover { border-color:#45A93C;box-shadow:0 3px 10px rgba(69,169,60,.1); }
 .mc-chips { display:flex;flex-wrap:wrap;gap:7px;padding:10px 14px 14px;background:transparent; }
 
 
@@ -1420,24 +1420,26 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 /* =========================================================
    CHIP & CONTACT FILL ANIMATIONS
-   - Quick chips: brand-green fills from the centre (same spring as contact icons)
-   - Contact icons (WhatsApp / phone / email): brand colour fills
-     the circle from the centre and the glyph flips to white
    ========================================================= */
-/* Quick chips: brand-green fill grows from the centre, text turns white.
-   We animate the chip's OWN radial-gradient background (not a pseudo behind it)
-   so the text always paints above the fill and stays visible. */
-.mc-chip{
-  position:relative;overflow:hidden;z-index:0;
-  background-image:radial-gradient(circle at center,#54BF49 0%,#2E7D32 100%);
-  background-repeat:no-repeat;background-position:center;background-size:0% 0%;
-  transition:background-size .38s cubic-bezier(.34,1.3,.64,1),color .25s ease,border-color .25s ease,transform .2s cubic-bezier(.34,1.4,.64,1)!important;
+/* Quick chips: brand-green fills from centre via ::before scale.
+   ::before sits at z-index:-1 within the chip's isolation context,
+   so it paints above the chip background but below the text. */
+.mc-chip:not(.mc-chip-calc){
+  position:relative;overflow:hidden;isolation:isolate;
+  transition:color .25s ease,border-color .25s ease,transform .2s cubic-bezier(.34,1.4,.64,1),box-shadow .2s ease;
 }
-.mc-chip:hover{color:#fff!important;border-color:#2E7D32;transform:translateY(-1px);background-image:radial-gradient(circle at center,#54BF49 0%,#2E7D32 100%);background-size:260% 260%;background-position:center;background-repeat:no-repeat;}
-.mc-chip:active{transform:translateY(0) scale(.97);}
-/* keep the calculator CTA chip on its own solid gradient (no fill animation) */
-.mc-chip.mc-chip-calc{background-image:linear-gradient(135deg,#2E7D32,#1B5E20);background-size:auto;}
-.mc-chip.mc-chip-calc:hover{background-size:auto;color:#fff!important;}
+.mc-chip:not(.mc-chip-calc)::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;
+  background:radial-gradient(circle at center,#54BF49 0%,#2E7D32 100%);
+  transform:scale(0);transform-origin:center;
+  transition:transform .38s cubic-bezier(.34,1.3,.64,1);
+}
+.mc-chip:not(.mc-chip-calc):hover::before{transform:scale(1.5);}
+.mc-chip:not(.mc-chip-calc):hover{color:#fff!important;border-color:#2E7D32;transform:translateY(-1px);box-shadow:0 4px 14px rgba(46,125,50,.35);}
+.mc-chip:not(.mc-chip-calc):active{transform:translateY(0) scale(.97);}
+/* calculator CTA chip keeps its solid green gradient, no fill animation */
+.mc-chip.mc-chip-calc{background:linear-gradient(135deg,#2E7D32,#1B5E20)!important;color:#fff!important;}
+.mc-chip.mc-chip-calc:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(46,125,50,.35);}
 
 /* Contact icons: brand colour fills the circle from the centre, glyph flips white.
    WhatsApp / phone / email all share the identical animation. */
@@ -4118,40 +4120,26 @@ function cpStepPhoto(slot){
     'vyska-hrubka': [calcState.thickness === '5mm' ? 'mojplot-drot-5mm.svg' : (calcState.thickness === '4mm' ? 'mojplot-drot-4mm.svg' : current3dColorPhoto()), '3D panelový plot', 'contain'],
     'dlzka': [current3dColorPhoto(), '3D panelový plot', 'contain'],
     'farba': [current3dColorPhoto(), 'Farba 3D panelového plotu', 'contain'],
-    'stlpik': [calcState.cpPostType === 'okruhly'
-      ? 'mojplot-stlpik-okruhly.webp'
-      : (calcState.cpPostType === 'hranaty' ? 'mojplot-stlpik-hranaty.webp' : [
-          ['mojplot-stlpik-okruhly.webp','Okrúhly stĺpik','contain'],
-          ['mojplot-stlpik-hranaty.webp','Hranatý stĺpik','contain']
-        ]), 'Typ stĺpika', 'contain'],
-    'montaz-typ': calcState.cpMounting === 'betono'
-      ? ['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover']
-      : (calcState.cpMounting === 'kotvo'
-          ? ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']
-          : [['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover'],
-             ['mojplot-kotvenie-beton.webp','Kotvenie na múrik','contain']]),
+    'stlpik': calcState.cpPostType === 'okruhly'
+      ? ['mojplot-stlpik-okruhly.webp', 'Okrúhly stĺpik', 'contain']
+      : ['mojplot-stlpik-hranaty.webp', 'Hranatý stĺpik', 'contain'],
+    'montaz-typ': calcState.cpMounting === 'kotvo'
+      ? ['mojplot-kotvenie-beton.webp', 'Kotvenie na múrik', 'contain']
+      : ['mojplot-plot-podmurovka.webp', 'Betónovanie do zeme', 'cover'],
     'podhrab': ['mojplot-podhrabova-doska.webp','Podhrabová doska','contain'],
     'brana': [
       ['mojplot-branka-3d.webp','Bránka','contain'],
       ['mojplot-brana-3d.webp','Brána','contain']
     ],
-    'montaz': calcState.cpInstallation === 'kluc'
-      ? ['mojplot-montaz-kluc.webp','Montáž na kľúč','cover']
-      : (calcState.cpInstallation === 'sam'
-          ? ['mojplot-plot-hotovy.webp','Hotový plot – montáž svojpomocne','cover']
-          : [['mojplot-montaz-kluc.webp','Montáž na kľúč','cover'],
-             ['mojplot-plot-hotovy.webp','Hotový plot','cover']]),
+    'montaz': calcState.cpInstallation === 'sam'
+      ? ['mojplot-farba-antracit.webp', 'Hotový plot', 'contain']
+      : ['mojplot-montaz-kluc.webp', 'Montáž na kľúč', 'cover'],
     'beton-typ': ['mojplot-beton-pohladovy.webp','Okrasný betónový plot','cover'],
     'beton-rozmer': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Pohľadový betónový plot', 'cover'],
     'beton-farba': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Plný betónový plot' : 'Vybraný vzor betónu', 'cover'],
-    'beton-montaz': [
-      calcState.betMounting === 'betono' ? ['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover'] : null,
-      calcState.betMounting === 'kotvo' ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
-      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-plot-podmurovka.webp','Betónovanie do zeme','cover'] : null,
-      (!calcState.betMounting || calcState.betMounting === 'poradte') ? ['mojplot-kotvenie-beton.webp','Kotvenie na podmurovku','contain'] : null,
-      ['mojplot-branka-3d.webp','Bránka','contain'],
-      ['mojplot-brana-3d.webp','Brána','contain']
-    ].filter(Boolean),
+    'beton-montaz': calcState.betMounting === 'kotvo'
+      ? ['mojplot-kotvenie-beton.webp', 'Kotvenie na podmurovku', 'contain']
+      : ['mojplot-plot-podmurovka.webp', 'Betónovanie do zeme', 'cover'],
     'beton-kontakt': [calcState.betType === 'plny' ? solidPhoto : currentBetPatternPhoto(), calcState.betType === 'plny' ? 'Betónový plot' : 'Vybraný vzor pohľadového betónu', 'cover']
   };
   var item = cfg[slot];
@@ -4247,9 +4235,9 @@ function renderCPStep3(el){
     '<div class="mc-step-title">'+(l?'Farba povrchu':'Surface color')+'</div>' +
     '<div class="mc-step-sub">'+(l?'Vyberte farbu povrchovej úpravy. Na ďalší krok prejdete až po potvrdení.':'Choose the surface finish color. You continue only after confirmation.')+'</div>' +
     '<div class="mc-color-grid">' +
-      colorCard('antracit','Antracit','RAL 7016','swatch-antracit', '') +
-      colorCard('zelena','Zelená','RAL 6005','swatch-zelena', '') +
-      colorCard('zinok','Zinok (pozink)','Hot-dip','swatch-zinok', '') +
+      colorCard('antracit','Antracit','RAL 7016','antracit', '') +
+      colorCard('zelena','Zelená','RAL 6005','zelena', '') +
+      colorCard('zinok','Zinok (pozink)','Hot-dip','zinok', '') +
     '</div>' +
     '<div class="mc-actions">' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
@@ -4257,8 +4245,8 @@ function renderCPStep3(el){
     '</div>' +
   '</div>';
 }
-function selCPThick(v){ calcState.thickness = v; rerenderCurrentCalcStep(); }
-function selColor(v){ calcState.color = v; rerenderCurrentCalcStep(); }
+function selCPThick(v){ if(calcState.thickness === v) return; calcState.thickness = v; rerenderCurrentCalcStep(); }
+function selColor(v){ if(calcState.color === v) return; calcState.color = v; rerenderCurrentCalcStep(); }
 function confirmCPStep3(){ if(!calcState.color){ alert(MC.lang==='sk'?'Vyberte farbu.':'Please select a color.'); return; } autoNext(); }
 
 /* KROK 4 – Typ stĺpika + Výška stĺpika (kombinovaný krok) */
@@ -4303,7 +4291,7 @@ function renderCPStep4(el){
     '</div>' +
   '</div>';
 }
-function selCPPostType(v){ calcState.cpPostType = v; rerenderCurrentCalcStep(); }
+function selCPPostType(v){ if(calcState.cpPostType === v) return; calcState.cpPostType = v; rerenderCurrentCalcStep(); }
 function selCPPostHeight(v){ calcState.cpPostHeight = v; var cards=document.querySelectorAll('.mc-size-card'); cards.forEach(function(c){if(c.querySelector('.mc-size-val')){c.classList.remove('selected');}}); event.currentTarget.classList.add('selected'); }
 function confirmCPStep4(){
   if(!calcState.cpPostType){ alert(MC.lang==='sk'?'Vyberte typ stĺpika.':'Please select post type.'); return; }
@@ -4331,7 +4319,21 @@ function renderCPStep5(el){
     '</div>' +
   '</div>';
 }
-function selCPMounting(v){ calcState.cpMounting = v; rerenderCurrentCalcStep(); }
+function selCPMounting(v){
+  var old = calcState.cpMounting;
+  if(old === v) return;
+  calcState.cpMounting = v;
+  var photoChanged = (old === 'kotvo') !== (v === 'kotvo');
+  if(photoChanged){
+    rerenderCurrentCalcStep();
+  } else {
+    document.querySelectorAll('.mc-cp-opt').forEach(function(o){
+      var oc = o.getAttribute('onclick') || '';
+      if(oc.indexOf('selCPMounting') < 0) return;
+      o.classList.toggle('sel', oc.indexOf("'"+v+"'") >= 0);
+    });
+  }
+}
 function confirmCPStep5(){ if(!calcState.cpMounting){ alert(MC.lang==='sk'?'Vyberte typ montáže.':'Please select mounting type.'); return; } autoNext(); }
 
 /* KROK 6 – Podhrabová doska */
@@ -4353,7 +4355,7 @@ function renderCPStep6(el){
     '</div>' +
   '</div>';
 }
-function selCPUnderboard(v){ calcState.cpUnderboard = (v==='yes'); rerenderCurrentCalcStep(); }
+function selCPUnderboard(v){ var b=(v==='yes'); if(calcState.cpUnderboard===b) return; calcState.cpUnderboard=b; rerenderCurrentCalcStep(); }
 function confirmCPStep6(){ if(typeof calcState.cpUnderboard === 'undefined'){ alert(MC.lang==='sk'?'Vyberte, či chcete podhrabovú dosku.':'Please select whether you want an underboard.'); return; } autoNext(); }
 
 /* KROK 7 – Brána/bránka + Rohy/ukončenia (kombinovaný krok) */
