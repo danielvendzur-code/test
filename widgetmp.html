@@ -2061,6 +2061,8 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 /* iOS input zoom fix — font-size ≥16px prevents Safari from auto-zooming on any input */
 #mojplot-chat input:not([type="range"]):not([type="radio"]):not([type="checkbox"]),
 #mojplot-chat textarea{font-size:16px!important}
+/* Prevent double-tap zoom on iOS 16+ across the entire widget */
+#mojplot-chat,#mojplot-bubble{touch-action:manipulation}
 
 </style>
 
@@ -2500,6 +2502,13 @@ function toggleChat(){
   }
   if(MC.open){
     setMobileHeight();
+    /* Reset iOS zoom back to 1× when chat opens */
+    var _vm = document.querySelector('meta[name="viewport"]');
+    if(_vm){
+      var _vc = _vm.getAttribute('content');
+      _vm.setAttribute('content','width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover');
+      setTimeout(function(){ _vm.setAttribute('content',_vc); }, 120);
+    }
     var calcC = document.getElementById('calcContainer');
     if(!calcC || calcC.getAttribute('data-open') !== 'true') syncCalcChrome(false);
   }
