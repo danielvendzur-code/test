@@ -189,9 +189,10 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 .mc-calc-container::-webkit-scrollbar-thumb{background:var(--mc-border);border-radius:4px}
 .mc-calc-container[data-open="true"]{display:block;animation:calcOpen .4s cubic-bezier(.16,1,.3,1)}
 /* Nenápadný indikátor scrollovania – zjaví sa len keď je obsah dlhší ako okno */
-.mc-scroll-hint{position:sticky;bottom:10px;left:0;right:0;display:flex;justify-content:center;pointer-events:none;margin-top:-46px;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease;z-index:6}
+.mc-scroll-hint{position:sticky;bottom:10px;left:0;right:0;display:flex;justify-content:flex-end;padding-right:6px;pointer-events:none;margin-top:-46px;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease;z-index:6}
 .mc-scroll-hint.show{opacity:1;transform:translateY(0)}
-.mc-scroll-hint button{pointer-events:auto;cursor:pointer;width:38px;height:38px;border-radius:50%;border:none;background:rgba(46,125,50,.93);color:#fff;box-shadow:0 4px 14px rgba(46,125,50,.4);display:flex;align-items:center;justify-content:center;padding:0;animation:scrollHintBounce 1.7s ease-in-out infinite}
+.mc-scroll-hint button{pointer-events:none;cursor:pointer;width:38px;height:38px;border-radius:50%;border:none;background:rgba(46,125,50,.93);color:#fff;box-shadow:0 4px 14px rgba(46,125,50,.4);display:flex;align-items:center;justify-content:center;padding:0;animation:scrollHintBounce 1.7s ease-in-out infinite}
+.mc-scroll-hint.show button{pointer-events:auto}
 .mc-scroll-hint button svg{width:22px;height:22px;fill:#fff}
 .mc-scroll-hint button:hover{background:#2E7D32}
 @keyframes scrollHintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
@@ -342,6 +343,12 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 
 /* Result sub-text */
 .mc-result-sub{font-size:11.5px;color:var(--mc-text-sub);line-height:1.5;position:relative;margin-top:4px}
+.mc-price-line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 0;position:relative}
+.mc-price-line-k{font-size:12.5px;font-weight:600;color:var(--mc-text-sub)}
+.mc-price-line-v{font-size:16px;font-weight:800;color:var(--mc-text);white-space:nowrap;letter-spacing:-.3px}
+.mc-price-total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding-top:9px;margin-top:5px;border-top:2px solid var(--m-green);position:relative}
+.mc-price-total-k{font-size:13px;font-weight:800;color:var(--m-green);text-transform:uppercase;letter-spacing:.4px}
+.mc-price-total-v{font-size:21px;font-weight:800;color:var(--m-green);white-space:nowrap;letter-spacing:-.5px}
 
 /* Contact form (final step) */
 .mc-contact-form{display:flex;flex-direction:column;gap:9px;margin:14px 0 6px;padding:14px 13px;background:var(--mc-input-bg);border:1px solid var(--mc-border);border-radius:14px}
@@ -2329,7 +2336,6 @@ var calcState = {
   cpLocation: '',
   cpZip: '',
   cpInstallation: null,
-  cpGateColor: null,
   cpGdpr: false,
   /* Betónový plot konfigurátor */
   betType: null,        // 'plny' or 'pohladovy'
@@ -2339,6 +2345,7 @@ var calcState = {
   betMounting: null,    // betono / kotvo / poradte
   betGate: 0,
   betBranka: 0,
+  betGateColor: null,   // zelena / zinok / antracit (brány sa robia len v 3 farbách)
   betLocation: '',
   betZip: '',
   betGdpr: false
@@ -2893,9 +2900,19 @@ function updateCalcScrollHint(){
   var hint = document.getElementById('calcScrollHint');
   if(!c || !hint) return;
   var max = c.scrollHeight - c.clientHeight;
-  var canScroll = max > 30;
-  var atBottom = c.scrollTop >= max - 30;
-  if(canScroll && !atBottom) hint.classList.add('show');
+  /* Indikátor len keď je krok výrazne dlhší ako okno (veľa je schované). */
+  if(max < 90){ hint.classList.remove('show'); return; }
+  var remaining = max - c.scrollTop;
+  /* Skry, keď sú už akčné tlačidlá (Späť / Pokračovať) viditeľné – nech šípka
+     nezavadzia a neprekrýva tlačidlo Pokračovať. */
+  var actions = c.querySelector('.mc-actions');
+  var actionsVisible = false;
+  if(actions){
+    var ar = actions.getBoundingClientRect();
+    var cr = c.getBoundingClientRect();
+    actionsVisible = ar.top < (cr.bottom - 16);
+  }
+  if(remaining > 80 && !actionsVisible) hint.classList.add('show');
   else hint.classList.remove('show');
 }
 var _calcScrollBound = false;
@@ -3780,6 +3797,22 @@ function confirmBetColor(){ if(!calcState.betColor){ alert(MC.lang==='sk'?'Vyber
 
 function renderBetStep4(el){
   var l = MC.lang==='sk';
+  var gateColors = [
+    { id:'zelena',  name:l?'Zelená':'Green',        ral:'RAL 6005', sw:'zelena' },
+    { id:'zinok',   name:l?'Zinok':'Zinc',          ral:'Pozink',   sw:'zinok'  },
+    { id:'antracit',name:l?'Antracit':'Anthracite', ral:'RAL 7016', sw:'antracit'}
+  ];
+  var gc = calcState.betGateColor || 'zinok';
+  var gateColorCards = gateColors.map(function(co){
+    var sel = gc === co.id ? ' selected' : '';
+    return '<div class="mc-color-card'+sel+'" onclick="selBetGateColor(\''+co.id+'\')">' +
+      '<div class="mc-color-body">' +
+        '<div class="mc-color-swatch lg '+co.sw+'"></div>' +
+        '<div class="mc-color-name">'+co.name+'</div>' +
+        '<div class="mc-color-ral">'+co.ral+'</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-kontakt') +
     '<div class="mc-step-title">'+(l?'Brána a bránka':'Gate and wicket')+'</div>' +
@@ -3802,13 +3835,28 @@ function renderBetStep4(el){
         '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
+    '<div style="border-top:1px solid #E8F0E6;margin:14px 0 10px"></div>' +
+    '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Farba brány / bránky':'Gate / wicket color')+'</span></div>' +
+    '<div class="mc-step-sub" style="margin-bottom:8px">'+(l?'Brány a bránky vyrábame v 3 farbách (betónový plot má viac odtieňov).':'Gates are made in 3 colors (the concrete fence offers more shades).')+'</div>' +
+    '<div class="mc-color-grid" id="betGateColorGrid">'+gateColorCards+'</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep4()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
 function adjBetBranka(d){ calcState.betBranka = Math.max(0, (calcState.betBranka||0)+d); var i=document.getElementById('betBrankaIn'); if(i) i.value = calcState.betBranka; }
 function adjBetGate(d){ calcState.betGate = Math.max(0, (calcState.betGate||0)+d); var i=document.getElementById('betGateIn'); if(i) i.value = calcState.betGate; }
-
-function confirmBetStep4(){ autoNext(); }
+function selBetGateColor(v){
+  calcState.betGateColor = v;
+  var grid = document.getElementById('betGateColorGrid');
+  if(!grid) return;
+  grid.querySelectorAll('.mc-color-card').forEach(function(card){
+    var oc = card.getAttribute('onclick') || '';
+    card.classList.toggle('selected', oc.indexOf("'"+v+"'") >= 0);
+  });
+}
+function confirmBetStep4(){
+  if(!calcState.betGateColor) calcState.betGateColor = 'zinok';
+  autoNext();
+}
 
 function renderBetStep5(el){
   var l = MC.lang==='sk';
@@ -3857,6 +3905,7 @@ function submitBetCalc(){
     'Výška: '+(calcState.betHeight||'-')+' m\n' +
     'Farba: '+(calcState.betColor||'-')+'\n' +
     'Brána (4m): '+(calcState.betGate||0)+' ks\n' +
+    'Farba brány/bránky: '+(calcState.betGateColor||'zinok')+'\n' +
     'Bránka (1m): '+(calcState.betBranka||0)+' ks\n' +
     'Lokalita: '+calcState.betLocation+' '+calcState.betZip+'\n' +
     'Doprava: '+(dlv.label||'-')+'\n' +
@@ -4084,8 +4133,8 @@ function showThanks(){
 
 function resetCalc(){
   calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = '';
-  calcState.betType=null; calcState.betPattern=null; calcState.betSides=null; calcState.betLength=null; calcState.betHeight=null; calcState.betColor=null; calcState.betMounting=null; calcState.betBranka=0; calcState.betGate=0; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
-  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGateColor=null; calcState.cpGdpr=false;
+  calcState.betType=null; calcState.betPattern=null; calcState.betSides=null; calcState.betLength=null; calcState.betHeight=null; calcState.betColor=null; calcState.betMounting=null; calcState.betBranka=0; calcState.betGate=0; calcState.betGateColor=null; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
+  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
   renderCalcStep();
 }
 
@@ -4488,22 +4537,6 @@ function renderCPStep7(el){
   var c = calcState.cpCorners || 0;
   var e = calcState.cpEnds || 0;
   var h = calcState.height || '153';
-  var gateColors = [
-    { id:'zelena',  name:l?'Zelená':'Green',     ral:'RAL 6005', sw:'zelena' },
-    { id:'zinok',   name:l?'Zinok':'Zinc',       ral:'Pozink',   sw:'zinok'  },
-    { id:'antracit',name:l?'Antracit':'Anthracite',ral:'RAL 7016',sw:'antracit'}
-  ];
-  var gc = calcState.cpGateColor || calcState.color || 'zinok';
-  var gateColorCards = gateColors.map(function(co){
-    var sel = gc === co.id ? ' selected' : '';
-    return '<div class="mc-color-card'+sel+'" onclick="selCPGateColor(\''+co.id+'\')" style="min-width:80px">' +
-      '<div class="mc-color-body" style="padding:10px 8px">' +
-        '<div class="mc-color-swatch lg '+co.sw+'"></div>' +
-        '<div class="mc-color-name">'+co.name+'</div>' +
-        '<div class="mc-color-ral">'+co.ral+'</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('brana') +
     '<div class="mc-step-title">'+(l?'Brány, bránky a rohy':'Gates, wickets and corners')+'</div>' +
@@ -4527,9 +4560,11 @@ function renderCPStep7(el){
         '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
-    '<div style="border-top:1px solid #E8F0E6;margin:14px 0 10px"></div>' +
-    '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Farba brány / bránky':'Gate / wicket color')+'</span></div>' +
-    '<div class="mc-color-grid" id="cpGateColorGrid">'+gateColorCards+'</div>' +
+    '<div class="mc-hint" style="margin-top:10px"><div class="hi">i</div><div>'+
+      ((b>0 || g>0)
+        ? (l?'<b>Farba brány a bránky:</b> použijeme rovnakú farbu ako pri plote. Ak chcete inú farbu, napíšte ju do poznámky pri odoslaní.':'<b>Gate and wicket color:</b> we will use the same color as the fence. If you want a different color, write it in the note before sending.')
+        : (l?'Ak pridáte bránku alebo bránu, ich výška bude zhodná s výškou panela a farba sa predvyplní podľa farby plota.':'If you add a wicket or gate, its height will match the panel and color will follow the fence color.'))+
+    '</div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:14px 0 0"></div>' +
     '<div style="margin:12px 0">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet rohov (zmena smeru plotu)':'Number of corners')+'</span></div>' +
@@ -4555,15 +4590,6 @@ function renderCPStep7(el){
     '</div>' +
   '</div>';
 }
-function selCPGateColor(v){
-  calcState.cpGateColor = v;
-  var grid = document.getElementById('cpGateColorGrid');
-  if(!grid) return;
-  grid.querySelectorAll('.mc-color-card').forEach(function(card){
-    var oc = card.getAttribute('onclick') || '';
-    card.classList.toggle('selected', oc.indexOf("'"+v+"'") >= 0);
-  });
-}
 function adjCPBranka(d){ var v=Math.max(0,(calcState.cpBrankaCount||0)+d); calcState.cpBrankaCount=v; var inp=document.getElementById('cpBrankaIn'); if(inp)inp.value=v; }
 function adjCPGate(d){ var v=Math.max(0,(calcState.cpGateCount||0)+d); calcState.cpGateCount=v; var inp=document.getElementById('cpGateIn'); if(inp)inp.value=v; }
 function adjCPCorners(d){ var v=Math.max(0,(calcState.cpCorners||0)+d); calcState.cpCorners=v; var inp=document.getElementById('cpCornersIn'); if(inp)inp.value=v; }
@@ -4573,7 +4599,6 @@ function confirmCPStep7(){
   calcState.cpGateCount   = parseInt((document.getElementById('cpGateIn')||{}).value)||0;
   calcState.cpCorners     = parseInt((document.getElementById('cpCornersIn')||{}).value)||0;
   calcState.cpEnds        = parseInt((document.getElementById('cpEndsIn')||{}).value)||0;
-  if(!calcState.cpGateColor) calcState.cpGateColor = calcState.color || 'zinok';
   autoNext();
 }
 
@@ -4815,6 +4840,7 @@ function betSummaryHtml(){
     [l?'Strana':'Sides', calcState.betSides==='obojstranny'?(l?'Obojstranný':'Double-sided'):(l?'Jednostranný':'Single-sided')],
     [l?'Farba betónu':'Concrete colour', calcState.betColor||(l?'Neurčené':'Unspecified')],
     [l?'Bránky / Brány':'Wickets / Gates', (calcState.betBranka||0)+' / '+(calcState.betGate||0)+' ks'],
+    [l?'Farba brány/bránky':'Gate/wicket colour', { zelena:l?'Zelená RAL 6005':'Green RAL 6005', zinok:l?'Zinok (pozink)':'Zinc', antracit:'Antracit RAL 7016' }[calcState.betGateColor||'zinok']],
   ].map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+r[0]+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+r[1]+'</span></div>'; }).join('');
   return '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(patternPh)+'" alt="'+(l?'Váš betónový plot':'Your concrete fence')+'" loading="eager" decoding="async"></div>' +
     '<div style="font-size:13px;font-weight:800;color:#1E2E1C;text-transform:uppercase;letter-spacing:.4px;margin:2px 0 6px">'+(l?'Zhrnutie dopytu':'Request summary')+'</div>' +
@@ -4855,7 +4881,6 @@ function renderCPFinal(el){
       { k:l?'Podhrabová doska':'Underboard', v:calcState.cpUnderboard?(l?'Áno':'Yes'):(l?'Nie':'No') },
       { k:l?'Bránky':'Wickets', v:(calcState.cpBrankaCount||0)+' ks' },
       { k:l?'Brány':'Gates', v:(calcState.cpGateCount||0)+' ks' },
-      { k:l?'Farba brány/bránky':'Gate/wicket color', v:{ antracit:'Antracit RAL 7016', zelena:'Zelená RAL 6005', zinok:'Zinok (pozink)' }[calcState.cpGateColor||calcState.color||'zinok']||(calcState.cpGateColor||calcState.color||'zinok') },
       { k:l?'Rohy':'Corners', v:(calcState.cpCorners||0)+' ks' },
       { k:l?'Voľné konce':'Open ends', v:(calcState.cpEnds||0)+' ks' },
       { k:l?'Stĺpikov celkom':'Total posts', v:r.posts+' ks' },
@@ -4870,16 +4895,40 @@ function renderCPFinal(el){
     ? 'mojplot-plot-hotovy.webp'
     : (C==='antracit'?'mojplot-farba-antracit.webp':(C==='zelena'?'mojplot-farba-zelena.webp':'mojplot-farba-zinok.webp'));
 
+  /* Cena: najprv materiál, pod ním montáž, prípadne doprava, a nakoniec spolu. */
+  function eur(n){ return Math.round(n).toLocaleString('sk-SK'); }
+  var instFrom = Math.round(r.installCost * 0.95);
+  var instTo   = Math.round(r.installCost * 1.05);
+  var delivery = r.deliveryFee || 0;
+  var grandFrom = matFrom + (r.installCost>0?instFrom:0) + delivery;
+  var grandTo   = matTo   + (r.installCost>0?instTo:0)   + delivery;
+  var priceCardHtml = '<div class="mc-result-card">' +
+    '<div class="mc-result-label">'+(l?'Orientačná cena':'Estimated price')+'</div>' +
+    '<div class="mc-price-line">' +
+      '<span class="mc-price-line-k">'+(l?'Materiál (s DPH)':'Material (incl. VAT)')+'</span>' +
+      '<span class="mc-price-line-v">'+eur(matFrom)+' – '+eur(matTo)+' €</span>' +
+    '</div>' +
+    (r.installCost>0 ?
+      '<div class="mc-price-line">' +
+        '<span class="mc-price-line-k">'+(l?'Montáž na kľúč (bez DPH)':'Key-ready installation (ex. VAT)')+'</span>' +
+        '<span class="mc-price-line-v">'+eur(instFrom)+' – '+eur(instTo)+' €</span>' +
+      '</div>' : '') +
+    (delivery>0 ?
+      '<div class="mc-price-line">' +
+        '<span class="mc-price-line-k">'+(l?'Doprava':'Delivery')+'</span>' +
+        '<span class="mc-price-line-v">'+eur(delivery)+' €</span>' +
+      '</div>' : '') +
+    '<div class="mc-price-total">' +
+      '<span class="mc-price-total-k">'+(l?'Spolu orientačne':'Estimated total')+'</span>' +
+      '<span class="mc-price-total-v">'+eur(grandFrom)+' – '+eur(grandTo)+' €</span>' +
+    '</div>' +
+    '<div class="mc-result-sub">'+(l?'Presná cena závisí od konečných rozmerov a detailov montáže.':'Exact price depends on final dimensions and installation details.')+'</div>' +
+  '</div>';
+
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(finishedPhoto)+'" alt="'+(l?'Váš hotový plot':'Your finished fence')+'" loading="eager" decoding="async"></div>' +
     '<div class="mc-step-title">'+(l?'Orientačný výpočet':'Your estimate')+'</div>' +
-    '<div class="mc-result-card">' +
-      '<div class="mc-result-label">'+(l?'Cena materiálu (orientačne, s DPH)':'Material price (estimate, incl. VAT)')+'</div>' +
-      '<div class="mc-result-price">'+matFrom.toLocaleString('sk-SK')+' – '+matTo.toLocaleString('sk-SK')+' <span class="mc-result-price-eur">€</span></div>' +
-      (r.installCost>0 ? '<div class="mc-result-sub" style="font-size:12px;margin-top:4px;color:#45A93C;font-weight:600">'+(l?'+ Montáž ~'+Math.round(r.installCost*0.95)+' – '+Math.round(r.installCost*1.05)+' € bez DPH':'+ Installation ~'+Math.round(r.installCost*0.95)+' – '+Math.round(r.installCost*1.05)+' € ex. VAT')+'</div>' : '') +
-      (r.deliveryLabel ? '<div class="mc-result-sub" style="font-size:12px;margin-top:4px;color:#45A93C;font-weight:600">'+r.deliveryLabel+'</div>' : '') +
-      '<div class="mc-result-sub">'+(l?'Presná cena závisí od konečných rozmerov a detailov montáže.':'Exact price depends on final dimensions and installation details.')+'</div>' +
-    '</div>' +
+    priceCardHtml +
     breakdownHtml + summaryHtml +
     '<div class="mc-actions" style="margin-top:8px;flex-direction:column;gap:8px">' +
       '<button class="mc-btn mc-form-submit" onclick="submitCPCalc()">'+(l?'Odoslať dopyt a získať cenovú ponuku':'Send inquiry and get a quote')+' →</button>' +
@@ -4923,7 +4972,6 @@ function submitCPCalc(){
     'Podhrabová: '+(calcState.cpUnderboard?'áno':'nie'),
     'Bránky: '+(calcState.cpBrankaCount||0)+' ks',
     'Brány: '+(calcState.cpGateCount||0)+' ks',
-    'Farba brány: '+(calcState.cpGateColor||calcState.color||'zinok'),
     'Rohy: '+(calcState.cpCorners||0)+', Konce: '+(calcState.cpEnds||0),
     'Lokalita: '+(calcState.cpLocation||'-')+' '+(calcState.cpZip||''),
     'Montáž: '+(calcState.cpInstallation||'sam'),
