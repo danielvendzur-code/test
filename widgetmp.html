@@ -188,6 +188,14 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 .mc-calc-container::-webkit-scrollbar{width:4px}
 .mc-calc-container::-webkit-scrollbar-thumb{background:var(--mc-border);border-radius:4px}
 .mc-calc-container[data-open="true"]{display:block;animation:calcOpen .4s cubic-bezier(.16,1,.3,1)}
+/* Nenápadný indikátor scrollovania – zjaví sa len keď je obsah dlhší ako okno */
+.mc-scroll-hint{position:sticky;bottom:10px;left:0;right:0;display:flex;justify-content:center;pointer-events:none;margin-top:-46px;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease;z-index:6}
+.mc-scroll-hint.show{opacity:1;transform:translateY(0)}
+.mc-scroll-hint button{pointer-events:auto;cursor:pointer;width:38px;height:38px;border-radius:50%;border:none;background:rgba(46,125,50,.93);color:#fff;box-shadow:0 4px 14px rgba(46,125,50,.4);display:flex;align-items:center;justify-content:center;padding:0;animation:scrollHintBounce 1.7s ease-in-out infinite}
+.mc-scroll-hint button svg{width:22px;height:22px;fill:#fff}
+.mc-scroll-hint button:hover{background:#2E7D32}
+@keyframes scrollHintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.mc-scroll-hint button{animation:none}}
 @keyframes calcOpen{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 .mc-calc-container[data-open="true"] ~ .mc-msgs,#mojplot-chat:has(.mc-calc-container[data-open="true"]) .mc-msgs{display:none}
 
@@ -2132,6 +2140,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
       <div class="mc-progress-step" id="calcStepLabel">Krok 1/7</div>
     </div>
     <div id="calcContent"></div>
+    <div class="mc-scroll-hint" id="calcScrollHint" aria-hidden="true">
+      <button type="button" onclick="calcScrollDown()" aria-label="Posunúť nadol">
+        <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+      </button>
+    </div>
   </div>
 
   <!-- Input bar -->
@@ -2867,6 +2880,43 @@ function openCalc(){
   syncCalcChrome(true);
   calcState.step = 0;
   renderCalcStep();
+  bindCalcScroll();
+}
+
+/* Nenápadný scroll indikátor – ukáže šípku len keď je krok dlhší ako okno */
+function calcScrollDown(){
+  var c = document.getElementById('calcContainer');
+  if(c) c.scrollBy({ top: Math.round(c.clientHeight * 0.7), behavior:'smooth' });
+}
+function updateCalcScrollHint(){
+  var c = document.getElementById('calcContainer');
+  var hint = document.getElementById('calcScrollHint');
+  if(!c || !hint) return;
+  var max = c.scrollHeight - c.clientHeight;
+  var canScroll = max > 30;
+  var atBottom = c.scrollTop >= max - 30;
+  if(canScroll && !atBottom) hint.classList.add('show');
+  else hint.classList.remove('show');
+}
+var _calcScrollBound = false;
+function bindCalcScroll(){
+  if(_calcScrollBound) return;
+  var c = document.getElementById('calcContainer');
+  var content = document.getElementById('calcContent');
+  if(!c) return;
+  c.addEventListener('scroll', updateCalcScrollHint, { passive:true });
+  window.addEventListener('resize', updateCalcScrollHint);
+  /* Pri každom novom kroku (výmena celého obsahu) skroluj hore a prepočítaj indikátor.
+     Cielené úpravy (výmena fotky vo vnútri .mc-step) sa subtree:false neodchytia. */
+  if(content && window.MutationObserver){
+    new MutationObserver(function(){
+      c.scrollTop = 0;
+      requestAnimationFrame(updateCalcScrollHint);
+      setTimeout(updateCalcScrollHint, 160);
+    }).observe(content, { childList:true, subtree:false });
+  }
+  _calcScrollBound = true;
+  requestAnimationFrame(updateCalcScrollHint);
 }
 
 function closeCalc(){
@@ -3730,29 +3780,29 @@ function confirmBetColor(){ if(!calcState.betColor){ alert(MC.lang==='sk'?'Vyber
 
 function renderBetStep4(el){
   var l = MC.lang==='sk';
-  el.innerHTML = '<div class=”mc-step”>' +
+  el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-kontakt') +
-    '<div class=”mc-step-title”>'+(l?'Brána a bránka':'Gate and wicket')+'</div>' +
-    '<div class=”mc-step-sub”>'+(l?'Zadajte počet vstupov. Výška zodpovedá výške plota.':'Enter the number of entrances. Height matches fence height.')+'</div>' +
-    '<div style=”margin-top:12px”>' +
-      '<div class=”mc-dim-label” style=”margin-bottom:8px”><span>'+(l?'Bránka (1 m, pre chodcov)':'Wicket (1 m, pedestrian)')+'</span></div>' +
-      '<div class=”mc-num-input-row”>' +
-        '<button class=”mc-num-btn” onclick=”adjBetBranka(-1)”>−</button>' +
-        '<input type=”number” min=”0” max=”20” class=”mc-num-input” id=”betBrankaIn” value=”'+(calcState.betBranka||0)+'” oninput=”calcState.betBranka=parseInt(this.value)||0”>' +
-        '<button class=”mc-num-btn” onclick=”adjBetBranka(1)”>+</button>' +
-        '<span style=”font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px”>ks</span>' +
+    '<div class="mc-step-title">'+(l?'Brána a bránka':'Gate and wicket')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Zadajte počet vstupov. Výška zodpovedá výške plota.':'Enter the number of entrances. Height matches fence height.')+'</div>' +
+    '<div style="margin-top:12px">' +
+      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Bránka (1 m, pre chodcov)':'Wicket (1 m, pedestrian)')+'</span></div>' +
+      '<div class="mc-num-input-row">' +
+        '<button class="mc-num-btn" onclick="adjBetBranka(-1)">−</button>' +
+        '<input type="number" min="0" max="20" class="mc-num-input" id="betBrankaIn" value="'+(calcState.betBranka||0)+'" oninput="calcState.betBranka=parseInt(this.value)||0">' +
+        '<button class="mc-num-btn" onclick="adjBetBranka(1)">+</button>' +
+        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
-    '<div style=”margin-top:12px”>' +
-      '<div class=”mc-dim-label” style=”margin-bottom:8px”><span>'+(l?'Brána (4 m, dvojkrídlová)':'Gate (4 m, double-wing)')+'</span></div>' +
-      '<div class=”mc-num-input-row”>' +
-        '<button class=”mc-num-btn” onclick=”adjBetGate(-1)”>−</button>' +
-        '<input type=”number” min=”0” max=”20” class=”mc-num-input” id=”betGateIn” value=”'+(calcState.betGate||0)+'” oninput=”calcState.betGate=parseInt(this.value)||0”>' +
-        '<button class=”mc-num-btn” onclick=”adjBetGate(1)”>+</button>' +
-        '<span style=”font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px”>ks</span>' +
+    '<div style="margin-top:12px">' +
+      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Brána (4 m, dvojkrídlová)':'Gate (4 m, double-wing)')+'</span></div>' +
+      '<div class="mc-num-input-row">' +
+        '<button class="mc-num-btn" onclick="adjBetGate(-1)">−</button>' +
+        '<input type="number" min="0" max="20" class="mc-num-input" id="betGateIn" value="'+(calcState.betGate||0)+'" oninput="calcState.betGate=parseInt(this.value)||0">' +
+        '<button class="mc-num-btn" onclick="adjBetGate(1)">+</button>' +
+        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
-    '<div class=”mc-actions”><button class=”mc-btn-secondary” onclick=”calcBack()”>← '+(l?'Späť':'Back')+'</button><button class=”mc-btn” onclick=”confirmBetStep4()”>'+(l?'Pokračovať':'Continue')+' →</button></div>' +
+    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep4()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
 function adjBetBranka(d){ calcState.betBranka = Math.max(0, (calcState.betBranka||0)+d); var i=document.getElementById('betBrankaIn'); if(i) i.value = calcState.betBranka; }
