@@ -2061,6 +2061,10 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 /* iOS input zoom fix — font-size ≥16px prevents Safari from auto-zooming on any input */
 #mojplot-chat input:not([type="range"]):not([type="radio"]):not([type="checkbox"]),
 #mojplot-chat textarea{font-size:16px!important}
+/* Prevent iOS Safari text inflation (auto text-size-adjust during scale animation or narrow layout) */
+#mojplot-chat{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* Lock message bubble font-size so it can never be overridden or inflated */
+#mojplot-chat .mc-m{font-size:13.5px!important}
 /* Prevent double-tap zoom on iOS 16+ across the entire widget */
 #mojplot-chat,#mojplot-bubble{touch-action:manipulation}
 
