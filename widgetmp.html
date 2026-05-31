@@ -3857,6 +3857,15 @@ function confirmBetStep4(){
   if(!calcState.betGateColor) calcState.betGateColor = 'zinok';
   autoNext();
 }
+function toggleBetGdpr(label){
+  calcState.betGdpr = !calcState.betGdpr;
+  var box = document.getElementById('betGdprBox');
+  if(box){
+    box.style.borderColor = calcState.betGdpr ? '#45A93C' : '#C8D6C4';
+    box.style.background  = calcState.betGdpr ? '#45A93C' : '#fff';
+    box.innerHTML = calcState.betGdpr ? '<svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' : '';
+  }
+}
 
 function renderBetStep5(el){
   var l = MC.lang==='sk';
@@ -3871,11 +3880,11 @@ function renderBetStep5(el){
       '<input class="mc-form-input" id="betName" type="text" placeholder="'+(l?'Meno a priezvisko':'Name')+'">' +
       '<input class="mc-form-input" id="betEmail" type="email" placeholder="E-mail">' +
       '<input class="mc-form-input" id="betPhone" type="tel" placeholder="'+(l?'Telefón':'Phone')+'">' +
-      '<label class="mc-gdpr-label" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:12px;line-height:1.45;color:#4B6450;padding:8px 0">' +
-        '<input type="checkbox" id="betGdpr" '+(calcState.betGdpr?'checked':'')+' style="margin-top:2px;flex-shrink:0">' +
-        '<span>'+(l?'Súhlasím so spracovaním osobných údajov za účelom vypracovania cenovej ponuky.':'I agree to the processing of personal data for the purpose of preparing a price quote.')+'</span>' +
-      '</label>' +
     '</div>' +
+    '<label class="mc-gdpr-check" onclick="toggleBetGdpr(this)" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin:8px 0">' +
+      '<div id="betGdprBox" style="width:18px;height:18px;border:2px solid '+(calcState.betGdpr?'#45A93C':'#C8D6C4')+';border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:'+(calcState.betGdpr?'#45A93C':'#fff')+';transition:all .2s">'+(calcState.betGdpr?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>':'')+'</div>' +
+      '<span style="font-size:11.5px;color:#68736A;line-height:1.45">'+(l?'Súhlasím so <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">spracovaním osobných údajov</a> za účelom prípravy cenovej ponuky. (povinné)':'I agree to the <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">processing of personal data</a> for quote preparation. (required)')+'</span>' +
+    '</label>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="submitBetCalc()">'+(l?'Odoslať dopyt':'Send request')+'</button></div>' +
   '</div>';
 }
@@ -3892,7 +3901,6 @@ function submitBetCalc(){
   var l = MC.lang==='sk';
   calcState.betLocation = (document.getElementById('betCity')||{}).value||'';
   calcState.betZip = (document.getElementById('betZip')||{}).value||'';
-  calcState.betGdpr = !!(document.getElementById('betGdpr')||{}).checked;
   var name = (document.getElementById('betName')||{}).value||'';
   var email = (document.getElementById('betEmail')||{}).value||'';
   var phone = (document.getElementById('betPhone')||{}).value||'';
@@ -4654,7 +4662,7 @@ function renderCPStep9(el){
     '</div>' +
     '<label class="mc-gdpr-check" onclick="toggleCPGdpr(this)" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin:8px 0">' +
       '<div id="cpGdprBox" style="width:18px;height:18px;border:2px solid '+(calcState.cpGdpr?'#45A93C':'#C8D6C4')+';border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:'+(calcState.cpGdpr?'#45A93C':'#fff')+';transition:all .2s">'+(calcState.cpGdpr?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>':'')+'</div>' +
-      '<span style="font-size:11.5px;color:#68736A;line-height:1.45">'+(l?'Súhlasím so <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" style="color:#45A93C;font-weight:600">spracovaním osobných údajov</a> za účelom prípravy cenovej ponuky. (povinné)':'I agree to the <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" style="color:#45A93C;font-weight:600">processing of personal data</a> for quote preparation. (required)')+'</span>' +
+      '<span style="font-size:11.5px;color:#68736A;line-height:1.45">'+(l?'Súhlasím so <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">spracovaním osobných údajov</a> za účelom prípravy cenovej ponuky. (povinné)':'I agree to the <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">processing of personal data</a> for quote preparation. (required)')+'</span>' +
     '</label>' +
     '<div class="mc-actions" style="flex-direction:column;gap:8px">' +
       '<button class="mc-btn mc-form-submit" onclick="submitCPFromStep9()">'+(l?'Vypočítať a odoslať':'Calculate and send')+' →</button>' +
