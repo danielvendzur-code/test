@@ -4486,7 +4486,7 @@ function renderCPStepMount(el){
     '<div class="mc-step-sub">'+(l?'Najprv podhrabová doska, potom spôsob osadenia stĺpikov.':'First the underboard, then how posts are mounted.')+'</div>' +
     '<div class="mc-dim-label" style="margin-bottom:6px;font-size:12px;font-weight:800;color:var(--mc-text);text-transform:uppercase;letter-spacing:.4px">'+(l?'Podhrabová doska':'Underboard')+'</div>' +
     '<div class="mc-cp-opts" style="margin-bottom:14px">' +
-      cpOpt('ud','yes', l?'Áno, chcem podhrabové dosky':'Yes, I want underboards', l?'2 ks držiakov na panel (+7,08 €/panel)':'2 holders per panel (+7.08 €/panel)', icoY, calcState.cpUnderboard===true?'yes':null, 'selCPUnderboard') +
+      cpOpt('ud','yes', l?'Áno, chcem podhrabové dosky':'Yes, I want underboards', l?'Doska + držiaky (+26,27 €/panel)':'Board + holders (+26.27 €/panel)', icoY, calcState.cpUnderboard===true?'yes':null, 'selCPUnderboard') +
       cpOpt('ud','no',  l?'Nie, nepotrebujem':'No, not needed', l?'Bez podhrabovej dosky':'Without underboard', icoN, calcState.cpUnderboard===false?'no':null, 'selCPUnderboard') +
     '</div>' +
     '<div class="mc-dim-label" style="margin-bottom:6px;font-size:12px;font-weight:800;color:var(--mc-text);text-transform:uppercase;letter-spacing:.4px">'+(l?'Typ montáže stĺpikov':'Post mounting type')+'</div>' +
@@ -4547,7 +4547,7 @@ function renderCPStep6(el){
     '<div class="mc-step-title">'+(l?'Podhrabová doska':'Underboard')+'</div>' +
     '<div class="mc-step-sub">'+(l?'Po výbere zostane náhľad viditeľný. Ďalej pôjdete až po potvrdení.':'After selection, the preview remains visible. You continue only after confirmation.')+'</div>' +
     '<div class="mc-cp-opts">' +
-      cpOpt('ud','yes', l?'Áno, chcem podhrabové dosky':'Yes, I want underboards', l?'2 ks držiakov na panel (+7,08 €/panel)':'2 holders per panel (+7.08 €/panel)', icoY, calcState.cpUnderboard===true?'yes':null, 'selCPUnderboard') +
+      cpOpt('ud','yes', l?'Áno, chcem podhrabové dosky':'Yes, I want underboards', l?'Doska + držiaky (+26,27 €/panel)':'Board + holders (+26.27 €/panel)', icoY, calcState.cpUnderboard===true?'yes':null, 'selCPUnderboard') +
       cpOpt('ud','no',  l?'Nie, nepotrebujem':'No, not needed', l?'Bez podhrabovej dosky':'Without underboard', icoN, calcState.cpUnderboard===false?'no':null, 'selCPUnderboard') +
     '</div>' +
     '<div class="mc-actions">' +
@@ -4757,7 +4757,7 @@ function calculateCPPrice(){
   var MT = calcState.cpMounting || 'betono';
 
   var panels = Math.max(1, Math.ceil(L/2.5));
-  var posts   = panels + 1 + (calcState.cpCorners||0) + (calcState.cpEnds||0);
+  var posts   = panels + 1;
   var clipsPerPost = { '123':3, '153':3, '173':4, '203':5 }[H] || 3;
   var totalClips = posts * clipsPerPost;
   var cornerBrackets = (calcState.cpCorners||0) * 2;
