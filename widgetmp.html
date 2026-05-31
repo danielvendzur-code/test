@@ -3,7 +3,7 @@
 <html lang="sk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Môj plot - AI asistent & Cenová kalkulačka</title>
 <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -2057,6 +2057,9 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 @media(max-width:380px){.mc-bet-pattern-grid{gap:8px!important}}
 .mc-bet-pattern-card{min-width:0!important;overflow:hidden!important}
 .mc-bet-pattern-preview img{object-fit:cover!important}
+
+/* iOS input zoom fix — font-size ≥16px prevents Safari from auto-zooming on focus */
+.mc-inp,.mc-form-input,.mc-form-textarea,.mc-num-input{font-size:16px!important}
 
 </style>
 
@@ -4586,7 +4589,7 @@ function renderCPStep7(el){
       ((b>0 || g>0)
         ? (l?'<b>Farba brány a bránky:</b> použijeme rovnakú farbu ako pri plote. Ak chcete inú farbu, napíšte ju do poznámky pri odoslaní.':'<b>Gate and wicket color:</b> we will use the same color as the fence. If you want a different color, write it in the note before sending.')
         : (l?'Ak pridáte bránku alebo bránu, ich výška bude zhodná s výškou panela a farba sa predvyplní podľa farby plota.':'If you add a wicket or gate, its height will match the panel and color will follow the fence color.'))+
-    '</div>' +
+    '</div></div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:14px 0 0"></div>' +
     '<div style="margin:12px 0">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet rohov (zmena smeru plotu)':'Number of corners')+'</span></div>' +
