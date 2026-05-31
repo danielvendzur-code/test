@@ -88,8 +88,8 @@ html.mc-locked, body.mc-locked{overflow:hidden!important;height:100%!important;p
 .mc-hdr-av svg{width:30px;height:30px;fill:#2E7D32}
 .mc-hdr-info{flex:1;position:relative;z-index:1}
 .mc-hdr-title{font-size:15px;font-weight:700;color:var(--mc-header-text);letter-spacing:-.2px}
-.mc-hdr-sub{font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px;margin-top:1px;font-weight:500}
-.mc-hdr-sub .dot{width:7px;height:7px;background:#4CAF50;border-radius:50%;animation:dotP 2s infinite;box-shadow:0 0 6px #4CAF50}
+.mc-hdr-sub{font-size:13px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px;margin-top:2px;font-weight:600}
+.mc-hdr-sub .dot{width:9px;height:9px;background:#4CAF50;border-radius:50%;animation:dotP 2s infinite;box-shadow:0 0 8px #4CAF50}
 @keyframes dotP{0%,100%{opacity:1}50%{opacity:.4}}
 .mc-hdr-actions{display:flex;gap:4px;align-items:center;position:relative;z-index:1}
 .mc-hdr-btn{width:32px;height:32px;border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);transition:all .2s}
@@ -531,7 +531,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-choice-preview{grid-template-columns:82px 1fr}
   .mc-header{align-items:flex-start;gap:8px}
   .mc-hdr-title{font-size:13px;line-height:1.2}
-  .mc-hdr-sub{font-size:10px;line-height:1.2}
+  .mc-hdr-sub{font-size:12px;line-height:1.2}
   .mc-hdr-actions{flex-wrap:wrap;justify-content:flex-end;max-width:45%}
   .mc-lang button{font-size:10px;padding:4px 6px}
 }
@@ -3850,7 +3850,7 @@ function renderBetStep4(el){
       '</div>' +
     '</div>' +
     '<div style="width:100%;background:#F0F9EE;border:1px solid #C8E6C9;border-radius:11px;padding:10px 13px;margin:12px 0 2px;box-sizing:border-box;font-size:12px;color:#3E5E38;line-height:1.5">' +
-      (l?'Ak pridáte bránku alebo bránu, ich výška bude zhodná s výškou panela a farba sa predvyplní podľa farby plota.':'If you add a wicket or gate, its height will match the panel height and the colour will be pre-filled to match the fence.') +
+      (l?'Výška brány / bránky bude zhodná s výškou panelov plota.':'The gate / wicket height will match the height of the fence panels.') +
     '</div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:14px 0 10px"></div>' +
     '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Farba brány / bránky':'Gate / wicket color')+'</span></div>' +
