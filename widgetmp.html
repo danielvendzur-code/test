@@ -2058,8 +2058,9 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-bet-pattern-card{min-width:0!important;overflow:hidden!important}
 .mc-bet-pattern-preview img{object-fit:cover!important}
 
-/* iOS input zoom fix — font-size ≥16px prevents Safari from auto-zooming on focus */
-.mc-inp,.mc-form-input,.mc-form-textarea,.mc-num-input,.mc-eb input,.mc-eb textarea{font-size:16px!important}
+/* iOS input zoom fix — font-size ≥16px prevents Safari from auto-zooming on any input */
+#mojplot-chat input:not([type="range"]):not([type="radio"]):not([type="checkbox"]),
+#mojplot-chat textarea{font-size:16px!important}
 
 </style>
 
@@ -3663,7 +3664,7 @@ function renderCustomDesc(el){
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+title+'</div>' +
     '<div class="mc-step-sub">'+sub+'</div>' +
-    '<textarea class="mc-num-input" id="customDescInput" style="width:100%;text-align:left;height:130px;padding:12px;resize:none;font-size:13.5px;line-height:1.5;font-weight:400;font-family:var(--m-font)" placeholder="'+(lang==='sk'?'Napr.: Betónový plot 32 m, výška 180 cm, antracit, záujem o montáž...':'E.g.: Concrete fence 32 m, height 180 cm, anthracite, interested in installation...')+'" oninput="calcState.customDesc=this.value">'+(calcState.customDesc||'')+'</textarea>' +
+    '<textarea class="mc-num-input" id="customDescInput" style="width:100%;text-align:left;height:130px;padding:12px;resize:none;font-size:16px;line-height:1.5;font-weight:400;font-family:var(--m-font)" placeholder="'+(lang==='sk'?'Napr.: Betónový plot 32 m, výška 180 cm, antracit, záujem o montáž...':'E.g.: Concrete fence 32 m, height 180 cm, anthracite, interested in installation...')+'" oninput="calcState.customDesc=this.value">'+(calcState.customDesc||'')+'</textarea>' +
     '<div class="mc-hint" style="margin-top:10px"><div class="hi">i</div><div>'+(lang==='sk'?'Na mieru naceníme bez zdržania po overení detailov.':'We will price the custom request after checking the details.')+'</div></div>' +
     '<div class="mc-actions">' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button>' +
