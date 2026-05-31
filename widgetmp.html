@@ -1432,7 +1432,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;
   background:radial-gradient(circle at center,#54BF49 0%,#2E7D32 100%);
   transform:scale(0);transform-origin:center;
-  transition:transform .38s cubic-bezier(.34,1.3,.64,1);
+  transition:transform .65s ease-out;
 }
 .mc-chip:not(.mc-chip-calc):hover::before{transform:scale(1.5);}
 .mc-chip:not(.mc-chip-calc):hover{color:#fff!important;border-color:#2E7D32;transform:translateY(-1px);box-shadow:0 4px 14px rgba(46,125,50,.35);}
@@ -2316,6 +2316,7 @@ var calcState = {
   cpLocation: '',
   cpZip: '',
   cpInstallation: null,
+  cpGateColor: null,
   cpGdpr: false,
   /* Betónový plot konfigurátor */
   betType: null,        // 'plny' or 'pohladovy'
@@ -2915,7 +2916,7 @@ function renderCalcStep(){
   } else if(calcState.product === 'mobilne'){
     calcState.totalSteps = 4; /* product, length, extras, final */
   } else if(calcState.product === 'betonovy'){
-    calcState.totalSteps = (calcState.betType === 'pohladovy') ? 9 : 7; /* decorative concrete has extra steps */
+    calcState.totalSteps = 8; /* pohladovy: 7 krokov + product selection */
   } else if(calcState.product === 'ine'){
     calcState.totalSteps = 3; /* product, desc, final */
   } else if(calcState.product === 'oporne'){
@@ -2972,21 +2973,13 @@ function renderCalcStep(){
     else if(calcState.step === 4) renderFinal(el);
   }
   else if(calcState.product === 'betonovy'){
-    if(calcState.step === 1) renderBetStep1(el);       /* type (plny vs pohladovy) */
-    else if(calcState.step === 2) renderBetStep2(el);  /* length + height */
-    else if(calcState.betType === 'pohladovy'){
-      if(calcState.step === 3) renderBetPatternStep(el);    /* decorative pattern */
-      else if(calcState.step === 4) renderBetSidesStep(el); /* single / double-sided */
-      else if(calcState.step === 5) renderBetStep3(el);     /* color */
-      else if(calcState.step === 6) renderBetStep4(el);     /* mounting + gate/wicket */
-      else if(calcState.step === 7) renderBetStep5(el);     /* zhrnutie + location + contact + GDPR */
-      else if(calcState.step === 8) renderBetFinal(el);     /* thank-you */
-    } else {
-      if(calcState.step === 3) renderBetStep3(el);  /* color */
-      else if(calcState.step === 4) renderBetStep4(el);  /* mounting + brana/branka */
-      else if(calcState.step === 5) renderBetStep5(el);  /* location + contact + GDPR */
-      else if(calcState.step === 6) renderBetFinal(el);  /* thank-you / send request */
-    }
+    if(calcState.step === 1)      renderBetStep2(el);      /* rozmery (dĺžka + výška) */
+    else if(calcState.step === 2) renderBetPatternStep(el); /* vzor */
+    else if(calcState.step === 3) renderBetSidesStep(el);   /* jednostranný / obojstranný */
+    else if(calcState.step === 4) renderBetStep3(el);       /* farba */
+    else if(calcState.step === 5) renderBetStep4(el);       /* brána a bránka */
+    else if(calcState.step === 6) renderBetStep5(el);       /* kontaktný formulár */
+    else if(calcState.step === 7) renderBetFinal(el);       /* poďakovanie */
   }
   else if(calcState.product === 'ine'){
     if(calcState.step === 1) renderCustomDesc(el);
@@ -3737,54 +3730,35 @@ function confirmBetColor(){ if(!calcState.betColor){ alert(MC.lang==='sk'?'Vyber
 
 function renderBetStep4(el){
   var l = MC.lang==='sk';
-  var icoB = '<svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.2L19.5 8 12 11.8 4.5 8 12 4.2z"/></svg>';
-  var icoK = '<svg viewBox="0 0 24 24"><path d="M17 7H7v10h10V7zm-5 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>';
-  var icoQ = '<svg viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 8c-1.1 0-2 .9-2 2h2c0 0 0 0 0 0z"/></svg>';
-  el.innerHTML = '<div class="mc-step">' +
-    cpStepPhoto('beton-montaz') +
-    '<div class="mc-step-title">'+(l?'Montáž, brána a bránka':'Mounting, gate and wicket')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Spôsob montáže stĺpikov a počet vstupov.':'Post mounting and number of entrances.')+'</div>' +
-    '<div class="mc-cp-opts">' +
-      cpOpt('bm','betono', l?'Betónovanie do zeme':'Concreting into ground', l?'Najstabilnejšie kotvenie':'Most stable mounting', icoB, calcState.betMounting, 'selBetMounting', l?'Stĺpik je osadený do betónovej pätky min. 80 cm hlbokej kvôli vyššej hmotnosti betónových dosiek.':'Post is set in a concrete footing min. 80 cm deep due to heavier concrete slabs.') +
-      cpOpt('bm','kotvo', l?'Kotvenie na podmurovku':'Anchoring to base', l?'Na existujúci betón / múrik':'On existing concrete / wall', icoK, calcState.betMounting, 'selBetMounting') +
-      cpOpt('bm','poradte', l?'Neviem, poraďte mi':'Not sure, advise me', l?'Pri obhliadke navrhneme':'We will recommend during site visit', icoQ, calcState.betMounting, 'selBetMounting') +
-    '</div>' +
-    '<div class="mc-hint" style="margin-top:14px"><div class="hi">i</div><div>'+(l?'<b>Farba brány a bránky</b> bude vždy zhodná s farbou plotu.':'<b>Gate and wicket color</b> will match the fence color.')+'</div></div>' +
-    '<div style="margin-top:12px">' +
-      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Bránka (1 m, pre chodcov)':'Wicket (1 m, pedestrian)')+'</span></div>' +
-      '<div class="mc-num-input-row">' +
-        '<button class="mc-num-btn" onclick="adjBetBranka(-1)">−</button>' +
-        '<input type="number" min="0" max="20" class="mc-num-input" id="betBrankaIn" value="'+(calcState.betBranka||0)+'" oninput="calcState.betBranka=parseInt(this.value)||0">' +
-        '<button class="mc-num-btn" onclick="adjBetBranka(1)">+</button>' +
-        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
+  el.innerHTML = '<div class=”mc-step”>' +
+    cpStepPhoto('beton-kontakt') +
+    '<div class=”mc-step-title”>'+(l?'Brána a bránka':'Gate and wicket')+'</div>' +
+    '<div class=”mc-step-sub”>'+(l?'Zadajte počet vstupov. Výška zodpovedá výške plota.':'Enter the number of entrances. Height matches fence height.')+'</div>' +
+    '<div style=”margin-top:12px”>' +
+      '<div class=”mc-dim-label” style=”margin-bottom:8px”><span>'+(l?'Bránka (1 m, pre chodcov)':'Wicket (1 m, pedestrian)')+'</span></div>' +
+      '<div class=”mc-num-input-row”>' +
+        '<button class=”mc-num-btn” onclick=”adjBetBranka(-1)”>−</button>' +
+        '<input type=”number” min=”0” max=”20” class=”mc-num-input” id=”betBrankaIn” value=”'+(calcState.betBranka||0)+'” oninput=”calcState.betBranka=parseInt(this.value)||0”>' +
+        '<button class=”mc-num-btn” onclick=”adjBetBranka(1)”>+</button>' +
+        '<span style=”font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px”>ks</span>' +
       '</div>' +
     '</div>' +
-    '<div style="margin-top:12px">' +
-      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Brána (4 m, dvojkrídlová)':'Gate (4 m, double-wing)')+'</span></div>' +
-      '<div class="mc-num-input-row">' +
-        '<button class="mc-num-btn" onclick="adjBetGate(-1)">−</button>' +
-        '<input type="number" min="0" max="20" class="mc-num-input" id="betGateIn" value="'+(calcState.betGate||0)+'" oninput="calcState.betGate=parseInt(this.value)||0">' +
-        '<button class="mc-num-btn" onclick="adjBetGate(1)">+</button>' +
-        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
+    '<div style=”margin-top:12px”>' +
+      '<div class=”mc-dim-label” style=”margin-bottom:8px”><span>'+(l?'Brána (4 m, dvojkrídlová)':'Gate (4 m, double-wing)')+'</span></div>' +
+      '<div class=”mc-num-input-row”>' +
+        '<button class=”mc-num-btn” onclick=”adjBetGate(-1)”>−</button>' +
+        '<input type=”number” min=”0” max=”20” class=”mc-num-input” id=”betGateIn” value=”'+(calcState.betGate||0)+'” oninput=”calcState.betGate=parseInt(this.value)||0”>' +
+        '<button class=”mc-num-btn” onclick=”adjBetGate(1)”>+</button>' +
+        '<span style=”font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px”>ks</span>' +
       '</div>' +
     '</div>' +
-    '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep4()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
+    '<div class=”mc-actions”><button class=”mc-btn-secondary” onclick=”calcBack()”>← '+(l?'Späť':'Back')+'</button><button class=”mc-btn” onclick=”confirmBetStep4()”>'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
-}
-function selBetMounting(v){
-  var old = calcState.betMounting;
-  if(old === v) return;
-  calcState.betMounting = v;
-  updateOptSel('selBetMounting', v);
-  if((old === 'kotvo') !== (v === 'kotvo')) updateInlineStepPhoto('beton-montaz');
 }
 function adjBetBranka(d){ calcState.betBranka = Math.max(0, (calcState.betBranka||0)+d); var i=document.getElementById('betBrankaIn'); if(i) i.value = calcState.betBranka; }
 function adjBetGate(d){ calcState.betGate = Math.max(0, (calcState.betGate||0)+d); var i=document.getElementById('betGateIn'); if(i) i.value = calcState.betGate; }
 
-function confirmBetStep4(){
-  if(!calcState.betMounting){ alert(MC.lang==='sk'?'Vyberte typ montáže alebo možnosť „Neviem, poraďte mi“.':'Please select mounting type or “Not sure”.'); return; }
-  autoNext();
-}
+function confirmBetStep4(){ autoNext(); }
 
 function renderBetStep5(el){
   var l = MC.lang==='sk';
@@ -3832,7 +3806,6 @@ function submitBetCalc(){
     'Dĺžka: '+(calcState.betLength||'-')+' bm\n' +
     'Výška: '+(calcState.betHeight||'-')+' m\n' +
     'Farba: '+(calcState.betColor||'-')+'\n' +
-    'Montáž: '+(calcState.betMounting||'-')+'\n' +
     'Brána (4m): '+(calcState.betGate||0)+' ks\n' +
     'Bránka (1m): '+(calcState.betBranka||0)+' ks\n' +
     'Lokalita: '+calcState.betLocation+' '+calcState.betZip+'\n' +
@@ -4062,7 +4035,7 @@ function showThanks(){
 function resetCalc(){
   calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = '';
   calcState.betType=null; calcState.betPattern=null; calcState.betSides=null; calcState.betLength=null; calcState.betHeight=null; calcState.betColor=null; calcState.betMounting=null; calcState.betBranka=0; calcState.betGate=0; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
-  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
+  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGateColor=null; calcState.cpGdpr=false;
   renderCalcStep();
 }
 
@@ -4465,6 +4438,22 @@ function renderCPStep7(el){
   var c = calcState.cpCorners || 0;
   var e = calcState.cpEnds || 0;
   var h = calcState.height || '153';
+  var gateColors = [
+    { id:'zelena',  name:l?'Zelená':'Green',     ral:'RAL 6005', sw:'zelena' },
+    { id:'zinok',   name:l?'Zinok':'Zinc',       ral:'Pozink',   sw:'zinok'  },
+    { id:'antracit',name:l?'Antracit':'Anthracite',ral:'RAL 7016',sw:'antracit'}
+  ];
+  var gc = calcState.cpGateColor || calcState.color || 'zinok';
+  var gateColorCards = gateColors.map(function(co){
+    var sel = gc === co.id ? ' selected' : '';
+    return '<div class="mc-color-card'+sel+'" onclick="selCPGateColor(\''+co.id+'\')" style="min-width:80px">' +
+      '<div class="mc-color-body" style="padding:10px 8px">' +
+        '<div class="mc-color-swatch lg '+co.sw+'"></div>' +
+        '<div class="mc-color-name">'+co.name+'</div>' +
+        '<div class="mc-color-ral">'+co.ral+'</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('brana') +
     '<div class="mc-step-title">'+(l?'Brány, bránky a rohy':'Gates, wickets and corners')+'</div>' +
@@ -4488,12 +4477,10 @@ function renderCPStep7(el){
         '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
-    '<div class="mc-hint" style="margin-top:10px" id="brankaColorHint"><div class="hi">i</div><div>'+
-      ((b>0 || g>0)
-        ? (l?'<b>Farba brány a bránky:</b> použijeme rovnakú farbu ako pri plote. Ak chcete inú farbu, napíšte ju do poznámky pri odoslaní.':'<b>Gate and wicket color:</b> we will use the same color as the fence. If you want a different color, write it in the note before sending.')
-        : (l?'Ak pridáte bránku alebo bránu, ich výška bude zhodná s výškou panela a farba sa predvyplní podľa farby plota.':'If you add a wicket or gate, its height will match the panel and color will follow the fence color.'))+
-    '</div></div>' +
-    '<div style="border-top:1px solid #E8F0E6;margin:12px 0 0"></div>' +
+    '<div style="border-top:1px solid #E8F0E6;margin:14px 0 10px"></div>' +
+    '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Farba brány / bránky':'Gate / wicket color')+'</span></div>' +
+    '<div class="mc-color-grid" id="cpGateColorGrid">'+gateColorCards+'</div>' +
+    '<div style="border-top:1px solid #E8F0E6;margin:14px 0 0"></div>' +
     '<div style="margin:12px 0">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet rohov (zmena smeru plotu)':'Number of corners')+'</span></div>' +
       '<div class="mc-num-input-row">' +
@@ -4518,6 +4505,15 @@ function renderCPStep7(el){
     '</div>' +
   '</div>';
 }
+function selCPGateColor(v){
+  calcState.cpGateColor = v;
+  var grid = document.getElementById('cpGateColorGrid');
+  if(!grid) return;
+  grid.querySelectorAll('.mc-color-card').forEach(function(card){
+    var oc = card.getAttribute('onclick') || '';
+    card.classList.toggle('selected', oc.indexOf("'"+v+"'") >= 0);
+  });
+}
 function adjCPBranka(d){ var v=Math.max(0,(calcState.cpBrankaCount||0)+d); calcState.cpBrankaCount=v; var inp=document.getElementById('cpBrankaIn'); if(inp)inp.value=v; }
 function adjCPGate(d){ var v=Math.max(0,(calcState.cpGateCount||0)+d); calcState.cpGateCount=v; var inp=document.getElementById('cpGateIn'); if(inp)inp.value=v; }
 function adjCPCorners(d){ var v=Math.max(0,(calcState.cpCorners||0)+d); calcState.cpCorners=v; var inp=document.getElementById('cpCornersIn'); if(inp)inp.value=v; }
@@ -4527,6 +4523,7 @@ function confirmCPStep7(){
   calcState.cpGateCount   = parseInt((document.getElementById('cpGateIn')||{}).value)||0;
   calcState.cpCorners     = parseInt((document.getElementById('cpCornersIn')||{}).value)||0;
   calcState.cpEnds        = parseInt((document.getElementById('cpEndsIn')||{}).value)||0;
+  if(!calcState.cpGateColor) calcState.cpGateColor = calcState.color || 'zinok';
   autoNext();
 }
 
@@ -4767,7 +4764,6 @@ function betSummaryHtml(){
     [l?'Vzor':'Pattern', patternLabels[calcState.betPattern]||'-'],
     [l?'Strana':'Sides', calcState.betSides==='obojstranny'?(l?'Obojstranný':'Double-sided'):(l?'Jednostranný':'Single-sided')],
     [l?'Farba betónu':'Concrete colour', calcState.betColor||(l?'Neurčené':'Unspecified')],
-    [l?'Kotvenie':'Mounting', calcState.betMounting==='kotvo'?(l?'Na podmurovku':'To base'):(calcState.betMounting==='poradte'?(l?'Poradte mi':'Advise me'):(l?'Betónovanie do zeme':'Concreting'))],
     [l?'Bránky / Brány':'Wickets / Gates', (calcState.betBranka||0)+' / '+(calcState.betGate||0)+' ks'],
   ].map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+r[0]+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+r[1]+'</span></div>'; }).join('');
   return '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(patternPh)+'" alt="'+(l?'Váš betónový plot':'Your concrete fence')+'" loading="eager" decoding="async"></div>' +
@@ -4809,6 +4805,7 @@ function renderCPFinal(el){
       { k:l?'Podhrabová doska':'Underboard', v:calcState.cpUnderboard?(l?'Áno':'Yes'):(l?'Nie':'No') },
       { k:l?'Bránky':'Wickets', v:(calcState.cpBrankaCount||0)+' ks' },
       { k:l?'Brány':'Gates', v:(calcState.cpGateCount||0)+' ks' },
+      { k:l?'Farba brány/bránky':'Gate/wicket color', v:{ antracit:'Antracit RAL 7016', zelena:'Zelená RAL 6005', zinok:'Zinok (pozink)' }[calcState.cpGateColor||calcState.color||'zinok']||(calcState.cpGateColor||calcState.color||'zinok') },
       { k:l?'Rohy':'Corners', v:(calcState.cpCorners||0)+' ks' },
       { k:l?'Voľné konce':'Open ends', v:(calcState.cpEnds||0)+' ks' },
       { k:l?'Stĺpikov celkom':'Total posts', v:r.posts+' ks' },
@@ -4876,6 +4873,7 @@ function submitCPCalc(){
     'Podhrabová: '+(calcState.cpUnderboard?'áno':'nie'),
     'Bránky: '+(calcState.cpBrankaCount||0)+' ks',
     'Brány: '+(calcState.cpGateCount||0)+' ks',
+    'Farba brány: '+(calcState.cpGateColor||calcState.color||'zinok'),
     'Rohy: '+(calcState.cpCorners||0)+', Konce: '+(calcState.cpEnds||0),
     'Lokalita: '+(calcState.cpLocation||'-')+' '+(calcState.cpZip||''),
     'Montáž: '+(calcState.cpInstallation||'sam'),
