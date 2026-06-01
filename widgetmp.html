@@ -5036,45 +5036,6 @@ function submitCPCalc(){
 }
 
 </script>
-<!-- EMERGENCY_OPEN_FIX -->
-
-<script>
-(function(){
-  function byId(id){ return document.getElementById(id); }
-  function openWidget(){
-    var b = byId('mojplot-bubble');
-    var c = byId('mojplot-chat');
-    var t = byId('mojplot-teaser');
-    if (b) b.classList.add('open');
-    if (c) {
-      c.classList.add('visible');
-      c.style.pointerEvents = 'all';
-      c.style.opacity = '1';
-    }
-    if (t) t.classList.add('mp-dismissed');
-    if (window.MC) window.MC.open = true;
-  }
-  function closeWidget(){
-    var b = byId('mojplot-bubble');
-    var c = byId('mojplot-chat');
-    if (b) b.classList.remove('open');
-    if (c) c.classList.remove('visible');
-    if (window.MC) window.MC.open = false;
-  }
-  window.toggleChat = function(){
-    var c = byId('mojplot-chat');
-    if (c && c.classList.contains('visible')) closeWidget();
-    else openWidget();
-  };
-  document.addEventListener('click', function(e){
-    var bubble = e.target.closest && e.target.closest('#mojplot-bubble');
-    var teaser = e.target.closest && e.target.closest('#mojplot-teaser');
-    var close = e.target.closest && e.target.closest('#hdr-close-btn');
-    if (bubble || teaser) { e.preventDefault(); e.stopPropagation(); openWidget(); }
-    if (close) { e.preventDefault(); e.stopPropagation(); closeWidget(); }
-  }, true);
-})();
-</script>
 
 </body>
 </html>
