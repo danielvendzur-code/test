@@ -2820,7 +2820,7 @@ var PRODUCTS = [
   { id:'3d-plot', name:'3D panelový plot', nameEn:'3D panel fence', desc:'Cenová kalkulačka', descEn:'Price calculator',
     img:mpPhoto('mojplot-farby-3d-panel.webp'), badge:'KALKULAČKA' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Okrasný betón – maximálne súkromie', descEn:'Decorative concrete – maximum privacy',
-    img:mpPhoto('mojplot-beton-pohladovy.webp'), badge:'NA DOPYT' }
+    img:mpPhoto('mojplot-beton-pohladovy.webp'), badge:'KALKULAČKA' }
 ];
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
@@ -3793,7 +3793,7 @@ function confirmBetStep2(){ if(!calcState.betHeight) calcState.betHeight='2'; au
 function renderBetStep3(el){
   var l = MC.lang==='sk';
   var colors = [
-    { id:'prirodny', name:l?'Prírodný betón':'Natural concrete', swatch:'#C0B89A', note:l?'Bez príplatku':'No surcharge' },
+    { id:'prirodny', name:l?'Prírodný betón':'Natural concrete', swatch:'#B5B2AC', note:l?'Bez príplatku':'No surcharge' },
     { id:'biela',    name:l?'Biela':'White',                     swatch:'#F0EFE8', note:'+3 €/platňu' },
     { id:'pieskova', name:l?'Piesková / béžová':'Sand / beige',  swatch:'#C9B78F', note:'+3 €/platňu' },
     { id:'tehlova',  name:l?'Tehlová':'Brick',                   swatch:'#9A4F38', note:'+3 €/platňu' },
@@ -3832,11 +3832,6 @@ function renderBetInstallStep(el){
   var l = MC.lang==='sk';
   var corners = calcState.betCorners !== null && calcState.betCorners !== undefined ? calcState.betCorners : 0;
   var inst = calcState.betInstallation;
-  var cornerBtns = [0,1,2,3].map(function(n){
-    var sel = corners === n ? ' selected' : '';
-    var lbl = n === 3 ? '3+' : String(n);
-    return '<div class="mc-size-card'+sel+'" onclick="selBetCorners('+n+')" style="cursor:pointer"><div class="mc-size-val">'+lbl+'</div></div>';
-  }).join('');
   var icoMat = '<svg viewBox="0 0 24 24"><path d="M20 6H4c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H4V8h16v8z"/></svg>';
   var icoInst = '<svg viewBox="0 0 24 24"><path d="M15.5 2C13 2 11 4 11 6.5c0 .85.24 1.64.65 2.33L2 18.5 3.5 22l3-3-1-1 1-1 1 1 3-3-1-1 5.17-5.17c.69.41 1.48.67 2.33.67C20 10.5 22 8.5 22 6c0-.65-.14-1.28-.4-1.85L18 8l-2-2 3.85-3.6C19.28 2.14 18.65 2 18 2z"/></svg>';
   var instVal = inst === true ? 'true' : 'false';
@@ -3844,10 +3839,9 @@ function renderBetInstallStep(el){
     '<div class="mc-step-title">'+(l?'Rohy a montáž':'Corners and installation')+'</div>' +
     '<div class="mc-step-sub">'+(l?'Uveďte počet rohov pozemku a zvoľte typ dodávky.':'Enter the number of property corners and choose delivery type.')+'</div>' +
     '<div style="margin-top:16px">' +
-      '<div class="mc-dim-label" style="margin-bottom:6px"><b>'+(l?'Počet rohov':'Number of corners')+'</b></div>' +
-      '<div style="font-size:12px;color:var(--mc-text-sub);margin-bottom:8px">'+(l?'Každý roh = +1 stĺpik navyše':'Each corner = +1 extra post')+'</div>' +
-      '<div class="mc-size-grid" style="grid-template-columns:repeat(4,1fr)">'+cornerBtns+'</div>' +
-      '<div class="mc-num-input-row" style="margin-top:8px"><input type="number" min="0" max="99" class="mc-num-input" id="betCornersInput" value="'+corners+'" oninput="onBetCornersInput(this.value)" style="width:80px"><span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">'+(l?'rohov':'corners')+'</span></div>' +
+      '<div class="mc-dim-label"><span>'+(l?'Počet rohov':'Number of corners')+'</span><span class="mc-dim-value" id="betCornersVal">'+corners+'</span></div>' +
+      '<input type="range" min="0" max="15" step="1" value="'+corners+'" class="mc-slider" id="betCornersSlider" oninput="onBetCornersSlide(this.value)">' +
+      '<div style="font-size:12px;color:var(--mc-text-sub);margin-top:4px">'+(l?'Každý roh = +1 stĺpik navyše (otočka plota)':'Each corner = +1 extra post (fence turn)')+'</div>' +
     '</div>' +
     '<div style="margin-top:20px">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><b>'+(l?'Typ dodávky':'Delivery type')+'</b></div>' +
@@ -3859,12 +3853,7 @@ function renderBetInstallStep(el){
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetInstallStep()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetCorners(n){
-  calcState.betCorners = n;
-  document.querySelectorAll('#calcContent .mc-size-grid .mc-size-card').forEach(function(c,i){ c.classList.toggle('selected', i===n); });
-  var inp=document.getElementById('betCornersInput'); if(inp) inp.value=n;
-}
-function onBetCornersInput(v){ var n=parseInt(v)||0; if(n<0)n=0; calcState.betCorners=n; document.querySelectorAll('#calcContent .mc-size-grid .mc-size-card').forEach(function(c,i){ c.classList.toggle('selected', i===n); }); }
+function onBetCornersSlide(v){ var n=parseInt(v)||0; calcState.betCorners=n; var lbl=document.getElementById('betCornersVal'); if(lbl) lbl.textContent=n; }
 function selBetInstall(v){
   calcState.betInstallation = (v === 'true');
   updateOptSel('selBetInstall', v);
@@ -3958,14 +3947,14 @@ function submitBetCalc(){
 
 function renderBetFinal(el){
   var l = MC.lang==='sk';
-  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:24px 18px">' +
-    cpStepPhoto('beton-kontakt') +
-    '<div style="font-size:52px;margin-bottom:12px">✓</div>' +
-    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme za dopyt!':'Thank you for your request!')+'</div>' +
-    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Betónový plot ceníme individuálne. Naceníme do 24 hodín a ozveme sa vám e-mailom či telefonicky. Vyššie vidíte náhľad zvoleného typu / vzoru plotu.':'Concrete fences are quoted individually. We will price your request within 24 hours and contact you. Above you can see the selected fence type / pattern preview.')+'</div>' +
-    '<div class="mc-actions" style="margin-top:18px">' +
+  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:20px 18px">' +
+    '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto('mojplot-plot-hotovy.webp')+'" alt="'+(l?'Hotový betónový plot Môj plot':'Finished concrete fence Môj plot')+'" loading="eager" decoding="async" onerror="this.parentElement.style.display=\'none\'"></div>' +
+    '<div style="font-size:42px;margin:10px 0 6px">✓</div>' +
+    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
+    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Ozveme sa vám do 24 hodín s presnou cenovou ponukou. Orientačná cena je uvedená vyššie vo výpočte.':'We will contact you within 24 hours with an exact quote. The estimated price is shown above.')+'</div>' +
+    '<div class="mc-actions" style="margin-top:16px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
-      '<button class="mc-btn" onclick="resetCalc()">'+(l?'Nový výpočet':'New request')+'</button>' +
+      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
     '</div>' +
   '</div>';
 }
