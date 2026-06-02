@@ -3766,11 +3766,18 @@ function confirmBetSides(){ if(!calcState.betSides){ alert(MC.lang==='sk'?'Vyber
 function renderBetStep2(el){
   var l = MC.lang==='sk';
   var L = calcState.betLength || 20;
-  var heights = ['2','2.5'];
+  var heightDefs = [
+    { v:'2',   lbl:'2 m',   sub: l?'Bežná výška':'Standard height' },
+    { v:'2.5', lbl:'2,5 m', sub: l?'Maximálne súkromie':'Maximum privacy', pop:true }
+  ];
   var hsel = calcState.betHeight || '2';
-  var hCards = heights.map(function(h){
-    var sel = hsel === h ? ' selected' : '';
-    return '<div class="mc-size-card'+sel+'" onclick="selBetHeight(\''+h+'\')"><div class="mc-size-val">'+h+' <span style="font-size:12px;color:var(--mc-text-sub)">m</span></div></div>';
+  var hCards = heightDefs.map(function(h){
+    var sel = hsel === h.v ? ' selected' : '';
+    var pop = h.pop ? ' popular' : '';
+    return '<div class="mc-size-card'+sel+pop+'" onclick="selBetHeight(\''+h.v+'\')">' +
+      '<div class="mc-size-val">'+h.lbl.replace(',','.')+'</div>' +
+      '<div class="mc-size-label">'+h.sub+'</div>' +
+    '</div>';
   }).join('');
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-rozmer') +
@@ -3778,15 +3785,25 @@ function renderBetStep2(el){
     '<div class="mc-step-sub">'+(calcState.betType==='pohladovy' ? (l?'Zadajte celkovú dĺžku a vyberte výšku dekoratívneho betónového plotu.':'Enter total length and choose the height of the decorative concrete fence.') : (l?'Zadajte celkovú dĺžku a vyberte výšku plného betónového plotu.':'Enter total length and choose the height of the solid concrete fence.'))+'</div>' +
     '<div class="mc-dim-wrap">' +
       '<div class="mc-dim-label"><span>'+(l?'Dĺžka plota':'Fence length')+'</span><span class="mc-dim-value" id="betLenVal">'+L+'<span class="mc-dim-value-unit"> bm</span></span></div>' +
-      '<input type="range" min="5" max="200" step="1" value="'+L+'" class="mc-slider" oninput="onBetLen(this.value)">' +
-      '<div class="mc-num-input-row" style="margin-top:8px"><input type="number" min="1" max="1000" class="mc-num-input" id="betLenInput" value="'+L+'" oninput="onBetLenInput(this.value)" style="width:80px"><span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">bm</span></div>' +
+      '<input type="range" min="5" max="200" step="1" value="'+L+'" class="mc-slider" id="betLenSlider" oninput="onBetLen(this.value)">' +
+      '<div class="mc-slider-ticks"><span>5</span><span>50</span><span>100</span><span>150</span><span>200</span></div>' +
     '</div>' +
-    '<div style="margin-top:14px"><div class="mc-step-sub" style="margin-bottom:8px"><b>'+(l?'Výška plota':'Fence height')+'</b></div><div class="mc-size-grid" style="grid-template-columns:1fr 1fr">'+hCards+'</div></div>' +
+    '<div class="mc-num-input-row">' +
+      '<button class="mc-num-btn" onclick="adjBetLen(-1)">−</button>' +
+      '<input type="number" min="1" max="1000" class="mc-num-input" id="betLenInput" value="'+L+'" oninput="onBetLenInput(this.value)">' +
+      '<button class="mc-num-btn" onclick="adjBetLen(1)">+</button>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--mc-text-sub);padding-left:4px">bm</span>' +
+    '</div>' +
+    '<div style="margin-top:14px">' +
+      '<div class="mc-dim-label" style="margin-bottom:6px;font-size:12px;font-weight:800;color:var(--mc-text);text-transform:uppercase;letter-spacing:.4px">'+(l?'Výška plota':'Fence height')+'</div>' +
+      '<div class="mc-size-grid" style="grid-template-columns:1fr 1fr">'+hCards+'</div>' +
+    '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep2()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function onBetLen(v){ calcState.betLength = parseInt(v)||20; var el=document.getElementById('betLenVal'); if(el) el.firstChild.nodeValue = calcState.betLength; var inp=document.getElementById('betLenInput'); if(inp) inp.value=calcState.betLength; }
-function onBetLenInput(v){ var n=parseInt(v)||20; if(n<1)n=1; if(n>1000)n=1000; calcState.betLength=n; var sl=document.querySelector('#calcContent .mc-slider'); if(sl){sl.value=Math.min(n,200);} var lbl=document.getElementById('betLenVal'); if(lbl) lbl.firstChild.nodeValue=n; }
+function onBetLen(v){ calcState.betLength=parseInt(v)||20; var lbl=document.getElementById('betLenVal'); if(lbl) lbl.firstChild.nodeValue=calcState.betLength; var inp=document.getElementById('betLenInput'); if(inp) inp.value=calcState.betLength; }
+function onBetLenInput(v){ var n=parseInt(v)||20; if(n<1)n=1; if(n>1000)n=1000; calcState.betLength=n; var sl=document.getElementById('betLenSlider'); if(sl) sl.value=Math.min(n,200); var lbl=document.getElementById('betLenVal'); if(lbl) lbl.firstChild.nodeValue=n; }
+function adjBetLen(d){ var v=(calcState.betLength||20)+d; if(v<1)v=1; if(v>1000)v=1000; var inp=document.getElementById('betLenInput'); if(inp) inp.value=v; onBetLenInput(v); }
 function selBetHeight(h){ calcState.betHeight = h; document.querySelectorAll('.mc-size-card').forEach(function(c){c.classList.remove('selected');}); event.currentTarget.classList.add('selected'); }
 function confirmBetStep2(){ if(!calcState.betHeight) calcState.betHeight='2'; autoNext(); }
 
@@ -4190,7 +4207,18 @@ function showThanks(){
   var lang = MC.lang;
   var el = document.getElementById('calcContent');
   if(!el) return;
-  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:30px 18px"><div style="font-size:52px;margin-bottom:12px">✓</div><div class="mc-step-title" style="text-align:center;font-size:18px">'+(lang==='sk'?'Ďakujeme za dopyt!':'Thank you for your inquiry!')+'</div><div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div><div class="mc-actions" style="margin-top:18px"><a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a><button class="mc-btn" onclick="resetCalc()">'+(lang==='sk'?'Nový výpočet':'New calculation')+'</button></div></div>';
+  var C = calcState.color || 'zinok';
+  var photo = C==='antracit' ? 'mojplot-farba-antracit.webp' : (C==='zelena' ? 'mojplot-farba-zelena.webp' : 'mojplot-plot-hotovy.webp');
+  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:20px 18px">' +
+    '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(photo)+'" alt="'+(lang==='sk'?'Váš hotový plot':'Your finished fence')+'" loading="eager" decoding="async" onerror="this.parentElement.style.display=\'none\'"></div>' +
+    '<div style="font-size:42px;margin:10px 0 6px">✓</div>' +
+    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(lang==='sk'?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
+    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div>' +
+    '<div class="mc-actions" style="margin-top:16px">' +
+      '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
+      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(lang==='sk'?'Nový výpočet':'New calculation')+'</button>' +
+    '</div>' +
+  '</div>';
   try { var r = calculatePrice(); var priceText = r.onRequest ? (lang==='sk'?'na vyžiadanie':'on request') : (Math.round(r.total*0.95)+'-'+Math.round(r.total*1.10)+' €'); addMsg((lang==='sk'?'Dopyt sme pripravili. Orientačná cena: <b>':'Inquiry prepared. Estimated price: <b>')+priceText+'</b>.', 'bot', { noRating:true }); } catch(e){}
 }
 
@@ -4630,16 +4658,14 @@ function renderCPStep7(el){
     '</div></div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:14px 0 0"></div>' +
     '<div style="margin:12px 0">' +
-      '<div class="mc-dim-label" style="margin-bottom:4px"><span>'+(l?'Počet rohov':'Number of corners')+'<button class="cpo-info-btn" type="button" onclick="var b=document.getElementById(\'cpCornersInfo\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'" style="margin-left:6px">ℹ</button></span></div>' +
+      '<div class="mc-dim-label">' +
+        '<span>'+(l?'Počet rohov':'Number of corners')+'<button class="cpo-info-btn" type="button" onclick="var b=document.getElementById(\'cpCornersInfo\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'" style="margin-left:6px">ℹ</button></span>' +
+        '<span class="mc-dim-value" id="cpCornersVal">'+c+'</span>' +
+      '</div>' +
       '<div class="cpo-info-box" id="cpCornersInfo" style="display:none;margin-bottom:6px">' +
         (l?'Roh je miesto, kde plot mení smer – napr. v rohu vašho pozemku alebo pri obchádzaní stromu. Na každom rohu pribúda 1 extra stĺpik navyše. Bežný obdĺžnikový pozemok má <b>4 rohy</b>.':'A corner is where the fence changes direction — e.g. at a property corner or around a tree. Each corner adds 1 extra post. A typical rectangular plot has <b>4 corners</b>.') +
       '</div>' +
-      '<div class="mc-num-input-row">' +
-        '<button class="mc-num-btn" onclick="adjCPCorners(-1)">−</button>' +
-        '<input type="number" min="0" max="50" class="mc-num-input" id="cpCornersIn" value="'+c+'" oninput="calcState.cpCorners=parseInt(this.value)||0">' +
-        '<button class="mc-num-btn" onclick="adjCPCorners(1)">+</button>' +
-        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
-      '</div>' +
+      '<input type="range" min="0" max="15" step="1" value="'+c+'" class="mc-slider" id="cpCornersSlider" oninput="onCPCornersSlide(this.value)">' +
     '</div>' +
     '<div style="margin:12px 0">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet voľných koncov plotu':'Number of open ends')+'</span></div>' +
@@ -4658,12 +4684,12 @@ function renderCPStep7(el){
 }
 function adjCPBranka(d){ var v=Math.max(0,(calcState.cpBrankaCount||0)+d); calcState.cpBrankaCount=v; var inp=document.getElementById('cpBrankaIn'); if(inp)inp.value=v; }
 function adjCPGate(d){ var v=Math.max(0,(calcState.cpGateCount||0)+d); calcState.cpGateCount=v; var inp=document.getElementById('cpGateIn'); if(inp)inp.value=v; }
-function adjCPCorners(d){ var v=Math.max(0,(calcState.cpCorners||0)+d); calcState.cpCorners=v; var inp=document.getElementById('cpCornersIn'); if(inp)inp.value=v; }
+function onCPCornersSlide(v){ var n=parseInt(v)||0; calcState.cpCorners=n; var lbl=document.getElementById('cpCornersVal'); if(lbl) lbl.textContent=n; }
 function adjCPEnds(d){ var v=Math.max(0,(calcState.cpEnds||0)+d); calcState.cpEnds=v; var inp=document.getElementById('cpEndsIn'); if(inp)inp.value=v; }
 function confirmCPStep7(){
   calcState.cpBrankaCount = parseInt((document.getElementById('cpBrankaIn')||{}).value)||0;
   calcState.cpGateCount   = parseInt((document.getElementById('cpGateIn')||{}).value)||0;
-  calcState.cpCorners     = parseInt((document.getElementById('cpCornersIn')||{}).value)||0;
+  calcState.cpCorners     = parseInt((document.getElementById('cpCornersSlider')||{}).value) || calcState.cpCorners || 0;
   calcState.cpEnds        = parseInt((document.getElementById('cpEndsIn')||{}).value)||0;
   autoNext();
 }
