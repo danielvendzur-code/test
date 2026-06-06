@@ -2069,6 +2069,23 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 /* Prevent double-tap zoom on iOS 16+ across the entire widget */
 #mojplot-chat,#mojplot-bubble{touch-action:manipulation}
 
+/* === Tlačidlo "prepnúť na AI chatbot" pod výberom produktov v kalkulačke === */
+.mc-calc-ai-switch{
+  width:100%; margin-top:12px; padding:14px 15px; border:1.5px solid rgba(69,169,60,.38);
+  border-radius:14px; background:linear-gradient(135deg,#F1F8EE,#FFFFFF); color:#23452A;
+  font-family:var(--m-font); font-size:14px; font-weight:800; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  box-shadow:0 8px 22px rgba(69,169,60,.12); transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.mc-calc-ai-switch:hover{transform:translateY(-1px);border-color:#45A93C;box-shadow:0 10px 26px rgba(69,169,60,.18);}
+.mc-calc-ai-switch strong{font-weight:800;}
+
+/* Step 0: contact bar under the product grid — reuses .mc-cbar / .mc-ct chat styling */
+.mc-step-p0 .mc-cbar{margin-top:12px;border-top:1px solid var(--mc-border);border-radius:12px;overflow:hidden}
+/* Keep the step-0 contact bar visible even though the calc is open (the global rule hides .mc-cbar) */
+#mojplot-chat:has(.mc-calc-container[data-open="true"]) .mc-step-p0 .mc-cbar,
+#mojplot-chat.calc-open .mc-step-p0 .mc-cbar{display:flex!important}
+
 </style>
 
 </head>
@@ -2076,7 +2093,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 <!-- Bubble -->
 
-<div id="mojplot-bubble" onclick="toggleChat()">
+<div id="mojplot-bubble" onclick="openChatCalc()">
 
   <div class="notif-dot">1</div>
   <div class="bubble-icon wobble">
@@ -2088,7 +2105,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 </div>
 
 <!-- Floating teaser (desktop only, shown when chat is closed) -->
-<div id="mojplot-teaser" onclick="toggleChat()" role="button" tabindex="0">
+<div id="mojplot-teaser" onclick="openChatCalc()" role="button" tabindex="0">
   <button class="mp-teaser-close" onclick="event.stopPropagation();dismissTeaser()" aria-label="Zavrieť">&times;</button>
   <div class="mp-teaser-title">Vypočítajte si cenu za 3 minúty</div>
   <div class="mp-teaser-text">Pre <b>3D plot alebo betónový plot</b> priamo online, bez čakania.</div>
@@ -2156,7 +2173,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
       <div class="mc-calc-title" id="calc-title">🧮 Cenová kalkulačka</div>
       <button class="mc-calc-close" onclick="closeCalc()">✕</button>
     </div>
-    <div class="mc-calc-progress-wrap">
+    <div class="mc-calc-progress-wrap" id="calcProgressWrap">
       <button class="mc-progress-back" id="calcBackBtn" onclick="calcBack()" disabled>‹</button>
       <div class="mc-calc-progress" id="calcProgressDots" style="--step-count:7"><div class="mc-calc-progress-fill" id="calcProgressFill" style="width:14%"></div></div>
       <div class="mc-progress-step" id="calcStepLabel">Krok 1/7</div>
@@ -2357,7 +2374,8 @@ var calcState = {
   betHeight: '2',       // '2' alebo '2.5' m
   betLength: 20,
   betColor: null,       // prirodny / biela / pieskova / tehlova / cervena / hneda / antracit
-  betCorners: 0,        // počet rohov 0-3
+  betSides: null,       // iba pri vzore bridlica: obycajny / obojstranny
+  betCorners: 4,        // počet rohov 0-10 (default 4)
   betInstallation: false,
   betLocation: '',
   betZip: '',
@@ -2820,17 +2838,17 @@ var PRODUCTS = [
   { id:'3d-plot', name:'3D panelový plot', nameEn:'3D panel fence', desc:'Cenová kalkulačka', descEn:'Price calculator',
     img:mpPhoto('mojplot-farby-3d-panel.webp'), badge:'KALKULAČKA' },
   { id:'betonovy', name:'Betónový plot', nameEn:'Concrete fence', desc:'Okrasný betón – maximálne súkromie', descEn:'Decorative concrete – maximum privacy',
-    img:mpPhoto('mojplot-beton-pohladovy.webp'), badge:'NA DOPYT' }
+    img:mpPhoto('mojplot-beton-pohladovy.webp'), badge:'KALKULAČKA' }
 ];
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
 var PRICE_3D = {
-  /* [height_cm][thickness][color] = €/panel */
+  /* [height_cm][thickness][color] = €/panel s DPH (oficiálny cenník) */
   '103': { '4mm': { zinok:13.35, zelena:14.95, antracit:14.95 }, '5mm': { zinok:15.85, zelena:17.65, antracit:17.65 } },
-  '123': { '4mm': { zinok:15.50, zelena:17.30, antracit:17.30 }, '5mm': { zinok:18.40, zelena:20.50, antracit:20.50 } },
-  '153': { '4mm': { zinok:18.90, zelena:21.20, antracit:21.20 }, '5mm': { zinok:22.50, zelena:25.10, antracit:25.10 } },
-  '173': { '4mm': { zinok:21.50, zelena:23.95, antracit:23.95 }, '5mm': { zinok:25.50, zelena:28.40, antracit:28.40 } },
-  '203': { '4mm': { zinok:24.90, zelena:27.75, antracit:27.75 }, '5mm': { zinok:29.50, zelena:32.90, antracit:32.90 } }
+  '123': { '4mm': { zinok:15.36, zelena:15.36, antracit:15.36 }, '5mm': { zinok:18.40, zelena:20.50, antracit:20.50 } },
+  '153': { '4mm': { zinok:18.76, zelena:18.76, antracit:18.76 }, '5mm': { zinok:28.78, zelena:25.83, antracit:25.83 } },
+  '173': { '4mm': { zinok:20.99, zelena:20.99, antracit:20.99 }, '5mm': { zinok:25.50, zelena:28.40, antracit:28.40 } },
+  '203': { '4mm': { zinok:24.62, zelena:24.62, antracit:24.62 }, '5mm': { zinok:29.50, zelena:32.90, antracit:32.90 } }
 };
 
 var PRICE_POST = {
@@ -2880,12 +2898,22 @@ var PRICE_POST_ROUND = {
   '173': { zinok:12.80, zelena:14.30, antracit:14.30 },
   '203': { zinok:14.60, zelena:16.30, antracit:16.30 }
 };
+/* Cena stĺpika podľa typu a výšky stĺpika (oficiálny cenník s DPH) */
+function getCPPostPrice(type, postHeight, color){
+  var c = color || 'zinok';
+  if(type === 'okruhly') return 13.10; /* okrúhly stĺpik Ø48, 300 cm */
+  var h = String(postHeight || '2').replace(',', '.');
+  if(h === '2') return 11.07;          /* 60×40, 200 cm */
+  if(h === '2.4') return 12.88;        /* 60×40, 240 cm */
+  if(h === '3') return c === 'zinok' ? 16.42 : 14.03; /* 60×40, 300 cm */
+  return 12.88;
+}
 /* Platnicka stlpika pre kotvenie (za ks) */
 var PRICE_ANCHOR_PLATE = 6.86;
 /* Drziak podhrabovej dosky (cena za 2 ks = 1 panel) */
 var PRICE_UNDERBOARD_HOLDER = 7.08;
 /* Inštalácia v €/bm bez DPH */
-var INSTALLATION_CP_PER_M = 35;
+var INSTALLATION_CP_PER_M = 30; /* montáž 3D plotu €/bm s DPH */
 /* Rohová úchytka za ks */
 var PRICE_CORNER_BRACKET = 2.40;
 /* Koncová úchytka za ks */
@@ -2904,15 +2932,21 @@ var SURCHARGE_AUTOMATION = 850; /* automatický pohon brány */
 var INSTALLATION_PER_M = 18;    /* montáž za bežný meter */
 var GATE_INSTALLATION = 220;    /* montáž brány */
 /* Betónový plot - cenník */
-var PRICE_BET_PANEL = 17.99;    /* platňa s DPH */
+var PRICE_BET_PANEL = 18.00;    /* obyčajná betónová platňa s DPH */
 var PRICE_BET_POST_270 = 22.90; /* stĺpik 270 cm (výška 2,0 m) */
 var PRICE_BET_POST_320 = 26.00; /* stĺpik 320 cm (výška 2,5 m) */
 var BET_COLOR_SURCHARGE = 3.00; /* príplatok za farbu / platňu */
-var BET_INSTALL_PER_M = 75;     /* montáž €/bm */
+var BET_INSTALL_PER_M = 50;     /* montáž betónového plotu €/bm s DPH */
+var BET_DOUBLE_SIDE_SURCHARGE = 8.00; /* príplatok za obojstrannú bridlicu / platňu */
 
 /* =========================================================
    KALKULACKA - HLAVNE FUNKCIE
    ========================================================= */
+function openChatCalc(){
+  if(!MC.open){ toggleChat(); }
+  window.setTimeout(function(){ openCalc(); }, 0);
+}
+
 function openCalc(){
   var c = document.getElementById('calcContainer');
   c.setAttribute('data-open', 'true');
@@ -3016,7 +3050,7 @@ function renderCalcStep(){
   } else if(calcState.product === 'mobilne'){
     calcState.totalSteps = 4; /* product, length, extras, final */
   } else if(calcState.product === 'betonovy'){
-    calcState.totalSteps = 7; /* intro, rozmery, vzor, farba, montáž+rohy, kontakt, ďakujeme */
+    calcState.totalSteps = calcState.betPattern === 'bridlica' ? 8 : 7;
   } else if(calcState.product === 'ine'){
     calcState.totalSteps = 3; /* product, desc, final */
   } else if(calcState.product === 'oporne'){
@@ -3025,6 +3059,8 @@ function renderCalcStep(){
 
   updateProgress();
   var el = document.getElementById('calcContent');
+  var pw = document.getElementById('calcProgressWrap');
+  if(pw) pw.style.display = (calcState.step === 0 && !calcState.product) ? 'none' : '';
 
   if(calcState.step === 0) {
     renderStepProduct(el);
@@ -3073,12 +3109,14 @@ function renderCalcStep(){
     else if(calcState.step === 4) renderFinal(el);
   }
   else if(calcState.product === 'betonovy'){
-    if(calcState.step === 1)      renderBetStep2(el);        /* rozmery (dĺžka + výška) */
-    else if(calcState.step === 2) renderBetPatternStep(el);  /* vzor */
-    else if(calcState.step === 3) renderBetStep3(el);        /* farba */
-    else if(calcState.step === 4) renderBetInstallStep(el);  /* montáž + rohy */
-    else if(calcState.step === 5) renderBetStep5(el);        /* kontaktný formulár + cena */
-    else if(calcState.step === 6) renderBetFinal(el);        /* poďakovanie */
+    var hasSides = calcState.betPattern === 'bridlica';
+    if(calcState.step === 1)                                    renderBetStep2(el);
+    else if(calcState.step === 2)                               renderBetPatternStep(el);
+    else if(hasSides && calcState.step === 3)                   renderBetSidesStep(el);
+    else if(calcState.step === (hasSides ? 4 : 3))              renderBetStep3(el);
+    else if(calcState.step === (hasSides ? 5 : 4))              renderBetInstallStep(el);
+    else if(calcState.step === (hasSides ? 6 : 5))              renderBetStep5(el);
+    else if(calcState.step === (hasSides ? 7 : 6))              renderBetFinal(el);
   }
   else if(calcState.product === 'ine'){
     if(calcState.step === 1) renderCustomDesc(el);
@@ -3107,10 +3145,26 @@ function renderStepProduct(el){
       '</div></div>';
   }).join('');
 
-  el.innerHTML = '<div class="mc-step">' +
+  var contactChips = '<div class="mc-cbar" style="display:flex!important;margin-top:12px;border-radius:12px;overflow:hidden">' +
+    '<a href="https://wa.me/421940511266" target="_blank" class="mc-ct wa">' +
+      '<div class="mc-ci mc-wa-icon" aria-hidden="true"><svg viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32 101.5 32 2 131.5 2 253.9c0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 221.9-99.5 221.9-221.9 0-59.3-23.1-115-65-157.1zM223.9 438.7h-.1c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3 18.6-68.1-4.4-7C49.1 322.8 39.4 288.8 39.4 253.9c0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 54 81.2 53.9 130.5 0 101.8-82.8 184.6-184.5 184.6zm101.2-138.1c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.5-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2s-9.7 1.4-14.8 6.9c-5.1 5.5-19.4 19-19.4 46.3s19.9 53.7 22.6 57.4c2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.7 23.6 9.1 31.6 11.7 13.3 4.2 25.4 3.6 35 2.2 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.4-2.3-5.1-3.7-10.6-6.5z"/></svg></div>' +
+      '<span>WhatsApp</span>' +
+    '</a>' +
+    '<a href="tel:+421940511266" class="mc-ct ph">' +
+      '<div class="mc-ci"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.27-.27.35-.66.24-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg></div>' +
+      '<span>'+(lang==='sk'?'Volať':'Call')+'</span>' +
+    '</a>' +
+    '<a href="mailto:info@mojplot.sk?subject=Dopyt%20z%20webu%20M%C3%B4j%20plot" class="mc-ct em" aria-label="E-mail info@mojplot.sk" title="info@mojplot.sk">' +
+      '<div class="mc-ci"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>' +
+      '<span>E-mail</span>' +
+    '</a>' +
+  '</div>';
+  el.innerHTML = '<div class="mc-step mc-step-p0">' +
     '<div class="mc-step-title">' + title + '</div>' +
     '<div class="mc-step-sub" style="margin-bottom:10px">' + sub + '</div>' +
     '<div class="mc-product-grid" style="grid-template-columns:1fr 1fr">' + cards + '</div>' +
+    '<button type="button" class="mc-calc-ai-switch" onclick="closeCalc()">💬 <strong>'+(lang==='sk'?'AI chatbot firmy Mojplot':'Mojplot AI chatbot')+'</strong></button>' +
+    contactChips +
     renderTrust() +
   '</div>';
 }
@@ -3733,6 +3787,7 @@ function renderBetPatternStep(el){
 function selBetPattern(v){
   if(calcState.betPattern === v) return;
   calcState.betPattern = v;
+  calcState.betSides = (v === 'bridlica') ? null : 'obycajny';
   document.querySelectorAll('.mc-bet-pattern-card').forEach(function(c){
     var oc = c.getAttribute('onclick') || '';
     c.classList.toggle('selected', oc.indexOf("'"+v+"'") >= 0);
@@ -3747,11 +3802,11 @@ function renderBetSidesStep(el){
   var ico2 = '<svg viewBox="0 0 24 24"><path d="M3 6h7v12H3V6zm11 0h7v12h-7V6z"/></svg>';
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-kontakt') +
-    '<div class="mc-step-title">'+(l?'Prevedenie reliéfu':'Relief finish type')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyberte jednostranný alebo obojstranný reliéf. Ďalej prejdete až po potvrdení.':'Select single-sided or double-sided relief. You continue only after confirmation.')+'</div>' +
+    '<div class="mc-step-title">'+(l?'Bridlica – prevedenie':'Slate – finish type')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Pri vzore Bridlica vyberte obyčajné alebo obojstranné prevedenie. Obojstranné prevedenie pridáva +8 € za dosku.':'For slate, choose regular or double-sided finish. Double-sided finish adds +€8 per panel.')+'</div>' +
     '<div class="mc-cp-opts">' +
-      cpOpt('bs','jednostranny', l?'Jednostranný':'Single-sided', l?'Dekor z jednej strany, druhá strana hladšia':'Decor on one side, simpler back side', ico1, calcState.betSides, 'selBetSides') +
-      cpOpt('bs','obojstranny', l?'Obojstranný':'Double-sided', l?'Dekor viditeľný z oboch strán':'Decor visible on both sides', ico2, calcState.betSides, 'selBetSides') +
+      cpOpt('bs','obycajny', l?'Obyčajný':'Regular', l?'Štandardná doska – dekor iba z jednej strany':'Standard panel – decor on one side only', ico1, calcState.betSides, 'selBetSides') +
+      cpOpt('bs','obojstranny', l?'Obojstranný':'Double-sided', l?'Doska 26 € (18 € + 8 €) – dekor z oboch strán':'Panel €26 (€18 + €8) – decor on both sides', ico2, calcState.betSides, 'selBetSides') +
     '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetSides()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
@@ -3766,11 +3821,18 @@ function confirmBetSides(){ if(!calcState.betSides){ alert(MC.lang==='sk'?'Vyber
 function renderBetStep2(el){
   var l = MC.lang==='sk';
   var L = calcState.betLength || 20;
-  var heights = ['2','2.5'];
+  var heightDefs = [
+    { v:'2',   lbl:'2 m',   sub: l?'Bežná výška':'Standard height' },
+    { v:'2.5', lbl:'2,5 m', sub: l?'Maximálne súkromie':'Maximum privacy', pop:true }
+  ];
   var hsel = calcState.betHeight || '2';
-  var hCards = heights.map(function(h){
-    var sel = hsel === h ? ' selected' : '';
-    return '<div class="mc-size-card'+sel+'" onclick="selBetHeight(\''+h+'\')"><div class="mc-size-val">'+h+' <span style="font-size:12px;color:var(--mc-text-sub)">m</span></div></div>';
+  var hCards = heightDefs.map(function(h){
+    var sel = hsel === h.v ? ' selected' : '';
+    var pop = h.pop ? ' popular' : '';
+    return '<div class="mc-size-card'+sel+pop+'" onclick="selBetHeight(\''+h.v+'\')">' +
+      '<div class="mc-size-val">'+h.lbl.replace(',','.')+'</div>' +
+      '<div class="mc-size-label">'+h.sub+'</div>' +
+    '</div>';
   }).join('');
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-rozmer') +
@@ -3778,22 +3840,32 @@ function renderBetStep2(el){
     '<div class="mc-step-sub">'+(calcState.betType==='pohladovy' ? (l?'Zadajte celkovú dĺžku a vyberte výšku dekoratívneho betónového plotu.':'Enter total length and choose the height of the decorative concrete fence.') : (l?'Zadajte celkovú dĺžku a vyberte výšku plného betónového plotu.':'Enter total length and choose the height of the solid concrete fence.'))+'</div>' +
     '<div class="mc-dim-wrap">' +
       '<div class="mc-dim-label"><span>'+(l?'Dĺžka plota':'Fence length')+'</span><span class="mc-dim-value" id="betLenVal">'+L+'<span class="mc-dim-value-unit"> bm</span></span></div>' +
-      '<input type="range" min="5" max="200" step="1" value="'+L+'" class="mc-slider" oninput="onBetLen(this.value)">' +
-      '<div class="mc-num-input-row" style="margin-top:8px"><input type="number" min="1" max="1000" class="mc-num-input" id="betLenInput" value="'+L+'" oninput="onBetLenInput(this.value)" style="width:80px"><span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">bm</span></div>' +
+      '<input type="range" min="5" max="200" step="1" value="'+L+'" class="mc-slider" id="betLenSlider" oninput="onBetLen(this.value)">' +
+      '<div class="mc-slider-ticks"><span>5</span><span>50</span><span>100</span><span>150</span><span>200</span></div>' +
     '</div>' +
-    '<div style="margin-top:14px"><div class="mc-step-sub" style="margin-bottom:8px"><b>'+(l?'Výška plota':'Fence height')+'</b></div><div class="mc-size-grid" style="grid-template-columns:1fr 1fr">'+hCards+'</div></div>' +
+    '<div class="mc-num-input-row">' +
+      '<button class="mc-num-btn" onclick="adjBetLen(-1)">−</button>' +
+      '<input type="number" min="1" max="1000" class="mc-num-input" id="betLenInput" value="'+L+'" oninput="onBetLenInput(this.value)">' +
+      '<button class="mc-num-btn" onclick="adjBetLen(1)">+</button>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--mc-text-sub);padding-left:4px">bm</span>' +
+    '</div>' +
+    '<div style="margin-top:14px">' +
+      '<div class="mc-dim-label" style="margin-bottom:6px;font-size:12px;font-weight:800;color:var(--mc-text);text-transform:uppercase;letter-spacing:.4px">'+(l?'Výška plota':'Fence height')+'</div>' +
+      '<div class="mc-size-grid" style="grid-template-columns:1fr 1fr">'+hCards+'</div>' +
+    '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetStep2()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function onBetLen(v){ calcState.betLength = parseInt(v)||20; var el=document.getElementById('betLenVal'); if(el) el.firstChild.nodeValue = calcState.betLength; var inp=document.getElementById('betLenInput'); if(inp) inp.value=calcState.betLength; }
-function onBetLenInput(v){ var n=parseInt(v)||20; if(n<1)n=1; if(n>1000)n=1000; calcState.betLength=n; var sl=document.querySelector('#calcContent .mc-slider'); if(sl){sl.value=Math.min(n,200);} var lbl=document.getElementById('betLenVal'); if(lbl) lbl.firstChild.nodeValue=n; }
+function onBetLen(v){ calcState.betLength=parseInt(v)||20; var lbl=document.getElementById('betLenVal'); if(lbl) lbl.firstChild.nodeValue=calcState.betLength; var inp=document.getElementById('betLenInput'); if(inp) inp.value=calcState.betLength; }
+function onBetLenInput(v){ var n=parseInt(v)||20; if(n<1)n=1; if(n>1000)n=1000; calcState.betLength=n; var sl=document.getElementById('betLenSlider'); if(sl) sl.value=Math.min(n,200); var lbl=document.getElementById('betLenVal'); if(lbl) lbl.firstChild.nodeValue=n; }
+function adjBetLen(d){ var v=(calcState.betLength||20)+d; if(v<1)v=1; if(v>1000)v=1000; var inp=document.getElementById('betLenInput'); if(inp) inp.value=v; onBetLenInput(v); }
 function selBetHeight(h){ calcState.betHeight = h; document.querySelectorAll('.mc-size-card').forEach(function(c){c.classList.remove('selected');}); event.currentTarget.classList.add('selected'); }
 function confirmBetStep2(){ if(!calcState.betHeight) calcState.betHeight='2'; autoNext(); }
 
 function renderBetStep3(el){
   var l = MC.lang==='sk';
   var colors = [
-    { id:'prirodny', name:l?'Prírodný betón':'Natural concrete', swatch:'#C0B89A', note:l?'Bez príplatku':'No surcharge' },
+    { id:'prirodny', name:l?'Prírodný betón':'Natural concrete', swatch:'#B5B2AC', note:l?'Bez príplatku':'No surcharge' },
     { id:'biela',    name:l?'Biela':'White',                     swatch:'#F0EFE8', note:'+3 €/platňu' },
     { id:'pieskova', name:l?'Piesková / béžová':'Sand / beige',  swatch:'#C9B78F', note:'+3 €/platňu' },
     { id:'tehlova',  name:l?'Tehlová':'Brick',                   swatch:'#9A4F38', note:'+3 €/platňu' },
@@ -3830,13 +3902,8 @@ function confirmBetColor(){ if(!calcState.betColor){ alert(MC.lang==='sk'?'Vyber
 
 function renderBetInstallStep(el){
   var l = MC.lang==='sk';
-  var corners = calcState.betCorners !== null && calcState.betCorners !== undefined ? calcState.betCorners : 0;
+  var corners = calcState.betCorners !== null && calcState.betCorners !== undefined ? calcState.betCorners : 4;
   var inst = calcState.betInstallation;
-  var cornerBtns = [0,1,2,3].map(function(n){
-    var sel = corners === n ? ' selected' : '';
-    var lbl = n === 3 ? '3+' : String(n);
-    return '<div class="mc-size-card'+sel+'" onclick="selBetCorners('+n+')" style="cursor:pointer"><div class="mc-size-val">'+lbl+'</div></div>';
-  }).join('');
   var icoMat = '<svg viewBox="0 0 24 24"><path d="M20 6H4c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H4V8h16v8z"/></svg>';
   var icoInst = '<svg viewBox="0 0 24 24"><path d="M15.5 2C13 2 11 4 11 6.5c0 .85.24 1.64.65 2.33L2 18.5 3.5 22l3-3-1-1 1-1 1 1 3-3-1-1 5.17-5.17c.69.41 1.48.67 2.33.67C20 10.5 22 8.5 22 6c0-.65-.14-1.28-.4-1.85L18 8l-2-2 3.85-3.6C19.28 2.14 18.65 2 18 2z"/></svg>';
   var instVal = inst === true ? 'true' : 'false';
@@ -3844,27 +3911,26 @@ function renderBetInstallStep(el){
     '<div class="mc-step-title">'+(l?'Rohy a montáž':'Corners and installation')+'</div>' +
     '<div class="mc-step-sub">'+(l?'Uveďte počet rohov pozemku a zvoľte typ dodávky.':'Enter the number of property corners and choose delivery type.')+'</div>' +
     '<div style="margin-top:16px">' +
-      '<div class="mc-dim-label" style="margin-bottom:6px"><b>'+(l?'Počet rohov':'Number of corners')+'</b></div>' +
-      '<div style="font-size:12px;color:var(--mc-text-sub);margin-bottom:8px">'+(l?'Každý roh = +1 stĺpik navyše':'Each corner = +1 extra post')+'</div>' +
-      '<div class="mc-size-grid" style="grid-template-columns:repeat(4,1fr)">'+cornerBtns+'</div>' +
-      '<div class="mc-num-input-row" style="margin-top:8px"><input type="number" min="0" max="99" class="mc-num-input" id="betCornersInput" value="'+corners+'" oninput="onBetCornersInput(this.value)" style="width:80px"><span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">'+(l?'rohov':'corners')+'</span></div>' +
+      '<div class="mc-dim-label">' +
+        '<span>'+(l?'Počet rohov':'Number of corners')+'<button class="cpo-info-btn" type="button" onclick="var b=document.getElementById(\'betCornersInfo\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'" style="margin-left:6px">ℹ</button></span>' +
+        '<span class="mc-dim-value" id="betCornersVal">'+corners+'</span>' +
+      '</div>' +
+      '<div class="cpo-info-box" id="betCornersInfo" style="display:none;margin-bottom:6px">' +
+        (l?'Roh je miesto, kde plot mení smer – napr. v rohu vašho pozemku alebo pri obchádzaní stromu. Na každom rohu pribúda 1 stĺpik navyše. Bežný obdĺžnikový pozemok má <b>4 rohy</b>.':'A corner is where the fence changes direction — e.g. at a property corner or around a tree. Each corner adds 1 extra post. A typical rectangular plot has <b>4 corners</b>.') +
+      '</div>' +
+      '<input type="range" min="0" max="10" step="1" value="'+corners+'" class="mc-slider" id="betCornersSlider" oninput="onBetCornersSlide(this.value)">' +
     '</div>' +
     '<div style="margin-top:20px">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><b>'+(l?'Typ dodávky':'Delivery type')+'</b></div>' +
       '<div class="mc-cp-opts">' +
         cpOpt('bi','false', l?'Len materiál':'Material only', l?'Dodávka materiálu bez montáže':'Material delivery only', icoMat, instVal, 'selBetInstall') +
-        cpOpt('bi','true',  l?'Materiál + montáž':'Material + installation', l?'Naša čata nainštaluje plot (75 €/bm)':'Our team installs the fence (75 €/bm)', icoInst, instVal, 'selBetInstall') +
+        cpOpt('bi','true',  l?'Materiál + montáž':'Material + installation', l?'Naša čata nainštaluje plot ('+BET_INSTALL_PER_M+' €/bm)':'Our team installs the fence ('+BET_INSTALL_PER_M+' €/lm)', icoInst, instVal, 'selBetInstall') +
       '</div>' +
     '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetInstallStep()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
 }
-function selBetCorners(n){
-  calcState.betCorners = n;
-  document.querySelectorAll('#calcContent .mc-size-grid .mc-size-card').forEach(function(c,i){ c.classList.toggle('selected', i===n); });
-  var inp=document.getElementById('betCornersInput'); if(inp) inp.value=n;
-}
-function onBetCornersInput(v){ var n=parseInt(v)||0; if(n<0)n=0; calcState.betCorners=n; document.querySelectorAll('#calcContent .mc-size-grid .mc-size-card').forEach(function(c,i){ c.classList.toggle('selected', i===n); }); }
+function onBetCornersSlide(v){ var n=parseInt(v)||0; calcState.betCorners=n; var lbl=document.getElementById('betCornersVal'); if(lbl) lbl.textContent=n; }
 function selBetInstall(v){
   calcState.betInstallation = (v === 'true');
   updateOptSel('selBetInstall', v);
@@ -3883,8 +3949,11 @@ function toggleBetGdpr(label){
 function renderBetStep5(el){
   var l = MC.lang==='sk';
   el.innerHTML = '<div class="mc-step">' +
-    betSummaryHtml() +
-    '<div class="mc-step-title" style="margin-top:4px">'+(l?'Vaše údaje a lokalita':'Your details and location')+'</div>' +
+    '<div style="background:#EAF6E4;border:1.5px solid #C8E6C9;border-radius:13px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#4A6B42;display:flex;align-items:center;gap:8px">' +
+      '<span style="font-size:18px">📊</span>' +
+      '<span>'+(l?'Vyplňte formulár — orientačná cena sa zobrazí po odoslaní dopytu.':'Fill in the form — estimated price will appear after submitting.')+'</span>' +
+    '</div>' +
+    '<div class="mc-step-title" style="margin-top:0">'+(l?'Vaše údaje a lokalita':'Your details and location')+'</div>' +
     '<div class="mc-step-sub">'+(l?'Vyplňte kontaktné údaje a my vám zašleme presnú cenovú ponuku.':'Fill in your contact details and we will send you an exact quote.')+'</div>' +
     '<div class="mc-form" style="display:flex;flex-direction:column;gap:9px">' +
       '<input class="mc-form-input" id="betCity" type="text" placeholder="'+(l?'Obec / mesto':'Town / city')+'" value="'+(calcState.betLocation||'')+'">' +
@@ -3958,14 +4027,16 @@ function submitBetCalc(){
 
 function renderBetFinal(el){
   var l = MC.lang==='sk';
-  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:24px 18px">' +
-    cpStepPhoto('beton-kontakt') +
-    '<div style="font-size:52px;margin-bottom:12px">✓</div>' +
-    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme za dopyt!':'Thank you for your request!')+'</div>' +
-    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Betónový plot ceníme individuálne. Naceníme do 24 hodín a ozveme sa vám e-mailom či telefonicky. Vyššie vidíte náhľad zvoleného typu / vzoru plotu.':'Concrete fences are quoted individually. We will price your request within 24 hours and contact you. Above you can see the selected fence type / pattern preview.')+'</div>' +
-    '<div class="mc-actions" style="margin-top:18px">' +
+  el.innerHTML = '<div class="mc-step">' +
+    '<div style="text-align:center;padding:12px 0 8px">' +
+      '<div style="font-size:36px;margin-bottom:4px">✓</div>' +
+      '<div class="mc-step-title" style="text-align:center">'+(l?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
+      '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Ozveme sa vám do 24 hodín s presnou cenovou ponukou.':'We will contact you within 24 hours with an exact quote.')+'</div>' +
+    '</div>' +
+    betSummaryHtml(true) +
+    '<div class="mc-actions" style="margin-top:12px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
-      '<button class="mc-btn" onclick="resetCalc()">'+(l?'Nový výpočet':'New request')+'</button>' +
+      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
     '</div>' +
   '</div>';
 }
@@ -3976,7 +4047,11 @@ function calculateBetPrice(){
   var fields = Math.ceil(L / 2);
   var panelsPerField = H === '2.5' ? 5 : 4;
   var panels = fields * panelsPerField;
-  var panelCost = panels * PRICE_BET_PANEL;
+  var panelUnit = PRICE_BET_PANEL;
+  if(calcState.betPattern === 'bridlica' && calcState.betSides === 'obojstranny'){
+    panelUnit += BET_DOUBLE_SIDE_SURCHARGE;
+  }
+  var panelCost = panels * panelUnit;
   var corners = parseInt(calcState.betCorners) || 0;
   var postCount = fields + 1 + corners;
   var postPrice = H === '2.5' ? PRICE_BET_POST_320 : PRICE_BET_POST_270;
@@ -3985,7 +4060,7 @@ function calculateBetPrice(){
   var materialTotal = panelCost + postCost + colorSurcharge;
   var installCost = calcState.betInstallation === true ? L * BET_INSTALL_PER_M : 0;
   var grandTotal = materialTotal + installCost;
-  return { L:L, H:H, fields:fields, panels:panels, panelCost:panelCost, postCount:postCount, postPrice:postPrice, postCost:postCost, colorSurcharge:colorSurcharge, materialTotal:materialTotal, installCost:installCost, grandTotal:grandTotal };
+  return { L:L, H:H, fields:fields, panels:panels, panelUnit:panelUnit, panelCost:panelCost, postCount:postCount, postPrice:postPrice, postCost:postCost, colorSurcharge:colorSurcharge, materialTotal:materialTotal, installCost:installCost, grandTotal:grandTotal };
 }
 
 function money(v){ return (Number(v) || 0).toLocaleString('sk-SK', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
@@ -4196,13 +4271,24 @@ function showThanks(){
   var lang = MC.lang;
   var el = document.getElementById('calcContent');
   if(!el) return;
-  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:30px 18px"><div style="font-size:52px;margin-bottom:12px">✓</div><div class="mc-step-title" style="text-align:center;font-size:18px">'+(lang==='sk'?'Ďakujeme za dopyt!':'Thank you for your inquiry!')+'</div><div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div><div class="mc-actions" style="margin-top:18px"><a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a><button class="mc-btn" onclick="resetCalc()">'+(lang==='sk'?'Nový výpočet':'New calculation')+'</button></div></div>';
+  var C = calcState.color || 'zinok';
+  var photo = C==='antracit' ? 'mojplot-farba-antracit.webp' : (C==='zelena' ? 'mojplot-farba-zelena.webp' : 'mojplot-plot-hotovy.webp');
+  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:20px 18px">' +
+    '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(photo)+'" alt="'+(lang==='sk'?'Váš hotový plot':'Your finished fence')+'" loading="eager" decoding="async" onerror="this.parentElement.style.display=\'none\'"></div>' +
+    '<div style="font-size:42px;margin:10px 0 6px">✓</div>' +
+    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(lang==='sk'?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
+    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div>' +
+    '<div class="mc-actions" style="margin-top:16px">' +
+      '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
+      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(lang==='sk'?'Nový výpočet':'New calculation')+'</button>' +
+    '</div>' +
+  '</div>';
   try { var r = calculatePrice(); var priceText = r.onRequest ? (lang==='sk'?'na vyžiadanie':'on request') : (Math.round(r.total*0.95)+'-'+Math.round(r.total*1.10)+' €'); addMsg((lang==='sk'?'Dopyt sme pripravili. Orientačná cena: <b>':'Inquiry prepared. Estimated price: <b>')+priceText+'</b>.', 'bot', { noRating:true }); } catch(e){}
 }
 
 function resetCalc(){
   calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = '';
-  calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betCorners=0; calcState.betInstallation=false; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
+  calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betSides=null; calcState.betCorners=4; calcState.betInstallation=false; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
   calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
   renderCalcStep();
 }
@@ -4636,13 +4722,14 @@ function renderCPStep7(el){
     '</div></div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:14px 0 0"></div>' +
     '<div style="margin:12px 0">' +
-      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet rohov (zmena smeru plotu)':'Number of corners')+'</span></div>' +
-      '<div class="mc-num-input-row">' +
-        '<button class="mc-num-btn" onclick="adjCPCorners(-1)">−</button>' +
-        '<input type="number" min="0" max="50" class="mc-num-input" id="cpCornersIn" value="'+c+'" oninput="calcState.cpCorners=parseInt(this.value)||0">' +
-        '<button class="mc-num-btn" onclick="adjCPCorners(1)">+</button>' +
-        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
+      '<div class="mc-dim-label">' +
+        '<span>'+(l?'Počet rohov':'Number of corners')+'<button class="cpo-info-btn" type="button" onclick="var b=document.getElementById(\'cpCornersInfo\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'" style="margin-left:6px">ℹ</button></span>' +
+        '<span class="mc-dim-value" id="cpCornersVal">'+c+'</span>' +
       '</div>' +
+      '<div class="cpo-info-box" id="cpCornersInfo" style="display:none;margin-bottom:6px">' +
+        (l?'Roh je miesto, kde plot mení smer – napr. v rohu vašho pozemku alebo pri obchádzaní stromu. Na každom rohu pribúda 1 extra stĺpik navyše. Bežný obdĺžnikový pozemok má <b>4 rohy</b>.':'A corner is where the fence changes direction — e.g. at a property corner or around a tree. Each corner adds 1 extra post. A typical rectangular plot has <b>4 corners</b>.') +
+      '</div>' +
+      '<input type="range" min="0" max="15" step="1" value="'+c+'" class="mc-slider" id="cpCornersSlider" oninput="onCPCornersSlide(this.value)">' +
     '</div>' +
     '<div style="margin:12px 0">' +
       '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet voľných koncov plotu':'Number of open ends')+'</span></div>' +
@@ -4661,12 +4748,12 @@ function renderCPStep7(el){
 }
 function adjCPBranka(d){ var v=Math.max(0,(calcState.cpBrankaCount||0)+d); calcState.cpBrankaCount=v; var inp=document.getElementById('cpBrankaIn'); if(inp)inp.value=v; }
 function adjCPGate(d){ var v=Math.max(0,(calcState.cpGateCount||0)+d); calcState.cpGateCount=v; var inp=document.getElementById('cpGateIn'); if(inp)inp.value=v; }
-function adjCPCorners(d){ var v=Math.max(0,(calcState.cpCorners||0)+d); calcState.cpCorners=v; var inp=document.getElementById('cpCornersIn'); if(inp)inp.value=v; }
+function onCPCornersSlide(v){ var n=parseInt(v)||0; calcState.cpCorners=n; var lbl=document.getElementById('cpCornersVal'); if(lbl) lbl.textContent=n; }
 function adjCPEnds(d){ var v=Math.max(0,(calcState.cpEnds||0)+d); calcState.cpEnds=v; var inp=document.getElementById('cpEndsIn'); if(inp)inp.value=v; }
 function confirmCPStep7(){
   calcState.cpBrankaCount = parseInt((document.getElementById('cpBrankaIn')||{}).value)||0;
   calcState.cpGateCount   = parseInt((document.getElementById('cpGateIn')||{}).value)||0;
-  calcState.cpCorners     = parseInt((document.getElementById('cpCornersIn')||{}).value)||0;
+  calcState.cpCorners     = parseInt((document.getElementById('cpCornersSlider')||{}).value) || calcState.cpCorners || 0;
   calcState.cpEnds        = parseInt((document.getElementById('cpEndsIn')||{}).value)||0;
   autoNext();
 }
@@ -4806,10 +4893,8 @@ function calculateCPPrice(){
   items.push({ k:(l?'3D panely':'3D panels')+' '+panels+' ks × '+money(panelUnit)+' €', v:panelSum });
   total += panelSum;
 
-  /* Stĺpiky */
-  var postPriceTable = PT === 'okruhly' ? PRICE_POST_ROUND : PRICE_POST;
-  var postEntry = postPriceTable[H] || postPriceTable['153'];
-  var postUnit = (postEntry && postEntry[C]) ? postEntry[C] : PRICE_POST['153']['zinok'];
+  /* Stĺpiky – cena podľa výšky stĺpika (oficiálny cenník) */
+  var postUnit = getCPPostPrice(PT, calcState.cpPostHeight, C);
   var postSum = posts * postUnit;
   items.push({ k:(l?'Stĺpiky':'Posts')+' '+(PT==='okruhly'?(l?'okrúhle 48mm':'round 48mm'):(l?'hranatý 60×40mm':'square 60×40mm'))+' '+posts+' ks × '+money(postUnit)+' €', v:postSum });
   total += postSum;
@@ -4907,15 +4992,16 @@ function betSummaryHtml(noPhoto){
     [l?'Dĺžka':'Length', (calcState.betLength||'-')+' bm ('+bp.fields+' '+(l?'polí':'fields')+')'],
     [l?'Výška':'Height', (calcState.betHeight||'-')+' m'],
     [l?'Vzor':'Pattern', patternLabels[calcState.betPattern]||'-'],
+    calcState.betPattern === 'bridlica' ? [l?'Prevedenie':'Finish', calcState.betSides === 'obojstranny' ? (l?'Obojstranný':'Double-sided') : (l?'Obyčajný':'Regular')] : null,
     [l?'Farba':'Color', colorLabels[calcState.betColor||'prirodny']||'-'],
-    [l?'Rohy':'Corners', String(calcState.betCorners||0)+(calcState.betCorners===3?'+':'')],
+    [l?'Rohy':'Corners', String(calcState.betCorners||0)],
     [l?'Montáž':'Installation', calcState.betInstallation?(l?'Materiál + montáž':'Material + installation'):(l?'Len materiál':'Material only')],
-  ].map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+r[0]+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+r[1]+'</span></div>'; }).join('');
-  var priceRows = '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Platne':'Panels')+' ('+bp.panels+' ks × '+money(PRICE_BET_PANEL)+' €)</span><span style="font-weight:700">'+money(bp.panelCost)+' €</span></div>' +
+  ].filter(Boolean).map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+r[0]+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+r[1]+'</span></div>'; }).join('');
+  var priceRows = '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Platne':'Panels')+' ('+bp.panels+' ks × '+money(bp.panelUnit)+' €)</span><span style="font-weight:700">'+money(bp.panelCost)+' €</span></div>' +
     '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Stĺpiky':'Posts')+' ('+bp.postCount+' ks × '+money(bp.postPrice)+' €)</span><span style="font-weight:700">'+money(bp.postCost)+' €</span></div>' +
     (bp.colorSurcharge > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Príplatok za farbu':'Color surcharge')+' ('+bp.panels+' × 3 €)</span><span style="font-weight:700">'+money(bp.colorSurcharge)+' €</span></div>' : '') +
     '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #C8E6C9;margin-top:4px"><span style="font-weight:700;font-size:13px;color:#1E2E1C">'+(l?'Orientačná cena materiálu':'Est. material price')+'</span><span style="font-weight:800;font-size:14px;color:#2E7D32">'+money(bp.materialTotal)+' €</span></div>' +
-    (bp.installCost > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Montáž':'Installation')+' ('+bp.L+' bm × 75 €)</span><span style="font-weight:700">'+money(bp.installCost)+' €</span></div>' +
+    (bp.installCost > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Montáž':'Installation')+' ('+bp.L+' bm × '+BET_INSTALL_PER_M+' €)</span><span style="font-weight:700">'+money(bp.installCost)+' €</span></div>' +
       '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #C8E6C9;margin-top:4px"><span style="font-weight:700;font-size:13px;color:#1E2E1C">'+(l?'Cena spolu':'Total price')+'</span><span style="font-weight:800;font-size:14px;color:#2E7D32">'+money(bp.grandTotal)+' €</span></div>' : '');
   var priceBox = '<div style="background:#EAF6E4;border:1.5px solid #C8E6C9;border-radius:13px;padding:12px 14px;margin:0 0 10px">' +
     '<div style="font-size:11px;font-weight:700;color:#4A6B42;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">'+(l?'Orientačný výpočet ceny':'Estimated price breakdown')+'</div>' +
@@ -4923,9 +5009,9 @@ function betSummaryHtml(noPhoto){
     '<div style="font-size:11px;color:#68736A;margin-top:8px;line-height:1.5">'+(l?'Ide o orientačný výpočet. Presnú cenovú ponuku Vám zašleme po spracovaní dopytu.':'This is an estimated calculation. An exact quote will be sent after processing your request.')+'</div>' +
   '</div>';
   return (noPhoto ? '' : '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(patternPh)+'" alt="'+(l?'Váš betónový plot':'Your concrete fence')+'" loading="eager" decoding="async"></div>') +
+    priceBox +
     '<div style="font-size:13px;font-weight:800;color:#1E2E1C;text-transform:uppercase;letter-spacing:.4px;margin:2px 0 6px">'+(l?'Zhrnutie':'Summary')+'</div>' +
-    '<div style="background:#F0F9EE;border-radius:14px;padding:12px 14px;margin:0 0 10px">'+rows+'</div>' +
-    priceBox;
+    '<div style="background:#F0F9EE;border-radius:14px;padding:12px 14px;margin:0 0 10px">'+rows+'</div>';
 }
 
 /* FINÁLNY KROK + GDPR FORMULÁR */
