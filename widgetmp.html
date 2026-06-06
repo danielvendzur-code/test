@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Môj plot - AI asistent & Cenová kalkulačka</title>
-<script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -2253,11 +2252,6 @@ var MC = {
   /* Backend - vlastny Vercel endpoint pre AI chat (treba nastavit) */
   apiUrl: 'https://mojplot-chatbot-backend.vercel.app/api/chat',
 
-  /* EmailJS - sluzba pre odosielanie dopytov (treba vytvorit alebo zdielat) */
-  emailService: 'service_mojplot',
-  emailTemplate: 'template_mojplot',
-  emailKey: 'YOUR_EMAILJS_PUBLIC_KEY',
-
   /* Stav */
   lang: 'sk',
   open: false,
@@ -2402,9 +2396,6 @@ document.addEventListener('DOMContentLoaded', function(){
   $chips = document.getElementById('chips');
   $i = document.getElementById('inputField');
   $tt = null;
-
-  /* Init EmailJS ak je dostupne */
-  try { if(typeof emailjs !== 'undefined') emailjs.init(MC.emailKey); } catch(e){}
 
   /* Welcome message */
   addMsg(MC.s[MC.lang].welcome, 'bot');
@@ -2770,14 +2761,12 @@ function logConvo(){
       var convoText = MC.hist.map(function(m){
         return (m.role==='user' ? 'ZÁKAZNÍK: ' : 'BOT: ') + m.content;
       }).join('\n\n');
-      if(typeof emailjs !== 'undefined'){
-        emailjs.send(MC.emailService, MC.emailTemplate, {
+      mpSendEmail({
           from_name: 'AI Chatbot - Záznam konverzácie (mojplot)',
           phone: 'Správ: ' + MC.hist.length,
           from_email: 'info@mojplot.sk',
           message: convoText
-        }).catch(function(err){ console.warn('Log err', err); });
-      }
+        }, function(){}, function(err){ console.warn('Log err', err); });
     }
   } catch(e){}
 }
@@ -2803,10 +2792,9 @@ function subEmail(){
   }
   var b = document.getElementById('esb'), t = document.getElementById('est');
   b.disabled = true; t.textContent = 'Odosielam...';
-  if(typeof emailjs !== 'undefined'){
-    emailjs.send(MC.emailService, MC.emailTemplate, {
-      from_name: n || 'Neuvedené', phone: ph || 'Neuvedené', from_email: e, message: m
-    }).then(function(){
+  mpSendEmail(
+    { from_name: n || 'Neuvedené', phone: ph || 'Neuvedené', from_email: e, message: m },
+    function(){
       b.classList.add('ok'); t.textContent = MC.s[MC.lang].sd;
       setTimeout(function(){
         tgEmail();
@@ -2814,15 +2802,13 @@ function subEmail(){
         t.textContent = MC.s[MC.lang].se;
         ['fn','fp','fe','fm'].forEach(function(id){ document.getElementById(id).value = ''; });
       }, 1800);
-    }, function(err){
+    },
+    function(err){
       console.warn('Email err', err);
       b.disabled = false; t.textContent = 'Chyba, skúste znova';
       setTimeout(function(){ t.textContent = MC.s[MC.lang].se; }, 3000);
-    });
-  } else {
-    b.disabled = false; t.textContent = MC.s[MC.lang].se;
-    alert('EmailJS nie je k dispozícii. Kontaktujte nás priamo: +421 940 511 266');
-  }
+    }
+  );
 }
 
 
@@ -4022,13 +4008,10 @@ function submitBetCalc(){
     'Meno: '+name+'\n' +
     'Email: '+email+'\n' +
     'Telefón: '+phone+'\n';
-  try {
-    if(typeof emailjs !== 'undefined' && MC.emailKey && MC.emailKey.indexOf('YOUR_') !== 0){
-      emailjs.send(MC.emailService, MC.emailTemplate, {
-        from_name: name, from_email: email, phone: phone, message: msg, subject:'Dopyt – Betónový plot'
-      });
-    }
-  } catch(e){ console.warn('emailjs send failed', e); }
+  mpSendEmail(
+    { from_name: name, from_email: email, phone: phone, message: msg, subject:'Dopyt – Betónový plot' },
+    function(){}, function(e){ console.warn('send failed', e); }
+  );
   autoNext();
 }
 
@@ -4268,10 +4251,7 @@ function submitCalc(){
   var btn = document.querySelector('.mc-form-submit');
   if(btn){ btn.disabled = true; btn.textContent = lang==='sk' ? 'Odosielam...' : 'Sending...'; }
   var params = { customer_name:name, customer_phone:phone, customer_email:email, customer_message:msg, customer_photo_name:photo ? photo.name : '', product:r.productName, price_estimate:priceText, configuration:summaryText + (photo ? '\nFotka: ' + photo.name : ''), language:lang, source:'mojplot.sk - kalkulacka' };
-  try {
-    if(typeof emailjs !== 'undefined' && MC.emailKey && MC.emailKey.indexOf('YOUR_') !== 0){ emailjs.send(MC.emailService, MC.emailTemplate, params).then(showThanks).catch(function(err){ console.error('EmailJS error:', err); showThanks(); }); }
-    else { console.log('[mojplot] Calc inquiry (EmailJS not configured):', params); setTimeout(showThanks, 500); }
-  } catch(e){ console.error(e); showThanks(); }
+  mpSendEmail(params, showThanks, function(err){ console.error('send failed', err); showThanks(); });
 }
 
 function showThanks(){
@@ -4321,15 +4301,14 @@ function resetCalc(){
   renderCalcStep();
 }
 
-(function initEmailJS(){
-  function doInit(){
-    try { if(typeof emailjs !== 'undefined' && MC.emailKey && MC.emailKey.indexOf('YOUR_') !== 0){ emailjs.init({ publicKey: MC.emailKey }); } } catch(e){ console.warn('EmailJS init skipped:', e); }
-  }
-  /* EmailJS now loads with defer (so it doesn't block the page). Init as soon
-     as it is available: immediately if already loaded, otherwise on window load. */
-  if(typeof emailjs !== 'undefined'){ doInit(); }
-  else { window.addEventListener('load', doInit); }
-})();
+/* Send via Resend backend */
+function mpSendEmail(params, onSuccess, onError){
+  fetch('/api/send-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params)
+  }).then(function(r){ return r.ok ? onSuccess() : onError(r.status); }).catch(onError);
+}
 
 
 /* ============================================
@@ -5179,14 +5158,7 @@ function submitCPCalc(){
     price_estimate:priceText, configuration:confText,
     language:l?'sk':'en', source:'mojplot.sk – CP konfigurátor'
   };
-  try {
-    if(typeof emailjs !== 'undefined' && MC.emailKey && MC.emailKey.indexOf('YOUR_')!==0){
-      emailjs.send(MC.emailService, MC.emailTemplate, params).then(showThanks).catch(function(){ showThanks(); });
-    } else {
-      console.log('[mojplot CP] Dopyt:', params);
-      setTimeout(showThanks, 600);
-    }
-  } catch(e){ showThanks(); }
+  mpSendEmail(params, showThanks, function(err){ console.error('CP send failed', err); showThanks(); });
 }
 
 </script>
