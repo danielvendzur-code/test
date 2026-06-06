@@ -2080,6 +2080,13 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-calc-ai-switch:hover{transform:translateY(-1px);border-color:#45A93C;box-shadow:0 10px 26px rgba(69,169,60,.18);}
 .mc-calc-ai-switch strong{font-weight:800;}
 
+/* Larger, more tappable bubble */
+#mojplot-bubble{width:84px!important;height:84px!important;bottom:16px!important;right:16px!important}
+#mojplot-bubble .bubble-icon{width:70px!important;height:70px!important}
+#mojplot-bubble::before{inset:6px!important}
+.mp-teaser-title{font-size:15.5px!important}
+.mp-teaser-text{font-size:13px!important}
+
 /* Step 0: contact bar under the product grid — reuses .mc-cbar / .mc-ct chat styling */
 .mc-step-p0 .mc-cbar{margin-top:12px;border-top:1px solid var(--mc-border);border-radius:12px;overflow:hidden}
 /* Keep the step-0 contact bar visible even though the calc is open (the global rule hides .mc-cbar) */
@@ -2272,7 +2279,7 @@ var MC = {
       ttText: 'Potrebujete poradiť? 👋',
       calcTitle: '🧮 Cenová kalkulačka',
       emailTitle: 'Napíšte nám',
-      thxMsg: 'Ďakujeme za dopyt! ✅<br>Náš tím (Denis Plichta) sa vám ozve <b>do 24 hodín</b> s presnou cenovou ponukou na mieru.',
+      thxMsg: 'Ďakujeme za dopyt! ✅<br>Denis Plichta vás bude kontaktovať telefonicky — zvyčajne do pár hodín.',
       /* UI labels */
       ctaTitle: 'Cenová kalkulačka',
       ctaSub: 'Rýchly orientačný výpočet plotu, brány alebo oporného múru.',
@@ -2363,7 +2370,7 @@ var calcState = {
   cpUnderboard: false,
   cpGateCount: 0,
   cpBrankaCount: 0,
-  cpCorners: 0,
+  cpCorners: 4,
   cpEnds: 0,
   cpLocation: '',
   cpZip: '',
@@ -3954,7 +3961,7 @@ function renderBetStep5(el){
       '<span>'+(l?'Vyplňte formulár — orientačná cena sa zobrazí po odoslaní dopytu.':'Fill in the form — estimated price will appear after submitting.')+'</span>' +
     '</div>' +
     '<div class="mc-step-title" style="margin-top:0">'+(l?'Vaše údaje a lokalita':'Your details and location')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyplňte kontaktné údaje a my vám zašleme presnú cenovú ponuku.':'Fill in your contact details and we will send you an exact quote.')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Vyplňte kontaktné údaje — zavoláme vám a spolu doladíme detaily.':'Fill in your details — we will call you to confirm everything.')+'</div>' +
     '<div class="mc-form" style="display:flex;flex-direction:column;gap:9px">' +
       '<input class="mc-form-input" id="betCity" type="text" placeholder="'+(l?'Obec / mesto':'Town / city')+'" value="'+(calcState.betLocation||'')+'">' +
       '<input class="mc-form-input" id="betZip" type="text" pattern="[0-9 ]{5,6}" placeholder="'+(l?'PSČ (napr. 027 52)':'ZIP code')+'" value="'+(calcState.betZip||'')+'" oninput="updateBetZipHint(this.value)">' +
@@ -4031,7 +4038,7 @@ function renderBetFinal(el){
     '<div style="text-align:center;padding:12px 0 8px">' +
       '<div style="font-size:36px;margin-bottom:4px">✓</div>' +
       '<div class="mc-step-title" style="text-align:center">'+(l?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
-      '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Ozveme sa vám do 24 hodín s presnou cenovou ponukou.':'We will contact you within 24 hours with an exact quote.')+'</div>' +
+      '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Denis Plichta vás bude kontaktovať telefonicky — zvyčajne do pár hodín.':'Denis Plichta will contact you by phone — usually within a few hours.')+'</div>' +
     '</div>' +
     betSummaryHtml(true) +
     '<div class="mc-actions" style="margin-top:12px">' +
@@ -4269,27 +4276,48 @@ function submitCalc(){
 
 function showThanks(){
   var lang = MC.lang;
+  var l = lang === 'sk';
   var el = document.getElementById('calcContent');
   if(!el) return;
-  var C = calcState.color || 'zinok';
-  var photo = C==='antracit' ? 'mojplot-farba-antracit.webp' : (C==='zelena' ? 'mojplot-farba-zelena.webp' : 'mojplot-plot-hotovy.webp');
-  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:20px 18px">' +
-    '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(photo)+'" alt="'+(lang==='sk'?'Váš hotový plot':'Your finished fence')+'" loading="eager" decoding="async" onerror="this.parentElement.style.display=\'none\'"></div>' +
-    '<div style="font-size:42px;margin:10px 0 6px">✓</div>' +
-    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(lang==='sk'?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
-    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div>' +
-    '<div class="mc-actions" style="margin-top:16px">' +
+
+  var priceHtml = '';
+  if(calcState.product === '3d-plot'){
+    try {
+      var r = calculateCPPrice();
+      var matFrom = Math.round(r.materialTotal * 0.95);
+      var matTo   = Math.round(r.materialTotal * 1.10);
+      var eur = function(n){ return Math.round(n).toLocaleString('sk-SK'); };
+      var rows = '';
+      r.items.forEach(function(it){ rows += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+it.k+'</span><span style="font-weight:700">'+money(it.v)+' €</span></div>'; });
+      rows += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #C8E6C9;margin-top:4px"><span style="font-weight:700;font-size:13px;color:#1E2E1C">'+(l?'Orientačná cena materiálu':'Est. material price')+'</span><span style="font-weight:800;font-size:14px;color:#2E7D32">'+eur(matFrom)+' – '+eur(matTo)+' €</span></div>';
+      if(r.installCost > 0) rows += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Montáž na kľúč':'Key-ready install')+'</span><span style="font-weight:700">'+eur(Math.round(r.installCost*0.95))+' – '+eur(Math.round(r.installCost*1.05))+' €</span></div>';
+      priceHtml = '<div style="background:#EAF6E4;border:1.5px solid #C8E6C9;border-radius:13px;padding:12px 14px;margin:8px 0 10px">' +
+        '<div style="font-size:11px;font-weight:700;color:#4A6B42;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">'+(l?'Orientačný výpočet ceny':'Estimated price breakdown')+'</div>' +
+        rows +
+        '<div style="font-size:11px;color:#68736A;margin-top:8px;line-height:1.5">'+(l?'Orientačný výpočet. Presnú cenu potvrdíme telefonicky.':'Estimate only. Exact price confirmed by phone.')+'</div>' +
+      '</div>';
+    } catch(e){}
+  }
+
+  el.innerHTML = '<div class="mc-step">' +
+    '<div style="text-align:center;padding:12px 0 8px">' +
+      '<div style="font-size:36px;margin-bottom:4px">✓</div>' +
+      '<div class="mc-step-title" style="text-align:center">'+(l?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
+      '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div>' +
+    '</div>' +
+    priceHtml +
+    '<div class="mc-actions" style="margin-top:12px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
-      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(lang==='sk'?'Nový výpočet':'New calculation')+'</button>' +
+      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
     '</div>' +
   '</div>';
-  try { var r = calculatePrice(); var priceText = r.onRequest ? (lang==='sk'?'na vyžiadanie':'on request') : (Math.round(r.total*0.95)+'-'+Math.round(r.total*1.10)+' €'); addMsg((lang==='sk'?'Dopyt sme pripravili. Orientačná cena: <b>':'Inquiry prepared. Estimated price: <b>')+priceText+'</b>.', 'bot', { noRating:true }); } catch(e){}
+  try { var rp = calculatePrice(); var priceText = rp.onRequest ? (l?'na vyžiadanie':'on request') : (Math.round(rp.total*0.95)+'-'+Math.round(rp.total*1.10)+' €'); addMsg((l?'Dopyt sme pripravili. Orientačná cena: <b>':'Inquiry prepared. Estimated price: <b>')+priceText+'</b>.', 'bot', { noRating:true }); } catch(e){}
 }
 
 function resetCalc(){
   calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = '';
   calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betSides=null; calcState.betCorners=4; calcState.betInstallation=false; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
-  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
+  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=4; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
   renderCalcStep();
 }
 
@@ -4689,7 +4717,7 @@ function renderCPStep7(el){
   var l = MC.lang==='sk';
   var g = calcState.cpGateCount || 0;
   var b = calcState.cpBrankaCount || 0;
-  var c = calcState.cpCorners || 0;
+  var c = (calcState.cpCorners !== null && calcState.cpCorners !== undefined) ? calcState.cpCorners : 4;
   var e = calcState.cpEnds || 0;
   var h = calcState.height || '153';
   el.innerHTML = '<div class="mc-step">' +
@@ -4797,7 +4825,6 @@ function renderCPStep9(el){
       '<input class="mc-form-input" id="cpCity" type="text" placeholder="'+(l?'Obec / mesto':'Town / city')+'" value="'+(calcState.cpLocation||'')+'">' +
       '<input class="mc-form-input" id="cpZip" type="text" pattern="[0-9 ]{5,6}" placeholder="'+(l?'PSČ (napr. 027 52)':'ZIP code')+'" value="'+(calcState.cpZip||'')+'" oninput="updateZipHint(this.value)">' +
       '<div id="zipHint" class="mc-hint" style="margin-top:6px;display:none"><div class="hi">i</div><div id="zipHintText"></div></div>' +
-      '<div class="mc-hint" style="margin-top:2px"><div class="hi">i</div><div>'+(l?'Doprava sa dopočíta orientačne podľa PSČ. Presnú cenu potvrdíme po overení adresy.':'Delivery is estimated by ZIP code. The exact price will be confirmed after checking the address.')+'</div></div>' +
     '</div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:10px 0"></div>' +
     '<div style="display:flex;flex-direction:column;gap:10px;margin:8px 0">' +
@@ -4813,7 +4840,7 @@ function renderCPStep9(el){
       '<span style="font-size:11.5px;color:#68736A;line-height:1.45">'+(l?'Súhlasím so <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">spracovaním osobných údajov</a> za účelom prípravy cenovej ponuky. (povinné)':'I agree to the <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">processing of personal data</a> for quote preparation. (required)')+'</span>' +
     '</label>' +
     '<div class="mc-contact-actions"><div class="mc-actions" style="margin-top:0;flex-direction:column;gap:8px">' +
-      '<button class="mc-btn mc-form-submit" onclick="submitCPFromStep9()">'+(l?'Vypočítať a odoslať':'Calculate and send')+' →</button>' +
+      '<button class="mc-btn mc-form-submit" onclick="submitCPFromStep9()">'+(l?'Odoslať dopyt a zobraziť cenu':'Send inquiry and show price')+' →</button>' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
     '</div></div>' +
   '</div>';
@@ -4829,7 +4856,7 @@ function submitCPFromStep9(){
   if(!calcState.cpGdpr){ alert(l?'Prosím zaškrtnite súhlas so spracovaním osobných údajov.':'Please check the personal data consent checkbox.'); return; }
   if(!calcState.cfName.trim()||!calcState.cfPhone.trim()||!calcState.cfEmail.trim()){ alert(l?'Prosím vyplňte meno, telefón a e-mail.':'Please fill in name, phone and email.'); return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(calcState.cfEmail)){ alert(l?'Prosím zadajte platný e-mail.':'Please enter a valid email.'); return; }
-  autoNext();
+  submitCPCalc();
 }
 
 /* ===================================================
