@@ -2837,12 +2837,12 @@ var PRODUCTS = [
 
 /* Cenníky (orientačné, za 1 panel 250cm, vrátane povrchovej úpravy) */
 var PRICE_3D = {
-  /* [height_cm][thickness][color] = €/panel */
+  /* [height_cm][thickness][color] = €/panel s DPH (oficiálny cenník) */
   '103': { '4mm': { zinok:13.35, zelena:14.95, antracit:14.95 }, '5mm': { zinok:15.85, zelena:17.65, antracit:17.65 } },
-  '123': { '4mm': { zinok:15.50, zelena:17.30, antracit:17.30 }, '5mm': { zinok:18.40, zelena:20.50, antracit:20.50 } },
-  '153': { '4mm': { zinok:18.90, zelena:21.20, antracit:21.20 }, '5mm': { zinok:22.50, zelena:25.10, antracit:25.10 } },
-  '173': { '4mm': { zinok:21.50, zelena:23.95, antracit:23.95 }, '5mm': { zinok:25.50, zelena:28.40, antracit:28.40 } },
-  '203': { '4mm': { zinok:24.90, zelena:27.75, antracit:27.75 }, '5mm': { zinok:29.50, zelena:32.90, antracit:32.90 } }
+  '123': { '4mm': { zinok:15.36, zelena:15.36, antracit:15.36 }, '5mm': { zinok:18.40, zelena:20.50, antracit:20.50 } },
+  '153': { '4mm': { zinok:18.76, zelena:18.76, antracit:18.76 }, '5mm': { zinok:28.78, zelena:25.83, antracit:25.83 } },
+  '173': { '4mm': { zinok:20.99, zelena:20.99, antracit:20.99 }, '5mm': { zinok:25.50, zelena:28.40, antracit:28.40 } },
+  '203': { '4mm': { zinok:24.62, zelena:24.62, antracit:24.62 }, '5mm': { zinok:29.50, zelena:32.90, antracit:32.90 } }
 };
 
 var PRICE_POST = {
@@ -2892,6 +2892,16 @@ var PRICE_POST_ROUND = {
   '173': { zinok:12.80, zelena:14.30, antracit:14.30 },
   '203': { zinok:14.60, zelena:16.30, antracit:16.30 }
 };
+/* Cena stĺpika podľa typu a výšky stĺpika (oficiálny cenník s DPH) */
+function getCPPostPrice(type, postHeight, color){
+  var c = color || 'zinok';
+  if(type === 'okruhly') return 13.10; /* okrúhly stĺpik Ø48, 300 cm */
+  var h = String(postHeight || '2').replace(',', '.');
+  if(h === '2') return 11.07;          /* 60×40, 200 cm */
+  if(h === '2.4') return 12.88;        /* 60×40, 240 cm */
+  if(h === '3') return c === 'zinok' ? 16.42 : 14.03; /* 60×40, 300 cm */
+  return 12.88;
+}
 /* Platnicka stlpika pre kotvenie (za ks) */
 var PRICE_ANCHOR_PLATE = 6.86;
 /* Drziak podhrabovej dosky (cena za 2 ks = 1 panel) */
@@ -4861,10 +4871,8 @@ function calculateCPPrice(){
   items.push({ k:(l?'3D panely':'3D panels')+' '+panels+' ks × '+money(panelUnit)+' €', v:panelSum });
   total += panelSum;
 
-  /* Stĺpiky */
-  var postPriceTable = PT === 'okruhly' ? PRICE_POST_ROUND : PRICE_POST;
-  var postEntry = postPriceTable[H] || postPriceTable['153'];
-  var postUnit = (postEntry && postEntry[C]) ? postEntry[C] : PRICE_POST['153']['zinok'];
+  /* Stĺpiky – cena podľa výšky stĺpika (oficiálny cenník) */
+  var postUnit = getCPPostPrice(PT, calcState.cpPostHeight, C);
   var postSum = posts * postUnit;
   items.push({ k:(l?'Stĺpiky':'Posts')+' '+(PT==='okruhly'?(l?'okrúhle 48mm':'round 48mm'):(l?'hranatý 60×40mm':'square 60×40mm'))+' '+posts+' ks × '+money(postUnit)+' €', v:postSum });
   total += postSum;
