@@ -2082,6 +2082,9 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 /* Step 0: contact bar under the product grid — reuses .mc-cbar / .mc-ct chat styling */
 .mc-step-p0 .mc-cbar{margin-top:12px;border-top:1px solid var(--mc-border);border-radius:12px;overflow:hidden}
+/* Keep the step-0 contact bar visible even though the calc is open (the global rule hides .mc-cbar) */
+#mojplot-chat:has(.mc-calc-container[data-open="true"]) .mc-step-p0 .mc-cbar,
+#mojplot-chat.calc-open .mc-step-p0 .mc-cbar{display:flex!important}
 
 </style>
 
