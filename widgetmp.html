@@ -2170,7 +2170,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
       <div class="mc-calc-title" id="calc-title">🧮 Cenová kalkulačka</div>
       <button class="mc-calc-close" onclick="closeCalc()">✕</button>
     </div>
-    <div class="mc-calc-progress-wrap">
+    <div class="mc-calc-progress-wrap" id="calcProgressWrap">
       <button class="mc-progress-back" id="calcBackBtn" onclick="calcBack()" disabled>‹</button>
       <div class="mc-calc-progress" id="calcProgressDots" style="--step-count:7"><div class="mc-calc-progress-fill" id="calcProgressFill" style="width:14%"></div></div>
       <div class="mc-progress-step" id="calcStepLabel">Krok 1/7</div>
@@ -3056,6 +3056,8 @@ function renderCalcStep(){
 
   updateProgress();
   var el = document.getElementById('calcContent');
+  var pw = document.getElementById('calcProgressWrap');
+  if(pw) pw.style.display = (calcState.step === 0 && !calcState.product) ? 'none' : '';
 
   if(calcState.step === 0) {
     renderStepProduct(el);
