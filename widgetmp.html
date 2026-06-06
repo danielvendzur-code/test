@@ -2069,6 +2069,17 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 /* Prevent double-tap zoom on iOS 16+ across the entire widget */
 #mojplot-chat,#mojplot-bubble{touch-action:manipulation}
 
+/* === Tlačidlo "prepnúť na AI chatbot" pod výberom produktov v kalkulačke === */
+.mc-calc-ai-switch{
+  width:100%; margin-top:12px; padding:14px 15px; border:1.5px solid rgba(69,169,60,.38);
+  border-radius:14px; background:linear-gradient(135deg,#F1F8EE,#FFFFFF); color:#23452A;
+  font-family:var(--m-font); font-size:14px; font-weight:800; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  box-shadow:0 8px 22px rgba(69,169,60,.12); transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.mc-calc-ai-switch:hover{transform:translateY(-1px);border-color:#45A93C;box-shadow:0 10px 26px rgba(69,169,60,.18);}
+.mc-calc-ai-switch strong{font-weight:800;}
+
 </style>
 
 </head>
@@ -2076,7 +2087,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
 <!-- Bubble -->
 
-<div id="mojplot-bubble" onclick="toggleChat()">
+<div id="mojplot-bubble" onclick="openChatCalc()">
 
   <div class="notif-dot">1</div>
   <div class="bubble-icon wobble">
@@ -2088,7 +2099,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 </div>
 
 <!-- Floating teaser (desktop only, shown when chat is closed) -->
-<div id="mojplot-teaser" onclick="toggleChat()" role="button" tabindex="0">
+<div id="mojplot-teaser" onclick="openChatCalc()" role="button" tabindex="0">
   <button class="mp-teaser-close" onclick="event.stopPropagation();dismissTeaser()" aria-label="Zavrieť">&times;</button>
   <div class="mp-teaser-title">Vypočítajte si cenu za 3 minúty</div>
   <div class="mp-teaser-text">Pre <b>3D plot alebo betónový plot</b> priamo online, bez čakania.</div>
@@ -2357,6 +2368,7 @@ var calcState = {
   betHeight: '2',       // '2' alebo '2.5' m
   betLength: 20,
   betColor: null,       // prirodny / biela / pieskova / tehlova / cervena / hneda / antracit
+  betSides: null,       // iba pri vzore bridlica: obycajny / obojstranny
   betCorners: 4,        // počet rohov 0-10 (default 4)
   betInstallation: false,
   betLocation: '',
@@ -2885,7 +2897,7 @@ var PRICE_ANCHOR_PLATE = 6.86;
 /* Drziak podhrabovej dosky (cena za 2 ks = 1 panel) */
 var PRICE_UNDERBOARD_HOLDER = 7.08;
 /* Inštalácia v €/bm bez DPH */
-var INSTALLATION_CP_PER_M = 35;
+var INSTALLATION_CP_PER_M = 30; /* montáž 3D plotu €/bm s DPH */
 /* Rohová úchytka za ks */
 var PRICE_CORNER_BRACKET = 2.40;
 /* Koncová úchytka za ks */
@@ -2904,15 +2916,21 @@ var SURCHARGE_AUTOMATION = 850; /* automatický pohon brány */
 var INSTALLATION_PER_M = 18;    /* montáž za bežný meter */
 var GATE_INSTALLATION = 220;    /* montáž brány */
 /* Betónový plot - cenník */
-var PRICE_BET_PANEL = 17.99;    /* platňa s DPH */
+var PRICE_BET_PANEL = 18.00;    /* obyčajná betónová platňa s DPH */
 var PRICE_BET_POST_270 = 22.90; /* stĺpik 270 cm (výška 2,0 m) */
 var PRICE_BET_POST_320 = 26.00; /* stĺpik 320 cm (výška 2,5 m) */
 var BET_COLOR_SURCHARGE = 3.00; /* príplatok za farbu / platňu */
-var BET_INSTALL_PER_M = 75;     /* montáž €/bm */
+var BET_INSTALL_PER_M = 50;     /* montáž betónového plotu €/bm s DPH */
+var BET_DOUBLE_SIDE_SURCHARGE = 8.00; /* príplatok za obojstrannú bridlicu / platňu */
 
 /* =========================================================
    KALKULACKA - HLAVNE FUNKCIE
    ========================================================= */
+function openChatCalc(){
+  if(!MC.open){ toggleChat(); }
+  window.setTimeout(function(){ openCalc(); }, 0);
+}
+
 function openCalc(){
   var c = document.getElementById('calcContainer');
   c.setAttribute('data-open', 'true');
@@ -3016,7 +3034,7 @@ function renderCalcStep(){
   } else if(calcState.product === 'mobilne'){
     calcState.totalSteps = 4; /* product, length, extras, final */
   } else if(calcState.product === 'betonovy'){
-    calcState.totalSteps = 7; /* intro, rozmery, vzor, farba, montáž+rohy, kontakt, ďakujeme */
+    calcState.totalSteps = calcState.betPattern === 'bridlica' ? 8 : 7;
   } else if(calcState.product === 'ine'){
     calcState.totalSteps = 3; /* product, desc, final */
   } else if(calcState.product === 'oporne'){
@@ -3073,12 +3091,14 @@ function renderCalcStep(){
     else if(calcState.step === 4) renderFinal(el);
   }
   else if(calcState.product === 'betonovy'){
-    if(calcState.step === 1)      renderBetStep2(el);        /* rozmery (dĺžka + výška) */
-    else if(calcState.step === 2) renderBetPatternStep(el);  /* vzor */
-    else if(calcState.step === 3) renderBetStep3(el);        /* farba */
-    else if(calcState.step === 4) renderBetInstallStep(el);  /* montáž + rohy */
-    else if(calcState.step === 5) renderBetStep5(el);        /* kontaktný formulár + cena */
-    else if(calcState.step === 6) renderBetFinal(el);        /* poďakovanie */
+    var hasSides = calcState.betPattern === 'bridlica';
+    if(calcState.step === 1)                                    renderBetStep2(el);
+    else if(calcState.step === 2)                               renderBetPatternStep(el);
+    else if(hasSides && calcState.step === 3)                   renderBetSidesStep(el);
+    else if(calcState.step === (hasSides ? 4 : 3))              renderBetStep3(el);
+    else if(calcState.step === (hasSides ? 5 : 4))              renderBetInstallStep(el);
+    else if(calcState.step === (hasSides ? 6 : 5))              renderBetStep5(el);
+    else if(calcState.step === (hasSides ? 7 : 6))              renderBetFinal(el);
   }
   else if(calcState.product === 'ine'){
     if(calcState.step === 1) renderCustomDesc(el);
@@ -3107,10 +3127,17 @@ function renderStepProduct(el){
       '</div></div>';
   }).join('');
 
+  var contactChips = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">' +
+    '<a href="tel:+421940511266" class="mc-chip" style="text-decoration:none">📞 +421 940 511 266</a>' +
+    '<a href="mailto:info@mojplot.sk" class="mc-chip" style="text-decoration:none">✉️ info@mojplot.sk</a>' +
+    '<a href="https://wa.me/421940511266" class="mc-chip" style="text-decoration:none" target="_blank" rel="noopener">💬 WhatsApp</a>' +
+  '</div>';
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">' + title + '</div>' +
     '<div class="mc-step-sub" style="margin-bottom:10px">' + sub + '</div>' +
     '<div class="mc-product-grid" style="grid-template-columns:1fr 1fr">' + cards + '</div>' +
+    '<button type="button" class="mc-calc-ai-switch" onclick="closeCalc()">💬 <strong>'+(lang==='sk'?'Radšej sa porozprávam s AI chatbotom':'I prefer the AI chatbot')+'</strong></button>' +
+    contactChips +
     renderTrust() +
   '</div>';
 }
@@ -3733,6 +3760,7 @@ function renderBetPatternStep(el){
 function selBetPattern(v){
   if(calcState.betPattern === v) return;
   calcState.betPattern = v;
+  calcState.betSides = (v === 'bridlica') ? null : 'obycajny';
   document.querySelectorAll('.mc-bet-pattern-card').forEach(function(c){
     var oc = c.getAttribute('onclick') || '';
     c.classList.toggle('selected', oc.indexOf("'"+v+"'") >= 0);
@@ -3747,11 +3775,11 @@ function renderBetSidesStep(el){
   var ico2 = '<svg viewBox="0 0 24 24"><path d="M3 6h7v12H3V6zm11 0h7v12h-7V6z"/></svg>';
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('beton-kontakt') +
-    '<div class="mc-step-title">'+(l?'Prevedenie reliéfu':'Relief finish type')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Vyberte jednostranný alebo obojstranný reliéf. Ďalej prejdete až po potvrdení.':'Select single-sided or double-sided relief. You continue only after confirmation.')+'</div>' +
+    '<div class="mc-step-title">'+(l?'Bridlica – prevedenie':'Slate – finish type')+'</div>' +
+    '<div class="mc-step-sub">'+(l?'Pri vzore Bridlica vyberte obyčajné alebo obojstranné prevedenie. Obojstranné prevedenie pridáva +8 € za dosku.':'For slate, choose regular or double-sided finish. Double-sided finish adds +€8 per panel.')+'</div>' +
     '<div class="mc-cp-opts">' +
-      cpOpt('bs','jednostranny', l?'Jednostranný':'Single-sided', l?'Dekor z jednej strany, druhá strana hladšia':'Decor on one side, simpler back side', ico1, calcState.betSides, 'selBetSides') +
-      cpOpt('bs','obojstranny', l?'Obojstranný':'Double-sided', l?'Dekor viditeľný z oboch strán':'Decor visible on both sides', ico2, calcState.betSides, 'selBetSides') +
+      cpOpt('bs','obycajny', l?'Obyčajný':'Regular', l?'Štandardná doska – dekor iba z jednej strany':'Standard panel – decor on one side only', ico1, calcState.betSides, 'selBetSides') +
+      cpOpt('bs','obojstranny', l?'Obojstranný':'Double-sided', l?'Doska 26 € (18 € + 8 €) – dekor z oboch strán':'Panel €26 (€18 + €8) – decor on both sides', ico2, calcState.betSides, 'selBetSides') +
     '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetSides()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
   '</div>';
@@ -3869,7 +3897,7 @@ function renderBetInstallStep(el){
       '<div class="mc-dim-label" style="margin-bottom:8px"><b>'+(l?'Typ dodávky':'Delivery type')+'</b></div>' +
       '<div class="mc-cp-opts">' +
         cpOpt('bi','false', l?'Len materiál':'Material only', l?'Dodávka materiálu bez montáže':'Material delivery only', icoMat, instVal, 'selBetInstall') +
-        cpOpt('bi','true',  l?'Materiál + montáž':'Material + installation', l?'Naša čata nainštaluje plot (75 €/bm)':'Our team installs the fence (75 €/bm)', icoInst, instVal, 'selBetInstall') +
+        cpOpt('bi','true',  l?'Materiál + montáž':'Material + installation', l?'Naša čata nainštaluje plot ('+BET_INSTALL_PER_M+' €/bm)':'Our team installs the fence ('+BET_INSTALL_PER_M+' €/lm)', icoInst, instVal, 'selBetInstall') +
       '</div>' +
     '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetInstallStep()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
@@ -3987,7 +4015,11 @@ function calculateBetPrice(){
   var fields = Math.ceil(L / 2);
   var panelsPerField = H === '2.5' ? 5 : 4;
   var panels = fields * panelsPerField;
-  var panelCost = panels * PRICE_BET_PANEL;
+  var panelUnit = PRICE_BET_PANEL;
+  if(calcState.betPattern === 'bridlica' && calcState.betSides === 'obojstranny'){
+    panelUnit += BET_DOUBLE_SIDE_SURCHARGE;
+  }
+  var panelCost = panels * panelUnit;
   var corners = parseInt(calcState.betCorners) || 0;
   var postCount = fields + 1 + corners;
   var postPrice = H === '2.5' ? PRICE_BET_POST_320 : PRICE_BET_POST_270;
@@ -3996,7 +4028,7 @@ function calculateBetPrice(){
   var materialTotal = panelCost + postCost + colorSurcharge;
   var installCost = calcState.betInstallation === true ? L * BET_INSTALL_PER_M : 0;
   var grandTotal = materialTotal + installCost;
-  return { L:L, H:H, fields:fields, panels:panels, panelCost:panelCost, postCount:postCount, postPrice:postPrice, postCost:postCost, colorSurcharge:colorSurcharge, materialTotal:materialTotal, installCost:installCost, grandTotal:grandTotal };
+  return { L:L, H:H, fields:fields, panels:panels, panelUnit:panelUnit, panelCost:panelCost, postCount:postCount, postPrice:postPrice, postCost:postCost, colorSurcharge:colorSurcharge, materialTotal:materialTotal, installCost:installCost, grandTotal:grandTotal };
 }
 
 function money(v){ return (Number(v) || 0).toLocaleString('sk-SK', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
@@ -4224,7 +4256,7 @@ function showThanks(){
 
 function resetCalc(){
   calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = '';
-  calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betCorners=4; calcState.betInstallation=false; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
+  calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betSides=null; calcState.betCorners=4; calcState.betInstallation=false; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
   calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=0; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
   renderCalcStep();
 }
@@ -4930,15 +4962,16 @@ function betSummaryHtml(noPhoto){
     [l?'Dĺžka':'Length', (calcState.betLength||'-')+' bm ('+bp.fields+' '+(l?'polí':'fields')+')'],
     [l?'Výška':'Height', (calcState.betHeight||'-')+' m'],
     [l?'Vzor':'Pattern', patternLabels[calcState.betPattern]||'-'],
+    calcState.betPattern === 'bridlica' ? [l?'Prevedenie':'Finish', calcState.betSides === 'obojstranny' ? (l?'Obojstranný':'Double-sided') : (l?'Obyčajný':'Regular')] : null,
     [l?'Farba':'Color', colorLabels[calcState.betColor||'prirodny']||'-'],
     [l?'Rohy':'Corners', String(calcState.betCorners||0)],
     [l?'Montáž':'Installation', calcState.betInstallation?(l?'Materiál + montáž':'Material + installation'):(l?'Len materiál':'Material only')],
-  ].map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+r[0]+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+r[1]+'</span></div>'; }).join('');
-  var priceRows = '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Platne':'Panels')+' ('+bp.panels+' ks × '+money(PRICE_BET_PANEL)+' €)</span><span style="font-weight:700">'+money(bp.panelCost)+' €</span></div>' +
+  ].filter(Boolean).map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+r[0]+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+r[1]+'</span></div>'; }).join('');
+  var priceRows = '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Platne':'Panels')+' ('+bp.panels+' ks × '+money(bp.panelUnit)+' €)</span><span style="font-weight:700">'+money(bp.panelCost)+' €</span></div>' +
     '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Stĺpiky':'Posts')+' ('+bp.postCount+' ks × '+money(bp.postPrice)+' €)</span><span style="font-weight:700">'+money(bp.postCost)+' €</span></div>' +
     (bp.colorSurcharge > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Príplatok za farbu':'Color surcharge')+' ('+bp.panels+' × 3 €)</span><span style="font-weight:700">'+money(bp.colorSurcharge)+' €</span></div>' : '') +
     '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #C8E6C9;margin-top:4px"><span style="font-weight:700;font-size:13px;color:#1E2E1C">'+(l?'Orientačná cena materiálu':'Est. material price')+'</span><span style="font-weight:800;font-size:14px;color:#2E7D32">'+money(bp.materialTotal)+' €</span></div>' +
-    (bp.installCost > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Montáž':'Installation')+' ('+bp.L+' bm × 75 €)</span><span style="font-weight:700">'+money(bp.installCost)+' €</span></div>' +
+    (bp.installCost > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Montáž':'Installation')+' ('+bp.L+' bm × '+BET_INSTALL_PER_M+' €)</span><span style="font-weight:700">'+money(bp.installCost)+' €</span></div>' +
       '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #C8E6C9;margin-top:4px"><span style="font-weight:700;font-size:13px;color:#1E2E1C">'+(l?'Cena spolu':'Total price')+'</span><span style="font-weight:800;font-size:14px;color:#2E7D32">'+money(bp.grandTotal)+' €</span></div>' : '');
   var priceBox = '<div style="background:#EAF6E4;border:1.5px solid #C8E6C9;border-radius:13px;padding:12px 14px;margin:0 0 10px">' +
     '<div style="font-size:11px;font-weight:700;color:#4A6B42;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">'+(l?'Orientačný výpočet ceny':'Estimated price breakdown')+'</div>' +
