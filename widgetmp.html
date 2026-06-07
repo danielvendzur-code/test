@@ -1506,8 +1506,8 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
    ========================================================= */
 #mojplot-teaser{
   position:fixed;
-  right:100px;
-  bottom:30px;
+  right:116px;
+  bottom:46px;
   z-index:99999;
   width:264px;
   max-width:72vw;
@@ -2092,6 +2092,32 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 #mojplot-chat:has(.mc-calc-container[data-open="true"]) .mc-step-p0 .mc-cbar,
 #mojplot-chat.calc-open .mc-step-p0 .mc-cbar{display:flex!important}
 
+/* Header typing caret */
+.mc-type-caret{display:inline-block;margin-left:1px;font-weight:400;color:#4CAF50;animation:mpCaret .8s steps(1) infinite}
+@keyframes mpCaret{50%{opacity:0}}
+
+/* ===== Záverečná obrazovka (3D aj betón): cena + akordeón + zhrnutie ===== */
+.mc-final-price-card{background:linear-gradient(135deg,#EAF6E4,#F4FBF0);border:1.5px solid #C8E6C9;border-radius:16px;padding:16px 16px 14px;margin:6px 0 12px;text-align:center;box-shadow:0 8px 22px rgba(69,169,60,.1)}
+.mc-final-price-label{font-size:11px;font-weight:700;color:#4A6B42;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.mc-final-total{font-size:32px;font-weight:900;color:#2E7D32;line-height:1.05;letter-spacing:-.6px}
+.mc-final-install{display:flex;justify-content:space-between;align-items:center;margin-top:11px;padding-top:11px;border-top:1px dashed #BFE0B8;font-size:13.5px;font-weight:600;color:#3A4A38}
+.mc-final-install span:last-child{font-weight:800;color:#2E7D32;font-size:15px}
+.mc-acc{border:1px solid #DDE7D8;border-radius:13px;overflow:hidden;margin:0 0 4px;background:#fff}
+.mc-acc-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;background:#F7FAF4;border:none;cursor:pointer;font-family:var(--m-font);font-size:13px;font-weight:700;color:#23452A;text-align:left}
+.mc-acc-head:hover{background:#EFF7EC}
+.mc-acc-arrow{transition:transform .25s ease;font-size:12px;color:#6B7A6A;flex:0 0 auto}
+.mc-acc.open .mc-acc-arrow{transform:rotate(180deg)}
+.mc-acc-body{max-height:0;overflow:hidden;transition:max-height .32s ease;padding:0 14px}
+.mc-acc.open .mc-acc-body{max-height:700px;padding:8px 14px 12px}
+.mc-acc-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:12.5px;border-bottom:1px solid #F0F4EE}
+.mc-acc-row:last-child{border-bottom:none}
+.mc-acc-row span:first-child{color:#6B7A6A}
+.mc-acc-row span:last-child{font-weight:700;color:#1E2E1C;white-space:nowrap}
+.mc-acc-row.strong span{font-weight:800;color:#1E2E1C}
+.mc-acc-row.strong span:last-child{color:#2E7D32}
+.mc-final-sumtitle{font-size:12px;font-weight:800;color:#1E2E1C;text-transform:uppercase;letter-spacing:.4px;margin:12px 0 6px}
+.mc-final-sumbox{background:#F0F9EE;border-radius:14px;padding:12px 14px;margin:0 0 10px}
+
 </style>
 
 </head>
@@ -2273,7 +2299,7 @@ var MC = {
       ttText: 'Potrebujete poradiť? 👋',
       calcTitle: '🧮 Cenová kalkulačka',
       emailTitle: 'Napíšte nám',
-      thxMsg: 'Ďakujeme za dopyt! ✅<br>Denis Plichta vás bude kontaktovať telefonicky — zvyčajne do pár hodín.',
+      thxMsg: 'Ďakujeme za dopyt! ✅<br>Budeme vás kontaktovať zvyčajne do pár hodín.',
       /* UI labels */
       ctaTitle: 'Cenová kalkulačka',
       ctaSub: 'Rýchly orientačný výpočet plotu, brány alebo oporného múru.',
@@ -2301,7 +2327,7 @@ var MC = {
       ttText: 'Need advice? 👋',
       calcTitle: '🧮 Price calculator',
       emailTitle: 'Write to us',
-      thxMsg: 'Thank you for your inquiry! ✅<br>Our team (Denis Plichta) will get back to you <b>within 24 hours</b> with a tailored quote.',
+      thxMsg: 'Thank you for your inquiry! ✅<br>We will contact you, usually within a few hours.',
       /* UI labels */
       ctaTitle: 'Price calculator',
       ctaSub: 'Quick estimate for a fence, gate or retaining wall.',
@@ -2530,7 +2556,29 @@ function toggleChat(){
     }
     var calcC = document.getElementById('calcContainer');
     if(!calcC || calcC.getAttribute('data-open') !== 'true') syncCalcChrome(false);
+    mpHeaderTyping();
   }
+}
+
+/* Animácia písania v hlavičke: napíše "AI chatbot firmy Môj plot", potom sa prepíše na "Spýtajte sa ma otázku" */
+function mpHeaderTyping(){
+  var el = document.getElementById('hdr-title');
+  if(!el) return;
+  if(MC._typeTO){ MC._typeTO.forEach(function(t){ clearTimeout(t); }); }
+  MC._typeTO = [];
+  var l = MC.lang === 'sk';
+  var p1 = l ? 'AI chatbot firmy Môj plot' : 'Môj plot AI chatbot';
+  var p2 = l ? 'Spýtajte sa ma otázku' : 'Ask me a question';
+  var caret = '<span class="mc-type-caret">|</span>';
+  var t = 0;
+  function at(d, fn){ MC._typeTO.push(setTimeout(fn, d)); }
+  el.innerHTML = caret;
+  for(var i=1;i<=p1.length;i++){ (function(i){ at(t, function(){ el.innerHTML = p1.slice(0,i) + caret; }); })(i); t += 55; }
+  t += 1100;
+  for(var j=p1.length-1;j>=0;j--){ (function(j){ at(t, function(){ el.innerHTML = p1.slice(0,j) + caret; }); })(j); t += 28; }
+  t += 250;
+  for(var k=1;k<=p2.length;k++){ (function(k){ at(t, function(){ el.innerHTML = p2.slice(0,k) + caret; }); })(k); t += 55; }
+  at(t + 600, function(){ el.textContent = p2; });
 }
 
 function setLang(l){
@@ -2541,7 +2589,7 @@ function setLang(l){
   var t = MC.s[l];
 
   /* Header */
-  document.getElementById('hdr-title').textContent = t.hdrTitle;
+  if(MC.open){ mpHeaderTyping(); } else { document.getElementById('hdr-title').textContent = t.hdrTitle; }
   document.getElementById('hdr-sub').textContent = t.hdrSub;
   var hcb = document.getElementById('hdr-close-btn'); if(hcb) hcb.setAttribute('title', t.closeTitle);
 
@@ -4017,18 +4065,28 @@ function submitBetCalc(){
 
 function renderBetFinal(el){
   var l = MC.lang==='sk';
-  el.innerHTML = '<div class="mc-step">' +
-    '<div style="text-align:center;padding:12px 0 8px">' +
-      '<div style="font-size:36px;margin-bottom:4px">✓</div>' +
-      '<div class="mc-step-title" style="text-align:center">'+(l?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
-      '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Denis Plichta vás bude kontaktovať telefonicky — zvyčajne do pár hodín.':'Denis Plichta will contact you by phone — usually within a few hours.')+'</div>' +
-    '</div>' +
-    betSummaryHtml(true) +
-    '<div class="mc-actions" style="margin-top:12px">' +
-      '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
-      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
-    '</div>' +
-  '</div>';
+  var bp = calculateBetPrice();
+  var patternLabels = {tehla:l?'Tehla':'Brick',skala:l?'Skala':'Stone',vlnka:l?'Vlnka':'Wave',bridlica:l?'Bridlica':'Slate'};
+  var colorLabels = {prirodny:l?'Prírodný betón':'Natural concrete',biela:l?'Biela':'White',pieskova:l?'Piesková / béžová':'Sand / beige',tehlova:l?'Tehlová':'Brick',cervena:l?'Červená':'Red',hneda:l?'Hnedá':'Brown',antracit:'Antracit'};
+  var bd = mpAccRow((l?'Platne':'Panels')+' ('+bp.panels+' ks × '+money(bp.panelUnit)+' €)', money(bp.panelCost)+' €') +
+    mpAccRow((l?'Stĺpiky':'Posts')+' ('+bp.postCount+' ks × '+money(bp.postPrice)+' €)', money(bp.postCost)+' €') +
+    (bp.colorSurcharge>0 ? mpAccRow(l?'Príplatok za farbu':'Color surcharge', money(bp.colorSurcharge)+' €') : '') +
+    mpAccRow(l?'Cena materiálu':'Material price', money(bp.materialTotal)+' €', true) +
+    (bp.installCost>0 ? mpAccRow((l?'Montáž':'Installation')+' ('+bp.L+' bm × '+BET_INSTALL_PER_M+' €)', money(bp.installCost)+' €') : '');
+  var sum = mpSumRow(l?'Dĺžka':'Length', (calcState.betLength||'-')+' bm ('+bp.fields+' '+(l?'polí':'fields')+')') +
+    mpSumRow(l?'Výška':'Height', (calcState.betHeight||'-')+' m') +
+    mpSumRow(l?'Vzor':'Pattern', patternLabels[calcState.betPattern]||'-') +
+    (calcState.betPattern==='bridlica' ? mpSumRow(l?'Prevedenie':'Finish', calcState.betSides==='obojstranny'?(l?'Obojstranný':'Double-sided'):(l?'Obyčajný':'Regular')) : '') +
+    mpSumRow(l?'Farba':'Color', colorLabels[calcState.betColor||'prirodny']||'-') +
+    mpSumRow(l?'Rohy':'Corners', String(calcState.betCorners||0)) +
+    mpSumRow(l?'Montáž':'Installation', calcState.betInstallation?(l?'Materiál + montáž':'Material + installation'):(l?'Len materiál':'Material only')) +
+    ((calcState.betLocation||calcState.betZip) ? mpSumRow(l?'Lokalita':'Location', ((calcState.betLocation||'')+' '+(calcState.betZip||'')).trim()) : '');
+  el.innerHTML = mpFinalScreen({
+    totalStr: money(bp.grandTotal)+' €',
+    installStr: bp.installCost>0 ? money(bp.installCost)+' €' : null,
+    breakdownHtml: bd,
+    summaryHtml: sum
+  });
 }
 
 function calculateBetPrice(){
@@ -4254,39 +4312,91 @@ function submitCalc(){
   mpSendEmail(params, showThanks, function(err){ console.error('send failed', err); showThanks(); });
 }
 
+/* ===== Spoločná záverečná obrazovka (3D panel + betón) ===== */
+function mpToggleAcc(btn){ var a = btn.parentNode; if(a && a.classList.contains('mc-acc')) a.classList.toggle('open'); }
+function mpAccRow(k, v, strong){ return '<div class="mc-acc-row'+(strong?' strong':'')+'"><span>'+k+'</span><span>'+v+'</span></div>'; }
+function mpSumRow(k, v){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+k+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+v+'</span></div>'; }
+function mpFinalScreen(o){
+  var l = MC.lang === 'sk';
+  return '<div class="mc-step">' +
+    '<div style="text-align:center;padding:8px 0 4px">' +
+      '<div style="font-size:42px;line-height:1;margin-bottom:6px">✅</div>' +
+      '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme za dopyt!':'Thank you for your inquiry!')+'</div>' +
+      '<div class="mc-step-sub" style="text-align:center;line-height:1.55">'+(l?'Budeme vás kontaktovať zvyčajne do pár hodín.':'We will contact you, usually within a few hours.')+'</div>' +
+    '</div>' +
+    '<div class="mc-final-price-card">' +
+      '<div class="mc-final-price-label">'+(l?'Celková orientačná cena':'Total estimated price')+'</div>' +
+      '<div class="mc-final-total">'+o.totalStr+'</div>' +
+      (o.installStr ? '<div class="mc-final-install"><span>'+(l?'z toho montáž':'incl. installation')+'</span><span>'+o.installStr+'</span></div>' : '') +
+    '</div>' +
+    (o.breakdownHtml ? '<div class="mc-acc">' +
+      '<button type="button" class="mc-acc-head" onclick="mpToggleAcc(this)"><span>'+(l?'Podrobné nacenenie':'Detailed breakdown')+'</span><span class="mc-acc-arrow">▾</span></button>' +
+      '<div class="mc-acc-body">'+o.breakdownHtml+'</div>' +
+    '</div>' : '') +
+    (o.summaryHtml ? '<div class="mc-final-sumtitle">'+(l?'Zhrnutie dopytu':'Request summary')+'</div>' +
+      '<div class="mc-final-sumbox">'+o.summaryHtml+'</div>' : '') +
+    '<div class="mc-actions" style="margin-top:10px">' +
+      '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
+      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
+    '</div>' +
+  '</div>';
+}
+
 function showThanks(){
   var lang = MC.lang;
   var l = lang === 'sk';
   var el = document.getElementById('calcContent');
   if(!el) return;
 
-  var priceHtml = '';
   if(calcState.product === '3d-plot'){
     try {
       var r = calculateCPPrice();
-      var matFrom = Math.round(r.materialTotal * 0.95);
-      var matTo   = Math.round(r.materialTotal * 1.10);
       var eur = function(n){ return Math.round(n).toLocaleString('sk-SK'); };
-      var rows = '';
-      r.items.forEach(function(it){ rows += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+it.k+'</span><span style="font-weight:700">'+money(it.v)+' €</span></div>'; });
-      rows += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #C8E6C9;margin-top:4px"><span style="font-weight:700;font-size:13px;color:#1E2E1C">'+(l?'Orientačná cena materiálu':'Est. material price')+'</span><span style="font-weight:800;font-size:14px;color:#2E7D32">'+eur(matFrom)+' – '+eur(matTo)+' €</span></div>';
-      if(r.installCost > 0) rows += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px"><span style="color:#6B7A6A">'+(l?'Montáž na kľúč':'Key-ready install')+'</span><span style="font-weight:700">'+eur(Math.round(r.installCost*0.95))+' – '+eur(Math.round(r.installCost*1.05))+' €</span></div>';
-      priceHtml = '<div style="background:#EAF6E4;border:1.5px solid #C8E6C9;border-radius:13px;padding:12px 14px;margin:8px 0 10px">' +
-        '<div style="font-size:11px;font-weight:700;color:#4A6B42;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">'+(l?'Orientačný výpočet ceny':'Estimated price breakdown')+'</div>' +
-        rows +
-        '<div style="font-size:11px;color:#68736A;margin-top:8px;line-height:1.5">'+(l?'Orientačný výpočet. Presnú cenu potvrdíme telefonicky.':'Estimate only. Exact price confirmed by phone.')+'</div>' +
-      '</div>';
-    } catch(e){}
+      var matFrom = Math.round(r.materialTotal*0.95), matTo = Math.round(r.materialTotal*1.10);
+      var delivery = r.deliveryFee || 0;
+      var instFrom = Math.round(r.installCost*0.95), instTo = Math.round(r.installCost*1.05);
+      var grandFrom = matFrom + (r.installCost>0?instFrom:0) + delivery;
+      var grandTo   = matTo   + (r.installCost>0?instTo:0)   + delivery;
+      var bd = '';
+      r.items.forEach(function(it){ bd += mpAccRow(it.k, money(it.v)+' €'); });
+      bd += mpAccRow(l?'Materiál spolu':'Material total', money(r.materialTotal)+' €', true);
+      if(r.installCost>0) bd += mpAccRow(l?'Montáž na kľúč':'Key-ready install', money(r.installCost)+' €');
+      if(delivery>0) bd += mpAccRow(l?'Doprava':'Delivery', money(delivery)+' €');
+      var H = calcState.height||'153', C = calcState.color||'zinok';
+      var colorLabel = { antracit:'Antracit RAL 7016', zelena:'Zelená RAL 6005', zinok:'Zinok (pozink)' }[C]||C;
+      var sum = mpSumRow(l?'Dĺžka plotu':'Fence length', (calcState.length||20)+' bm ('+r.panels+' '+(l?'panelov':'panels')+')') +
+        mpSumRow(l?'Výška panela':'Panel height', H+' cm') +
+        mpSumRow(l?'Hrúbka drôtu':'Wire thickness', calcState.thickness||'4mm') +
+        mpSumRow(l?'Farba':'Color', colorLabel) +
+        mpSumRow(l?'Typ stĺpika':'Post type', calcState.cpPostType==='okruhly'?(l?'Okrúhly 48mm':'Round 48mm'):(l?'Hranatý 60×40mm':'Square 60×40mm')) +
+        mpSumRow(l?'Výška stĺpika':'Post height', (calcState.cpPostHeight||'2')+' m') +
+        mpSumRow(l?'Kotvenie':'Mounting', calcState.cpMounting==='kotvo'?(l?'Kotvenie na múrik':'Wall anchoring'):(l?'Betónovanie do zeme':'Concreting')) +
+        mpSumRow(l?'Podhrabová doska':'Underboard', calcState.cpUnderboard?(l?'Áno':'Yes'):(l?'Nie':'No')) +
+        mpSumRow(l?'Bránky':'Wickets', (calcState.cpBrankaCount||0)+' ks') +
+        mpSumRow(l?'Brány':'Gates', (calcState.cpGateCount||0)+' ks') +
+        mpSumRow(l?'Rohy':'Corners', (calcState.cpCorners||0)+' ks') +
+        mpSumRow(l?'Voľné konce':'Open ends', (calcState.cpEnds||0)+' ks') +
+        mpSumRow(l?'Montáž':'Installation', calcState.cpInstallation==='kluc'?(l?'Na kľúč':'Key-ready'):(l?'Vlastná':'Self')) +
+        ((calcState.cpLocation||calcState.cpZip) ? mpSumRow(l?'Lokalita':'Location', (calcState.cpLocation||'')+(calcState.cpZip?' ('+calcState.cpZip+')':'')) : '');
+      el.innerHTML = mpFinalScreen({
+        totalStr: eur(grandFrom)+' – '+eur(grandTo)+' €',
+        installStr: r.installCost>0 ? eur(instFrom)+' – '+eur(instTo)+' €' : null,
+        breakdownHtml: bd,
+        summaryHtml: sum
+      });
+    } catch(e){ console.error(e); el.innerHTML = mpFinalScreen({ totalStr:(l?'na vyžiadanie':'on request'), installStr:null, breakdownHtml:'', summaryHtml:'' }); }
+    return;
   }
 
-  el.innerHTML = '<div class="mc-step">' +
-    '<div style="text-align:center;padding:12px 0 8px">' +
-      '<div style="font-size:36px;margin-bottom:4px">✓</div>' +
-      '<div class="mc-step-title" style="text-align:center">'+(l?'Ďakujeme! Dopyt je odoslaný.':'Thank you! Request sent.')+'</div>' +
-      '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+MC.s[lang].thxMsg+'</div>' +
-    '</div>' +
-    priceHtml +
-    '<div class="mc-actions" style="margin-top:12px">' +
+  /* Ostatné produkty (brána, pletivo, mobilné, oporné, iné) – jednoduché poďakovanie */
+  var C2 = calcState.color || 'zinok';
+  var photo = C2==='antracit' ? 'mojplot-farba-antracit.webp' : (C2==='zelena' ? 'mojplot-farba-zelena.webp' : 'mojplot-plot-hotovy.webp');
+  el.innerHTML = '<div class="mc-step" style="text-align:center;padding:20px 18px">' +
+    '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(photo)+'" alt="'+(l?'Váš hotový plot':'Your finished fence')+'" loading="eager" decoding="async" onerror="this.parentElement.style.display=\'none\'"></div>' +
+    '<div style="font-size:42px;margin:10px 0 6px">✅</div>' +
+    '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme za dopyt!':'Thank you for your inquiry!')+'</div>' +
+    '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Budeme vás kontaktovať zvyčajne do pár hodín.':'We will contact you, usually within a few hours.')+'</div>' +
+    '<div class="mc-actions" style="margin-top:16px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
       '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
     '</div>' +
