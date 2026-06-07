@@ -1,0 +1,11 @@
+{
+  "name": "mojplot-widget",
+  "version": "1.0.0",
+  "description": "Môj plot chatbot widget",
+  "type": "module",
+  "scripts": {},
+  "license": "ISC",
+  "dependencies": {
+    "resend": "^6.12.4"
+  }
+}
