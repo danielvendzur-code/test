@@ -3,7 +3,8 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TO = 'info@mojplot.sk';
-const FROM = 'Môj plot Kalkulačka <kalkulacka@mojplot.sk>';
+// TODO: change to kalkulacka@mojplot.sk once mojplot.sk domain is verified in Resend
+const FROM = 'Môj plot Kalkulačka <onboarding@resend.dev>';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
