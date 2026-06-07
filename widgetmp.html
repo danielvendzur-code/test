@@ -2556,7 +2556,7 @@ function toggleChat(){
     }
     var calcC = document.getElementById('calcContainer');
     if(!calcC || calcC.getAttribute('data-open') !== 'true') syncCalcChrome(false);
-    mpHeaderTyping();
+    mpHeaderForContext();
   }
 }
 
@@ -2567,6 +2567,7 @@ function mpHeaderTyping(){
   if(MC._typeTO){ MC._typeTO.forEach(function(t){ clearTimeout(t); }); }
   MC._typeTO = [];
   var l = MC.lang === 'sk';
+  var sub = document.getElementById('hdr-sub'); if(sub) sub.textContent = 'Online';
   var p1 = l ? 'AI chatbot firmy Môj plot' : 'Môj plot AI chatbot';
   var p2 = l ? 'Spýtajte sa ma otázku' : 'Ask me a question';
   var caret = '<span class="mc-type-caret">|</span>';
@@ -2581,6 +2582,23 @@ function mpHeaderTyping(){
   at(t + 600, function(){ el.textContent = p2; });
 }
 
+/* Hlavička pri otvorenej kalkulačke */
+function mpHeaderCalc(){
+  if(MC._typeTO){ MC._typeTO.forEach(function(t){ clearTimeout(t); }); MC._typeTO = []; }
+  var l = MC.lang === 'sk';
+  var title = document.getElementById('hdr-title');
+  var sub = document.getElementById('hdr-sub');
+  if(title) title.textContent = l ? 'Kalkulačka 3D a betónových plotov' : '3D & concrete fence calculator';
+  if(sub) sub.textContent = l ? 'Online vypočítajte cenu ihneď' : 'Calculate your price online instantly';
+}
+
+/* Hlavička podľa toho, čo je otvorené (chat vs kalkulačka) */
+function mpHeaderForContext(){
+  var calcC = document.getElementById('calcContainer');
+  if(calcC && calcC.getAttribute('data-open') === 'true'){ mpHeaderCalc(); }
+  else { mpHeaderTyping(); }
+}
+
 function setLang(l){
   if(MC.lang === l) return;
   MC.lang = l;
@@ -2589,8 +2607,7 @@ function setLang(l){
   var t = MC.s[l];
 
   /* Header */
-  if(MC.open){ mpHeaderTyping(); } else { document.getElementById('hdr-title').textContent = t.hdrTitle; }
-  document.getElementById('hdr-sub').textContent = t.hdrSub;
+  if(MC.open){ mpHeaderForContext(); } else { document.getElementById('hdr-title').textContent = t.hdrTitle; document.getElementById('hdr-sub').textContent = t.hdrSub; }
   var hcb = document.getElementById('hdr-close-btn'); if(hcb) hcb.setAttribute('title', t.closeTitle);
 
   /* Input bar */
@@ -2993,6 +3010,7 @@ function openCalc(){
   c.setAttribute('data-open', 'true');
   if($chat) $chat.classList.add('calc-open');
   syncCalcChrome(true);
+  mpHeaderCalc();
   calcState.step = 0;
   renderCalcStep();
   bindCalcScroll();
@@ -3049,6 +3067,7 @@ function closeCalc(){
   c.setAttribute('data-open', 'false');
   if($chat) $chat.classList.remove('calc-open');
   syncCalcChrome(false);
+  mpHeaderTyping();
 }
 
 function calcBack(){
