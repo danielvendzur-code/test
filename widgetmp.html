@@ -2266,6 +2266,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
   /* Menšie fotky krokov */
   .mc-step-img{height:84px!important;min-height:0!important;margin-bottom:5px!important;flex:0 0 auto}
+  /* Krok s bránami: dvoj-fotka a číselné polia kompaktnejšie */
+  .mc-step-photo-grid{margin-bottom:5px!important}
+  .mc-step-photo-grid .mc-step-img.asset-photo{height:78px!important;min-height:0!important;padding:5px!important}
+  .mc-num-btn{height:36px!important;width:36px!important}
+  .mc-num-input{padding:8px 10px!important}
 
   /* Produktová mriežka – kompaktné karty */
   .mc-product-grid{grid-template-columns:1fr 1fr!important;gap:7px!important;margin-bottom:6px!important}
@@ -3416,7 +3421,12 @@ function renderStepProduct(el){
     '<div class="mc-step-title">' + title + '</div>' +
     '<div class="mc-step-sub" style="margin-bottom:10px">' + sub + '</div>' +
     '<div class="mc-product-grid" style="grid-template-columns:1fr 1fr">' + cards + '</div>' +
-    '<button type="button" class="mc-calc-ai-switch" onclick="closeCalc()">💬 <strong>'+(lang==='sk'?'AI chatbot firmy Môj plot':'Môj plot AI chatbot')+'</strong></button>' +
+    '<button type="button" class="mc-calc-ai-switch" onclick="closeCalc()">' +
+      '<span class="ai-sw-ico">💬</span>' +
+      '<span class="ai-sw-txt">' +
+        '<strong>'+(lang==='sk'?'AI chatbot firmy Môj plot':'Môj plot AI chatbot')+'</strong>' +
+      '</span>' +
+    '</button>' +
     renderTrust() +
     contactChips +
   '</div>';
@@ -5036,8 +5046,8 @@ function renderCPStep7(el){
   var h = calcState.height || '153';
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('brana') +
-    '<div style="margin:12px 0">' +
-      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Bránka (1 m, vstup pre chodcov)':'Wicket gate (1 m, pedestrian)')+'</span></div>' +
+    '<div style="margin:5px 0">' +
+      '<div class="mc-dim-label" style="margin-bottom:4px"><span>'+(l?'Bránka (1 m, vstup pre chodcov)':'Wicket gate (1 m, pedestrian)')+'</span></div>' +
       '<div class="mc-num-input-row">' +
         '<button class="mc-num-btn" onclick="adjCPBranka(-1)">−</button>' +
         '<input type="number" min="0" max="20" class="mc-num-input" id="cpBrankaIn" value="'+b+'" oninput="calcState.cpBrankaCount=parseInt(this.value)||0">' +
@@ -5045,8 +5055,8 @@ function renderCPStep7(el){
         '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
-    '<div style="margin:12px 0">' +
-      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Brána (4 m, vjazd, dvojkrídlová)':'Gate (4 m, driveway, double-wing)')+'</span></div>' +
+    '<div style="margin:5px 0">' +
+      '<div class="mc-dim-label" style="margin-bottom:4px"><span>'+(l?'Brána (4 m, vjazd, dvojkrídlová)':'Gate (4 m, driveway, double-wing)')+'</span></div>' +
       '<div class="mc-num-input-row">' +
         '<button class="mc-num-btn" onclick="adjCPGate(-1)">−</button>' +
         '<input type="number" min="0" max="20" class="mc-num-input" id="cpGateIn" value="'+g+'" oninput="calcState.cpGateCount=parseInt(this.value)||0">' +
@@ -5054,24 +5064,19 @@ function renderCPStep7(el){
         '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
       '</div>' +
     '</div>' +
-    '<div class="mc-hint" style="margin-top:10px"><div class="hi">i</div><div>'+
-      ((b>0 || g>0)
-        ? (l?'<b>Farba brány a bránky:</b> použijeme rovnakú farbu ako pri plote. Ak chcete inú farbu, napíšte ju do poznámky pri odoslaní.':'<b>Gate and wicket color:</b> we will use the same color as the fence. If you want a different color, write it in the note before sending.')
-        : (l?'Ak pridáte bránku alebo bránu, ich výška bude zhodná s výškou panela a farba sa predvyplní podľa farby plota.':'If you add a wicket or gate, its height will match the panel and color will follow the fence color.'))+
-    '</div></div>' +
-    '<div style="border-top:1px solid #E8F0E6;margin:14px 0 0"></div>' +
-    '<div style="margin:12px 0">' +
+    '<div style="border-top:1px solid #E8F0E6;margin:6px 0 0"></div>' +
+    '<div style="margin:5px 0">' +
       '<div class="mc-dim-label">' +
         '<span>'+(l?'Počet rohov':'Number of corners')+'<button class="cpo-info-btn" type="button" onclick="var b=document.getElementById(\'cpCornersInfo\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'" style="margin-left:6px">ℹ</button></span>' +
         '<span class="mc-dim-value" id="cpCornersVal">'+c+'</span>' +
       '</div>' +
       '<div class="cpo-info-box" id="cpCornersInfo" style="display:none;margin-bottom:6px">' +
-        (l?'Roh je miesto, kde plot mení smer – napr. v rohu vašho pozemku alebo pri obchádzaní stromu. Na každom rohu pribúda 1 extra stĺpik navyše. Bežný obdĺžnikový pozemok má <b>4 rohy</b>.':'A corner is where the fence changes direction — e.g. at a property corner or around a tree. Each corner adds 1 extra post. A typical rectangular plot has <b>4 corners</b>.') +
+        (l?'Roh je miesto, kde plot mení smer. Na každom rohu pribúda 1 stĺpik navyše. Bežný obdĺžnikový pozemok má <b>4 rohy</b>.':'A corner is where the fence changes direction. Each corner adds 1 extra post. A typical rectangular plot has <b>4 corners</b>.') +
       '</div>' +
       '<input type="range" min="0" max="15" step="1" value="'+c+'" class="mc-slider" id="cpCornersSlider" oninput="onCPCornersSlide(this.value)">' +
     '</div>' +
-    '<div style="margin:12px 0">' +
-      '<div class="mc-dim-label" style="margin-bottom:8px"><span>'+(l?'Počet voľných koncov plotu':'Number of open ends')+'</span></div>' +
+    '<div style="margin:5px 0">' +
+      '<div class="mc-dim-label" style="margin-bottom:4px"><span>'+(l?'Počet voľných koncov plotu':'Number of open ends')+'</span></div>' +
       '<div class="mc-num-input-row">' +
         '<button class="mc-num-btn" onclick="adjCPEnds(-1)">−</button>' +
         '<input type="number" min="0" max="50" class="mc-num-input" id="cpEndsIn" value="'+e+'" oninput="calcState.cpEnds=parseInt(this.value)||0">' +
