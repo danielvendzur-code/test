@@ -2212,9 +2212,12 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-product-img{height:130px!important;min-height:130px!important}
 }
 
-/* Step 0: contact bar pushed to bottom of available space (mobile + PC) */
-.mc-calc-container[data-open="true"]{display:flex!important;flex-direction:column!important}
-.mc-step-p0{flex:1!important;display:flex!important;flex-direction:column!important;min-height:0}
+/* Step 0: contact bar pushed to bottom of available space (mobile + PC).
+   Scoped via :has(.mc-step-p0) so ONLY the product-selection step gets the
+   flex column layout — every other step keeps its normal flow + scrolling. */
+.mc-calc-container[data-open="true"]:has(.mc-step-p0){display:flex!important;flex-direction:column!important}
+.mc-calc-container[data-open="true"]:has(.mc-step-p0) #calcContent{flex:1 1 auto!important;display:flex!important;flex-direction:column!important;min-height:0}
+.mc-step-p0{flex:1 1 auto!important;display:flex!important;flex-direction:column!important;min-height:0}
 .mc-step-p0 .mc-cbar{margin-top:auto!important;flex-shrink:0}
 
 /* Slower, calmer shine sweep on primary buttons */
@@ -3298,8 +3301,8 @@ function renderStepProduct(el){
     '<div class="mc-step-sub" style="margin-bottom:10px">' + sub + '</div>' +
     '<div class="mc-product-grid" style="grid-template-columns:1fr 1fr">' + cards + '</div>' +
     '<button type="button" class="mc-calc-ai-switch" onclick="closeCalc()">💬 <strong>'+(lang==='sk'?'AI chatbot firmy Môj plot':'Môj plot AI chatbot')+'</strong></button>' +
-    contactChips +
     renderTrust() +
+    contactChips +
   '</div>';
 }
 
