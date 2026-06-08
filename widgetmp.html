@@ -1501,6 +1501,72 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   height:0 !important;
 }
 
+/* =========================================================
+   Floating teaser bubble (DESKTOP ONLY) – shown when chat is closed
+   ========================================================= */
+#mojplot-teaser{
+  position:fixed;
+  right:116px;
+  bottom:46px;
+  z-index:99999;
+  width:264px;
+  max-width:72vw;
+  background:#FFFFFF;
+  border:1px solid rgba(69,169,60,.22);
+  border-radius:16px 16px 4px 16px;
+  padding:14px 16px 15px;
+  box-shadow:0 14px 38px rgba(35,39,42,.18), 0 0 0 5px rgba(69,169,60,.07);
+  font-family:var(--m-font, 'Inter', system-ui, sans-serif);
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(10px) scale(.96);
+  transform-origin:bottom right;
+  transition:opacity .45s cubic-bezier(.34,1.2,.64,1), transform .45s cubic-bezier(.34,1.2,.64,1);
+  animation:mpTeaserIn .6s cubic-bezier(.34,1.4,.64,1) 1.4s forwards;
+}
+@keyframes mpTeaserIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
+#mojplot-teaser::after{ /* little tail pointing at the bubble */
+  content:"";
+  position:absolute;
+  right:-7px;
+  bottom:14px;
+  width:16px;
+  height:16px;
+  background:#FFFFFF;
+  border-right:1px solid rgba(69,169,60,.22);
+  border-bottom:1px solid rgba(69,169,60,.22);
+  transform:rotate(-45deg);
+  border-radius:0 0 3px 0;
+}
+#mojplot-teaser:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 18px 44px rgba(35,39,42,.22), 0 0 0 6px rgba(69,169,60,.1); }
+.mp-teaser-title{ font-size:14.5px; font-weight:800; color:#23452A; margin-bottom:4px; line-height:1.25; }
+.mp-teaser-text{ font-size:12.5px; font-weight:500; color:#4B6450; line-height:1.45; }
+.mp-teaser-text b{ color:#2F8732; font-weight:800; }
+.mp-teaser-close{
+  position:absolute; top:6px; right:8px;
+  width:22px; height:22px; line-height:1;
+  border:none; background:rgba(35,39,42,.06); color:#6B7A6E;
+  border-radius:50%; cursor:pointer; font-size:16px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  transition:background .2s, color .2s;
+}
+.mp-teaser-close:hover{ background:rgba(35,39,42,.14); color:#23272A; }
+/* Hide when chat is open, when dismissed, or on small screens (mobile) */
+#mojplot-bubble.open ~ #mojplot-teaser,
+#mojplot-teaser.mp-dismissed{
+  opacity:0 !important;
+  pointer-events:none !important;
+  transform:translateY(10px) scale(.9) !important;
+  animation:none !important;
+  visibility:hidden;
+}
+@media (max-width:768px){
+  #mojplot-teaser{ display:none !important; visibility:hidden !important; pointer-events:none !important; }
+}
+@media (hover:none), (pointer:coarse){
+  #mojplot-teaser{ display:none !important; visibility:hidden !important; pointer-events:none !important; animation:none !important; }
+}
+
 /* Final polish: notification badge and bot avatar should not be clipped */
 #mojplot-bubble{
   overflow:visible!important;
@@ -2162,6 +2228,13 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   <div class="bubble-x">
     <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
   </div>
+</div>
+
+<!-- Floating teaser (desktop only, shown when chat is closed) -->
+<div id="mojplot-teaser" onclick="openChatCalc()" role="button" tabindex="0">
+  <button class="mp-teaser-close" onclick="event.stopPropagation();dismissTeaser()" aria-label="Zavrieť">&times;</button>
+  <div class="mp-teaser-title">Vypočítajte si cenu plotu online</div>
+  <div class="mp-teaser-text">Pre <b>3D plot alebo betónový plot</b> — rýchlo a bez záväzkov.</div>
 </div>
 
 
@@ -2989,6 +3062,8 @@ function openCalc(){
   c.setAttribute('data-open', 'true');
   if($chat) $chat.classList.add('calc-open');
   syncCalcChrome(true);
+  var ht = document.getElementById('hdr-title');
+  if(ht) ht.textContent = (MC.lang === 'sk') ? 'Kalkulačka Mojplot' : 'Mojplot calculator';
   calcState.step = 0;
   renderCalcStep();
   bindCalcScroll();
@@ -3045,6 +3120,8 @@ function closeCalc(){
   c.setAttribute('data-open', 'false');
   if($chat) $chat.classList.remove('calc-open');
   syncCalcChrome(false);
+  var ht = document.getElementById('hdr-title');
+  if(ht) ht.textContent = MC.s[MC.lang].hdrTitle;
 }
 
 function calcBack(){
@@ -4456,6 +4533,10 @@ function colorCard(id, name, ral, swatch, photo){
   '</div>';
 }
 
+function dismissTeaser(){
+  var t = document.getElementById('mojplot-teaser');
+  if(t) t.classList.add('mp-dismissed');
+}
 
 /* ===================================================
    CP KONFIGURÁTOR - 3D PANELOVÉ PLOTY
