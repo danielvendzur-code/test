@@ -3078,15 +3078,15 @@ var BET_DOUBLE_SIDE_SURCHARGE = 8.00; /* príplatok za obojstrannú bridlicu / p
 function openChatCalc(){
   if(!MC.open){ toggleChat(); }
   window.setTimeout(function(){ openCalc(); }, 0);
-}
 function openCalc(){
-  ...
+  var c = document.getElementById('calcContainer');
+  c.setAttribute('data-open', 'true');
+  if($chat) $chat.classList.add('calc-open');
+  syncCalcChrome(true);
+  var ht = document.getElementById('hdr-title');
   if(ht) ht.textContent = (MC.lang === 'sk') ? 'Kalkulačka Môj plot' : 'Môj plot calculator';
   calcState.step = 0;
   renderCalcStep();
-  ...
-
-  
   bindCalcScroll();
 }
 
