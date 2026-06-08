@@ -1501,73 +1501,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   height:0 !important;
 }
 
-/* =========================================================
-   Floating teaser bubble (DESKTOP ONLY) – shown when chat is closed
-   ========================================================= */
-#mojplot-teaser{
-  position:fixed;
-  right:116px;
-  bottom:46px;
-  z-index:99999;
-  width:264px;
-  max-width:72vw;
-  background:#FFFFFF;
-  border:1px solid rgba(69,169,60,.22);
-  border-radius:16px 16px 4px 16px;
-  padding:14px 16px 15px;
-  box-shadow:0 14px 38px rgba(35,39,42,.18), 0 0 0 5px rgba(69,169,60,.07);
-  font-family:var(--m-font, 'Inter', system-ui, sans-serif);
-  cursor:pointer;
-  opacity:0;
-  transform:translateY(10px) scale(.96);
-  transform-origin:bottom right;
-  transition:opacity .45s cubic-bezier(.34,1.2,.64,1), transform .45s cubic-bezier(.34,1.2,.64,1);
-  animation:mpTeaserIn .6s cubic-bezier(.34,1.4,.64,1) 1.4s forwards;
-}
-@keyframes mpTeaserIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
-#mojplot-teaser::after{ /* little tail pointing at the bubble */
-  content:"";
-  position:absolute;
-  right:-7px;
-  bottom:14px;
-  width:16px;
-  height:16px;
-  background:#FFFFFF;
-  border-right:1px solid rgba(69,169,60,.22);
-  border-bottom:1px solid rgba(69,169,60,.22);
-  transform:rotate(-45deg);
-  border-radius:0 0 3px 0;
-}
-#mojplot-teaser:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 18px 44px rgba(35,39,42,.22), 0 0 0 6px rgba(69,169,60,.1); }
-.mp-teaser-title{ font-size:14.5px; font-weight:800; color:#23452A; margin-bottom:4px; line-height:1.25; }
-.mp-teaser-text{ font-size:12.5px; font-weight:500; color:#4B6450; line-height:1.45; }
-.mp-teaser-text b{ color:#2F8732; font-weight:800; }
-.mp-teaser-close{
-  position:absolute; top:6px; right:8px;
-  width:22px; height:22px; line-height:1;
-  border:none; background:rgba(35,39,42,.06); color:#6B7A6E;
-  border-radius:50%; cursor:pointer; font-size:16px; font-weight:700;
-  display:flex; align-items:center; justify-content:center; padding:0;
-  transition:background .2s, color .2s;
-}
-.mp-teaser-close:hover{ background:rgba(35,39,42,.14); color:#23272A; }
-/* Hide when chat is open, when dismissed, or on small screens (mobile) */
-#mojplot-bubble.open ~ #mojplot-teaser,
-#mojplot-teaser.mp-dismissed{
-  opacity:0 !important;
-  pointer-events:none !important;
-  transform:translateY(10px) scale(.9) !important;
-  animation:none !important;
-  visibility:hidden;
-}
-@media (max-width:768px){
-  #mojplot-teaser{ display:none !important; visibility:hidden !important; pointer-events:none !important; }
-}
-@media (hover:none), (pointer:coarse){
-  #mojplot-teaser{ display:none !important; visibility:hidden !important; pointer-events:none !important; animation:none !important; }
-}
-
-
 /* Final polish: notification badge and bot avatar should not be clipped */
 #mojplot-bubble{
   overflow:visible!important;
@@ -2083,18 +2016,12 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 #mojplot-bubble{width:84px!important;height:84px!important;bottom:16px!important;right:16px!important}
 #mojplot-bubble .bubble-icon{width:70px!important;height:70px!important}
 #mojplot-bubble::before{inset:6px!important}
-.mp-teaser-title{font-size:15.5px!important}
-.mp-teaser-text{font-size:13px!important}
 
 /* Step 0: contact bar under the product grid — reuses .mc-cbar / .mc-ct chat styling */
 .mc-step-p0 .mc-cbar{margin-top:12px;border-top:1px solid var(--mc-border);border-radius:12px;overflow:hidden}
 /* Keep the step-0 contact bar visible even though the calc is open (the global rule hides .mc-cbar) */
 #mojplot-chat:has(.mc-calc-container[data-open="true"]) .mc-step-p0 .mc-cbar,
 #mojplot-chat.calc-open .mc-step-p0 .mc-cbar{display:flex!important}
-
-/* Header typing caret */
-.mc-type-caret{display:inline-block;margin-left:1px;font-weight:400;color:#4CAF50;animation:mpCaret .8s steps(1) infinite}
-@keyframes mpCaret{50%{opacity:0}}
 
 /* ===== Záverečná obrazovka (3D aj betón): cena + akordeón + zhrnutie ===== */
 .mc-final-price-card{background:linear-gradient(135deg,#EAF6E4,#F4FBF0);border:1.5px solid #C8E6C9;border-radius:16px;padding:16px 16px 14px;margin:6px 0 12px;text-align:center;box-shadow:0 8px 22px rgba(69,169,60,.1)}
@@ -2163,14 +2090,61 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 /* Progress bar fill smooth */
 .mc-calc-progress-fill{transition:width .42s cubic-bezier(.4,0,.2,1)!important}
 
-/* Teaser stars */
-.mp-teaser-stars{display:flex;align-items:center;gap:5px;margin-bottom:5px}
-.mp-teaser-stars .mp-stars{color:#F59E0B;font-size:12px;letter-spacing:-.3px}
-.mp-teaser-stars .mp-rating{font-size:11px;font-weight:700;color:#6B7A6A}
-
 /* Focus ring accessibility */
 .mc-btn:focus-visible{outline:2px solid rgba(255,255,255,.6);outline-offset:2px}
 .mc-btn-secondary:focus-visible{outline:2px solid #45A93C;outline-offset:2px}
+
+/* ============================================================
+   BIGGER V3 — fill empty space, larger & more tappable
+   (placed last to win over stacked overrides)
+   ============================================================ */
+
+/* Step heading larger */
+.mc-step-title{font-size:18px!important;margin-bottom:5px!important}
+.mc-step-sub{font-size:13.5px!important;margin-bottom:14px!important;line-height:1.5!important}
+
+/* Product grid: 2 cols, roomier */
+.mc-product-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;margin-bottom:6px!important}
+.mc-product-img{height:150px!important;min-height:150px!important}
+.mc-product-info{padding:11px 12px 13px!important}
+.mc-product-name{font-size:14.5px!important;line-height:1.25!important}
+.mc-product-desc{display:block!important;font-size:12px!important;line-height:1.4!important;margin-top:2px!important}
+.mc-product-badge{font-size:10px!important;padding:4px 9px!important}
+
+/* AI chatbot switch button — bigger & more inviting */
+.mc-calc-ai-switch{margin-top:14px!important;padding:16px 18px!important;font-size:15.5px!important;border-radius:15px!important;gap:11px!important}
+
+/* Contact chips bigger */
+.mc-step-p0 .mc-ct{padding:12px 6px!important;gap:7px!important;font-size:11.5px!important}
+.mc-step-p0 .mc-ci{width:42px!important;height:42px!important}
+.mc-step-p0 .mc-ci svg{width:21px!important;height:21px!important}
+
+/* Action buttons bigger across the calculator */
+.mc-actions .mc-btn,.mc-actions .mc-btn-secondary,.mc-btn.mc-form-submit{padding:15px 18px!important;font-size:15px!important;border-radius:13px!important}
+.mc-actions{gap:10px!important;margin-top:12px!important}
+
+/* Chat quick-action chips (incl. AI chatbot) bigger */
+.mc-chips{gap:8px!important;padding:8px 14px 12px!important}
+.mc-chip{font-size:13.5px!important;padding:10px 16px!important;border-radius:22px!important}
+
+/* CTA banner in chat: a touch larger */
+.mc-top-calc{padding:14px 15px!important}
+.mc-top-calc-text strong{font-size:15px!important}
+.mc-top-calc-text span{font-size:12.5px!important}
+
+/* Form inputs roomier */
+.mc-input,.mc-form input,.mc-form textarea{font-size:15px!important}
+
+/* Desktop: even more generous since the panel is wide */
+@media (min-width:481px){
+  .mc-product-img{height:165px!important;min-height:165px!important}
+  .mc-step-title{font-size:19px!important}
+}
+
+/* Small phones: keep images sensible so the form still fits */
+@media (max-width:380px){
+  .mc-product-img{height:130px!important;min-height:130px!important}
+}
 
 </style>
 
@@ -2190,13 +2164,6 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   </div>
 </div>
 
-<!-- Floating teaser (desktop only, shown when chat is closed) -->
-<div id="mojplot-teaser" onclick="openChatCalc()" role="button" tabindex="0">
-  <button class="mp-teaser-close" onclick="event.stopPropagation();dismissTeaser()" aria-label="Zavrieť">&times;</button>
-  <div class="mp-teaser-stars"><span class="mp-stars">★★★★★</span><span class="mp-rating">150+ spokojných zákazníkov</span></div>
-  <div class="mp-teaser-title">Cena plotu online, do 3 minút</div>
-  <div class="mp-teaser-text">Pre <b>3D plot alebo betónový plot</b> — zadarmo, bez záväzkov.</div>
-</div>
 
 <!-- Chat window -->
 
@@ -2348,7 +2315,7 @@ var MC = {
       sd: 'Odoslané!',
       se: 'Odoslať',
       ttText: 'Potrebujete poradiť? 👋',
-      calcTitle: '🧮 Cenová kalkulačka',
+      calcTitle: 'Cenová kalkulačka',
       emailTitle: 'Napíšte nám',
       thxMsg: 'Ďakujeme za dopyt! ✅<br>Budeme vás kontaktovať zvyčajne do pár hodín.',
       /* UI labels */
@@ -2376,7 +2343,7 @@ var MC = {
       sd: 'Sent!',
       se: 'Send',
       ttText: 'Need advice? 👋',
-      calcTitle: '🧮 Price calculator',
+      calcTitle: 'Price calculator',
       emailTitle: 'Write to us',
       thxMsg: 'Thank you for your inquiry! ✅<br>We will contact you, usually within a few hours.',
       /* UI labels */
@@ -2610,45 +2577,6 @@ function toggleChat(){
   }
 }
 
-/* Animácia písania v hlavičke: napíše "AI chatbot firmy Môj plot", potom sa prepíše na "Spýtajte sa ma otázku" */
-function mpHeaderTyping(){
-  var el = document.getElementById('hdr-title');
-  if(!el) return;
-  if(MC._typeTO){ MC._typeTO.forEach(function(t){ clearTimeout(t); }); }
-  MC._typeTO = [];
-  var l = MC.lang === 'sk';
-  var sub = document.getElementById('hdr-sub'); if(sub) sub.textContent = 'Online';
-  var p1 = l ? 'AI chatbot firmy Môj plot' : 'Môj plot AI chatbot';
-  var p2 = l ? 'Spýtajte sa ma otázku' : 'Ask me a question';
-  var caret = '<span class="mc-type-caret">|</span>';
-  var t = 0;
-  function at(d, fn){ MC._typeTO.push(setTimeout(fn, d)); }
-  el.innerHTML = caret;
-  for(var i=1;i<=p1.length;i++){ (function(i){ at(t, function(){ el.innerHTML = p1.slice(0,i) + caret; }); })(i); t += 55; }
-  t += 1100;
-  for(var j=p1.length-1;j>=0;j--){ (function(j){ at(t, function(){ el.innerHTML = p1.slice(0,j) + caret; }); })(j); t += 28; }
-  t += 250;
-  for(var k=1;k<=p2.length;k++){ (function(k){ at(t, function(){ el.innerHTML = p2.slice(0,k) + caret; }); })(k); t += 55; }
-  at(t + 600, function(){ el.textContent = p2; });
-}
-
-/* Hlavička pri otvorenej kalkulačke */
-function mpHeaderCalc(){
-  if(MC._typeTO){ MC._typeTO.forEach(function(t){ clearTimeout(t); }); MC._typeTO = []; }
-  var l = MC.lang === 'sk';
-  var title = document.getElementById('hdr-title');
-  var sub = document.getElementById('hdr-sub');
-  if(title) title.textContent = l ? 'Kalkulačka 3D a betónových plotov' : '3D & concrete fence calculator';
-  if(sub) sub.textContent = l ? 'Online vypočítajte cenu ihneď' : 'Calculate your price online instantly';
-}
-
-/* Hlavička podľa toho, čo je otvorené (chat vs kalkulačka) */
-function mpHeaderForContext(){
-  var calcC = document.getElementById('calcContainer');
-  if(calcC && calcC.getAttribute('data-open') === 'true'){ mpHeaderCalc(); }
-  else { mpHeaderTyping(); }
-}
-
 function setLang(l){
   if(MC.lang === l) return;
   MC.lang = l;
@@ -2657,7 +2585,8 @@ function setLang(l){
   var t = MC.s[l];
 
   /* Header */
-  if(!MC.open){ document.getElementById('hdr-title').textContent = t.hdrTitle; document.getElementById('hdr-sub').textContent = t.hdrSub; }
+  document.getElementById('hdr-title').textContent = t.hdrTitle;
+  document.getElementById('hdr-sub').textContent = t.hdrSub;
   var hcb = document.getElementById('hdr-close-btn'); if(hcb) hcb.setAttribute('title', t.closeTitle);
 
   /* Input bar */
@@ -4079,7 +4008,7 @@ function renderBetStep5(el){
       '<button class="mc-btn" onclick="submitBetCalc()" style="width:100%">'+(l?'Odoslať a získať presnú ponuku →':'Send and get exact quote →')+'</button>' +
       '<div style="display:flex;gap:8px">' +
         '<button class="mc-btn-secondary" onclick="calcBack()" style="flex:1">← '+(l?'Späť':'Back')+'</button>' +
-        '<button class="mc-btn-secondary" onclick="resetCalc()" style="flex:1">🧮 '+(l?'Kalkulačka':'Calculator')+'</button>' +
+        '<button class="mc-btn-secondary" onclick="resetCalc()" style="flex:1">'+(l?'Kalkulačka':'Calculator')+'</button>' +
       '</div>' +
     '</div>' +
   '</div>';
@@ -4404,7 +4333,7 @@ function mpFinalScreen(o){
       '<div class="mc-final-sumbox">'+o.summaryHtml+'</div>' : '') +
     '<div class="mc-actions" style="margin-top:10px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
-      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
+      '<button class="mc-btn" onclick="resetCalc()">'+(l?'Nový výpočet':'New calculation')+'</button>' +
     '</div>' +
   '</div>';
 }
@@ -4465,7 +4394,7 @@ function showThanks(){
     '<div class="mc-step-sub" style="text-align:center;line-height:1.6">'+(l?'Budeme vás kontaktovať zvyčajne do pár hodín.':'We will contact you, usually within a few hours.')+'</div>' +
     '<div class="mc-actions" style="margin-top:16px">' +
       '<a href="tel:+421940511266" class="mc-btn-secondary" style="text-decoration:none;text-align:center">+421 940 511 266</a>' +
-      '<button class="mc-btn" onclick="resetCalc()">🧮 '+(l?'Nový výpočet':'New calculation')+'</button>' +
+      '<button class="mc-btn" onclick="resetCalc()">'+(l?'Nový výpočet':'New calculation')+'</button>' +
     '</div>' +
   '</div>';
   try { var rp = calculatePrice(); var priceText = rp.onRequest ? (l?'na vyžiadanie':'on request') : (Math.round(rp.total*0.95)+'-'+Math.round(rp.total*1.10)+' €'); addMsg((l?'Dopyt sme pripravili. Orientačná cena: <b>':'Inquiry prepared. Estimated price: <b>')+priceText+'</b>.', 'bot', { noRating:true }); } catch(e){}
@@ -4527,11 +4456,6 @@ function colorCard(id, name, ral, swatch, photo){
   '</div>';
 }
 
-
-function dismissTeaser(){
-  var t = document.getElementById('mojplot-teaser');
-  if(t) t.classList.add('mp-dismissed');
-}
 
 /* ===================================================
    CP KONFIGURÁTOR - 3D PANELOVÉ PLOTY
