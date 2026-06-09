@@ -2279,11 +2279,11 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 
   /* Menšie fotky krokov */
   .mc-step-img{height:84px!important;min-height:0!important;margin-bottom:5px!important;flex:0 0 auto}
-  /* Krok s bránami: dvoj-fotka a číselné polia kompaktnejšie */
-  .mc-step-photo-grid{margin-bottom:5px!important}
-  .mc-step-photo-grid .mc-step-img.asset-photo{height:78px!important;min-height:0!important;padding:5px!important}
-  .mc-num-btn{height:36px!important;width:36px!important}
-  .mc-num-input{padding:8px 10px!important}
+  /* Krok s bránami: dvoj-fotka väčšia (je tam viac miesta), polia kompaktné */
+  .mc-step-photo-grid{margin-bottom:8px!important}
+  .mc-step-photo-grid .mc-step-img.asset-photo{height:118px!important;min-height:0!important;padding:6px!important}
+  .mc-num-btn{height:38px!important;width:38px!important}
+  .mc-num-input{padding:9px 10px!important}
 
   /* Produktová mriežka – kompaktné karty */
   .mc-product-grid{grid-template-columns:1fr 1fr!important;gap:7px!important;margin-bottom:6px!important}
@@ -2295,23 +2295,26 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   /* AI prepínač / banner menší */
   .mc-calc-ai-switch{margin-top:8px!important;padding:11px 14px!important;font-size:13.5px!important}
 
-  /* Voľby, farby, veľkosti – maximálne tesné rozostupy (bez scrollu) */
-  .mc-cp-opts{gap:5px!important;margin:5px 0!important}
-  .mc-cp-opt{padding:7px 12px!important;gap:10px!important}
-  .mc-cp-opt .cpo-ico{width:32px!important;height:32px!important;border-radius:9px!important}
-  .mc-cp-opt .cpo-ico svg{width:18px!important;height:18px!important}
-  .mc-cp-opt .cpo-lbl{font-size:13px!important;line-height:1.15!important}
+  /* Voľby/veľkosti – kompaktné (aby kroky 2,5,6 sadli bez scrollu) */
+  .mc-cp-opts{gap:6px!important;margin:6px 0!important}
+  .mc-cp-opt{padding:8px 12px!important;gap:10px!important}
+  .mc-cp-opt .cpo-ico{width:34px!important;height:34px!important;border-radius:9px!important}
+  .mc-cp-opt .cpo-ico svg{width:19px!important;height:19px!important}
+  .mc-cp-opt .cpo-lbl{font-size:13px!important;line-height:1.18!important}
   .mc-cp-opt .cpo-sub{font-size:10.5px!important;line-height:1.2!important;margin-top:1px!important}
-  .mc-color-grid{gap:6px!important;margin-bottom:5px!important}
-  .mc-color-photo{height:54px!important}
-  .mc-color-body{padding:4px 5px 5px!important}
-  .mc-color-name{font-size:10.5px!important}
-  .mc-size-grid{gap:5px!important}
-  .mc-size-card{padding:6px 10px!important;min-height:0!important}
+  /* Farba povrchu – väčšie vzorky farieb (je tam miesto) */
+  .mc-color-grid{gap:9px!important;margin-bottom:8px!important}
+  .mc-color-card{border-radius:14px!important}
+  .mc-color-body{padding:10px 6px 11px!important;gap:7px!important}
+  .mc-color-swatch.lg{width:58px!important;height:58px!important;border-radius:13px!important}
+  .mc-color-name{font-size:12.5px!important}
+  .mc-color-ral{font-size:11px!important}
+  .mc-size-grid{gap:6px!important}
+  .mc-size-card{padding:7px 10px!important;min-height:0!important}
   .mc-size-val{font-size:16px!important}
   .mc-size-label{font-size:10px!important;line-height:1.2!important}
-  .mc-check{padding:7px 12px!important}
-  .mc-radio-list,.mc-check-list{gap:5px!important;margin-bottom:5px!important}
+  .mc-check{padding:8px 12px!important}
+  .mc-radio-list,.mc-check-list{gap:6px!important;margin-bottom:6px!important}
 
   /* Rozmery / slider tesnejšie */
   .mc-dim-wrap{margin-bottom:6px!important}
@@ -2327,7 +2330,15 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-bet-pattern-card{padding:7px!important;gap:5px!important}
   .mc-bet-pattern-preview{height:56px!important}
 
-  /* Akčné tlačidlá: menší vrchný odstup pre konfiguračné kroky */
+  /* Tlačidlo „Pokračovať" VŽDY dole: krok vyplní výšku a akcie idú na spodok.
+     flex:1 0 auto = vyplní voľné miesto, ale pri dlhom obsahu sa nezmršťuje
+     (vtedy obsah dorovná zoom-poistka), takže spodok nikdy nie je zakrytý. */
+  .mc-calc-container[data-open="true"]{display:flex!important;flex-direction:column!important}
+  #calcContent{display:flex!important;flex-direction:column!important;flex:1 0 auto!important;min-height:0!important}
+  .mc-step{display:flex!important;flex-direction:column!important;flex:1 0 auto!important}
+  .mc-step .mc-actions, .mc-step .mc-contact-actions{margin-top:auto!important}
+
+  /* Akčné tlačidlá: menší vrchný odstup */
   .mc-actions{margin-top:6px!important}
 
   /* Žiadny scrollovací indikátor na PC */
@@ -3285,16 +3296,24 @@ function fitCalcStep(){
     var isDesktop = !window.matchMedia || window.matchMedia('(min-width:481px)').matches;
     content.style.zoom = '';
     if(!isDesktop) return;
-    /* Finálne / kontaktné / cenové obrazovky NEzmenšujeme – nechávame pôvodnú
-       veľkosť písma a povolíme scroll (zákazníkovi to tam neprekáža). */
-    if(content.querySelector('.mc-result-card,.mc-final-price-card,.mc-final-total,.mc-summary-card,.mc-breakdown,.mc-acc,.mc-contact-form,.mc-form,.mc-form-submit,textarea')) return;
+    /* NEzmenšujeme len finálne cenové / poďakovacie obrazovky – tam má cena
+       ostať veľká a scroll zákazníkovi neprekáža. Kontaktné/konfiguračné kroky
+       sa môžu jemne dorovnať, aby sa zmestili. */
+    if(content.querySelector('.mc-result-card,.mc-final-price-card,.mc-final-total,.mc-summary-card,.mc-breakdown,.mc-acc')) return;
     var cs = window.getComputedStyle(c);
     var pad = (parseFloat(cs.paddingTop)||0) + (parseFloat(cs.paddingBottom)||0);
-    var avail = c.clientHeight - pad - 2;
+    var avail = c.clientHeight - pad;
+    /* odpočítaj výšku súrodencov v kontajneri (napr. lišta s krokmi), aby bol
+       dostupný priestor presný a obsah sa naozaj zmestil bez scrollu */
+    if(content.parentElement === c){
+      var kids = c.children;
+      for(var i=0;i<kids.length;i++){ if(kids[i]!==content){ avail -= kids[i].offsetHeight; } }
+    }
+    avail -= 6;
     var needed = content.scrollHeight;
     if(needed > avail && needed > 0){
       var f = avail / needed;
-      if(f < 0.72) f = 0.72; /* dorovnanie konfiguračných krokov, aby spodok nebol zakrytý */
+      if(f < 0.7) f = 0.7;
       content.style.zoom = f;
     }
   }catch(e){}
@@ -3361,7 +3380,7 @@ function renderCalcStep(){
   if(!calcState.product){
     calcState.totalSteps = 2;
   } else if(calcState.product === '3d-plot'){
-    calcState.totalSteps = 9; /* step 0 + 8 krokov (zlúčená montáž, bez extra zhrnutia) */
+    calcState.totalSteps = 10; /* step 0 + 9 krokov (kontakt, cena/zhrnutie + odoslanie) */
   } else if(calcState.product === 'brana'){
     calcState.totalSteps = 6; /* product, type, dimensions, color, extras, final */
   } else if(calcState.product === 'pletivo'){
@@ -3486,7 +3505,7 @@ function renderStepProduct(el){
       '<span class="ai-sw-ico">💬</span>' +
       '<span class="ai-sw-txt">' +
         '<strong>'+(lang==='sk'?'AI chatbot firmy Môj plot':'Môj plot AI chatbot')+'</strong>' +
-        '<span class="ai-sw-desc">'+(lang==='sk'?'Neviete si vybrať? Spýtajte sa nášho asistenta na typy plotov, ceny aj montáž – odpovie hneď.':'Not sure which fence? Ask our assistant about types, prices and installation – instant answers.')+'</span>' +
+        '<span class="ai-sw-desc">'+(lang==='sk'?'Neviete si vybrať? Spýtajte sa nášho asistenta – odpovie hneď.':'Not sure which fence? Ask our assistant – instant answers.')+'</span>' +
       '</span>' +
     '</button>' +
     renderTrust() +
@@ -4249,7 +4268,7 @@ function renderBetInstallStep(el){
       '<div class="mc-dim-label" style="margin-bottom:8px"><b>'+(l?'Typ dodávky':'Delivery type')+'</b></div>' +
       '<div class="mc-cp-opts">' +
         cpOpt('bi','false', l?'Len materiál':'Material only', l?'Dodávka materiálu bez montáže':'Material delivery only', icoMat, instVal, 'selBetInstall') +
-        cpOpt('bi','true',  l?'Materiál + montáž':'Material + installation', l?'Naša čata nainštaluje plot ('+BET_INSTALL_PER_M+' €/bm)':'Our team installs the fence ('+BET_INSTALL_PER_M+' €/lm)', icoInst, instVal, 'selBetInstall') +
+        cpOpt('bi','true',  l?'Materiál + montáž':'Material + installation', l?'Plot Vám osadíme na kľúč ('+BET_INSTALL_PER_M+' €/bm)':'We install the fence for you ('+BET_INSTALL_PER_M+' €/lm)', icoInst, instVal, 'selBetInstall') +
       '</div>' +
     '</div>' +
     '<div class="mc-actions"><button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button><button class="mc-btn" onclick="confirmBetInstallStep()">'+(l?'Pokračovať':'Continue')+' →</button></div>' +
@@ -4318,7 +4337,6 @@ function submitBetCalc(){
   var email = (document.getElementById('betEmail')||{}).value||'';
   var phone = (document.getElementById('betPhone')||{}).value||'';
   if(!name || !email || !phone){ alert(l?'Vyplňte prosím meno, email a telefón.':'Please fill in name, email and phone.'); return; }
-  if(!calcState.betGdpr){ alert(l?'Súhlas so spracovaním osobných údajov je nevyhnutný.':'GDPR consent is required.'); return; }
   var dlv = calcDeliveryFee(calcState.betZip);
   var bp = calculateBetPrice();
   var colorLabels = {prirodny:'Prírodný betón',biela:'Biela',pieskova:'Piesková/béžová',tehlova:'Tehlová',cervena:'Červená',hneda:'Hnedá',antracit:'Antracit'};
@@ -4340,11 +4358,20 @@ function submitBetCalc(){
     'Meno: '+name+'\n' +
     'Email: '+email+'\n' +
     'Telefón: '+phone+'\n';
+  var betPriceText = money(bp.materialTotal)+' € materiál'+(bp.installCost>0?' + '+money(bp.installCost)+' € montáž = '+money(bp.grandTotal)+' € celkom':'');
   mpSendEmail(
-    { from_name: name, from_email: email, phone: phone, message: msg, subject:'Dopyt – Betónový plot' },
-    function(){}, function(e){ console.warn('send failed', e); }, {fallback:true}
+    {
+      customer_name: name, customer_phone: phone, customer_email: email,
+      customer_message: msg, customer_photo_name: '',
+      product: (MC.lang==='sk'?'Betónový plot – konfigurátor':'Concrete fence – configurator'),
+      price_estimate: betPriceText,
+      configuration: msg,
+      language: MC.lang==='sk'?'sk':'en', source: 'mojplot.sk – bet konfigurátor'
+    },
+    function(){ autoNext(); },
+    function(e){ autoNext(); },
+    {fallback:true}
   );
-  autoNext();
 }
 
 function renderBetFinal(el){
@@ -4559,8 +4586,8 @@ function renderFinal(el){
   var formHtml = '<div class="mc-contact-form">' +
     '<div class="mc-form-title">'+(lang==='sk'?'Získať presnú ponuku':'Get exact quote')+'</div>' +
     '<div class="mc-form-sub">'+(lang==='sk'?'Nechajte kontakt, prípadne pridajte fotku miesta. Ponuku pripravíme presnejšie.':'Leave your contact and optionally add a site photo. We will prepare a more accurate quote.')+'</div>' +
-    '<div class="mc-contact-fr"><input class="mc-form-input" id="cfName" type="text" placeholder="'+(lang==='sk'?'Meno *':'Name *')+'"><input class="mc-form-input" id="cfPhone" type="tel" placeholder="'+(lang==='sk'?'Telefón *':'Phone *')+'"></div>' +
-    '<input class="mc-form-input" id="cfEmail" type="email" placeholder="E-mail *">' +
+    '<div class="mc-contact-fr"><input class="mc-form-input" id="cfName" type="text" placeholder="'+(lang==='sk'?'Meno':'Name')+'"><input class="mc-form-input" id="cfPhone" type="tel" placeholder="'+(lang==='sk'?'Telefón':'Phone')+'"></div>' +
+    '<input class="mc-form-input" id="cfEmail" type="email" placeholder="E-mail">' +
     '<label class="mc-photo-upload">'+(lang==='sk'?'Pridať fotku miesta / brány':'Add site / gate photo')+'<input id="cfPhoto" type="file" accept="image/*" onchange="showPhotoName(this)"></label>' +
     '<div class="mc-photo-name" id="cfPhotoName">'+(lang==='sk'?'Fotka nie je povinná, ale pomôže s presnosťou.':'Photo is optional, but helps accuracy.')+'</div>' +
     '<textarea class="mc-form-textarea" id="cfMsg" placeholder="'+(lang==='sk'?'Doplňujúce informácie, PSČ, termín...':'Additional info, ZIP, timing...')+'"></textarea>' +
@@ -4593,7 +4620,7 @@ function submitCalc(){
   var btn = document.querySelector('.mc-form-submit');
   if(btn){ btn.disabled = true; btn.textContent = lang==='sk' ? 'Odosielam...' : 'Sending...'; }
   var params = { customer_name:name, customer_phone:phone, customer_email:email, customer_message:msg, customer_photo_name:photo ? photo.name : '', product:r.productName, price_estimate:priceText, configuration:summaryText + (photo ? '\nFotka: ' + photo.name : ''), language:lang, source:'mojplot.sk - kalkulacka' };
-  mpSendEmail(params, showThanks, function(err){ console.error('send failed', err); showThanks(); });
+  mpSendEmail(params, showThanks, function(err){ showThanks(); }, {fallback:true});
 }
 
 /* ===== Spoločná záverečná obrazovka (3D panel + betón) ===== */
@@ -4694,36 +4721,55 @@ function resetCalc(){
 /* Send via Resend backend */
 function mpSendEmail(params, onSuccess, onError, opts){
   /* Primárne posielame na backend (Resend) – rovnaký pôvod ako AI chat (Vercel).
-     Pri reálnom dopyte (opts.fallback === true) sa pri zlyhaní otvorí predvyplnený
-     e-mail klientovi, aby sa dopyt vždy dal odoslať na info@mojplot.sk.
-     Pri logovaní konverzácie sa fallback NEpoužíva. */
+     Pri reálnom dopyte (opts.fallback === true) sa pri zlyhaní/zaseknutí otvorí
+     predvyplnený e-mail klientovi, aby sa dopyt vždy dal odoslať na info@mojplot.sk. */
   var url = '/api/send-email';
   try{ if(MC && MC.apiUrl){ url = MC.apiUrl.replace(/\/api\/chat(\/.*)?$/, '/api/send-email'); } }catch(e){}
   var useFallback = !!(opts && opts.fallback);
   var done = false;
-  function fail(err){ if(done) return; done = true; if(useFallback){ try{ mpEmailFallback(params); }catch(e){} } if(onError) onError(err); }
+  /* Normalize any error to a plain string so it can safely cross postMessage / structured-clone
+     boundaries. DOMException objects (e.g. AbortError) carry an internal AbortSignal reference
+     that the structured-clone algorithm cannot handle, causing:
+       DataCloneError: "AbortSignal object could not be cloned." */
+  function normalizeErr(e){
+    if(e === null || e === undefined) return 'unknown';
+    if(typeof e === 'string' || typeof e === 'number') return e;
+    try{ return (e.name ? e.name + ': ' : '') + (e.message || String(e)); }catch(_){ return 'error'; }
+  }
+  function fail(err){ if(done) return; done = true; if(useFallback){ try{ mpEmailFallback(params); }catch(e){} } if(onError) onError(normalizeErr(err)); }
   function ok(){ if(done) return; done = true; if(onSuccess) onSuccess(); }
+  /* Poistka proti zaseknutiu: ak backend neodpovie do 6 s, pokracujeme
+     (fallback + dakovacia obrazovka), aby tlacidlo neostalo viseť. */
+  var timer = setTimeout(function(){ fail('timeout'); }, 6000);
+  /* NOTE: AbortController removed. Passing ctrl.signal into fetch is fine, but when the
+     resulting AbortError DOMException bubbles through .catch() and is later forwarded via
+     postMessage (e.g. from an iframe to the host page), structured clone throws DataCloneError
+     because AbortSignal is not cloneable. The 6 s timeout above is sufficient as a guard. */
   try{
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
-    }).then(function(r){ if(r && r.ok){ ok(); } else { fail(r ? r.status : 'no-response'); } }).catch(function(e){ fail(e); });
-  }catch(e){ fail(e); }
+    }).then(function(r){ clearTimeout(timer); if(r && r.ok){ ok(); } else { fail(r ? r.status : 'no-response'); } })
+      .catch(function(e){ clearTimeout(timer); fail(e); });
+  }catch(e){ clearTimeout(timer); fail(e); }
 }
 function mpEmailFallback(params){
-  var name  = params.customer_name  || params.from_name  || '';
-  var email = params.customer_email || params.from_email || '';
-  var phone = params.customer_phone || params.phone       || '';
-  var body = '';
-  if(params.message)        body += params.message + '\n';
-  if(params.product)        body += 'Produkt: ' + params.product + '\n';
-  if(params.price_estimate) body += 'Orientačná cena: ' + params.price_estimate + '\n';
-  if(params.configuration)  body += '\n' + params.configuration + '\n';
-  body += '\nMeno: ' + name + '\nE-mail: ' + email + '\nTelefón: ' + phone + '\n';
-  var subj = params.subject || 'Dopyt z kalkulačky – Môj plot';
-  var href = 'mailto:info@mojplot.sk?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
-  try{ window.location.href = href; }catch(e){ try{ window.open(href, '_blank'); }catch(_){} }
+  /* Fallback je len best-effort – v sandboxovanom iframe môže zlyhať, ignorujeme. */
+  try{
+    var name  = params.customer_name  || params.from_name  || '';
+    var email = params.customer_email || params.from_email || '';
+    var phone = params.customer_phone || params.phone       || '';
+    var body = '';
+    if(params.message)        body += params.message + '\n';
+    if(params.product)        body += 'Produkt: ' + params.product + '\n';
+    if(params.price_estimate) body += 'Orientačná cena: ' + params.price_estimate + '\n';
+    if(params.configuration)  body += '\n' + params.configuration + '\n';
+    body += '\nMeno: ' + name + '\nE-mail: ' + email + '\nTelefón: ' + phone + '\n';
+    var subj = params.subject || 'Dopyt z kalkulačky – Môj plot';
+    var href = 'mailto:info@mojplot.sk?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+    try{ window.open(href, '_blank'); }catch(_){}
+  }catch(e){}
 }
 
 
@@ -5198,27 +5244,25 @@ function renderCPStep9(el){
   var l = MC.lang==='sk';
   el.innerHTML = '<div class="mc-step">' +
     '<div class="mc-step-title">'+(l?'Lokalita a kontakt':'Location and contact')+'</div>' +
-    '<div class="mc-step-sub">'+(l?'Zadajte lokalitu pre výpočet dopravy a kontakt pre zaslanie cenovej ponuky.':'Enter location for shipping and contact details for the price quote.')+'</div>' +
-    '<div style="display:flex;flex-direction:column;gap:10px;margin:12px 0 8px">' +
-      '<input class="mc-form-input" id="cpCity" type="text" placeholder="'+(l?'Obec / mesto':'Town / city')+'" value="'+(calcState.cpLocation||'')+'">' +
-      '<input class="mc-form-input" id="cpZip" type="text" pattern="[0-9 ]{5,6}" placeholder="'+(l?'PSČ (napr. 027 52)':'ZIP code')+'" value="'+(calcState.cpZip||'')+'" oninput="updateZipHint(this.value)">' +
-      '<div id="zipHint" class="mc-hint" style="margin-top:6px;display:none"><div class="hi">i</div><div id="zipHintText"></div></div>' +
+    '<div style="display:flex;gap:8px;margin:8px 0 6px">' +
+      '<input class="mc-form-input" id="cpCity" type="text" placeholder="'+(l?'Obec / mesto':'Town / city')+'" value="'+(calcState.cpLocation||'')+'" style="flex:1.5">' +
+      '<input class="mc-form-input" id="cpZip" type="text" pattern="[0-9 ]{5,6}" placeholder="'+(l?'PSČ':'ZIP')+'" value="'+(calcState.cpZip||'')+'" oninput="updateZipHint(this.value)" style="flex:1">' +
     '</div>' +
-    '<div style="border-top:1px solid #E8F0E6;margin:10px 0"></div>' +
-    '<div style="display:flex;flex-direction:column;gap:10px;margin:8px 0">' +
+    '<div id="zipHint" class="mc-hint" style="margin:0 0 6px;display:none"><div class="hi">i</div><div id="zipHintText"></div></div>' +
+    '<div style="display:flex;flex-direction:column;gap:8px;margin:0 0 6px">' +
       '<div style="display:flex;gap:8px">' +
-        '<input class="mc-form-input" id="cfName" type="text" placeholder="'+(l?'Meno a priezvisko *':'Full name *')+'" value="'+(calcState.cfName||'')+'" style="flex:1">' +
-        '<input class="mc-form-input" id="cfPhone" type="tel" placeholder="'+(l?'Telefón *':'Phone *')+'" value="'+(calcState.cfPhone||'')+'" style="flex:1">' +
+        '<input class="mc-form-input" id="cfName" type="text" placeholder="'+(l?'Meno a priezvisko':'Full name')+'" value="'+(calcState.cfName||'')+'" style="flex:1">' +
+        '<input class="mc-form-input" id="cfPhone" type="tel" placeholder="'+(l?'Telefón':'Phone')+'" value="'+(calcState.cfPhone||'')+'" style="flex:1">' +
       '</div>' +
-      '<input class="mc-form-input" id="cfEmail" type="email" placeholder="E-mail *" value="'+(calcState.cfEmail||'')+'">' +
-      '<textarea class="mc-form-textarea" id="cfMsg" placeholder="'+(l?'Doplňujúce informácie...':'Additional info...')+'">'+( calcState.cfMsg||'')+'</textarea>' +
+      '<input class="mc-form-input" id="cfEmail" type="email" placeholder="E-mail" value="'+(calcState.cfEmail||'')+'">' +
+      '<textarea class="mc-form-textarea" id="cfMsg" style="height:46px" placeholder="'+(l?'Doplňujúce informácie...':'Additional info...')+'">'+( calcState.cfMsg||'')+'</textarea>' +
     '</div>' +
-    '<label class="mc-gdpr-check" onclick="toggleCPGdpr(this)" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin:8px 0">' +
+    '<label class="mc-gdpr-check" onclick="toggleCPGdpr(this)" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin:6px 0">' +
       '<div id="cpGdprBox" style="width:18px;height:18px;border:2px solid '+(calcState.cpGdpr?'#45A93C':'#C8D6C4')+';border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:'+(calcState.cpGdpr?'#45A93C':'#fff')+';transition:all .2s">'+(calcState.cpGdpr?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>':'')+'</div>' +
-      '<span style="font-size:11.5px;color:#68736A;line-height:1.45">'+(l?'Súhlasím so <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">spracovaním osobných údajov</a> za účelom prípravy cenovej ponuky. (povinné)':'I agree to the <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">processing of personal data</a> for quote preparation. (required)')+'</span>' +
+      '<span style="font-size:11px;color:#68736A;line-height:1.4">'+(l?'Súhlasím so <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">spracovaním osobných údajov</a> za účelom prípravy ponuky.':'I agree to the <a href="https://mojplot.sk/ochrana-osobnych-udajov/" target="_blank" onclick="event.stopPropagation()" style="color:#45A93C;font-weight:600">processing of personal data</a> for quote preparation.')+'</span>' +
     '</label>' +
-    '<div class="mc-contact-actions"><div class="mc-actions" style="margin-top:0;flex-direction:column;gap:8px">' +
-      '<button class="mc-btn mc-form-submit" onclick="submitCPFromStep9()">'+(l?'Odoslať dopyt a zobraziť cenu':'Send inquiry and show price')+' →</button>' +
+    '<div class="mc-contact-actions"><div class="mc-actions" style="margin-top:auto;flex-direction:column;gap:8px">' +
+      '<button class="mc-btn mc-form-submit" onclick="submitCPFromStep9()">'+(l?'Zobraziť cenovú kalkuláciu':'Show price estimate')+' →</button>' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
     '</div></div>' +
   '</div>';
@@ -5231,10 +5275,10 @@ function submitCPFromStep9(){
   calcState.cfPhone    = (document.getElementById('cfPhone')||{}).value || '';
   calcState.cfEmail    = (document.getElementById('cfEmail')||{}).value || '';
   calcState.cfMsg      = (document.getElementById('cfMsg')||{}).value || '';
-  if(!calcState.cpGdpr){ alert(l?'Prosím zaškrtnite súhlas so spracovaním osobných údajov.':'Please check the personal data consent checkbox.'); return; }
   if(!calcState.cfName.trim()||!calcState.cfPhone.trim()||!calcState.cfEmail.trim()){ alert(l?'Prosím vyplňte meno, telefón a e-mail.':'Please fill in name, phone and email.'); return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(calcState.cfEmail)){ alert(l?'Prosím zadajte platný e-mail.':'Please enter a valid email.'); return; }
-  submitCPCalc();
+  /* Advance to the price summary step (renderCPFinal) where the user confirms and sends */
+  autoNext();
 }
 
 /* ===================================================
@@ -5532,7 +5576,7 @@ function submitCPCalc(){
     price_estimate:priceText, configuration:confText,
     language:l?'sk':'en', source:'mojplot.sk – CP konfigurátor'
   };
-  mpSendEmail(params, showThanks, function(err){ console.error('CP send failed', err); showThanks(); }, {fallback:true});
+  mpSendEmail(params, showThanks, function(err){ showThanks(); }, {fallback:true});
 }
 
 </script>
