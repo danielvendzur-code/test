@@ -1747,9 +1747,22 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   display:none!important;
 }
 
-
-
-/* ===== V10 LOCAL REPOSITORY PHOTOS: fast, small, lazy-loaded ===== */
+/* ===== Krajšia notifikačná značka – rovnaký font ako zvyšok widgetu ===== */
+#mojplot-bubble .notif-dot{
+  width:21px!important; height:21px!important; min-width:21px!important; min-height:21px!important;
+  top:8px!important; right:8px!important;
+  background:#EF4444!important; color:#fff!important;
+  border:2.5px solid #fff!important; border-radius:999px!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  font-family:var(--m-font),"Inter",-apple-system,system-ui,Segoe UI,sans-serif!important;
+  font-size:11.5px!important; font-weight:800!important; line-height:1!important;
+  letter-spacing:0!important; text-indent:0!important; transform:none!important;
+  box-shadow:0 3px 8px rgba(239,68,68,.35)!important;
+  overflow:visible!important; z-index:30!important;
+  -webkit-font-smoothing:antialiased!important; text-rendering:geometricPrecision!important;
+}
+#mojplot-bubble .notif-dot::before{ content:none!important; display:none!important; }
+#mojplot-bubble .notif-dot::after{ content:none!important; display:none!important; }
 .mc-step-img.asset-photo{
   height:132px!important;
   border:1px solid #E4EEDF!important;
@@ -2328,6 +2341,54 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-color-photo{height:50px!important}
   .mc-step-sub{margin-bottom:5px!important}
   .mc-cp-opts{gap:5px!important}
+}
+
+/* ============================================================
+   AI chatbot prepínač – v štýle ostatných kariet kalkulačky
+   (rovnaký rámik, rádius a ikona v zelenom štvorčeku ako pri voľbách)
+   ============================================================ */
+.mc-calc-ai-switch{
+  width:100%!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  gap:12px!important;
+  margin-top:10px!important;
+  padding:12px 14px!important;
+  border:1.5px solid #DDE7D8!important;
+  border-radius:14px!important;
+  background:#F7FAF4!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#23272A!important;
+  font-family:var(--m-font)!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  cursor:pointer!important;
+  transition:border-color .22s ease,background .22s ease,transform .18s ease!important;
+}
+.mc-calc-ai-switch:hover{ border-color:#45A93C!important; background:#EDF7EA!important; transform:none!important; box-shadow:0 4px 14px rgba(69,169,60,.12)!important; }
+.mc-calc-ai-switch .ai-sw-ico{
+  width:42px!important; height:42px!important; flex-shrink:0!important;
+  border-radius:11px!important; background:#EAF4E7!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  font-size:21px!important; line-height:1!important;
+}
+.mc-calc-ai-switch .ai-sw-txt{ display:flex!important; flex-direction:column!important; gap:2px!important; align-items:flex-start!important; text-align:left!important; min-width:0!important; }
+.mc-calc-ai-switch .ai-sw-txt strong{ font-size:13.5px!important; font-weight:800!important; color:#23272A!important; line-height:1.2!important; }
+.mc-calc-ai-switch .ai-sw-desc{
+  font-size:11.5px!important; font-weight:600!important; color:#68736A!important;
+  line-height:1.3!important; max-width:none!important; margin:0!important;
+}
+
+/* Na PC len o kúsok väčšie, stále zladené s ostatnými kartami (žiadne roztiahnutie) */
+@media (min-width:481px){
+  .mc-step-p0 .mc-calc-ai-switch{ margin-top:12px!important; padding:13px 16px!important; }
+  .mc-step-p0 .mc-calc-ai-switch .ai-sw-ico{ width:44px!important; height:44px!important; font-size:22px!important; }
+  .mc-step-p0 .mc-calc-ai-switch .ai-sw-txt strong{ font-size:14px!important; }
+  .mc-step-p0 .mc-calc-ai-switch .ai-sw-desc{ font-size:12px!important; }
 }
 
 </style>
@@ -3425,6 +3486,7 @@ function renderStepProduct(el){
       '<span class="ai-sw-ico">💬</span>' +
       '<span class="ai-sw-txt">' +
         '<strong>'+(lang==='sk'?'AI chatbot firmy Môj plot':'Môj plot AI chatbot')+'</strong>' +
+        '<span class="ai-sw-desc">'+(lang==='sk'?'Neviete si vybrať? Spýtajte sa nášho asistenta na typy plotov, ceny aj montáž – odpovie hneď.':'Not sure which fence? Ask our assistant about types, prices and installation – instant answers.')+'</span>' +
       '</span>' +
     '</button>' +
     renderTrust() +
