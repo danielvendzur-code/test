@@ -2402,6 +2402,31 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-step-p0 .mc-calc-ai-switch .ai-sw-desc{ font-size:12px!important; }
 }
 
+/* ============================================================
+   MOBILE NO-SCROLL: button always in view on all steps except
+   the final price/summary step (mc-step-final).
+   PC is completely untouched (this block is max-width:480px only).
+   ============================================================ */
+@media (max-width:480px){
+  /* Chain: calc-container → calcContent → mc-step — no outer scroll */
+  .mc-calc-container[data-open="true"]{overflow:hidden!important;display:flex!important;flex-direction:column!important}
+  #calcContent{flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+  .mc-step{flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important}
+  /* Actions/contact-actions: sticky at visible bottom of the step */
+  .mc-step .mc-actions,.mc-step .mc-contact-actions{position:sticky!important;bottom:0!important;background:var(--mc-bg)!important;padding-top:8px!important;z-index:4!important;flex-shrink:0!important;margin-top:0!important}
+  /* Remove scroll-down hint arrow on mobile */
+  .mc-scroll-hint{display:none!important}
+  /* Step 0 (product selection): keep natural scroll, contact chips at bottom */
+  .mc-calc-container[data-open="true"]:has(.mc-step-p0){overflow-y:auto!important}
+  #calcContent:has(.mc-step-p0){overflow:visible!important;flex:1 1 auto!important}
+  .mc-step-p0{overflow-y:auto!important;flex:1 1 auto!important}
+  /* Final/summary step: full scroll allowed */
+  .mc-calc-container[data-open="true"]:has(.mc-step-final){overflow-y:auto!important}
+  #calcContent:has(.mc-step-final){overflow-y:auto!important;flex:1 1 auto!important}
+  .mc-step.mc-step-final{overflow-y:auto!important;flex:0 0 auto!important}
+  .mc-step.mc-step-final .mc-actions,.mc-step.mc-step-final .mc-contact-actions{position:static!important;padding-top:0!important}
+}
+
 </style>
 
 </head>
@@ -4594,7 +4619,7 @@ function renderFinal(el){
     '<button class="mc-btn mc-form-submit" onclick="submitCalc()">'+(lang==='sk'?'Odoslať dopyt':'Send inquiry')+' →</button>' +
     '<div class="mc-form-note">'+(lang==='sk'?'Odoslaním nás požiadate o prípravu presnej ponuky.':'Submitting asks us to prepare an exact quote.')+'</div>' +
   '</div>';
-  el.innerHTML = '<div class="mc-step"><div class="mc-step-title">'+(lang==='sk'?'Tu je orientačný výpočet':'Here is the estimate')+'</div>' + priceHtml + breakdownHtml + summaryHtml + formHtml + '<div class="mc-actions" style="margin-top:8px"><button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button><button class="mc-btn-secondary" onclick="closeCalc()">'+(lang==='sk'?'Zavrieť':'Close')+'</button></div></div>';
+  el.innerHTML = '<div class="mc-step mc-step-final"><div class="mc-step-title">'+(lang==='sk'?'Tu je orientačný výpočet':'Here is the estimate')+'</div>' + priceHtml + breakdownHtml + summaryHtml + formHtml + '<div class="mc-actions" style="margin-top:8px"><button class="mc-btn-secondary" onclick="calcBack()">← '+(lang==='sk'?'Späť':'Back')+'</button><button class="mc-btn-secondary" onclick="closeCalc()">'+(lang==='sk'?'Zavrieť':'Close')+'</button></div></div>';
 }
 
 function showPhotoName(input){
@@ -4629,7 +4654,7 @@ function mpAccRow(k, v, strong){ return '<div class="mc-acc-row'+(strong?' stron
 function mpSumRow(k, v){ return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #EBF2E8;font-size:13px"><span style="color:#6B7A6A;font-weight:500;flex:1">'+k+'</span><span style="font-weight:700;color:#1E2E1C;text-align:right;flex:1">'+v+'</span></div>'; }
 function mpFinalScreen(o){
   var l = MC.lang === 'sk';
-  return '<div class="mc-step">' +
+  return '<div class="mc-step mc-step-final">' +
     '<div style="text-align:center;padding:8px 0 4px">' +
       '<div style="font-size:42px;line-height:1;margin-bottom:6px">✅</div>' +
       '<div class="mc-step-title" style="text-align:center;font-size:18px">'+(l?'Ďakujeme za dopyt!':'Thank you for your inquiry!')+'</div>' +
@@ -5517,7 +5542,7 @@ function renderCPFinal(el){
     '<div class="mc-result-sub">'+(l?'Materiál a montáž spolu. Presná cena závisí od konečných rozmerov a detailov.':'Material and installation combined. Exact price depends on final dimensions and details.')+'</div>' +
   '</div>';
 
-  el.innerHTML = '<div class="mc-step">' +
+  el.innerHTML = '<div class="mc-step mc-step-final">' +
     '<div class="mc-step-img asset-photo cover"><img src="'+mpPhoto(finishedPhoto)+'" alt="'+(l?'Váš hotový plot':'Your finished fence')+'" loading="eager" decoding="async"></div>' +
     '<div class="mc-step-title">'+(l?'Orientačný výpočet':'Your estimate')+'</div>' +
     priceCardHtml +
