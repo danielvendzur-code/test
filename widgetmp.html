@@ -1401,6 +1401,8 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-cp-opt .cpo-radio { width:20px;height:20px;border:2px solid #C8D6C4;border-radius:50%;flex-shrink:0;position:relative;transition:border-color .22s; }
 .mc-cp-opt.sel .cpo-radio { border-color:#45A93C; }
 .mc-cp-opt.sel .cpo-radio::after { content:'';position:absolute;inset:3px;background:#45A93C;border-radius:50%; }
+/* "TOP" badge on a recommended option chip (e.g. square 60×40 post) */
+.mc-cp-opt.popular::before { content:"TOP";position:absolute;top:-8px;right:12px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:5px;letter-spacing:.4px;box-shadow:0 2px 4px rgba(217,119,6,.4);z-index:3; }
 
 /* CP STEP IMAGE PLACEHOLDER */
 .mc-step-img { width:100%;height:130px;border-radius:12px;overflow:hidden;margin-bottom:12px;background:linear-gradient(135deg,#EAF4E7,#D8EED0);display:flex;align-items:center;justify-content:center;border:1px dashed #B5D5B0;position:relative; }
@@ -2401,6 +2403,19 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-step-p0 .mc-calc-ai-switch .ai-sw-txt strong{ font-size:14px!important; }
   .mc-step-p0 .mc-calc-ai-switch .ai-sw-desc{ font-size:12px!important; }
 }
+
+/* ============================================================
+   FILL EMPTY SPACE (PC + mobile): on sparse steps where the choice
+   chips sit directly above the Continue/Back buttons, let the chips
+   grow into the free vertical space so the step looks full and the
+   chips are larger / easier to tap. flex-grow only consumes POSITIVE
+   free space and the chips never shrink (flex-shrink:0), so this can
+   NEVER introduce scroll — the buttons stay pinned at the very bottom.
+   (.mc-step is a flex column in both the ≤480 and ≥481 layouts.)
+   ============================================================ */
+.mc-step > .mc-cp-opts:has(+ .mc-actions){flex:1 0 auto;justify-content:center}
+.mc-step > .mc-cp-opts:has(+ .mc-actions) > .mc-cp-opt{flex:1 0 auto;max-height:140px}
+.mc-step:has(> .mc-cp-opts + .mc-actions) > .mc-actions{margin-top:0!important}
 
 /* ============================================================
    MOBILE NO-SCROLL: buttons always at visual bottom, no white
@@ -4837,11 +4852,12 @@ function dismissTeaser(){
    13 krokov + finálny formulár s GDPR
    =================================================== */
 
-function cpOpt(id, val, label, sub, iconSvg, current, fn, extraInfo){
+function cpOpt(id, val, label, sub, iconSvg, current, fn, extraInfo, popular){
   var sel = current === val ? ' sel' : '';
+  var pop = popular ? ' popular' : '';
   var infoBtn = extraInfo ? '<button class="cpo-info-btn" onclick="event.stopPropagation();toggleCpInfo(this)" type="button">ℹ</button>' : '';
   var infoBox = extraInfo ? '<div class="cpo-info-box" style="display:none">'+extraInfo+'</div>' : '';
-  return '<div class="mc-cp-opt'+sel+'" onclick="'+fn+'(\''+val+'\')">' +
+  return '<div class="mc-cp-opt'+sel+pop+'" onclick="'+fn+'(\''+val+'\')">' +
     '<div class="cpo-ico">'+iconSvg+'</div>' +
     '<div class="cpo-text"><div class="cpo-lbl">'+label+infoBtn+'</div>'+(sub?'<div class="cpo-sub">'+sub+'</div>':'')+''+infoBox+'</div>' +
     '<div class="cpo-radio"></div>' +
@@ -5014,21 +5030,24 @@ function selColor(v){
 function confirmCPStep3(){ if(!calcState.color){ alert(MC.lang==='sk'?'Vyberte farbu.':'Please select a color.'); return; } autoNext(); }
 
 /* KROK 4 – Typ stĺpika + Výška stĺpika (kombinovaný krok) */
-function renderCPStep4(el){
-  var l = MC.lang==='sk';
-  var icoOk = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>';
-  var icoHr = '<svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 16h18v2H3zm0-8h18v2H3zM3 7h18v2H3zm0 8h18v2H3z"/></svg>';
+function cpAutoRecPostHeight(){
   var h = calcState.height || '153';
   var mounting = calcState.cpMounting || '';
-  var autoRec = mounting === 'kotvo'
+  return mounting === 'kotvo'
     ? (h === '203' ? '2.4' : '2')
     : (h === '203' ? '3' : (h === '173' ? '2.4' : '2'));
-  var postHeights = [
+}
+function cpPostHeightCards(){
+  var l = MC.lang==='sk';
+  var autoRec = cpAutoRecPostHeight();
+  var all = [
     { v:'2',   lbl:'2 m',   sub: l?'Pre nižšie ploty / kotvenie na múrik':'For lower fences / wall anchoring' },
     { v:'2.4', lbl:'2,4 m', sub: l?'Štandardné betónovanie':'Standard concreting', pop: autoRec==='2.4' },
     { v:'3',   lbl:'3 m',   sub: l?'Pre vyššie ploty a betónovanie':'For taller fences and concreting', pop: autoRec==='3' }
   ];
-  var phCards = postHeights.map(function(ph){
+  /* Okrúhly stĺpik 48 mm sa dodáva iba vo výške 3 m */
+  if(calcState.cpPostType === 'okruhly'){ all = all.filter(function(p){ return p.v==='3'; }); }
+  return all.map(function(ph){
     var sel = calcState.cpPostHeight === ph.v ? ' selected' : '';
     var pop = ph.pop ? ' popular' : '';
     return '<div class="mc-size-card'+sel+pop+'" onclick="selCPPostHeight(\''+ph.v+'\')">' +
@@ -5036,22 +5055,50 @@ function renderCPStep4(el){
       '<div class="mc-size-label">'+ph.sub+'</div>' +
     '</div>';
   }).join('');
-  var rec = mounting === 'kotvo'
+}
+function cpPostHeightCols(){ return calcState.cpPostType === 'okruhly' ? '1fr' : '1fr 1fr 1fr'; }
+function cpPostRecText(){
+  var l = MC.lang==='sk';
+  if(calcState.cpPostType === 'okruhly'){
+    return l?'Okrúhly stĺpik 48 mm sa dodáva vo výške <b>3 m</b>.':'Round 48 mm post is supplied only in <b>3 m</b> height.';
+  }
+  var autoRec = cpAutoRecPostHeight();
+  var h = calcState.height || '153';
+  var mounting = calcState.cpMounting || '';
+  return mounting === 'kotvo'
     ? (l ? 'Kotvenie na múrik → kratší stĺpik. Odporúčame <b>'+autoRec+' m</b>.' : 'Wall anchoring → shorter post. Recommended <b>'+autoRec+' m</b>.')
     : (autoRec === '3' ? (l?'Betónovanie + výška '+h+' cm → odporúčame stĺpik <b>3 m</b>.':'Concreting + height '+h+' cm → recommended post <b>3 m</b>.')
     : autoRec === '2.4' ? (l?'Výška plotu '+h+' cm → odporúčame stĺpik <b>2,4 m</b>.':'Height '+h+' cm → recommended post <b>2.4 m</b>.')
     : (l?'Pre nižší plot stačí stĺpik <b>2 m</b>.':'For lower fence, <b>2 m</b> post is sufficient.'));
+}
+/* Po zmene typu stĺpika prerendruj výber výšky (okrúhly = iba 3 m) */
+function refreshCPPostHeights(){
+  var wrap = document.getElementById('cpPostHeightWrap');
+  if(wrap){
+    if(calcState.cpPostType === 'okruhly'){ calcState.cpPostHeight = '3'; }
+    wrap.style.gridTemplateColumns = cpPostHeightCols();
+    wrap.innerHTML = cpPostHeightCards();
+  }
+  var hint = document.getElementById('cpPostRecHint');
+  if(hint){ hint.innerHTML = cpPostRecText(); }
+}
+function renderCPStep4(el){
+  var l = MC.lang==='sk';
+  /* Okrúhly 48 mm má iba 3 m – zaisti konzistentný stav */
+  if(calcState.cpPostType === 'okruhly'){ calcState.cpPostHeight = '3'; }
+  var icoOk = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>';
+  var icoHr = '<svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 16h18v2H3zm0-8h18v2H3zM3 7h18v2H3zm0 8h18v2H3z"/></svg>';
   el.innerHTML = '<div class="mc-step">' +
     cpStepPhoto('stlpik') +
     '<div class="mc-dim-label" style="margin-bottom:6px;font-size:12px;font-weight:800;color:var(--mc-text);text-transform:uppercase;letter-spacing:.4px">'+(l?'Typ stĺpika':'Post type')+'</div>' +
     '<div class="mc-cp-opts" style="margin-bottom:4px">' +
-      cpOpt('pt','okruhly', l?'Okrúhly 48 mm':'Round 48 mm', l?'Ekonomickejšia varianta':'More economical option', icoOk, calcState.cpPostType, 'selCPPostType') +
       cpOpt('pt','hranaty', l?'Hranatý 60×40 mm':'Square 60×40 mm', l?'Pevnejšie riešenie, viac odolné':'Stronger and more rigid solution', icoHr, calcState.cpPostType, 'selCPPostType',
-        l?'Hranatý stĺpik 60×40 mm je pevnejší a odporúčaný pre vyššie ploty (173+ cm) a náročnejšie podmienky.':'Square 60×40mm post is stronger and recommended for taller fences (173+ cm) and demanding conditions.') +
+        l?'Hranatý stĺpik 60×40 mm je pevnejší a odporúčaný pre vyššie ploty (173+ cm) a náročnejšie podmienky.':'Square 60×40mm post is stronger and recommended for taller fences (173+ cm) and demanding conditions.', true) +
+      cpOpt('pt','okruhly', l?'Okrúhly 48 mm':'Round 48 mm', l?'Ekonomickejšia varianta (iba stĺpik 3 m)':'More economical option (3 m post only)', icoOk, calcState.cpPostType, 'selCPPostType') +
     '</div>' +
     '<div class="mc-dim-label" style="margin-bottom:6px;font-size:12px;font-weight:800;color:var(--mc-text);text-transform:uppercase;letter-spacing:.4px">'+(l?'Výška stĺpika':'Post height')+'</div>' +
-    '<div class="mc-hint" style="margin-bottom:8px"><div class="hi">i</div><div>'+rec+'</div></div>' +
-    '<div class="mc-size-grid" style="grid-template-columns:1fr 1fr 1fr">'+phCards+'</div>' +
+    '<div class="mc-hint" style="margin-bottom:8px"><div class="hi">i</div><div id="cpPostRecHint">'+cpPostRecText()+'</div></div>' +
+    '<div class="mc-size-grid" id="cpPostHeightWrap" style="grid-template-columns:'+cpPostHeightCols()+'">'+cpPostHeightCards()+'</div>' +
     '<div class="mc-actions">' +
       '<button class="mc-btn-secondary" onclick="calcBack()">← '+(l?'Späť':'Back')+'</button>' +
       '<button class="mc-btn" onclick="confirmCPStep4()">'+(l?'Pokračovať':'Continue')+' →</button>' +
@@ -5062,6 +5109,7 @@ function selCPPostType(v){
   if(calcState.cpPostType === v) return;
   calcState.cpPostType = v;
   updateOptSel('selCPPostType', v);
+  refreshCPPostHeights();
   updateInlineStepPhoto('stlpik');
 }
 function selCPPostHeight(v){ calcState.cpPostHeight = v; var cards=document.querySelectorAll('.mc-size-card'); cards.forEach(function(c){if(c.querySelector('.mc-size-val')){c.classList.remove('selected');}}); event.currentTarget.classList.add('selected'); }
@@ -5189,14 +5237,18 @@ function renderCPStep7(el){
     '</div>' +
     '<div style="border-top:1px solid #E8F0E6;margin:6px 0 0"></div>' +
     '<div style="margin:5px 0">' +
-      '<div class="mc-dim-label">' +
+      '<div class="mc-dim-label" style="margin-bottom:4px">' +
         '<span>'+(l?'Počet rohov':'Number of corners')+'<button class="cpo-info-btn" type="button" onclick="var b=document.getElementById(\'cpCornersInfo\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'" style="margin-left:6px">ℹ</button></span>' +
-        '<span class="mc-dim-value" id="cpCornersVal">'+c+'</span>' +
       '</div>' +
       '<div class="cpo-info-box" id="cpCornersInfo" style="display:none;margin-bottom:6px">' +
         (l?'Roh je miesto, kde plot mení smer. Na každom rohu pribúda 1 stĺpik navyše. Bežný obdĺžnikový pozemok má <b>4 rohy</b>.':'A corner is where the fence changes direction. Each corner adds 1 extra post. A typical rectangular plot has <b>4 corners</b>.') +
       '</div>' +
-      '<input type="range" min="0" max="15" step="1" value="'+c+'" class="mc-slider" id="cpCornersSlider" oninput="onCPCornersSlide(this.value)">' +
+      '<div class="mc-num-input-row">' +
+        '<button class="mc-num-btn" onclick="adjCPCorners(-1)">−</button>' +
+        '<input type="number" min="0" max="50" class="mc-num-input" id="cpCornersIn" value="'+c+'" oninput="calcState.cpCorners=parseInt(this.value)||0">' +
+        '<button class="mc-num-btn" onclick="adjCPCorners(1)">+</button>' +
+        '<span style="font-size:13px;font-weight:600;color:var(--mc-text-sub);padding-left:6px">ks</span>' +
+      '</div>' +
     '</div>' +
     '<div style="margin:5px 0">' +
       '<div class="mc-dim-label" style="margin-bottom:4px"><span>'+(l?'Počet voľných koncov plotu':'Number of open ends')+'</span></div>' +
@@ -5215,12 +5267,13 @@ function renderCPStep7(el){
 }
 function adjCPBranka(d){ var v=Math.max(0,(calcState.cpBrankaCount||0)+d); calcState.cpBrankaCount=v; var inp=document.getElementById('cpBrankaIn'); if(inp)inp.value=v; }
 function adjCPGate(d){ var v=Math.max(0,(calcState.cpGateCount||0)+d); calcState.cpGateCount=v; var inp=document.getElementById('cpGateIn'); if(inp)inp.value=v; }
-function onCPCornersSlide(v){ var n=parseInt(v)||0; calcState.cpCorners=n; var lbl=document.getElementById('cpCornersVal'); if(lbl) lbl.textContent=n; }
+function adjCPCorners(d){ var cur=(calcState.cpCorners!==null&&calcState.cpCorners!==undefined)?calcState.cpCorners:4; var v=Math.max(0,cur+d); calcState.cpCorners=v; var inp=document.getElementById('cpCornersIn'); if(inp)inp.value=v; }
 function adjCPEnds(d){ var v=Math.max(0,(calcState.cpEnds||0)+d); calcState.cpEnds=v; var inp=document.getElementById('cpEndsIn'); if(inp)inp.value=v; }
 function confirmCPStep7(){
   calcState.cpBrankaCount = parseInt((document.getElementById('cpBrankaIn')||{}).value)||0;
   calcState.cpGateCount   = parseInt((document.getElementById('cpGateIn')||{}).value)||0;
-  calcState.cpCorners     = parseInt((document.getElementById('cpCornersSlider')||{}).value) || calcState.cpCorners || 0;
+  var ci = document.getElementById('cpCornersIn');
+  calcState.cpCorners     = ci ? (parseInt(ci.value)||0) : ((calcState.cpCorners!==null&&calcState.cpCorners!==undefined)?calcState.cpCorners:4);
   calcState.cpEnds        = parseInt((document.getElementById('cpEndsIn')||{}).value)||0;
   autoNext();
 }
