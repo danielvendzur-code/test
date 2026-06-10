@@ -2403,23 +2403,30 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 }
 
 /* ============================================================
-   MOBILE NO-SCROLL: button always in view on all steps except
-   the final price/summary step (mc-step-final).
+   MOBILE NO-SCROLL: button always at screen bottom, zero scroll
+   on all steps except the final price/summary step (mc-step-final).
    PC is completely untouched (this block is max-width:480px only).
    ============================================================ */
 @media (max-width:480px){
-  /* Chain: calc-container → calcContent → mc-step — no outer scroll */
+  /* Full flex chain — outer container never scrolls */
   .mc-calc-container[data-open="true"]{overflow:hidden!important;display:flex!important;flex-direction:column!important}
   #calcContent{flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
-  .mc-step{flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important}
-  /* Direct-child action wrapper: sticky at visible bottom of the step.
-     Using > so contact steps (mc-actions nested in mc-contact-actions)
-     pin only the OUTER wrapper — no double sticky. */
-  .mc-step > .mc-actions,.mc-step > .mc-contact-actions{position:sticky!important;bottom:0!important;background:var(--mc-bg)!important;padding-top:8px!important;z-index:4!important;flex-shrink:0!important;margin-top:0!important}
-  .mc-step > .mc-contact-actions > .mc-actions{position:static!important;background:transparent!important;padding-top:0!important;margin-top:0!important}
-  /* Remove scroll-down hint arrow on mobile */
+  /* Each step fills exactly the available height — no overflow, no scroll */
+  .mc-step{flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+  /* Action buttons pushed to visual bottom via flex — no sticky, no background */
+  .mc-step > .mc-actions,.mc-step > .mc-contact-actions{margin-top:auto!important;flex-shrink:0!important;position:static!important;background:none!important;padding-top:6px!important;z-index:auto!important;bottom:auto!important}
+  .mc-step > .mc-contact-actions > .mc-actions{margin-top:0!important;padding-top:0!important}
+  /* Hide decorative step photos on mobile — saves ~130px per step */
+  .mc-step-img.asset-photo{display:none!important}
+  /* Compact spacing so all content fits without scroll */
+  .mc-calc-progress-wrap{margin-bottom:6px!important;padding:3px 2px!important}
+  .mc-step-sub{margin-bottom:8px!important}
+  .mc-actions{margin-top:6px!important}
+  .mc-cp-opts{gap:6px!important;margin:6px 0!important}
+  .mc-cp-opt{padding:10px 12px!important}
+  /* Hide scroll hint arrow */
   .mc-scroll-hint{display:none!important}
-  /* Step 0 (product selection): keep natural scroll, contact chips at bottom */
+  /* Step 0 (product selection): natural scroll, contact chips at bottom */
   .mc-calc-container[data-open="true"]:has(.mc-step-p0){overflow-y:auto!important}
   #calcContent:has(.mc-step-p0){overflow:visible!important;flex:1 1 auto!important}
   .mc-step-p0{overflow-y:auto!important;flex:1 1 auto!important}
@@ -2427,7 +2434,7 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
   .mc-calc-container[data-open="true"]:has(.mc-step-final){overflow-y:auto!important}
   #calcContent:has(.mc-step-final){overflow-y:auto!important;flex:1 1 auto!important}
   .mc-step.mc-step-final{overflow-y:auto!important;flex:0 0 auto!important}
-  .mc-step.mc-step-final > .mc-actions,.mc-step.mc-step-final > .mc-contact-actions{position:static!important;padding-top:0!important}
+  .mc-step.mc-step-final > .mc-actions,.mc-step.mc-step-final > .mc-contact-actions{margin-top:0!important;padding-top:0!important}
 }
 
 </style>
