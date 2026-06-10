@@ -2025,13 +2025,13 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 .mc-color-grid{grid-template-columns:1fr 1fr 1fr!important}
 @media(min-width:420px){.mc-color-grid{grid-template-columns:1fr 1fr 1fr!important}}
 /* Betónový plot má 7 odtieňov – kompaktná 4-stĺpcová mriežka, aby sa zmestili bez scrollu */
-.mc-color-grid.mc-cg-bet{grid-template-columns:1fr 1fr 1fr 1fr!important;gap:7px!important}
-.mc-color-grid.mc-cg-bet .mc-color-card{min-height:92px!important;padding:9px 5px!important}
+.mc-color-grid.mc-cg-bet{grid-template-columns:1fr 1fr 1fr 1fr!important;gap:8px!important}
+.mc-color-grid.mc-cg-bet .mc-color-card{min-height:106px!important;padding:11px 6px!important}
 .mc-color-grid.mc-cg-bet .mc-color-swatch,
 .mc-color-grid.mc-cg-bet .mc-color-swatch.lg,
-.mc-color-grid.mc-cg-bet .mc-color-swatch.xl{width:38px!important;height:38px!important;border-radius:11px!important}
-.mc-color-grid.mc-cg-bet .mc-color-name{font-size:11px!important}
-.mc-color-grid.mc-cg-bet .mc-color-ral{font-size:9.5px!important}
+.mc-color-grid.mc-cg-bet .mc-color-swatch.xl{width:46px!important;height:46px!important;border-radius:12px!important}
+.mc-color-grid.mc-cg-bet .mc-color-name{font-size:11.5px!important}
+.mc-color-grid.mc-cg-bet .mc-color-ral{font-size:10px!important}
 @media(max-width:480px){.mc-chips{padding:5px 8px 7px!important}.mc-chip{font-size:10.5px!important;padding:5px 8px!important}.mc-bet-pattern-preview{height:76px!important}}
 
 
@@ -2724,14 +2724,14 @@ var calcState = {
   cpPostType: null,
   cpPostHeight: null,
   cpMounting: null,
-  cpUnderboard: false,
+  cpUnderboard: true,   // predvolene zakliknutá podhrabová doska (dá sa zmeniť)
   cpGateCount: 0,
   cpBrankaCount: 0,
   cpCorners: 4,
   cpEnds: 0,
   cpLocation: '',
   cpZip: '',
-  cpInstallation: null,
+  cpInstallation: 'kluc',  // predvolene zakliknutá montáž na kľúč (dá sa prepnúť)
   cpGdpr: false,
   /* Betónový plot konfigurátor */
   betType: null,
@@ -2740,7 +2740,7 @@ var calcState = {
   betColor: null,       // prirodny / biela / pieskova / tehlova / cervena / hneda / antracit
   betSides: null,       // iba pri vzore bridlica: obycajny / obojstranny
   betCorners: 4,        // počet rohov 0-10 (default 4)
-  betInstallation: false,
+  betInstallation: true,  // predvolene zakliknutá montáž (dá sa prepnúť)
   betLocation: '',
   betZip: '',
   betGdpr: false
@@ -4763,8 +4763,8 @@ function showThanks(){
 
 function resetCalc(){
   calcState.step = 0; calcState.product = null; calcState.length = null; calcState.height = null; calcState.thickness = '4mm'; calcState.color = null; calcState.withPosts = true; calcState.withUnderboard = false; calcState.installation = false; calcState.gateType = null; calcState.gateWidth = null; calcState.gateHeight = null; calcState.gateAutomation = false; calcState.meshHeight = null; calcState.mobileLength = null; calcState.mobileBases = true; calcState.wallLength = null; calcState.wallHeight = null; calcState.blockWidth = null; calcState.customDesc = '';
-  calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betSides=null; calcState.betCorners=4; calcState.betInstallation=false; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
-  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=false; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=4; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation=null; calcState.cpGdpr=false;
+  calcState.betType=null; calcState.betPattern=null; calcState.betLength=20; calcState.betHeight='2'; calcState.betColor=null; calcState.betSides=null; calcState.betCorners=4; calcState.betInstallation=true; calcState.betLocation=''; calcState.betZip=''; calcState.betGdpr=false;
+  calcState.cpType=null; calcState.cpPostType=null; calcState.cpPostHeight=null; calcState.cpMounting=null; calcState.cpUnderboard=true; calcState.cpGateCount=0; calcState.cpBrankaCount=0; calcState.cpCorners=4; calcState.cpEnds=0; calcState.cpLocation=''; calcState.cpZip=''; calcState.cpInstallation='kluc'; calcState.cpGdpr=false;
   calcState.cfName=''; calcState.cfPhone=''; calcState.cfEmail=''; calcState.cfMsg=''; calcState.cfCity=''; calcState.cfZip=''; calcState.cfGdpr=false;
   renderCalcStep();
 }
