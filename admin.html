@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Môj plot — História AI konverzácií</title>
+<style>
+:root{
+  --g:#45A93C; --g-dark:#2E7D32; --g-bg:#EAF4E7;
+  --text:#1F2937; --muted:#6B7280; --border:#E5E7EB; --bg:#F4F6F3;
+  --radius:16px; --shadow:0 4px 18px rgba(31,41,55,.08);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:inherit;min-height:100vh}
+
+/* ---------- Login ---------- */
+#login{position:fixed;inset:0;background:linear-gradient(160deg,#F4F6F3,#E3EFDF);display:flex;align-items:center;justify-content:center;z-index:100}
+.login-card{background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:36px 32px;width:min(92vw,400px);text-align:center}
+.login-card .logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--g),var(--g-dark));display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:#fff;font-size:26px}
+.login-card h1{font-size:19px;margin-bottom:4px}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.login-card input{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;margin-bottom:12px;outline:none;transition:border .2s}
+.login-card input:focus{border-color:var(--g)}
+.login-card button{width:100%;padding:13px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--g),var(--g-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+.login-err{color:#E53935;font-size:13px;margin-top:10px;display:none}
+
+/* ---------- App ---------- */
+#app{display:none;max-width:980px;margin:0 auto;padding:22px 16px 60px}
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.hdr .logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--g),var(--g-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0}
+.hdr h1{font-size:20px}
+.hdr .sub{font-size:12.5px;color:var(--muted)}
+.hdr .spacer{flex:1}
+.btn-light{padding:9px 16px;border:1.5px solid var(--border);background:#fff;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text)}
+.btn-light:hover{border-color:var(--g);color:var(--g-dark)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+.stat .v{font-size:26px;font-weight:800;color:var(--g-dark)}
+.stat .l{font-size:12px;color:var(--muted);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+
+.filters{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:22px}
+.filters label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:4px}
+.filters input{padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;font-size:13.5px;outline:none}
+.filters input:focus{border-color:var(--g)}
+.filters .search{flex:1;min-width:180px}
+.filters .search input{width:100%}
+.btn-go{padding:10px 20px;border:0;border-radius:10px;background:linear-gradient(135deg,var(--g),var(--g-dark));color:#fff;font-size:13.5px;font-weight:700;cursor:pointer}
+
+.day-head{font-size:13px;font-weight:800;color:var(--g-dark);text-transform:uppercase;letter-spacing:.5px;margin:26px 0 10px;display:flex;align-items:center;gap:10px}
+.day-head::after{content:"";flex:1;height:1px;background:var(--border)}
+.day-head .cnt{background:var(--g-bg);color:var(--g-dark);border-radius:20px;padding:2px 10px;font-size:11.5px}
+
+.convo{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.convo-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none}
+.convo-head:hover{background:#FAFBF9}
+.convo-time{font-size:14px;font-weight:700;min-width:52px}
+.convo-meta{flex:1;min-width:0}
+.convo-preview{font-size:13.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.convo-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.badge{font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.badge.sk{background:var(--g-bg);color:var(--g-dark)}
+.badge.en{background:#E3F2FD;color:#1565C0}
+.badge.msgs{background:#F3F4F6;color:var(--muted)}
+.chev{color:var(--muted);transition:transform .25s;flex-shrink:0}
+.convo.open .chev{transform:rotate(180deg)}
+.convo-body{display:none;border-top:1px solid var(--border);padding:16px 18px;background:#FBFCFA}
+.convo.open .convo-body{display:block}
+.msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.45;margin-bottom:8px;white-space:pre-wrap;word-break:break-word}
+.msg.user{background:linear-gradient(135deg,var(--g),var(--g-dark));color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.msg.bot{background:#fff;border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg-who{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;opacity:.65;margin-bottom:3px}
+.convo-actions{display:flex;justify-content:flex-end;margin-top:8px}
+.btn-del{padding:7px 14px;border:1.5px solid #FECACA;background:#fff;color:#DC2626;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-del:hover{background:#FEF2F2}
+
+.empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:14.5px}
+.loadmore{display:block;margin:24px auto 0;padding:12px 28px;border:1.5px solid var(--border);background:#fff;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;color:var(--g-dark)}
+.loadmore:hover{border-color:var(--g)}
+.loading{text-align:center;padding:40px;color:var(--muted)}
+@media(max-width:600px){ .msg{max-width:92%} .convo-time{min-width:44px;font-size:13px} }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-card">
+    <div class="logo">🌿</div>
+    <h1>Môj plot — Admin</h1>
+    <p>História AI konverzácií z chatbotu</p>
+    <input type="password" id="keyInput" placeholder="Prístupový kľúč" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Prihlásiť sa</button>
+    <div class="login-err" id="loginErr">Nesprávny kľúč, skúste znova.</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <div class="logo">🌿</div>
+    <div>
+      <h1>História konverzácií</h1>
+      <div class="sub">AI chatbot — mojplot.sk</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn-light" onclick="loadFresh()">↻ Obnoviť</button>
+    <button class="btn-light" onclick="logout()">Odhlásiť</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="stTotal">–</div><div class="l">Spolu konverzácií</div></div>
+    <div class="stat"><div class="v" id="stToday">–</div><div class="l">Dnes</div></div>
+    <div class="stat"><div class="v" id="stWeek">–</div><div class="l">Posledných 7 dní</div></div>
+    <div class="stat"><div class="v" id="stMsgs">–</div><div class="l">Správ (načítané)</div></div>
+  </div>
+
+  <div class="filters">
+    <div><label>Od</label><input type="date" id="fFrom"></div>
+    <div><label>Do</label><input type="date" id="fTo"></div>
+    <div class="search"><label>Hľadať v texte</label><input type="search" id="fSearch" placeholder="napr. brána, montáž, 3D…" oninput="renderList()"></div>
+    <button class="btn-go" onclick="loadFresh()">Filtrovať</button>
+  </div>
+
+  <div id="list"><div class="loading">Načítavam…</div></div>
+  <button class="loadmore" id="loadMore" style="display:none" onclick="loadPage()">Načítať staršie</button>
+</div>
+
+<script>
+var API = 'https://mojplot-chatbot-backend.vercel.app/api/history';
+var PAGE = 50;
+var state = { items: [], total: 0, offset: 0 };
+
+function getKey(){ return localStorage.getItem('mp_admin_key') || ''; }
+
+async function api(params, method){
+  var qs = new URLSearchParams(params || {}).toString();
+  var r = await fetch(API + (qs ? '?' + qs : ''), {
+    method: method || 'GET',
+    headers: { Authorization: 'Bearer ' + getKey() }
+  });
+  if (r.status === 401) { logout(); throw new Error('unauthorized'); }
+  if (!r.ok) throw new Error('API ' + r.status);
+  return r.json();
+}
+
+async function doLogin(){
+  var k = document.getElementById('keyInput').value.trim();
+  if (!k) return;
+  localStorage.setItem('mp_admin_key', k);
+  try {
+    await api({ limit: 1 });
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadFresh();
+  } catch (e) {
+    localStorage.removeItem('mp_admin_key');
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+function logout(){
+  localStorage.removeItem('mp_admin_key');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('keyInput').value = '';
+}
+
+function filterParams(){
+  var p = { limit: PAGE, offset: state.offset };
+  var f = document.getElementById('fFrom').value, t = document.getElementById('fTo').value;
+  if (f) p.from = f;
+  if (t) p.to = t;
+  return p;
+}
+
+function loadFresh(){
+  state = { items: [], total: 0, offset: 0 };
+  document.getElementById('list').innerHTML = '<div class="loading">Načítavam…</div>';
+  loadPage();
+}
+
+async function loadPage(){
+  try {
+    var d = await api(filterParams());
+    state.total = d.total;
+    state.items = state.items.concat(d.items);
+    state.offset += d.items.length;
+    renderStats();
+    renderList();
+    document.getElementById('loadMore').style.display = state.offset < state.total ? 'block' : 'none';
+  } catch (e) {
+    if (e.message !== 'unauthorized')
+      document.getElementById('list').innerHTML = '<div class="empty">Chyba pri načítaní. Skontrolujte pripojenie a nastavenie backendu.</div>';
+  }
+}
+
+function renderStats(){
+  var now = new Date();
+  var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  var weekStart = todayStart - 6 * 86400000;
+  var today = 0, week = 0, msgs = 0;
+  state.items.forEach(function(c){
+    if (c.createdAt >= todayStart) today++;
+    if (c.createdAt >= weekStart) week++;
+    msgs += (c.messages || []).length;
+  });
+  document.getElementById('stTotal').textContent = state.total;
+  document.getElementById('stToday').textContent = today;
+  document.getElementById('stWeek').textContent = week + (state.offset < state.total ? '+' : '');
+  document.getElementById('stMsgs').textContent = msgs;
+}
+
+function esc(s){ var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function stripHtml(s){ var d = document.createElement('div'); d.innerHTML = s || ''; return d.textContent || ''; }
+
+function renderList(){
+  var q = (document.getElementById('fSearch').value || '').toLowerCase();
+  var items = state.items.filter(function(c){
+    if (!q) return true;
+    return (c.messages || []).some(function(m){ return stripHtml(m.content).toLowerCase().indexOf(q) !== -1; });
+  });
+
+  if (items.length === 0) {
+    document.getElementById('list').innerHTML = '<div class="empty">Žiadne konverzácie' + (q ? ' pre „' + esc(q) + '“' : '') + '.</div>';
+    return;
+  }
+
+  var days = {};
+  items.forEach(function(c){
+    var d = new Date(c.createdAt);
+    var k = d.toLocaleDateString('sk-SK', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    (days[k] = days[k] || []).push(c);
+  });
+
+  var html = '';
+  Object.keys(days).forEach(function(day){
+    var list = days[day];
+    html += '<div class="day-head">' + esc(day) + '<span class="cnt">' + list.length + '</span></div>';
+    list.forEach(function(c){
+      var t = new Date(c.createdAt);
+      var time = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2);
+      var firstUser = (c.messages || []).filter(function(m){ return m.role === 'user'; })[0];
+      var preview = firstUser ? stripHtml(firstUser.content) : '(bez správy zákazníka)';
+      var userCnt = (c.messages || []).filter(function(m){ return m.role === 'user'; }).length;
+      var bubbles = (c.messages || []).map(function(m){
+        return '<div class="msg ' + (m.role === 'user' ? 'user' : 'bot') + '">' +
+          '<div class="msg-who">' + (m.role === 'user' ? 'Zákazník' : 'AI bot') + '</div>' +
+          esc(stripHtml(m.content)) + '</div>';
+      }).join('');
+      html += '<div class="convo" id="cv-' + esc(c.id) + '">' +
+        '<div class="convo-head" onclick="this.parentElement.classList.toggle(\'open\')">' +
+          '<div class="convo-time">' + time + '</div>' +
+          '<div class="convo-meta">' +
+            '<div class="convo-preview">' + esc(preview) + '</div>' +
+            '<div class="convo-sub">' + esc((c.page || '').replace(/^https?:\/\//, '').split('?')[0]) + '</div>' +
+          '</div>' +
+          '<span class="badge ' + (c.lang === 'en' ? 'en' : 'sk') + '">' + (c.lang === 'en' ? 'EN' : 'SK') + '</span>' +
+          '<span class="badge msgs">' + userCnt + ' otázok</span>' +
+          '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>' +
+        '</div>' +
+        '<div class="convo-body">' + bubbles +
+          '<div class="convo-actions"><button class="btn-del" onclick="delConvo(\'' + esc(c.id) + '\')">Zmazať konverzáciu</button></div>' +
+        '</div>' +
+      '</div>';
+    });
+  });
+  document.getElementById('list').innerHTML = html;
+}
+
+async function delConvo(id){
+  if (!confirm('Naozaj zmazať túto konverzáciu? Akcia sa nedá vrátiť.')) return;
+  try {
+    await api({ id: id }, 'DELETE');
+    state.items = state.items.filter(function(c){ return c.id !== id; });
+    state.total = Math.max(0, state.total - 1);
+    renderStats();
+    renderList();
+  } catch (e) { alert('Mazanie zlyhalo.'); }
+}
+
+/* Auto-login ak je kľúč uložený */
+if (getKey()) {
+  api({ limit: 1 }).then(function(){
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadFresh();
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>

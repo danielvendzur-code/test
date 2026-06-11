@@ -2405,17 +2405,22 @@ html.mc-locked,body.mc-locked{overflow:hidden!important;height:auto!important;po
 }
 
 /* ============================================================
-   FILL EMPTY SPACE (PC + mobile): on sparse steps where the choice
-   chips sit directly above the Continue/Back buttons, let the chips
-   grow into the free vertical space so the step looks full and the
-   chips are larger / easier to tap. flex-grow only consumes POSITIVE
-   free space and the chips never shrink (flex-shrink:0), so this can
-   NEVER introduce scroll — the buttons stay pinned at the very bottom.
-   (.mc-step is a flex column in both the ≤480 and ≥481 layouts.)
-   ============================================================ */
-.mc-step > .mc-cp-opts:has(+ .mc-actions){flex:1 0 auto;justify-content:center}
-.mc-step > .mc-cp-opts:has(+ .mc-actions) > .mc-cp-opt{flex:1 0 auto;max-height:140px}
-.mc-step:has(> .mc-cp-opts + .mc-actions) > .mc-actions{margin-top:0!important}
+   FILL EMPTY SPACE (PC + mobile): sparse steps distribute the free
+   vertical space into their content blocks instead of leaving a hole
+   above the Continue/Back buttons. flex-grow only consumes POSITIVE
+   free space, so this can NEVER introduce scroll — when content is
+   already tall, nothing grows and the layout is unchanged.
+   Excluded: final/summary step and product step (own layouts).
+   Priority: step photo grows first (3), choice chips next (2),
+   size/color grids and lists last (1).
+   (.mc-step is a flex column in both the ≤480 and ≥481 layouts.) */
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-step-img{flex:3 1 84px;height:auto!important;min-height:84px;max-height:200px}
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-cp-opts{flex:2 0 auto;justify-content:center}
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-cp-opts > .mc-cp-opt{flex:1 0 auto;max-height:130px}
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-size-grid{flex:1 0 auto;align-content:center}
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-color-grid{flex:1 0 auto;align-content:center}
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-radio-list,
+.mc-step:not(.mc-step-final):not(.mc-step-p0) > .mc-check-list{flex:1 0 auto;justify-content:center}
 
 /* ============================================================
    MOBILE NO-SCROLL: buttons always at visual bottom, no white
@@ -3073,7 +3078,8 @@ async function callAI(msg){
     role:'system',
     content: MC.lang === 'sk' ?
       'Si profesionálny digitálny asistent firmy Môj plot s.r.o. (mojplot.sk) - slovenského dodávateľa plotov, brán a oplotenia. Pôsobíme na Slovensku aj v Česku.\n\n' +
-      'KONTAKT: Denis Plichta (konateľ), tel. +421 940 511 266, e-mail info@mojplot.sk alebo plichta@mojplot.sk, WhatsApp na čísle +421 940 511 266. Sídlo: Párnica 361, 026 01 Párnica. Pracovná doba: odpovedáme do 24 hodín, telefonicky pondelok-piatok počas pracovných hodín. Cez víkendy sme tiež dostupní pre B2B zákazníkov.\n\n' +
+      'KONTAKT: Denis Plichta (konateľ), tel. +421 940 511 266, e-mail info@mojplot.sk alebo plichta@mojplot.sk, WhatsApp na čísle +421 940 511 266. Sídlo: Párnica 361, 026 01 Párnica. Dostupnosť: 7 dní v týždni od 7:00 do 20:00 hod.\n\n' +
+      'FAKTURAČNÉ ÚDAJE: Môj plot s.r.o., IČO: 57 127 336, DIČ: 2122575059, IČ DPH: SK2122575059.\n\n' +
       'SERVIS: Pomáhame s výberom typu oplotenia, rozmermi, príslušenstvom a orientačným nacenením cez kalkulačku. Pri presnej ponuke si vypýtaj rozmery, lokalitu a preferovanú montáž.\n\n' +
       'PRODUKTY:\n' +
       '• 3D plotové panely (najpopulárnejšie): dĺžka 250 cm, výšky 103/123/153/173/203 cm, hrúbka drôtu 4 mm alebo 5 mm (5 mm je pevnejší pre vyššie ploty), oko 200×50 mm, farby Zinok (pozink, najlacnejší), Zelená (RAL 6005), Antracit (RAL 7016 - najobľúbenejší pre rodinné domy). Cena od 13,35 €/panel.\n' +
@@ -3098,7 +3104,8 @@ async function callAI(msg){
       '• Showroom a sklad: Istebné 26, 027 53 Istebné.\n\n' +
       'ŠTÝL KOMUNIKÁCIE: Buď stručný, vecný, priateľský a praktický. Používaj odrážky pre prehľadnosť. Ak zákazník chce orientačnú cenu alebo presné nacenenie, **vždy ho nasmeruj na cenovú kalkulačku** v tomto chate (veľké tlačidlo "Cenová kalkulačka" hore). Ak nevie aký typ plotu, opýtaj sa na účel (záhrada/firma/dočasné ohradenie) a odporuč. Pri väčších projektoch alebo neistote odporuč priamo kontakt s Denisom Plichtom.' :
       'You are a professional digital assistant for Môj plot s.r.o. (mojplot.sk), a Slovak supplier of fences, gates and fencing systems. We operate in Slovakia and the Czech Republic.\n\n' +
-      'CONTACT: Denis Plichta (owner/managing director), phone +421 940 511 266, email info@mojplot.sk or plichta@mojplot.sk, WhatsApp at +421 940 511 266. Address: Párnica 361, 026 01 Párnica, Slovakia. Working hours: we respond within 24 hours, phone Mon-Fri during business hours. Available on weekends for B2B clients.\n\n' +
+      'CONTACT: Denis Plichta (owner/managing director), phone +421 940 511 266, email info@mojplot.sk or plichta@mojplot.sk, WhatsApp at +421 940 511 266. Address: Párnica 361, 026 01 Párnica, Slovakia. Availability: 7 days a week, 7:00–20:00.\n\n' +
+      'BILLING DETAILS: Môj plot s.r.o., Company ID (IČO): 57 127 336, Tax ID (DIČ): 2122575059, VAT ID (IČ DPH): SK2122575059.\n\n' +
       'SERVICE: Help customers choose the right fencing type, dimensions, accessories and an estimate through the calculator. For exact quotes, ask for dimensions, location and installation preference.\n\n' +
       'PRODUCTS:\n' +
       '• 3D fence panels (most popular): length 250 cm, heights 103/123/153/173/203 cm, wire thickness 4 mm or 5 mm (5 mm stronger for taller fences), mesh 200×50 mm, colors Galvanized (cheapest), Green (RAL 6005), Anthracite (RAL 7016 - most popular for family homes). From €13.35/panel.\n' +
@@ -3133,7 +3140,24 @@ async function callAI(msg){
   return data.reply || data.message || '...';
 }
 
+/* História konverzácií → backend úložisko (admin.html dashboard).
+   Posiela sa po každej odpovedi AI (upsert podľa sessionId), takže
+   v dashboarde je vždy kompletný prepis. Zlyhanie sa ticho ignoruje. */
+function mpLogHistory(){
+  try {
+    if(!MC.sessionId){ MC.sessionId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+    var url = MC.apiUrl.replace(/\/api\/chat(\/.*)?$/, '/api/log-convo');
+    if(url === MC.apiUrl) return;
+    fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ sessionId: MC.sessionId, lang: MC.lang, page: location.href, messages: MC.hist })
+    }).catch(function(){});
+  } catch(e){}
+}
+
 function logConvo(){
+  mpLogHistory();
   try {
     var userMsgs = MC.hist.filter(function(h){return h.role==='user'});
     if(userMsgs.length >= 2 && !MC.convoLogged){
